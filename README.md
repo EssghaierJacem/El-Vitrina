@@ -10,7 +10,6 @@
 - **Backend:** Spring Boot 3.4.3
 - **Frontend:** Angular
 - **Java Version:** 17.0.11 (2024-04-16 LTS)
-- **Database:** [Your Database Here, e.g., MySQL, PostgreSQL]
 
 ---
 
