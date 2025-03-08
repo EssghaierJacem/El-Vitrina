@@ -14,14 +14,6 @@
 
 ---
 
-## 🌈 Colors Used
-
-- **Primary Color:** #3e8e41 ![Green](https://via.placeholder.com/15/3e8e41/000000?text=+)
-- **Secondary Color:** #FF9800 ![Orange](https://via.placeholder.com/15/FF9800/000000?text=+)
-- **Accent Color:** #FF5722 ![Red](https://via.placeholder.com/15/FF5722/000000?text=+)
-- **Text Color:** #333333 ![Dark Grey](https://via.placeholder.com/15/333333/000000?text=+)
-
----
 
 ## 📦 Features
 
@@ -61,7 +53,7 @@
 
 
 ### Frontend (Angular)
-
+---
 1. Clone this repository:
 
     ```bash
@@ -86,6 +78,8 @@ The frontend should now be running on http://localhost:4200.
 
 ## 📝 Usage
 
+---
+
 Once both backend and frontend are running:
 
 Open the application in your browser at http://localhost:4200.
@@ -94,17 +88,23 @@ Customers can interact with the stores, leave feedback, and browse product listi
 
 ## 🔧 Configuration
 
+---
+
 The application uses JWT for authentication. Ensure that you configure your environment variables accordingly.
 
 The database is connected via Spring Data JPA, so make sure your database settings are correctly set in application.properties.
 
 ## 🤖 Future Features
 
+---
+
 Payment Integration: Allow businesses to accept payments through the platform.
 Advanced Analytics: Provide detailed sales and customer engagement reports.
 Mobile App: A mobile version of the platform for easier access
 
 ## 💡 Contributing
+
+---
 
 We welcome contributions to El Vitrina! Please follow these steps:
 
