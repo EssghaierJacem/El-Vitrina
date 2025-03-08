@@ -1,6 +1,5 @@
 # El Vitrina
 
-![El Vitrina Logo](link_to_your_logo_image)
 
 **El Vitrina** is a platform designed to empower small business owners by providing tools to easily communicate with customers, showcase products, and boost sales. This application provides a seamless connection between business owners and their customers, making it easier to manage product listings, receive feedback, and increase sales.
 
