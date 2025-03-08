@@ -1,3 +1,4 @@
+/*
 package com.sudoers.elvitrinabackend.config;
 
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,10 @@ public class SecurityConfiguration {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated())
                 .build();
     }
 }
+
+ */

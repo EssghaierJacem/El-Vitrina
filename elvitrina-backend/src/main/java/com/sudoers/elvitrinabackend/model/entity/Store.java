@@ -1,42 +1,67 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
-import com.sudoers.elvitrinabackend.model.enums.CategoryType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sudoers.elvitrinabackend.model.enums.StoreCategoryType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.*;
+import lombok.*;
+import org.hibernate.validator.constraints.URL;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
+@EntityListeners(AuditingEntityListener.class)
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Store {
+public class Store implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long storeId;
 
-    private String storename;
+    @NotBlank(message = "Store name is required")
+    @Size(max = 100, message = "Store name must be less than 100 characters")
+    private String storeName;
+
+    @Size(max = 500, message = "Description must be less than 500 characters")
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private CategoryType category;
+    private StoreCategoryType category;
 
+    @CreatedDate
     private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
     private boolean status;
+
+    // not very logical here
+    @NotBlank(message = "Address is required")
     private String address;
+
+    //@URL(message = "Image must be a valid URL")
     private String image;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "store")
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<StoreFeedback> feedbacks;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Product> products;
 
 }

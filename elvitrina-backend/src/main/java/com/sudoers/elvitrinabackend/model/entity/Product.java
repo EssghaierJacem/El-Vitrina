@@ -1,33 +1,56 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
+import com.sudoers.elvitrinabackend.model.enums.ProductCategoryType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+import org.hibernate.validator.constraints.URL;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class Product implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long productId;
 
+    @NotBlank(message = "Product name is required")
+    @Size(max = 100, message = "Product name must be less than 100 characters")
     private String productName;
+
+    @Size(max = 500, message = "Description must be less than 500 characters")
     private String description;
+
+    @PositiveOrZero(message = "Price must be a positive number or zero")
     private double price;
+
+    @PositiveOrZero(message = "Stock quantity must be a positive number or zero")
     private int stockQuantity;
-    private String category;
+
+    @Enumerated(EnumType.STRING)
+    private ProductCategoryType category;
+
+    @CreatedDate
     private LocalDateTime createdAt;
+
+    @LastModifiedDate
     private LocalDateTime updatedAt;
+
     private boolean hasDiscount;
 
     @ElementCollection
-    private List<String> images;
+    private List<@URL(message = "Image must be a valid URL") String> images;
 
     @ManyToOne
     @JoinColumn(name = "store_id")
