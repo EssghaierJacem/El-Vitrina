@@ -3,6 +3,7 @@ package com.sudoers.elvitrinabackend.controller.user;
 import com.sudoers.elvitrinabackend.model.dto.UserDTO;
 import com.sudoers.elvitrinabackend.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,16 @@ public class UserController {
     @PostMapping("/login")
     public UserDTO loginUser(@RequestParam String emailOrPhone, @RequestParam String password) {
         return userService.login(emailOrPhone, password);
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyUser(@RequestParam String token) {
+        boolean isVerified = userService.verifyUser(token);
+        if (isVerified) {
+            return ResponseEntity.ok("Your account has been verified and enabled!");
+        } else {
+            return ResponseEntity.status(400).body("Invalid or expired token.");
+        }
     }
 
     @Autowired

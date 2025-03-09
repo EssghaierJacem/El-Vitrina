@@ -8,12 +8,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -141,14 +145,20 @@ public class UserService {
         user.setPhone(userDTO.getPhone());
         user.setAddress(userDTO.getAddress());
         user.setRegistrationDate(userDTO.getRegistrationDate());
-        user.setStatus(userDTO.isStatus());
+
+        user.setStatus(false);
+
         user.setPoints(userDTO.getPoints());
         user.setActive(userDTO.isActive());
         user.setRole(userDTO.getRole());
-
         user.setPassword(userDTO.getPassword());
 
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
+
         User savedUser = userRepository.save(user);
+
+        emailService.sendVerificationEmail(savedUser.getEmail(), savedUser.getFirstname(),token);
 
         return new UserDTO(
                 savedUser.getId(),
@@ -167,20 +177,20 @@ public class UserService {
         );
     }
 
-    public UserDTO login(String emailOrPhone, String password) {
-        Optional<User> userOptional = userRepository.findByEmail(emailOrPhone);
+    public UserDTO login(String email, String password) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
 
-        if (!userOptional.isPresent()) {
-            userOptional = userRepository.findByPhone(emailOrPhone);
-        }
-
-        if (!userOptional.isPresent()) {
-            throw new RuntimeException("User not found with the given email or phone");
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
         }
 
         User user = userOptional.get();
 
-        if (!password.equals(user.getPassword())) {
+        if (!user.isStatus()) {
+            throw new RuntimeException("Your account is disabled. Please contact support.");
+        }
+
+        if (!user.getPassword().equals(password)) {
             throw new RuntimeException("Invalid password");
         }
 
@@ -200,6 +210,18 @@ public class UserService {
                 user.getPassword()
         );
     }
+
+    public boolean verifyUser(String token) {
+        User user = userRepository.findByVerificationToken(token);
+        if (user != null) {
+            user.setStatus(true);
+            user.setVerificationToken(null);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         userRepository.delete(user);
