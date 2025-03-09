@@ -37,6 +37,8 @@ public class User {
     private boolean status;
     private int points;
     private boolean isActive;
+    private String verificationToken;
+    private boolean enabled;
 
     @Enumerated(EnumType.STRING)
     private RoleType role;
