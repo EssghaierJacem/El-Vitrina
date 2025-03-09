@@ -1,3 +1,4 @@
+/*
 package com.sudoers.elvitrinabackend.config;
 
 import com.sudoers.elvitrinabackend.repository.UserRepository;
@@ -44,3 +45,5 @@ public class ApplicationConfig {
         return new BCryptPasswordEncoder();
     }
 }
+
+ */

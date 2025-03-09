@@ -1,3 +1,4 @@
+/*
 package com.sudoers.elvitrinabackend.controller.user;
 
 import com.sudoers.elvitrinabackend.model.request.AuthenticationRequest;
@@ -32,3 +33,5 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 }
+
+ */
