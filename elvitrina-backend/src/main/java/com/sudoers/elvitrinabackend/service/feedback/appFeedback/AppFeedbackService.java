@@ -35,7 +35,6 @@ public class AppFeedbackService implements IAppFeedbackService{
             existingAppFeedback.setComment(appFeedback.getComment());
             existingAppFeedback.setAppFeedbackType(appFeedback.getAppFeedbackType());
             existingAppFeedback.setContactEmail(appFeedback.getContactEmail());
-            existingAppFeedback.setUser(appFeedback.getUser());
             return appFeedbackRepository.save(existingAppFeedback); // Update
         }
         return null;
