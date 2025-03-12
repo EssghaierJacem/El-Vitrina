@@ -1,7 +1,11 @@
 package com.sudoers.elvitrinabackend.service.ProposalPerso;
 
 import com.sudoers.elvitrinabackend.model.entity.ProposalPerso;
+import com.sudoers.elvitrinabackend.model.entity.RequestPerso;
+import com.sudoers.elvitrinabackend.model.entity.User;
 import com.sudoers.elvitrinabackend.repository.ProposalPersoRepository;
+import com.sudoers.elvitrinabackend.repository.RequestPersoRepository;
+import com.sudoers.elvitrinabackend.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +15,14 @@ import java.util.List;
 @AllArgsConstructor
 public class ProposalPersoService implements IProposalPersoService{
   ProposalPersoRepository proposalPersoRepository;
+  RequestPersoRepository requestPersoRepository;
+    UserRepository userRepository;
     @Override
     public ProposalPerso addProposalPerso(ProposalPerso prop) {
+        RequestPerso requestPerso;
+        requestPerso=requestPersoRepository.findById(prop.getRequestPerso().getId()).orElseThrow(null);
+        prop.setRequestPerso(requestPerso);
+
         return proposalPersoRepository.save(prop);
     }
 

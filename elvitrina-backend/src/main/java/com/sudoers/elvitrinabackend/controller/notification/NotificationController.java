@@ -3,7 +3,9 @@ package com.sudoers.elvitrinabackend.controller.notification;
 import com.sudoers.elvitrinabackend.model.entity.Notification;
 import com.sudoers.elvitrinabackend.model.entity.ProposalPerso;
 import com.sudoers.elvitrinabackend.repository.NotificationRepository;
+import com.sudoers.elvitrinabackend.repository.UserRepository;
 import com.sudoers.elvitrinabackend.service.Notification.NotificationService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +14,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/notification")
+@AllArgsConstructor
 public class NotificationController {
     NotificationService notificationService;
+
     @PostMapping
     public ResponseEntity<Notification> createNotification(@RequestBody Notification notif) {
         Notification createdRequest = notificationService.addNotification(notif);

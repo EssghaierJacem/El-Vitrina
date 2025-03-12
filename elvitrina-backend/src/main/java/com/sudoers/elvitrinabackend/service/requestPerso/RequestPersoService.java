@@ -4,8 +4,13 @@ import com.sudoers.elvitrinabackend.model.entity.RequestPerso;
 import com.sudoers.elvitrinabackend.model.entity.User;
 import com.sudoers.elvitrinabackend.repository.RequestPersoRepository;
 import com.sudoers.elvitrinabackend.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,10 +23,13 @@ public class RequestPersoService implements IRequestPersoService{
     @Override
     public RequestPerso addRequestPerso(RequestPerso request) {
         User user;
-        user=userRepository.findById(request.getUser().getId()).orElseThrow(null);
-       request.setUser(user);
+      user=userRepository.findById(request.getUser().getId()).orElseThrow(null);
+    request.setUser(user);
         return requestPersoRepository.save(request);
     }
+
+
+
 
     @Override
     public List<RequestPerso> getAllRequestPerso() {
@@ -30,9 +38,9 @@ public class RequestPersoService implements IRequestPersoService{
 
     @Override
     public RequestPerso getRequestPersoById(Long id) {
-        return requestPersoRepository.findById(id).orElse(null);
+        return requestPersoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("RequestPerso not found with id: " + id));
     }
-
     @Override
     public void deleteRequestPersoById(Long id) {
         requestPersoRepository.deleteById(id);

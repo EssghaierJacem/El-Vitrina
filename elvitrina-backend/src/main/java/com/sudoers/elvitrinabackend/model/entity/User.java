@@ -1,5 +1,6 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sudoers.elvitrinabackend.model.enums.RoleType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -58,7 +59,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BlogPost> blogPosts;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // One User can have many RequestPersos (One-to-Many)
+   // @JsonBackReference  // The "back" side of the relationship
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RequestPerso> requestPersos;
 
     @OneToMany(mappedBy = "user")
@@ -67,7 +70,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VirtualEvent> virtualEvents;
 
-    @OneToMany(mappedBy = "user")
+    // Many Users can have many Notifications
+    @ManyToMany(mappedBy = "users")
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

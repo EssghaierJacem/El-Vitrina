@@ -3,6 +3,7 @@ package com.sudoers.elvitrinabackend.controller.ProposalPerso;
 import com.sudoers.elvitrinabackend.model.entity.ProposalPerso;
 import com.sudoers.elvitrinabackend.model.entity.RequestPerso;
 import com.sudoers.elvitrinabackend.service.ProposalPerso.IProposalPersoService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/ProposalPerso")
+@AllArgsConstructor
 public class ProposalPersoController {
     IProposalPersoService proposalPersoService;
     @PostMapping

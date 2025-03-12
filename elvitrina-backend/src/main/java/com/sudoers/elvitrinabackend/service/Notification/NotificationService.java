@@ -1,7 +1,9 @@
 package com.sudoers.elvitrinabackend.service.Notification;
 
 import com.sudoers.elvitrinabackend.model.entity.Notification;
+import com.sudoers.elvitrinabackend.model.entity.User;
 import com.sudoers.elvitrinabackend.repository.NotificationRepository;
+import com.sudoers.elvitrinabackend.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class NotificationService implements  INotificationService{
     NotificationRepository notificationRepository;
+    //UserRepository userRepository;
     @Override
     public Notification addNotification(Notification notif) {
         return notificationRepository.save(notif);
