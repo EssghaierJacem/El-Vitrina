@@ -1,15 +1,15 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Notification {
@@ -21,7 +21,7 @@ public class Notification {
     private String content;
 
     private LocalDateTime datePublished;
-
+    // Many Notifications can belong to many Users
     @ManyToMany
     private List<User> users;
 
