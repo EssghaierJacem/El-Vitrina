@@ -34,6 +34,6 @@ public class RequestPerso {
 
     private LocalDateTime deliveryTime;
 
-    @OneToMany(mappedBy = "requestPerso")
+    @OneToMany(mappedBy = "requestPerso", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProposalPerso> proposals;
 }

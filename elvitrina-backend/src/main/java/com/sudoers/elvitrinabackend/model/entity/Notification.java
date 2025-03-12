@@ -22,8 +22,7 @@ public class Notification {
 
     private LocalDateTime datePublished;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @ManyToMany
+    private List<User> users;
 
 }

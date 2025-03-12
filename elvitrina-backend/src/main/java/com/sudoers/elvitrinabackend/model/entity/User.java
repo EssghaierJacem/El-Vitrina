@@ -85,13 +85,13 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BlogPost> blogPosts;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RequestPerso> requestPersos;
 
     @OneToMany(mappedBy = "user")
     private List<StoreFeedback> feedbacks;
 
-    @OneToMany(mappedBy = "user")
+    @ManyToMany(mappedBy = "users")
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
