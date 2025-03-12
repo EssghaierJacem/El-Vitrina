@@ -53,9 +53,6 @@ public class User {
     private List<Offer> offers;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Donation> donations;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BlogPost> blogPosts;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -63,9 +60,6 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<StoreFeedback> feedbacks;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<VirtualEvent> virtualEvents;
 
     @OneToMany(mappedBy = "user")
     private List<Notification> notifications;
@@ -75,6 +69,16 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments;
+
+
+    @OneToOne(mappedBy = "user" ,cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Creator creator;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Donation> donations;
+
+    @OneToMany(mappedBy = "user" ,cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<DonationCampaign> donationCampaigns;
+
 /*
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
