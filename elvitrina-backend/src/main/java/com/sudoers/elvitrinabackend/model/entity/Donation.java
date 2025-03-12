@@ -1,10 +1,10 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,25 +15,44 @@ public class Donation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long donationId;
 
-    private double rising;
+    @NotNull(message = "Amount is required")
+    @Positive(message = "Amount must be a positive number")
+    @Column(nullable = false)
+    private Double amount;
 
-    private String title;
+    @NotBlank(message = "Type is required")
+    @Size(max = 50, message = "Type must be less than 50 characters")
+    @Column(nullable = false)
+    private String type;
 
-    private String description;
+    @NotNull(message = "Anonymity setting is required")
+    @Column(nullable = false)
+    private Boolean anonymitySetting;
 
-    private String reason;
+    @Size(max = 500, message = "Donor message must be less than 500 characters")
+    @Column(nullable = true)
+    private String donorMessage;
 
-    private boolean isApproved;
+    @NotNull(message = "Timestamp is required")
+    @Column(nullable = false)
+    private LocalDateTime timestamp;
 
-    private LocalDateTime donatedAt;
+    @NotNull(message = "Store is required")
+    @ManyToOne
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "campaign_id", nullable = true)
+    private DonationCampaign donationCampaign;
+
+    @NotNull(message = "User is required")
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "store_id")
-    private Store store;
+    @OneToOne(mappedBy = "donation")
+    private DonorReward donorReward;
 }
