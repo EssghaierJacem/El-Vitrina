@@ -36,7 +36,6 @@ public class PaymentService implements IPaymentService {
                     existingPayment.setAmount(payment.getAmount());
                     existingPayment.setTransactionDate(payment.getTransactionDate());
                     existingPayment.setStatus(payment.getStatus());
-                    existingPayment.setCustomOrder(payment.getCustomOrder());
                     return paymentRepository.save(existingPayment);
                 })
                 .orElseThrow(() -> new RuntimeException("Payment not found with id " + id));
