@@ -25,8 +25,8 @@ public class EventParticipant {
     private LocalDateTime timestamp;
 
     @NotNull(message = "User is required")
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
     @NotNull(message = "Virtual event is required")
