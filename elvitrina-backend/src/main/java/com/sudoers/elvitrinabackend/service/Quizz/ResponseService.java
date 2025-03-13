@@ -1,7 +1,6 @@
 package com.sudoers.elvitrinabackend.service.Quizz;
 import com.sudoers.elvitrinabackend.model.entity.Response;
 import com.sudoers.elvitrinabackend.repository.ResponseRepository;
-import com.sudoers.elvitrinabackend.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

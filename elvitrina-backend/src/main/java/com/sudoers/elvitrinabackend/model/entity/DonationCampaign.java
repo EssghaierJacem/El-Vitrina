@@ -7,17 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VirtualEvent {
-
+public class DonationCampaign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long eventId;
+    private Long campaignId;
 
     @NotBlank(message = "Title is required")
     @Size(max = 100, message = "Title must be less than 100 characters")
@@ -29,20 +27,30 @@ public class VirtualEvent {
     @Column(nullable = false)
     private String description;
 
-    @NotNull(message = "Event date is required")
-    @Future(message = "Event date must be in the future")
+    @NotBlank(message = "Cause is required")
+    @Size(max = 255, message = "Cause must be less than 255 characters")
     @Column(nullable = false)
-    private LocalDateTime eventDate;
+    private String cause;
 
-    @NotBlank(message = "Event type is required")
-    @Size(max = 50, message = "Event type must be less than 50 characters")
+    @NotNull(message = "Goal is required")
+    @Positive(message = "Goal must be a positive number")
     @Column(nullable = false)
-    private String eventType;
+    private Double goal;
 
-    @NotNull(message = "Ticket price is required")
-    @PositiveOrZero(message = "Ticket price must be a positive number or zero")
+    @NotNull(message = "Current amount is required")
+    @PositiveOrZero(message = "Current amount must be a positive number or zero")
     @Column(nullable = false)
-    private Double ticketPrice;
+    private Double currentAmount;
+
+    @NotNull(message = "Start date is required")
+    @FutureOrPresent(message = "Start date must be in the present or future")
+    @Column(nullable = false)
+    private LocalDateTime startDate;
+
+    @NotNull(message = "End date is required")
+    @Future(message = "End date must be in the future")
+    @Column(nullable = false)
+    private LocalDateTime endDate;
 
     @NotBlank(message = "Status is required")
     @Size(max = 50, message = "Status must be less than 50 characters")
@@ -58,13 +66,11 @@ public class VirtualEvent {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    @OneToMany(mappedBy = "virtualEvent")
-    private List<EventParticipant> participants;
-
-    @OneToMany(mappedBy = "virtualEvent")
-    private List<EventTicket> tickets;
-
+    @NotNull(message = "User is required")
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "donationCampaign")
+    private List<Donation> donations;
 }
