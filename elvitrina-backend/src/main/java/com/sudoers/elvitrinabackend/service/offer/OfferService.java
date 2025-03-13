@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class OfferService {
+public class OfferService implements IOffer {
 
     private final OfferRepository offerRepository;
     private final UserRepository userRepository;
