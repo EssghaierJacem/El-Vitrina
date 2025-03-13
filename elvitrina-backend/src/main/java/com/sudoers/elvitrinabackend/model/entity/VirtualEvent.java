@@ -63,4 +63,8 @@ public class VirtualEvent {
 
     @OneToMany(mappedBy = "virtualEvent")
     private List<EventTicket> tickets;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
