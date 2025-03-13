@@ -65,15 +65,19 @@ public class Store implements Serializable {
     private List<Product> products;
 
     @OneToMany(mappedBy = "store")
+    @JsonIgnore
     private List<Donation> donations;
 
     @OneToMany(mappedBy = "store")
+    @JsonIgnore
     private List<DonationCampaign> donationCampaigns;
 
     @OneToMany(mappedBy = "store")
+    @JsonIgnore
     private List<VirtualEvent> virtualEvents;
 
     @OneToMany(mappedBy = "store")
+    @JsonIgnore
     private List<Advertisement> advertisements;
 
 }
