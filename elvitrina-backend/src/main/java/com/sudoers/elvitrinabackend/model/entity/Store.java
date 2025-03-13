@@ -64,4 +64,16 @@ public class Store implements Serializable {
     @JsonIgnore
     private List<Product> products;
 
+    @OneToMany(mappedBy = "store")
+    private List<Donation> donations;
+
+    @OneToMany(mappedBy = "store")
+    private List<DonationCampaign> donationCampaigns;
+
+    @OneToMany(mappedBy = "store")
+    private List<VirtualEvent> virtualEvents;
+
+    @OneToMany(mappedBy = "store")
+    private List<Advertisement> advertisements;
+
 }

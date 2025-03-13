@@ -33,7 +33,7 @@ public class CustomOrder {
     @Enumerated(EnumType.STRING)
     private OrderStatusType status;
 
-    @OneToOne(mappedBy = "customOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne
     private Payment payment;
 
     @ManyToOne(fetch = FetchType.LAZY)

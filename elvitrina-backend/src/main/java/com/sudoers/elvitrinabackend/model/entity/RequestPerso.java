@@ -1,23 +1,26 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestPerso {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    // Many RequestPersons belong to one User (Many-to-One)
+    //@JsonManagedReference  // The "forward" side of the relationship
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -34,6 +37,9 @@ public class RequestPerso {
 
     private LocalDateTime deliveryTime;
 
-    @OneToMany(mappedBy = "requestPerso")
+    // One RequestPerson can have many ProposalPersons (One-to-Many)
+
+    @OneToMany(mappedBy = "requestPerso", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProposalPerso> proposals;
+
 }
