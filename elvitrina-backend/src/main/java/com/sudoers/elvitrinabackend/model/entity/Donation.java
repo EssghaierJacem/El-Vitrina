@@ -35,22 +35,22 @@ public class Donation {
     @Column(nullable = true)
     private String donorMessage;
 
-    @NotNull(message = "Timestamp is required")
-    @Column(nullable = false)
+    // @NotNull(message = "Timestamp is required")
+    @Column(nullable = true)
     private LocalDateTime timestamp;
 
-    @NotNull(message = "Store is required")
+    //@NotNull(message = "Store is required")
     @ManyToOne
-    @JoinColumn(name = "store_id", nullable = false)
+    @JoinColumn(name = "store_id", nullable = true)
     private Store store;
 
     @ManyToOne
     @JoinColumn(name = "campaign_id", nullable = true)
     private DonationCampaign donationCampaign;
 
-    @NotNull(message = "User is required")
+   // @NotNull(message = "User is required")
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
     @OneToOne(mappedBy = "donation")

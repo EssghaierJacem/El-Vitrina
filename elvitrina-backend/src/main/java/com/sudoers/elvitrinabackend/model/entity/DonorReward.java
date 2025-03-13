@@ -47,12 +47,12 @@ public class DonorReward {
     @Column(nullable = true)
     private String redemptionCode;
 
-    @NotNull(message = "Timestamp is required")
-    @Column(nullable = false)
+    //@NotNull(message = "Timestamp is required")
+    @Column(nullable = true)
     private LocalDateTime timestamp;
 
-    @NotNull(message = "Donation is required")
+    //@NotNull(message = "Donation is required")
     @OneToOne
-    @JoinColumn(name = "donation_id", nullable = false)
+    @JoinColumn(name = "donation_id", nullable = true)
     private Donation donation;
 }

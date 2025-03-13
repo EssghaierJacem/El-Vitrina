@@ -20,17 +20,17 @@ public class EventParticipant {
     @Column(nullable = false)
     private Boolean attended;
 
-    @NotNull(message = "Timestamp is required")
-    @Column(nullable = false)
+    // @NotNull(message = "Timestamp is required")
+    @Column(nullable = true)
     private LocalDateTime timestamp;
 
-    @NotNull(message = "User is required")
+    //  @NotNull(message = "User is required")
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", nullable = true, unique = true)
     private User user;
 
-    @NotNull(message = "Virtual event is required")
+    // @NotNull(message = "Virtual event is required")
     @ManyToOne
-    @JoinColumn(name = "virtual_event_id", nullable = false)
+    @JoinColumn(name = "virtual_event_id", nullable = true)
     private VirtualEvent virtualEvent;
 }
