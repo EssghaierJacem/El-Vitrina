@@ -27,7 +27,7 @@ public class Creator {
     @Column(nullable = false)
     private String specialties;
 
-    @NotBlank(message = "Portfolio is required")
+    // @NotBlank(message = "Portfolio is required")
     @Size(max = 255, message = "Portfolio must be less than 255 characters")
     @Column(nullable = false)
     private String portfolio;
@@ -42,8 +42,8 @@ public class Creator {
     @Column(nullable = false)
     private String tierClassification;
 
-    @NotNull(message = "Timestamp is required")
-    @Column(nullable = false)
+    // @NotNull(message = "Timestamp is required")
+    @Column(nullable = true)
     private LocalDateTime timestamp;
 
     @Size(max = 255, message = "Facebook link must be less than 255 characters")
@@ -78,9 +78,9 @@ public class Creator {
     @Column(nullable = true)
     private String whatsappLink;
 
-    @NotNull(message = "User is required")
+    // @NotNull(message = "User is required")
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
     @OneToMany(mappedBy = "creator")
