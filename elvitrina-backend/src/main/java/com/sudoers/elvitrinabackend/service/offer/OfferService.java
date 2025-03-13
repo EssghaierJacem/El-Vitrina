@@ -19,7 +19,6 @@ public class OfferService {
     private final OfferRepository offerRepository;
     private final UserRepository userRepository;
 
-    // Convert Entity to DTO
     private OfferDTO mapToDTO(Offer offer) {
         return new OfferDTO(
                 offer.getId(),
@@ -33,7 +32,6 @@ public class OfferService {
         );
     }
 
-    // Convert DTO to Entity
     private Offer mapToEntity(OfferDTO dto) {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -49,7 +47,6 @@ public class OfferService {
         );
     }
 
-    // CRUD Operations
 
     public List<OfferDTO> getAllOffers() {
         return offerRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
