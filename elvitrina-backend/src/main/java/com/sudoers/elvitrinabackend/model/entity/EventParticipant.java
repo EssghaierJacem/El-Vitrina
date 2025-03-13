@@ -33,4 +33,7 @@ public class EventParticipant {
     @ManyToOne
     @JoinColumn(name = "virtual_event_id", nullable = true)
     private VirtualEvent virtualEvent;
+
+    @OneToOne(mappedBy = "eventParticipant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private EventTicket eventTicket;
 }

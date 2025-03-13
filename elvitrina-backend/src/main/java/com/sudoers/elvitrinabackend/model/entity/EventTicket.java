@@ -58,4 +58,8 @@ public class EventTicket {
     @ManyToOne
     @JoinColumn(name = "virtual_event_id", nullable = true)
     private VirtualEvent virtualEvent;
+
+    @OneToOne
+    @JoinColumn(name = "event_participant_id", nullable = true, unique = true)
+    private EventParticipant eventParticipant;
 }
