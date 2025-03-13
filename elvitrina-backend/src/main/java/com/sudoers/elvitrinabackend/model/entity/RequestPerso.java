@@ -36,7 +36,9 @@ public class RequestPerso {
     private String image;
 
     private LocalDateTime deliveryTime;
+
     // One RequestPerson can have many ProposalPersons (One-to-Many)
+
     @OneToMany(mappedBy = "requestPerso", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProposalPerso> proposals;
 
