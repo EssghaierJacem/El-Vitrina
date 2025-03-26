@@ -50,12 +50,16 @@ public class EventTicket {
     @Column(nullable = false)
     private String type;
 
-    @NotNull(message = "Timestamp is required")
-    @Column(nullable = false)
+    // @NotNull(message = "Timestamp is required")
+    @Column(nullable = true)
     private LocalDateTime timestamp;
 
-    @NotNull(message = "Virtual event is required")
+    // @NotNull(message = "Virtual event is required")
     @ManyToOne
-    @JoinColumn(name = "virtual_event_id", nullable = false)
+    @JoinColumn(name = "virtual_event_id", nullable = true)
     private VirtualEvent virtualEvent;
+
+    @OneToOne
+    @JoinColumn(name = "event_participant_id", nullable = true, unique = true)
+    private EventParticipant eventParticipant;
 }
