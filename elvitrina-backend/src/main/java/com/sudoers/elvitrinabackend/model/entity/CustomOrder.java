@@ -1,5 +1,6 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sudoers.elvitrinabackend.model.enums.OrderStatusType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,9 @@ public class CustomOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinTable(
             name = "order_product",
             joinColumns = @JoinColumn(name = "order_id"),
@@ -34,6 +37,7 @@ public class CustomOrder {
     private OrderStatusType status;
 
     @OneToOne
+    @JsonIgnore
     private Payment payment;
 
     @ManyToOne(fetch = FetchType.LAZY)

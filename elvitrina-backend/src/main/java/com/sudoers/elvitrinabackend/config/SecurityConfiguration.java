@@ -1,4 +1,4 @@
-/*
+
 package com.sudoers.elvitrinabackend.config;
 
 import lombok.RequiredArgsConstructor;
@@ -34,4 +34,4 @@ public class SecurityConfiguration {
     }
 }
 
- */
+
