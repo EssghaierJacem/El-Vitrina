@@ -27,7 +27,8 @@ export const routes: Routes = [
       },
       {
         path: 'users',
-        component: UserTableComponent,
+        loadChildren: () =>
+          import('./main-components/user/user.routes').then(m => m.UserRoutes),
       },
       {
         path: 'extra',
