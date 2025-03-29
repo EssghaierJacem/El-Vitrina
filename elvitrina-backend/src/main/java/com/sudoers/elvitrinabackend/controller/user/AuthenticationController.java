@@ -46,13 +46,18 @@ public class AuthenticationController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(
+    public ResponseEntity<Map<String, String>> resetPassword(
             @RequestParam String token,
             @RequestParam String newPassword
     ) {
         userService.resetPassword(token, newPassword);
-        return ResponseEntity.ok("Password updated successfully.");
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Password updated successfully.");
+
+        return ResponseEntity.ok(response);
     }
+
 }
 
 

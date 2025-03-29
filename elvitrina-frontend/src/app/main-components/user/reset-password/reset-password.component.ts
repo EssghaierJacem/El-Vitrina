@@ -39,22 +39,30 @@ export class ResetPasswordComponent {
 
   onSubmit() {
     if (this.resetForm.invalid || !this.token) return;
-
+  
     this.isLoading = true;
     const newPassword = this.resetForm.value.newPassword;
-
+  
     this.authService.resetPassword(this.token, newPassword).subscribe({
-      next: () => {
-        this.message = '✅ Password has been successfully reset.';
+      next: (res) => {
+        this.message = res.message || '✅ Password has been successfully reset.';
         this.errorMessage = '';
         this.isLoading = false;
         setTimeout(() => this.router.navigate(['/authentication/login']), 2000);
       },
       error: (err: HttpErrorResponse) => {
-        this.errorMessage = err.error?.message || '❌ Failed to reset password.';
+        // Display backend error or default
+        if (typeof err.error === 'string') {
+          this.errorMessage = `❌ ${err.error}`;
+        } else if (err.error?.message) {
+          this.errorMessage = `❌ ${err.error.message}`;
+        } else {
+          this.errorMessage = '❌ Failed to reset password.';
+        }
         this.message = '';
         this.isLoading = false;
       }
     });
   }
+  
 }

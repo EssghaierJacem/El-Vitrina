@@ -24,11 +24,8 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/forgot-password?email=${email}`, {});
   }
   resetPassword(token: string, newPassword: string) {
-    return this.http.post(`${this.apiUrl}/reset-password`, null, {
-      params: {
-        token,
-        newPassword
-      }
+    return this.http.post<{ message: string }>(`${this.apiUrl}/reset-password`, null, {
+      params: { token, newPassword }
     });
   }
 }
