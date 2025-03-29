@@ -4,6 +4,7 @@ import com.sudoers.elvitrinabackend.model.dto.UserDTO;
 import com.sudoers.elvitrinabackend.model.entity.User;
 import com.sudoers.elvitrinabackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +16,16 @@ import java.util.stream.Collectors;
 public class UserService implements IUser {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Autowired
     private EmailService emailService;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserDTO createUser(UserDTO userDTO) {
@@ -212,13 +216,16 @@ public class UserService implements IUser {
     }
 
     public boolean verifyUser(String token) {
-        User user = userRepository.findByVerificationToken(token);
-        if (user != null) {
+        Optional<User> optionalUser = userRepository.findByVerificationToken(token);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
             user.setStatus(true);
             user.setVerificationToken(null);
             userRepository.save(user);
             return true;
         }
+
         return false;
     }
 
@@ -226,4 +233,37 @@ public class UserService implements IUser {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         userRepository.delete(user);
     }
+
+    public void forgotPassword(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("No user found with this email");
+        }
+
+        User user = optionalUser.get();
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
+        userRepository.save(user);
+
+        emailService.sendResetPasswordEmail(email, token);
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        Optional<User> optionalUser = userRepository.findByVerificationToken(token);
+
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("Invalid or expired token.");
+        }
+
+        User user = optionalUser.get();
+
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new RuntimeException("New password must be different from the old one.");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setVerificationToken(null);
+        userRepository.save(user);
+    }
+
 }
