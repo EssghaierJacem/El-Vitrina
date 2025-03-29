@@ -1,6 +1,7 @@
 
 package com.sudoers.elvitrinabackend.service.user;
 
+import com.sudoers.elvitrinabackend.model.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -30,22 +31,26 @@ public class JwtService {
         return claimsResolver.apply(clailms);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
-    }
+    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        if (userDetails instanceof User user) {
+            extraClaims.put("id", user.getId());
+            extraClaims.put("firstname", user.getFirstname());
+            extraClaims.put("email", user.getEmail());
+            extraClaims.put("role", user.getRole().name());
+        }
 
-    public String generateToken(
-            Map<String, Object> extraClaims,
-            UserDetails userDetails
-    ) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String generateToken(User user) {
+        return generateToken(new HashMap<>(), user);
     }
 
     public boolean isTokenValid(String token,

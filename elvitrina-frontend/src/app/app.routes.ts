@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
 import { RegisterComponent } from './main-components/user/register/register.component';
+import { LoginComponent } from './main-components/user/login/login.component';
+import { ForgotPasswordComponent } from './main-components/user/forgot-password/forgot-password.component';
 
 export const routes: Routes = [
   {
@@ -32,7 +34,6 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: 'authentication/register', component: RegisterComponent },
   {
     path: '',
     component: BlankComponent,
