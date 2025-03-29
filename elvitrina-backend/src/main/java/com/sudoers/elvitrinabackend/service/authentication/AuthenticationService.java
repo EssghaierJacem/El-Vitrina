@@ -38,7 +38,7 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(RoleType.USER)
-                .enabled(false)
+                .status(false)
                 .verificationToken(verificationToken)
                 .build();
 
@@ -62,7 +62,7 @@ public class AuthenticationService {
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        if (!user.isEnabled()) {
+        if (!user.isStatus()) {
             throw new BadCredentialsException("Email not verified. Please check your inbox.");
         }
 
@@ -77,7 +77,7 @@ public class AuthenticationService {
 
         if (optionalUser.isPresent()) {
             var user = optionalUser.get();
-            user.setEnabled(true);
+            user.setStatus(true);
             user.setVerificationToken(null);
             userRepository.save(user);
             emailService.sendWelcomeEmail(user.getEmail(), user.getFirstname());
