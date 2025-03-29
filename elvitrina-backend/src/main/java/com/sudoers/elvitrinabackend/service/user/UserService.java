@@ -41,6 +41,7 @@ public class UserService implements IUser {
         user.setPoints(userDTO.getPoints());
         user.setActive(userDTO.isActive());
         user.setRole(userDTO.getRole());
+        user.setImage(userDTO.getImage());
 
         User savedUser = userRepository.save(user);
         return new UserDTO(
@@ -56,7 +57,8 @@ public class UserService implements IUser {
                 savedUser.getPoints(),
                 savedUser.isActive(),
                 savedUser.getRole(),
-                savedUser.getPassword()
+                savedUser.getPassword(),
+                savedUser.getImage()
         );
     }
 
@@ -75,7 +77,8 @@ public class UserService implements IUser {
                 user.getPoints(),
                 user.isActive(),
                 user.getRole(),
-                user.getPassword()
+                user.getPassword(),
+                user.getImage()
         );
     }
 
@@ -94,7 +97,8 @@ public class UserService implements IUser {
                         user.getPoints(),
                         user.isActive(),
                         user.getRole(),
-                        user.getPassword()
+                        user.getPassword(),
+                        user.getImage()
                 ))
                 .collect(Collectors.toList());
     }
@@ -111,6 +115,7 @@ public class UserService implements IUser {
         user.setPoints(userDTO.getPoints());
         user.setActive(userDTO.isActive());
         user.setRole(userDTO.getRole());
+        user.setImage(userDTO.getImage());
 
         User updatedUser = userRepository.save(user);
         return new UserDTO(
@@ -126,7 +131,9 @@ public class UserService implements IUser {
                 updatedUser.getPoints(),
                 updatedUser.isActive(),
                 updatedUser.getRole(),
-                updatedUser.getPassword()
+                updatedUser.getPassword(),
+                updatedUser.getImage()
+
         );
     }
 
@@ -156,6 +163,7 @@ public class UserService implements IUser {
         user.setActive(userDTO.isActive());
         user.setRole(userDTO.getRole());
         user.setPassword(userDTO.getPassword());
+        user.setImage(userDTO.getImage());
 
         String token = UUID.randomUUID().toString();
         user.setVerificationToken(token);
@@ -177,7 +185,8 @@ public class UserService implements IUser {
                 savedUser.getPoints(),
                 savedUser.isActive(),
                 savedUser.getRole(),
-                savedUser.getPassword()
+                savedUser.getPassword(),
+                savedUser.getImage()
         );
     }
 
@@ -211,7 +220,8 @@ public class UserService implements IUser {
                 user.getPoints(),
                 user.isActive(),
                 user.getRole(),
-                user.getPassword()
+                user.getPassword(),
+                user.getImage()
         );
     }
 

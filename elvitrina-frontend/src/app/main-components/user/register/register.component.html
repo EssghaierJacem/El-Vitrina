@@ -1,91 +1,134 @@
 <div class="blank-layout-container justify-content-center align-items-center bg-light">
-    <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
-      <div class="col-lg-4 d-flex align-items-center">
-        <mat-card class="cardWithShadow boxed-auth">
-          <mat-card-content class="p-32">
-            <!-- Logo -->
-            <div class="text-center">
-              <a [routerLink]="['/dashboard']">
-                <img src="./assets/images/logos/dark-logo.png" class="align-middle m-2" alt="logo" />
-              </a>
-            </div>
-  
-            <!-- Social Login Buttons -->
-            <div class="row m-t-24 custom-row">
-              <div class="col-12 col-sm-6">
-                <button mat-stroked-button class="w-100">
-                  <div class="d-flex align-items-center">
-                    <img src="/assets/images/svgs/google-icon.svg" alt="google" width="16" class="m-r-8" />
-                    Sign in with Google
-                  </div>
-                </button>
-              </div>
-              <div class="col-12 col-sm-6">
-                <button mat-stroked-button class="w-100 d-flex align-items-center">
-                  <div class="d-flex align-items-center">
-                    <img src="/assets/images/svgs/facebook-icon.svg" alt="facebook" width="40" class="m-r-4" />
-                    Sign in with FB
-                  </div>
-                </button>
-              </div>
-            </div>
-  
-            <!-- OR separator -->
-            <div class="or-border m-t-30">or sign up with</div>
-  
-            <!-- Reactive Form -->
-            <form class="m-t-30" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-              <!-- First Name -->
-              <mat-label class="f-s-14 f-w-600 m-b-12 d-block">First Name</mat-label>
-              <mat-form-field appearance="outline" class="w-100" color="primary">
-                <input matInput formControlName="firstName" placeholder="Enter your first name" />
-              </mat-form-field>
-  
-              <!-- Last Name -->
-              <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Last Name</mat-label>
-              <mat-form-field appearance="outline" class="w-100" color="primary">
-                <input matInput formControlName="lastName" placeholder="Enter your last name" />
-              </mat-form-field>
-  
-              <!-- Email -->
-              <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Email Address</mat-label>
-              <mat-form-field appearance="outline" class="w-100" color="primary">
-                <input matInput type="email" formControlName="email" placeholder="Enter your email" />
-              </mat-form-field>
-  
-              <!-- Password -->
-              <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Password</mat-label>
-              <mat-form-field appearance="outline" class="w-100" color="primary">
-                <input matInput type="password" formControlName="password" placeholder="Enter your password" />
-              </mat-form-field>
-  
-              <!-- Submit Button -->
-              <button
-                mat-flat-button
-                color="primary"
-                class="w-100"
-                type="submit"
-                [disabled]="registerForm.invalid || isLoading"
-              >
-                Sign Up
-              </button>
-  
-              <!-- Error message -->
-              <div *ngIf="errorMessage" class="text-danger mt-2 text-center">
-                {{ errorMessage }}
-              </div>
-            </form>
-  
-            <!-- Redirect to login -->
-            <span class="d-block f-w-500 text-center m-t-24">
-              Already have an Account?
-              <a [routerLink]="['/authentication/login']" class="text-decoration-none text-primary f-w-500 f-s-14">
-                Sign In
-              </a>
-            </span>
-          </mat-card-content>
-        </mat-card>
+  <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
+
+    <!-- Flash message on top right -->
+    <div *ngIf="flashMessage" class="flash-toast fade-in-out">
+      <div class="card">
+        <svg class="wave" viewBox="0 0 84 84" fill="none">
+          <g filter="url(#filter0_f_207_4)">
+            <ellipse cx="41.5" cy="42" rx="25.5" ry="26" />
+          </g>
+          <defs>
+            <filter id="filter0_f_207_4" x="0" y="0" width="83" height="84" filterUnits="userSpaceOnUse">
+              <feGaussianBlur stdDeviation="8" />
+            </filter>
+          </defs>
+        </svg>
+        <div class="icon-container">
+          <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <div class="message-text-container">
+          <p class="message-text">Check your inbox</p>
+          <span class="sub-text">An email has been sent to verify your account.</span>
+        </div>
+        <svg class="cross-icon" (click)="flashMessage = ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
       </div>
     </div>
+
+    <div class="col-lg-4 d-flex align-items-center">
+      <mat-card class="cardWithShadow boxed-auth">
+        <mat-card-content class="p-32">
+          <!-- Logo -->
+          <div class="text-center">
+            <a [routerLink]="['/dashboard']">
+              <img src="./assets/images/logos/dark-logo.png" class="align-middle m-2" alt="logo" />
+            </a>
+          </div>
+
+          <!-- Social Login Buttons -->
+          <div class="row m-t-24 custom-row">
+            <div class="col-12 col-sm-6">
+              <button mat-stroked-button class="w-100">
+                <div class="d-flex align-items-center">
+                  <img src="/assets/images/svgs/google-icon.svg" alt="google" width="16" class="m-r-8" />
+                  Sign up with Google
+                </div>
+              </button>
+            </div>
+            <div class="col-12 col-sm-6">
+              <button mat-stroked-button class="w-100 d-flex align-items-center">
+                <div class="d-flex align-items-center">
+                  <img src="/assets/images/svgs/facebook-icon.svg" alt="facebook" width="40" class="m-r-4" />
+                  Sign up with FB
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- OR separator -->
+          <div class="or-border m-t-30">or sign up with</div>
+
+          <!-- Reactive Form -->
+          <form class="m-t-30" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <!-- First Name -->
+            <mat-label class="f-s-14 f-w-600 m-b-12 d-block">First Name</mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <input matInput formControlName="firstName" placeholder="Enter your first name" />
+            </mat-form-field>
+
+            <!-- Last Name -->
+            <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Last Name</mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <input matInput formControlName="lastName" placeholder="Enter your last name" />
+            </mat-form-field>
+
+            <!-- Email -->
+            <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Email Address</mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <input matInput type="email" formControlName="email" placeholder="Enter your email" />
+            </mat-form-field>
+
+            <!-- Password -->
+            <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Password</mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Enter your password" />
+              <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+
+            <!-- Password Strength Meter -->
+            <div *ngIf="registerForm.get('password')?.value" class="mb-3 text-start">
+              <div class="password-meter-container">
+                <div class="password-meter" [ngStyle]="{
+                    'background-color': passwordStrengthColor,
+                    width: passwordStrengthWidth
+                  }"></div>
+              </div>
+              <small class="d-block mt-1" [style.color]="passwordStrengthColor">
+                Strength: {{ passwordStrength | titlecase }}
+              </small>
+            </div>
+
+            <!-- Submit Button -->
+            <button
+              mat-flat-button
+              color="primary"
+              class="w-100"
+              type="submit"
+              [disabled]="registerForm.invalid || isLoading">
+              {{ isLoading ? 'Registering...' : 'Sign Up' }}
+            </button>
+
+            <!-- Error message -->
+            <div *ngIf="errorMessage" class="text-danger mt-2 text-center">
+              {{ errorMessage }}
+            </div>
+          </form>
+
+          <!-- Redirect to login -->
+          <span class="d-block f-w-500 text-center m-t-24">
+            Already have an Account?
+            <a [routerLink]="['/authentication/login']" class="text-decoration-none text-primary f-w-500 f-s-14">
+              Sign In
+            </a>
+          </span>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
-  
+</div>
