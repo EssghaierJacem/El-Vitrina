@@ -2,6 +2,7 @@ package com.sudoers.elvitrinabackend.controller.payment;
 
 import com.sudoers.elvitrinabackend.model.entity.Payment;
 import com.sudoers.elvitrinabackend.service.payment.PaymentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,5 +46,24 @@ public class paymentController {
     public ResponseEntity<Void> deletePayment(@PathVariable Long id) {
         paymentService.deletePayment(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/process")
+    public ResponseEntity<Payment> processPayment(
+            @RequestParam Long orderId,
+            @RequestParam double amount,
+            @RequestParam String paymentMethod) {
+
+        Payment payment = paymentService.processPayment(orderId, amount, paymentMethod);
+        return ResponseEntity.ok(payment);
+    }
+    @PostMapping("/validate/{paymentId}")
+    public ResponseEntity<Payment> validatePayment(@PathVariable Long paymentId) {
+        try {
+            Payment validatedPayment = paymentService.validatePayment(paymentId);
+            return ResponseEntity.ok(validatedPayment);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 }

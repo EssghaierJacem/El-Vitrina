@@ -1,6 +1,7 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
 import com.sudoers.elvitrinabackend.model.enums.PaymentMethodType;
+import com.sudoers.elvitrinabackend.model.enums.PaymentStatusType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +23,16 @@ public class Payment {
     private LocalDateTime transactionDate;
 
     @Enumerated(EnumType.STRING)
-    private PaymentMethodType status;
+    private PaymentMethodType method ;
+
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatusType Paystatus;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
 
 
 

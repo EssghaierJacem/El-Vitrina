@@ -1,6 +1,7 @@
 package com.sudoers.elvitrinabackend.controller.CustomOrder;
 
 import com.sudoers.elvitrinabackend.model.entity.CustomOrder;
+import com.sudoers.elvitrinabackend.model.enums.OrderStatusType;
 import com.sudoers.elvitrinabackend.service.customOrder.CustomOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,4 +53,30 @@ public class CustomOrderController {
             customOrderService.deleteOrder(id);
             return ResponseEntity.noContent().build();
         }
+    // Example usage in a controller
+    @PutMapping("/orders/{orderId}/status")
+    public ResponseEntity<CustomOrder> updateOrderStatus(
+            @PathVariable Long orderId,
+            @RequestParam Long userId,
+            @RequestParam OrderStatusType newStatus) {
+        CustomOrder updatedOrder = customOrderService.updateOrderStatus(orderId, userId, newStatus);
+        return ResponseEntity.ok(updatedOrder);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<CustomOrder>> getUserOrders(@PathVariable Long userId) {
+        List<CustomOrder> orders = customOrderService.getUserOrders(userId);
+        return ResponseEntity.ok(orders);
+    }
+
+
+    // Obtenir les commandes d'un utilisateur filtrées par statut
+    @GetMapping("/user/{userId}/status/{status}")
+    public ResponseEntity<List<CustomOrder>> getUserOrdersByStatus(
+            @PathVariable Long userId,
+            @PathVariable OrderStatusType status
+    ) {
+        List<CustomOrder> orders = customOrderService.getUserOrdersByStatus(userId, status);
+        return ResponseEntity.ok(orders);
+    }
 }
