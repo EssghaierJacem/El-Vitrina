@@ -3,7 +3,9 @@
     <mat-card class="cardWithShadow">
       <mat-card-content>
         <mat-card-title>Users</mat-card-title>
-
+        <div>
+          
+        </div>
         <!-- Search Bar -->
         <div class="m-b-16">
           <mat-form-field appearance="outline" class="w-100">
@@ -14,7 +16,9 @@
 
         <!-- Export Button -->
         <div class="m-b-16 text-right">
-          <button mat-raised-button color="primary" (click)="exportToExcel()">Export to Excel</button>
+          <button mat-icon-button color="primary" (click)="exportToExcel()">
+            <mat-icon>file_download</mat-icon>
+          </button>
         </div>
 
         <!-- Table -->

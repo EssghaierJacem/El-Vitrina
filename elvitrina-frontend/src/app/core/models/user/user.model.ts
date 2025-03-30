@@ -10,6 +10,7 @@ export interface User {
     registrationDate?: string; 
     status?: boolean;
     points?: number;
+    password?: string;
     isActive?: boolean;
     role?: 'ADMIN' | 'USER' | 'MODERATOR'; 
   }
