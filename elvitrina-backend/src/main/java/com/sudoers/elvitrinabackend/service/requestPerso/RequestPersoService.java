@@ -27,10 +27,6 @@ public class RequestPersoService implements IRequestPersoService{
     request.setUser(user);
         return requestPersoRepository.save(request);
     }
-
-
-
-
     @Override
     public List<RequestPerso> getAllRequestPerso() {
         return requestPersoRepository.findAll();
