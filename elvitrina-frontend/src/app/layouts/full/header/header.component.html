@@ -22,7 +22,7 @@
   <!-- --------------------------------------------------------------- -->
   <a mat-flat-button href="https://adminmart.com/product/modernize-angular-admin-dashboard/?ref=56"
     target="_blank" class="d-flex justify-content-center bg-success">
-    Check Pro Template
+    Hello, {{ firstName }}
   </a>
   <button mat-mini-fab [matMenuTriggerFor]="profilemenu" aria-label="Notifications">
     <img src="/assets/images/profile/user-1.jpg" class="rounded-circle object-cover d-block" width="35" />
@@ -41,8 +41,8 @@
           class="icon-18 d-flex"></i-tabler></mat-icon>My Task
     </button>
 
-    <div class="p-x-12 m-t-12">
-      <a [routerLink]="['/authentication/login']" mat-stroked-button class="w-100">Logout</a>
-    </div>
+<div class="p-x-12 m-t-12">
+  <button mat-stroked-button class="w-100" (click)="logout()">Logout</button>
+</div>
   </mat-menu>
 </mat-toolbar>

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
-import { RegisterComponent } from './main-components/user/register/register.component';
+import { UserTableComponent } from './main-components/user/user-table/user-table.component';
 
 export const routes: Routes = [
   {
@@ -26,13 +26,22 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'users',
+        loadChildren: () =>
+          import('./main-components/user/user.routes').then(m => m.UserRoutes),
+      },
+      {
         path: 'extra',
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
       },
     ],
   },
-  { path: 'authentication/register', component: RegisterComponent },
+  {
+    path: '',
+    redirectTo: 'user',
+    pathMatch: 'full'
+  },
   {
     path: '',
     component: BlankComponent,
