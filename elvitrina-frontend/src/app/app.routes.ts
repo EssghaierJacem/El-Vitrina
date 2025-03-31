@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
-import { UserTableComponent } from './main-components/user/user-table/user-table.component';
 
 export const routes: Routes = [
   {
@@ -31,11 +30,16 @@ export const routes: Routes = [
           import('./main-components/user/user.routes').then(m => m.UserRoutes),
       },
       {
+        path: 'offers',
+        loadChildren: () =>
+          import('./main-components/offer/backoffice/backoffice_offer.routes').then(m => m.OfferRoutes),
+      },
+      {
         path: 'extra',
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
       },
-    ],
+    ], 
   },
   {
     path: '',

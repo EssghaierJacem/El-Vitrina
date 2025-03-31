@@ -1,0 +1,41 @@
+<mat-card class="cardWithShadow theme-card">
+    <mat-card-header>
+      <mat-card-title>{{ offer.id ? 'Edit Offer' : 'Create Offer' }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form (ngSubmit)="saveOffer()">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Offer Name</mat-label>
+          <input matInput [(ngModel)]="offer.name" name="name" required />
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Description</mat-label>
+          <input matInput [(ngModel)]="offer.description" name="description" required />
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Discount (%)</mat-label>
+          <input matInput type="number" [(ngModel)]="offer.discount" name="discount" required />
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Start Date</mat-label>
+          <input matInput [(ngModel)]="offer.startDate" name="startDate" required />
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>End Date</mat-label>
+          <input matInput [(ngModel)]="offer.endDate" name="endDate" required />
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Offer Type</mat-label>
+          <input matInput [(ngModel)]="offer.offer" name="offer" required />
+        </mat-form-field>
+  
+        <button mat-flat-button color="primary" type="submit">Save Offer</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+  

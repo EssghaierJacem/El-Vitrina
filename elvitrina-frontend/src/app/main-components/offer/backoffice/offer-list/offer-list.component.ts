@@ -1,93 +1,99 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { OfferService } from 'src/app/core/services/offer/OfferService';
+import { Router } from '@angular/router';
+import { Offer } from 'src/app/core/models/offer/offer.model';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { UserService } from 'src/app/core/services/user/UserService';
-import { User } from 'src/app/core/models/user/user.model';
-import { Router } from '@angular/router';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MaterialModule } from 'src/app/material.module';
-import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { DatePipe } from '@angular/common';
 import * as XLSX from 'xlsx';
 
 @Component({
-  selector: 'app-user-table',
+  selector: 'app-offer-list',
+  templateUrl: './offer-list.component.html',
+  styleUrls: ['./offer-list.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     MatCardModule,
     MatTableModule,
-    MatIconModule,
-    MatMenuModule,
-    MatProgressBarModule,
-    MatSidenavModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    FormsModule,
-    MaterialModule,
     MatButtonModule,
     MatPaginatorModule,
-    RouterModule
-  ],
-  templateUrl: './user-table.component.html',
-  styleUrls: ['./user-table.component.scss']
+    MatPaginator,
+    MatIconModule,
+    MatFormFieldModule,
+    FormsModule,
+    RouterModule,
+    MatSidenavModule,
+    MatMenuModule,
+    MatProgressBarModule,
+    MatInputModule,
+    MatSelectModule,
+    MaterialModule,
+    DatePipe
+  ]
 })
-export class UserTableComponent implements OnInit {
-  dataSource: MatTableDataSource<User> = new MatTableDataSource<User>([]);
-  filteredDataSource: MatTableDataSource<User> = new MatTableDataSource<User>([]);
-  displayedColumns = ['user', 'email', 'points', 'status', 'actions'];
-  searchText: string = '';
+export class OfferListComponent implements OnInit {
+  offers: Offer[] = [];
+  displayedColumns: string[] = ['name', 'offerType', 'endDate','discount', 'actions']; 
+  dataSource: MatTableDataSource<Offer> = new MatTableDataSource<Offer>();
+  filteredDataSource: MatTableDataSource<Offer> = new MatTableDataSource<Offer>(); 
+  searchText: string = ''; 
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(private offerService: OfferService, public router: Router) {}
 
   ngOnInit(): void {
-    this.userService.getAllUsers().subscribe((users) => {
-      this.dataSource.data = users;
-      this.filteredDataSource = this.dataSource;
-      this.filteredDataSource.paginator = this.paginator; 
+    this.loadOffers();
+  }
+
+  loadOffers(): void {
+    console.log('Calling offerService.getAllOffers()');
+    this.offerService.getAllOffers().subscribe({
+      next: (data) => {
+        this.offers = data;
+        this.dataSource.data = this.offers; 
+        this.filteredDataSource.data = this.offers; 
+        this.dataSource.paginator = this.paginator;
+      },
+      error: (err) => {
+        console.error('Failed to load offers', err);
+      }
     });
   }
 
-  getProgressColor(points: number): 'primary' | 'accent' | 'warn' {
-    if (points >= 70) return 'primary';
-    if (points >= 40) return 'accent';
-    return 'warn';
+  deleteOffer(id: number): void {
+    this.offerService.deleteOffer(id).subscribe({
+      next: () => {
+        this.loadOffers(); 
+      },
+      error: (err) => {
+        console.error('Failed to delete offer', err);
+      }
+    });
   }
 
   applyFilter(): void {
     this.filteredDataSource.filter = this.searchText.trim().toLowerCase();
   }
 
-  editUser(user: User): void {
-    this.router.navigate(['/users', user.id, 'edit']);
-  }
-
-  deleteUser(id: number): void {
-    if (confirm('Are you sure you want to delete this user?')) {
-      this.userService.deleteUser(id).subscribe(() => {
-        this.dataSource.data = this.dataSource.data.filter((user) => user.id !== id);
-      });
-    }
-  }
-
   exportToExcel(): void {
-    const dataWithoutPassword = this.dataSource.data.map(user => {
-      const { password, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+    const dataWithoutPassword = this.offers.map(offer => {
+      const { ...offerWithoutPassword } = offer;
+      return offerWithoutPassword;
     });
   
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataWithoutPassword);
@@ -137,8 +143,8 @@ export class UserTableComponent implements OnInit {
     }
   
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Users');
+    XLSX.utils.book_append_sheet(wb, ws, 'Offers');
   
-    XLSX.writeFile(wb, 'List of Users.xlsx');
+    XLSX.writeFile(wb, 'Offers.xlsx');
   }
 }

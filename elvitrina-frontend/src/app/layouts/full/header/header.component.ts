@@ -51,4 +51,10 @@ export class HeaderComponent {
     this.tokenService.logout();
     this.router.navigate(['/authentication/login']);
   }
+
+  goToProfile(): void {
+    if (this.userId) {
+      this.router.navigate([`/users/${this.userId}/edit`]); 
+    }
+  }
 }
