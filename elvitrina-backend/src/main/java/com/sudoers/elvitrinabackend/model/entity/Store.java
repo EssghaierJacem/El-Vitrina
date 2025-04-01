@@ -51,6 +51,9 @@ public class Store implements Serializable {
     //@URL(message = "Image must be a valid URL")
     private String image;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean featured = false;
+
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "user_id")

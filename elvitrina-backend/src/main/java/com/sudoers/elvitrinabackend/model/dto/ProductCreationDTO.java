@@ -1,36 +1,37 @@
 package com.sudoers.elvitrinabackend.model.dto;
 
 import com.sudoers.elvitrinabackend.model.enums.ProductCategoryType;
-import com.sudoers.elvitrinabackend.model.enums.ProductStatus;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDTO {
-    private Long productId;
+public class ProductCreationDTO {
+    @NotBlank
+    @Size(max = 100)
     private String productName;
+
+    @Size(max = 500)
     private String description;
+
+    @PositiveOrZero
     private double price;
+
+    @PositiveOrZero
     private int stockQuantity;
+
     private ProductCategoryType category;
-    private String categoryDisplayName;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private boolean hasDiscount;
-    private ProductStatus status;
-    private List<String> images;
+    private List<@URL String> images;
     private Long storeId;
-    private String storeName;
-    private List<Long> customOrderIds;
-    // Additional calculated fields
-    private boolean inStock;
-    private boolean isNew;
 }
