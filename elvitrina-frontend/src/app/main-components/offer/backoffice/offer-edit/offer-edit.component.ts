@@ -8,7 +8,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button'; 
 import { MatIconModule } from '@angular/material/icon'
 import { FormsModule } from '@angular/forms';
-
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatSelectModule } from '@angular/material/select';
+import { MatNativeDateModule } from '@angular/material/core';  
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-offer-edit',
@@ -19,7 +22,11 @@ import { FormsModule } from '@angular/forms';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule, 
-    MatIconModule,  
+    MatIconModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    RouterModule,
+    MatSelectModule,
     FormsModule
   ]
 })

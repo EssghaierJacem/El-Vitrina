@@ -12,10 +12,14 @@
               <mat-icon matPrefix>search</mat-icon>
               <input matInput [(ngModel)]="searchText" (ngModelChange)="applyFilter()" placeholder="Search by name, email, etc." />
             </mat-form-field>
-  
+
+            <button mat-icon-button color="primary" [routerLink]="['/offers/create']">
+              <mat-icon>add</mat-icon>
+            </button>
             <button mat-icon-button color="primary" (click)="exportToExcel()">
               <mat-icon>file_download</mat-icon>
             </button>
+
           </div>
   
           <!-- Table -->

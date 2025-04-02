@@ -1,0 +1,76 @@
+<mat-card class="cardWithShadow theme-card p-4">
+    <mat-card-header>
+      <mat-card-title>Create Offer</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form (ngSubmit)="saveOffer()">
+        <div class="row">
+          <!-- Offer Name Field -->
+          <div class="col-md-6 m-b-16">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Offer Name</mat-label>
+              <input matInput [(ngModel)]="offer.name" name="name" required />
+            </mat-form-field>
+          </div>
+  
+          <!-- Description Field (Larger input) -->
+          <div class="col-md-12 m-b-16">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Description</mat-label>
+              <textarea matInput [(ngModel)]="offer.description" name="description" rows="4" required></textarea>
+            </mat-form-field>
+          </div>
+  
+          <!-- Discount Field -->
+          <div class="col-md-6 m-b-16">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Discount (%)</mat-label>
+              <input matInput type="number" [(ngModel)]="offer.discount" name="discount" required />
+            </mat-form-field>
+          </div>
+  
+          <!-- Start Date Field with Calendar Picker -->
+          <div class="col-md-6 m-b-16">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Start Date</mat-label>
+              <input matInput [(ngModel)]="offer.startDate" name="startDate" [matDatepicker]="startDatePicker" required />
+              <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #startDatePicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+  
+          <!-- End Date Field with Calendar Picker -->
+          <div class="col-md-6 m-b-16">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>End Date</mat-label>
+              <input matInput [(ngModel)]="offer.endDate" name="endDate" [matDatepicker]="endDatePicker" required />
+              <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #endDatePicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+  
+          <!-- Offer Type Field (Select Dropdown) -->
+          <div class="col-md-6 m-b-16">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Offer Type</mat-label>
+              <mat-select [(ngModel)]="offer.offer" name="offer" required>
+                <mat-option value="DISCOUNT">Discount</mat-option>
+                <mat-option value="BUY_ONE_GET_ONE">Buy One Get One</mat-option>
+                <mat-option value="SPECIAL_OFFER">Special Offer</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+  
+          <!-- Submit Button -->
+          <div class="d-flex justify-content-between m-t-20">
+            <button mat-flat-button color="primary" type="submit">
+              Create Offer
+            </button>
+  
+            <button mat-button color="primary" [routerLink]="['/offers']">Back to Offers</button>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+  

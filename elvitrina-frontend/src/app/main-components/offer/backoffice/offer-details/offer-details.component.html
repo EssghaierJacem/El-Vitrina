@@ -1,51 +1,76 @@
-<mat-card class="cardWithShadow theme-card">
-    <mat-card-header>
-      <mat-card-title>Offer Details</mat-card-title>
-    </mat-card-header>
-  
-    <mat-card-content *ngIf="offer; else loadingTemplate">
-      <div class="d-flex justify-content-between">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Name</mat-label>
-          <input matInput [value]="offer?.name" readonly />
-        </mat-form-field>
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Discount</mat-label>
-          <input matInput [value]="offer?.discount + '%'" readonly />
-        </mat-form-field>
+<mat-card class="cardWithShadow theme-card p-4">
+  <mat-card-header>
+    <mat-card-title>Offer Details</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content *ngIf="offer; else loadingTemplate">
+    <div class="d-flex align-items-center gap-16 m-b-24">
+      <div>
+        <h2 class="f-w-600 f-s-20 m-b-4">
+          {{ offer?.name }}
+        </h2>
+        <p class="text-muted f-s-14">{{ offer?.offer }}</p>
+          <span
+          class="f-s-12 rounded px-2 py-1 f-w-600"
+          [ngClass]="{
+            'bg-light-success text-success': offer && offer.discount < 50,
+            'bg-light-error text-error': !offer || offer.discount > 50
+          }"
+        >
+          {{ offer?.discount }}%
+        </span>
       </div>
-  
-      <div class="d-flex justify-content-between">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Description</mat-label>
-          <textarea matInput [value]="offer?.description" readonly></textarea>
-        </mat-form-field>
-  
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Offer Type</mat-label>
-          <input matInput [value]="offer?.offer" readonly />
-        </mat-form-field>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Offer Info Section -->
+    <div class="p-x-20 p-y-16">
+      <div class="row">
+        <div class="col-md-6 m-b-16">
+          <p class="f-w-500 m-b-4">📝 Description :</p>
+          <p class="text-muted">{{ offer?.description }}</p>
+        </div>
+
+        <div class="col-md-6 m-b-16">
+          <p class="f-w-500 m-b-4">📅 Start Date :</p>
+          <p class="text-muted">{{ offer?.startDate | date }}</p>
+        </div>
+
+        <div class="col-md-6 m-b-16">
+          <p class="f-w-500 m-b-4">📅 End Date :</p>
+          <p class="text-muted">{{ offer?.endDate | date }}</p>
+        </div>
+
+        <div class="col-md-6 m-b-16">
+          <p class="f-w-500 m-b-4">🥇 Offer Type :</p>
+          <p class="text-muted">{{ offer?.offer }}</p>
+        </div>
       </div>
-  
-      <div class="d-flex justify-content-between">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Start Date</mat-label>
-          <input matInput [value]="offer?.startDate | date" readonly />
-        </mat-form-field>
-  
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>End Date</mat-label>
-          <input matInput [value]="offer?.endDate | date" readonly />
-        </mat-form-field>
+    </div>
+
+    <mat-divider class="m-t-24"></mat-divider>
+
+    <!-- Actions -->
+
+    <div class="d-flex justify-content-between gap-8 m-t-20">
+      
+      <div class="d-flex gap-8">
+        <button mat-flat-button color="primary" [routerLink]="['/offers', offer?.id, 'edit']">
+          <mat-icon class="m-r-4">edit</mat-icon> Edit
+        </button>    
+        <button mat-stroked-button color="warn" (click)="deleteOffer(offer?.id ?? 0)">
+          <mat-icon class="m-r-4">delete</mat-icon> Delete
+        </button>
       </div>
-  
-      <div class="d-flex justify-content-end">
-        <button mat-button color="primary" [routerLink]="['/offers']">Back to Offers</button>
-      </div>
-    </mat-card-content>
-  
-    <ng-template #loadingTemplate>
-      <p>Loading offer details...</p>
-    </ng-template>
-  </mat-card>
-  
+    
+      <button mat-button color="primary" [routerLink]="['/offers']">Back to Offers</button>
+    </div>
+    
+  </mat-card-content>
+
+  <!-- Loading Template -->
+  <ng-template #loadingTemplate>
+    <p>Loading offer details...</p>
+  </ng-template>
+</mat-card>

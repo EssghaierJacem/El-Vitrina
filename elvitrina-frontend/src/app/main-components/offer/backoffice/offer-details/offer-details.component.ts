@@ -67,4 +67,18 @@ export class OfferDetailsComponent implements OnInit {
       });
     }
   }
+
+  deleteOffer(id: number): void {
+    if (confirm('Are you sure you want to delete this offer?')) {
+      this.offerService.deleteOffer(id).subscribe({
+        next: () => {
+          console.log('Offer deleted successfully');
+          this.router.navigate(['/offers']);  
+        },
+        error: (err) => {
+          console.error('Error deleting offer', err);
+        }
+      });
+    }
+  }
 }
