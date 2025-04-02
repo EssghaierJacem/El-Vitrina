@@ -1,0 +1,76 @@
+<app-header></app-header> <!-- Top navigation bar -->
+<app-sidebar></app-sidebar> <!-- Sidebar -->
+<div class="p-4">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold">App Feedback</h2>
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="create"
+      >
+        Add Feedback
+      </button>
+    </div>
+  
+    @if (isLoading) {
+      <mat-spinner></mat-spinner>
+    } @else {
+      <table mat-table [dataSource]="feedbacks">
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let feedback">{{ feedback.id }}</td>
+        </ng-container>
+  
+        <!-- Type Column -->
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Type</th>
+          <td mat-cell *matCellDef="let feedback">{{ feedback.appFeedbackType }}</td>
+        </ng-container>
+  
+        <!-- Comment Column -->
+        <ng-container matColumnDef="comment">
+          <th mat-header-cell *matHeaderCellDef>Comment</th>
+          <td mat-cell *matCellDef="let feedback">
+            {{ feedback.comment | slice: 0:50 }}...
+          </td>
+        </ng-container>
+  
+        <!-- Date Column -->
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let feedback">
+            {{ feedback.createdAt | date }}
+          </td>
+        </ng-container>
+  
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let feedback">
+            <button
+              mat-icon-button
+              color="primary"
+              [routerLink]="[feedback.id]"
+              matTooltip="View"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="deleteFeedback(feedback.id)"
+              matTooltip="Delete"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+  
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    }
+  </div>

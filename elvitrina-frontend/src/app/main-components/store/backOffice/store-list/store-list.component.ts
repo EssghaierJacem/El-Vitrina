@@ -4,12 +4,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
+  selector: 'app-store-list',
   standalone: true,
-  selector: 'app-app-feedback-table',
   imports: [CommonModule, MatCardModule, MatButtonModule],
-  templateUrl: './app-feedback-table.component.html',
-  styleUrl: './app-feedback-table.component.scss'
+  templateUrl: './store-list.component.html',
+  styleUrl: './store-list.component.scss'
 })
-export class AppFeedbackTableComponent {
+export class StoreListComponent {
 
 }

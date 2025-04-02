@@ -1,10 +1,9 @@
 // src/app/core/services/appFeedback/app-feedback.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
-import { AppFeedbackApiResponse } from '../../models/appFeedback/app-feedback-api-response.model';
-import { AppFeedback } from '../../models/appFeedback/app-feedback.model';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { AppFeedback } from '../../models/appFeedback/app-feedback.model';
 import { AppFeedbackType } from '../../models/appFeedback/app-feedback-type.type';
 
 @Injectable({ providedIn: 'root' })
@@ -13,26 +12,32 @@ export class AppFeedbackService {
 
   constructor(private http: HttpClient) {}
 
-  create(feedback: AppFeedback): Observable<AppFeedbackApiResponse> {
-    return this.http.post<AppFeedbackApiResponse>(this.apiUrl, feedback);
+  // Create new feedback
+  create(feedback: AppFeedback): Observable<AppFeedback> {
+    return this.http.post<AppFeedback>(this.apiUrl, feedback);
   }
 
-  getAll(): Observable<AppFeedbackApiResponse<AppFeedback[]>> {
-    return this.http.get<AppFeedbackApiResponse<AppFeedback[]>>(this.apiUrl);
+  // Get all feedback entries
+  getAll(): Observable<AppFeedback[]> {
+    return this.http.get<AppFeedback[]>(this.apiUrl);
   }
 
-  getById(id: number): Observable<AppFeedbackApiResponse> {
-    return this.http.get<AppFeedbackApiResponse>(`${this.apiUrl}/${id}`);
+  // Get single feedback by ID
+  getById(id: number): Observable<AppFeedback> {
+    return this.http.get<AppFeedback>(`${this.apiUrl}/${id}`);
   }
 
-  update(id: number, feedback: AppFeedback): Observable<AppFeedbackApiResponse> {
-    return this.http.put<AppFeedbackApiResponse>(`${this.apiUrl}/${id}`, feedback);
+  // Update existing feedback
+  update(id: number, feedback: AppFeedback): Observable<AppFeedback> {
+    return this.http.put<AppFeedback>(`${this.apiUrl}/${id}`, feedback);
   }
 
+  // Delete feedback
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  // Get available feedback types
   getTypes(): AppFeedbackType[] {
     return Object.values(AppFeedbackType);
   }

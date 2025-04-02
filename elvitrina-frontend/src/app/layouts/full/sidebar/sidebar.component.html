@@ -1,3 +1,4 @@
+
 <div class="d-flex align-items-center justify-content-between">
   <div class="branding"><app-branding></app-branding></div>
 
@@ -8,3 +9,13 @@
   </a>
   }
 </div>
+<nav>
+  <ul>
+    <li *ngFor="let item of navItems">
+      <a [routerLink]="item.route">
+        <mat-icon>{{ item.iconName }}</mat-icon>
+        {{ item.displayName }}
+      </a>
+    </li>
+  </ul>
+</nav>

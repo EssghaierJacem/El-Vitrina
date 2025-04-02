@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
 import { UserTableComponent } from './main-components/user/user-table/user-table.component';
+import { APP_FEEDBACK_ROUTES } from './main-components/appFeedback/backOffice/app-feedback.routes';
 
 export const routes: Routes = [
   {
@@ -54,6 +55,10 @@ export const routes: Routes = [
           ),
       },
     ],
+  },
+  {
+    path: 'app-feedback',
+    children: APP_FEEDBACK_ROUTES,
   },
   {
     path: '**',
