@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -28,6 +29,9 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
 
+    LocalDateTime currentDateTime = LocalDateTime.now();
+
+
     public AuthenticationResponse register(RegisterRequest request) {
         String verificationToken = UUID.randomUUID().toString();
 
@@ -39,6 +43,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(RoleType.USER)
                 .status(false)
+                .registrationDate(currentDateTime)
                 .verificationToken(verificationToken)
                 .build();
 
