@@ -14,7 +14,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { TokenService } from 'src/app/core/services/user/TokenService';
 
 @Component({
-  selector: 'app-header',
+  selector: 'front-header',
   standalone: true,
   imports: [
     CommonModule,
@@ -23,10 +23,11 @@ import { TokenService } from 'src/app/core/services/user/TokenService';
     TablerIconsModule,
     MaterialModule,
   ],
-  templateUrl: './header.component.html',
+  templateUrl: './front-header.component.html',
+  styleUrls: ['./front-header.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class HeaderComponent {
+export class FrontHeaderComponent {
   @Input() showToggle = true;
   @Input() toggleChecked = false;
   @Output() toggleMobileNav = new EventEmitter<void>();
@@ -34,6 +35,7 @@ export class HeaderComponent {
   firstName = '';
   email = '';
   userId: number | null = null;
+  userImage = ''; 
 
   constructor(
     private tokenService: TokenService,
@@ -42,9 +44,10 @@ export class HeaderComponent {
 
   ngOnInit(): void {
     const user = this.tokenService.getDecodedToken();
-    this.firstName = user?.firstname || '';
+    this.firstName = user?.firstname || 'Guest';
     this.email = user?.email || '';
     this.userId = user?.id ?? null;
+    this.userImage = user?.['image'] || '';
   }
 
   logout(): void {

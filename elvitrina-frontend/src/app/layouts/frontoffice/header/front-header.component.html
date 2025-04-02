@@ -1,0 +1,71 @@
+<mat-toolbar class="topbar" color="primary">
+
+  <!-- Mobile Menu (Hamburger Menu) -->
+  <button mat-icon-button (click)="toggleMobileNav.emit()" class="d-flex d-lg-none justify-content-center">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <!-- Logo -->
+  <div class="logo-container">
+    <img src="/assets/images/logos/dark-logo.png" alt="eCommerce Logo" class="logo" />
+  </div>
+
+  <!-- Navigation Links -->
+  <div class="nav-links-container">
+    <a mat-button routerLink="/" class="nav-link">Home</a>
+    <a mat-button routerLink="/shop" class="nav-link">Shop</a>
+    <a mat-button routerLink="/about" class="nav-link">About Us</a>
+    <a mat-button routerLink="/contact" class="nav-link">Contact</a>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-container">
+    <input matInput placeholder="Search products..." class="search-input" />
+    <button mat-icon-button class="search-button">
+      <mat-icon>search</mat-icon>
+    </button>
+  </div>
+
+  <!-- Notifications & Cart -->
+  <div class="actions-container">
+    <button mat-icon-button [matMenuTriggerFor]="notificationsMenu" aria-label="Notifications">
+      <mat-icon>notifications</mat-icon>
+    </button>
+    <mat-menu #notificationsMenu="matMenu">
+      <button mat-menu-item>New Sale!</button>
+      <button mat-menu-item>Stock Update</button>
+    </mat-menu>
+
+    <!-- Cart Icon -->
+    <button mat-icon-button [matMenuTriggerFor]="cartMenu" aria-label="Cart">
+      <mat-icon>shopping_cart</mat-icon>
+    </button>
+    <mat-menu #cartMenu="matMenu">
+      <button mat-menu-item>Cart (2 items)</button>
+      <button mat-menu-item>Proceed to Checkout</button>
+    </mat-menu>
+  </div>
+
+  <!-- User Profile & Account -->
+  <span class="spacer"></span>
+
+  <div class="profile-container">
+    <button mat-icon-button [matMenuTriggerFor]="profileMenu" aria-label="User Profile">
+      <img src="/assets/images/profile/user-1.jpg" class="profile-img" width="40" />
+    </button>
+    <mat-menu #profileMenu="matMenu">
+      <button mat-menu-item (click)="goToProfile()">
+        <mat-icon>account_circle</mat-icon>
+        My Profile
+      </button>
+      <button mat-menu-item>
+        <mat-icon>list_alt</mat-icon>
+        Orders
+      </button>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon>
+        Logout
+      </button>
+    </mat-menu>
+  </div>
+</mat-toolbar>

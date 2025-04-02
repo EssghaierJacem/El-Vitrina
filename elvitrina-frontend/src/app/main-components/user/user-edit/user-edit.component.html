@@ -57,10 +57,14 @@
   
               <div class="col-md-6 m-b-16">
                 <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Points</mat-label>
-                  <input matInput type="number" [(ngModel)]="user.points" name="points" />
+                  <mat-label>Status</mat-label>
+                  <mat-select [(ngModel)]="user.status" name="status">
+                    <mat-option [value]="true">Active</mat-option>
+                    <mat-option [value]="false">Inactive</mat-option>
+                  </mat-select>
                 </mat-form-field>
-              </div>
+              </div>              
+
             </div>
             <!-- Save and Cancel Buttons -->
             <div class="d-flex justify-content-center m-t-20 gap-8">
