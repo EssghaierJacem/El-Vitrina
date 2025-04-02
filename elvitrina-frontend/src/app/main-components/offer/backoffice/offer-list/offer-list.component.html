@@ -13,7 +13,7 @@
               <input matInput [(ngModel)]="searchText" (ngModelChange)="applyFilter()" placeholder="Search by name, email, etc." />
             </mat-form-field>
 
-            <button mat-icon-button color="primary" [routerLink]="['/offers/create']">
+            <button mat-icon-button color="primary" [routerLink]="['/dashboard/offers/create']">
               <mat-icon>add</mat-icon>
             </button>
             <button mat-icon-button color="primary" (click)="exportToExcel()">
@@ -69,11 +69,11 @@
                     <mat-icon>more_vert</mat-icon>
                   </button>
                   <mat-menu #menu="matMenu">
-                    <button mat-menu-item [routerLink]="['/offers', offer.id]">
+                    <button mat-menu-item [routerLink]="['/dashboard/offers', offer.id]">
                         <mat-icon>visibility</mat-icon>
                         <span>View</span>
                       </button>
-                    <button mat-menu-item [routerLink]="['/offers', offer.id, 'edit']">
+                    <button mat-menu-item [routerLink]="['/dashboard/offers', offer.id, 'edit']">
                       <mat-icon>edit</mat-icon>
                       <span>Edit</span>
                     </button>

@@ -50,7 +50,7 @@ export class OfferCreateComponent implements OnInit {
     this.offerService.createOffer(this.offer).subscribe({
       next: () => {
         alert('Offer created successfully');
-        this.router.navigate(['/offers']);
+        this.router.navigate(['/dashboard/offers']);
       },
       error: (err) => {
         alert('Failed to create offer');

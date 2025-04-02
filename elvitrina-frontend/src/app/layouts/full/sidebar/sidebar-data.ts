@@ -58,37 +58,37 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Badge',
     iconName: 'archive',
-    route: '/ui-components/badge',
+    route: 'dashboard/ui-components/badge',
   },
   {
     displayName: 'Chips',
     iconName: 'info-circle',
-    route: '/ui-components/chips',
+    route: 'dashboard/ui-components/chips',
   },
   {
     displayName: 'Lists',
     iconName: 'list-details',
-    route: '/ui-components/lists',
+    route: 'dashboard/ui-components/lists',
   },
   {
     displayName: 'Menu',
     iconName: 'file-text',
-    route: '/ui-components/menu',
+    route: 'dashboard/ui-components/menu',
   },
   {
     displayName: 'Tooltips',
     iconName: 'file-text-ai',
-    route: '/ui-components/tooltips',
+    route: 'dashboard/ui-components/tooltips',
   },
   {
     displayName: 'Forms',
     iconName: 'clipboard-text',
-    route: '/ui-components/forms',
+    route: 'dashboard/ui-components/forms',
   },
   {
     displayName: 'Tables',
     iconName: 'table',
-    route: '/ui-components/tables',
+    route: 'dashboard/ui-components/tables',
   },
 
   {
@@ -121,12 +121,12 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Icons',
     iconName: 'mood-smile',
-    route: '/extra/icons',
+    route: 'dashboard/extra/icons',
   },
   {
     displayName: 'Sample Page',
     iconName: 'brand-dribbble',
-    route: '/extra/sample-page',
+    route: 'dashboard/extra/sample-page',
   },
 
   {

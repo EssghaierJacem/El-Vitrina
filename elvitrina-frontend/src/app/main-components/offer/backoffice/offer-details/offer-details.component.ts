@@ -62,7 +62,7 @@ export class OfferDetailsComponent implements OnInit {
         },
         error: (err) => {
           console.error('Failed to load offer', err);
-          this.router.navigate(['/offers']); 
+          this.router.navigate(['dashboard/offers']); 
         }
       });
     }
@@ -73,7 +73,7 @@ export class OfferDetailsComponent implements OnInit {
       this.offerService.deleteOffer(id).subscribe({
         next: () => {
           console.log('Offer deleted successfully');
-          this.router.navigate(['/offers']);  
+          this.router.navigate(['dashboard/offers']);  
         },
         error: (err) => {
           console.error('Error deleting offer', err);

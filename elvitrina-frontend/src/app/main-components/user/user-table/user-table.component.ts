@@ -73,7 +73,7 @@ export class UserTableComponent implements OnInit {
   }
 
   editUser(user: User): void {
-    this.router.navigate(['/users', user.id, 'edit']);
+    this.router.navigate(['/dashboard/users', user.id, 'edit']);
   }
 
   deleteUser(id: number): void {

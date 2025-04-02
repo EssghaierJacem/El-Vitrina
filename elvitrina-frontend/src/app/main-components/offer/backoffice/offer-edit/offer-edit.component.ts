@@ -59,7 +59,7 @@ export class OfferEditComponent implements OnInit {
       this.offerService.updateOffer(offerId, this.offer).subscribe({
         next: () => {
           alert('Offer updated successfully');
-          this.router.navigate(['/offers']);
+          this.router.navigate(['dashboard/offers']);
         },
         error: (err) => {
           alert('Failed to update offer');
@@ -69,7 +69,7 @@ export class OfferEditComponent implements OnInit {
       this.offerService.createOffer(this.offer).subscribe({
         next: () => {
           alert('Offer created successfully');
-          this.router.navigate(['/offers']);
+          this.router.navigate(['dashboard/offers']);
         },
         error: (err) => {
           alert('Failed to create offer');

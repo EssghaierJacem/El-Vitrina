@@ -35,6 +35,7 @@ export class FrontHeaderComponent {
   firstName = '';
   email = '';
   userId: number | null = null;
+  userImage = ''; 
 
   constructor(
     private tokenService: TokenService,
@@ -43,9 +44,10 @@ export class FrontHeaderComponent {
 
   ngOnInit(): void {
     const user = this.tokenService.getDecodedToken();
-    this.firstName = user?.firstname || '';
+    this.firstName = user?.firstname || 'Guest';
     this.email = user?.email || '';
     this.userId = user?.id ?? null;
+    this.userImage = user?.['image'] || '';
   }
 
   logout(): void {

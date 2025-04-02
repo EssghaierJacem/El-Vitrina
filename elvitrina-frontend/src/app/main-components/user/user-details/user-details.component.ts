@@ -52,7 +52,7 @@ export class UserDetailsComponent implements OnInit {
         this.user = data;
         this.isLoading = false;
       },
-      error: () => this.router.navigate(['/users'])
+      error: () => this.router.navigate(['/dashboard/users'])
     });
   }
 
@@ -65,7 +65,7 @@ export class UserDetailsComponent implements OnInit {
   deleteUser(): void {
     if (confirm('Are you sure you want to delete this user?')) {
       this.userService.deleteUser(this.userId).subscribe(() => {
-        this.router.navigate(['/users']);
+        this.router.navigate(['/dashboard/users']);
       });
     }
   }
