@@ -37,7 +37,7 @@ export const navItems: NavItem[] = [
         chip: true,
         chipClass: 'bg-secondary text-white',
         chipContent: 'ADMIN',
-        route: 'users',
+        route: 'dashboard/users',
       },
       {
         displayName: 'Offers',
@@ -47,7 +47,7 @@ export const navItems: NavItem[] = [
         chipClass: 'bg-secondary text-white',
         chipContent: 'ADMIN',
         route:
-          '/offers',
+          'dashboard/offers',
       },
     ],
   },

@@ -1,19 +1,23 @@
 import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
+import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: FullComponent,
+    component: FrontComponent, 
+    children: [
+
+    ],
+  },
+
+  {
+    path: 'dashboard', 
+    component: FullComponent, 
     children: [
       {
         path: '',
-        redirectTo: '/dashboard',
-        pathMatch: 'full',
-      },
-      {
-        path: 'dashboard',
         loadChildren: () =>
           import('./pages/pages.routes').then((m) => m.PagesRoutes),
       },
@@ -39,11 +43,12 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
       },
-    ], 
+    ],
   },
+
   {
     path: '',
-    redirectTo: 'user',
+    redirectTo: 'authentication',
     pathMatch: 'full'
   },
   {
@@ -59,6 +64,7 @@ export const routes: Routes = [
       },
     ],
   },
+
   {
     path: '**',
     redirectTo: 'authentication/error',
