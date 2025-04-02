@@ -47,7 +47,7 @@ export class UserEditComponent implements OnInit {
       next: (data) => {
         this.user = data;
       },
-      error: () => this.router.navigate(['/users'])
+      error: () => this.router.navigate(['/dashboard/users'])
     });
   }
 
@@ -55,7 +55,7 @@ export class UserEditComponent implements OnInit {
     this.userService.updateUser(this.userId, this.user).subscribe({
       next: () => {
         alert('User updated successfully!');
-        this.router.navigate(['/users']);
+        this.router.navigate(['/dashboard/users']);
       },
       error: (error) => {
         console.error(error);
@@ -65,6 +65,6 @@ export class UserEditComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/users']);
+    this.router.navigate(['/dashboard/users']);
   }
 }
