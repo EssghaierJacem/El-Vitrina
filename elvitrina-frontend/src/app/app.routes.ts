@@ -3,7 +3,6 @@ import { BlankComponent } from './layouts/blank/blank.component';
 import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
 import { UserTableComponent } from './main-components/user/user-table/user-table.component';
-import { APP_FEEDBACK_ROUTES } from './main-components/appFeedback/backOffice/app-feedback.routes';
 
 export const routes: Routes = [
   {
@@ -40,9 +39,20 @@ export const routes: Routes = [
           import('./main-components/offer/backoffice/backoffice_offer.routes').then(m => m.OfferRoutes),
       },
       {
+        path: 'app-feedback',
+        loadChildren: () =>
+          import('./main-components/appFeedback/backOffice/app-feedback.routes').then(m => m.AppFeedbackRoutes),
+      },
+      {
         path: 'extra',
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
+      },
+      {
+        path: 'store-feedback',
+        loadChildren: () =>
+          import('./main-components/storeFeedback/backOffice/store-feedback.routes')
+            .then(m => m.StoreFeedbackRoutes)
       },
     ],
   },
@@ -64,11 +74,6 @@ export const routes: Routes = [
           ),
       },
     ],
-  },
-
-  {
-    path: 'app-feedback',
-    children: APP_FEEDBACK_ROUTES,
   },
   {
     path: '**',

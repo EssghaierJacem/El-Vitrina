@@ -4,15 +4,14 @@ import { AppFeedbackCreateComponent } from './app-feedback-create/app-feedback-c
 import { AppFeedbackDetailsComponent } from './app-feedback-details/app-feedback-details.component';
 import { AppFeedbackEditComponent } from './app-feedback-edit/app-feedback-edit.component';
 
-export const APP_FEEDBACK_ROUTES: Routes = [
+const routes: Routes = [
   {
     path: '',
     component: AppFeedbackListComponent,
     data: {
       title: 'App Feedback',
       breadcrumb: [
-        { label: 'Home', url: '/backoffice' },
-        { label: 'Feedback', url: '/backoffice/feedback' },
+        { label: 'Dashboard', url: '/dashboard' },
         { label: 'App Feedback', url: '' }
       ]
     }
@@ -23,10 +22,21 @@ export const APP_FEEDBACK_ROUTES: Routes = [
     data: {
       title: 'Create App Feedback',
       breadcrumb: [
-        { label: 'Home', url: '/backoffice' },
-        { label: 'Feedback', url: '/backoffice/feedback' },
-        { label: 'App Feedback', url: '/backoffice/app-feedback' },
+        { label: 'Dashboard', url: '/dashboard' },
+        { label: 'App Feedback', url: '/dashboard/app-feedback' },
         { label: 'Create', url: '' }
+      ]
+    }
+  },
+  {
+    path: 'edit/:id',
+    component: AppFeedbackEditComponent,
+    data: {
+      title: 'Edit App Feedback',
+      breadcrumb: [
+        { label: 'Dashboard', url: '/dashboard' },
+        { label: 'App Feedback', url: '/dashboard/app-feedback' },
+        { label: 'Edit', url: '' }
       ]
     }
   },
@@ -36,24 +46,12 @@ export const APP_FEEDBACK_ROUTES: Routes = [
     data: {
       title: 'Feedback Details',
       breadcrumb: [
-        { label: 'Home', url: '/backoffice' },
-        { label: 'Feedback', url: '/backoffice/feedback' },
-        { label: 'App Feedback', url: '/backoffice/app-feedback' },
+        { label: 'Dashboard', url: '/dashboard' },
+        { label: 'App Feedback', url: '/dashboard/app-feedback' },
         { label: 'Details', url: '' }
-      ]
-    }
-  },
-  {
-    path: ':id/edit',
-    component: AppFeedbackEditComponent,
-    data: {
-      title: 'Edit App Feedback',
-      breadcrumb: [
-        { label: 'Home', url: '/' },
-        { label: 'Feedback', url: '/feedback' },
-        { label: 'App Feedback', url: '/app-feedback' },
-        { label: 'Edit', url: '' }
       ]
     }
   }
 ];
+
+export const AppFeedbackRoutes = routes;

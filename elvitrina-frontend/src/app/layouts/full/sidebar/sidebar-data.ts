@@ -31,12 +31,12 @@ export const navItems: NavItem[] = [
   {
     displayName: 'App Feedback',
     iconName: 'feedback',
-    route: '/app-feedback',
+    route: '/dashboard/app-feedback',
   },
   {
     displayName: 'Store Feedback',
     iconName: 'feedback',
-    route: '/store-feedback',
+    route: '/dashboard/store-feedback',
   },
   // {
   //   displayName: 'Analytical',
@@ -75,8 +75,7 @@ export const navItems: NavItem[] = [
         chip: true,
         chipClass: 'bg-secondary text-white',
         chipContent: 'ADMIN',
-        route:
-          'dashboard/offers',
+        route: 'dashboard/offers',
       },
     ],
   },

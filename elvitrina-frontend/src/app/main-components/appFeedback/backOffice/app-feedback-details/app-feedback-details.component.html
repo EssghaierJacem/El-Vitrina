@@ -1,1 +1,85 @@
-<p>app-feedback-details works!</p>
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <!-- Header with Back Button -->
+    <div class="d-flex justify-content-between align-items-center m-b-16">
+      <div class="d-flex align-items-center">
+        <button mat-icon-button color="primary" [routerLink]="['../']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <mat-card-title>Feedback Details</mat-card-title>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading) {
+      <div class="text-center p-y-32">
+        <mat-spinner diameter="40" class="m-auto"></mat-spinner>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (error) {
+      <div class="text-center p-y-32 text-danger">
+        <mat-icon>error</mat-icon>
+        <p>{{ error }}</p>
+        <button mat-raised-button color="primary" [routerLink]="['../']">
+          Back to List
+        </button>
+      </div>
+    }
+
+    <!-- Feedback Details -->
+    @if (!isLoading && !error && feedback) {
+      <div class="feedback-details">
+        <!-- Type -->
+        <div class="detail-section">
+          <mat-chip-listbox>
+            <mat-chip [color]="'primary'" selected>
+              {{ getTypeDisplayName(feedback.appFeedbackType) }}
+            </mat-chip>
+          </mat-chip-listbox>
+        </div>
+
+        <mat-divider class="m-y-16"></mat-divider>
+
+        <!-- Comment -->
+        <div class="detail-section">
+          <h3 class="m-b-8 text-secondary">Comment</h3>
+          <p class="comment-text">{{ feedback.comment }}</p>
+        </div>
+
+        <mat-divider class="m-y-16"></mat-divider>
+
+        <!-- Metadata -->
+        <div class="detail-section">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h3 class="m-b-8 text-secondary">Created At</h3>
+              <p>{{ formatDate(feedback.createdAt) }}</p>
+            </div>
+            @if (feedback.contactEmail) {
+              <div>
+                <h3 class="m-b-8 text-secondary">Contact Email</h3>
+                <p>{{ feedback.contactEmail }}</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions m-t-32">
+          <div class="d-flex gap-2">
+            <button mat-button color="primary" [routerLink]="['../edit', feedback.id]">
+              <mat-icon>edit</mat-icon>
+              Edit Feedback
+            </button>
+            <button mat-button color="warn" (click)="deleteFeedback()">
+              <mat-icon>delete</mat-icon>
+              Delete Feedback
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

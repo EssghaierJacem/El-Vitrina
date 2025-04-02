@@ -1,8 +1,8 @@
 // src/app/models/appFeedback/app-feedback-type.type.ts
 export enum AppFeedbackType {
-  GENERAL = 'General Feedback',
-  BUG_REPORT = 'Bug Report',
-  FEATURE_REQUEST = 'Feature Request',
-  USER_EXPERIENCE = 'User Experience',
-  PERFORMANCE = 'Performance'
+  GENERAL = 'GENERAL',
+  BUG_REPORT = 'BUG_REPORT',
+  FEATURE_REQUEST = 'FEATURE_REQUEST',
+  USER_EXPERIENCE = 'USER_EXPERIENCE',
+  PERFORMANCE = 'PERFORMANCE'
 }
