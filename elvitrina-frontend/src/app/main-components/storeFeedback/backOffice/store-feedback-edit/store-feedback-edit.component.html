@@ -1,1 +1,92 @@
-<p>store-feedback-edit works!</p>
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <!-- Header with Back Button -->
+    <div class="d-flex justify-content-between align-items-center m-b-16">
+      <div class="d-flex align-items-center">
+        <button mat-icon-button color="primary" [routerLink]="['../']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <mat-card-title>Edit Store Feedback</mat-card-title>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" class="m-t-16">
+      <!-- Store Selection -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Select Store</mat-label>
+        <mat-select formControlName="storeId" required>
+          @for (store of stores; track store.storeId) {
+            <mat-option [value]="store.storeId">{{ store.storeName }}</mat-option>
+          }
+        </mat-select>
+        <mat-error *ngIf="feedbackForm.get('storeId')?.hasError('required')">
+          Store selection is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Feedback Type -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Feedback Type</mat-label>
+        <mat-select formControlName="storeFeedbackType" required>
+          @for (option of feedbackTypeOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-error *ngIf="feedbackForm.get('storeFeedbackType')?.hasError('required')">
+          Feedback type is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Rating -->
+      <div class="rating-container m-b-16">
+        <label class="rating-label">Rating</label>
+        <mat-slider
+          min="1"
+          max="5"
+          step="1"
+          discrete
+          [displayWith]="getRatingStars"
+          class="w-100">
+          <input matSliderThumb formControlName="rating">
+        </mat-slider>
+        <div class="rating-display">
+          {{ getRatingStars(feedbackForm.get('rating')?.value || 0) }}
+        </div>
+      </div>
+
+      <!-- Comment -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Comment</mat-label>
+        <textarea matInput formControlName="comment" rows="4" required></textarea>
+        <mat-error *ngIf="feedbackForm.get('comment')?.hasError('required')">
+          Comment is required
+        </mat-error>
+        <mat-error *ngIf="feedbackForm.get('comment')?.hasError('minlength')">
+          Comment must be at least 10 characters
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Would Recommend -->
+      <div class="m-b-16">
+        <mat-checkbox formControlName="wouldRecommend" color="primary">
+          Would you recommend this store?
+        </mat-checkbox>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 m-t-16">
+        <button mat-button type="button" (click)="resetForm()" [disabled]="isSubmitting">
+          Cancel
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="feedbackForm.invalid || isSubmitting">
+          @if (isSubmitting) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            Update Feedback
+          }
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

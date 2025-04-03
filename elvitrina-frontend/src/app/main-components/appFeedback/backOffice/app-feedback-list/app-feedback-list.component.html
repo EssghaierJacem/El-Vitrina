@@ -11,11 +11,16 @@
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     
     <!-- Search Bar -->
-    <mat-form-field appearance="outline" class="w-100">
-      <mat-label>Search</mat-label>
-      <mat-icon matPrefix>search</mat-icon>
-      <input matInput [(ngModel)]="searchText" (keyup)="applyFilter()" placeholder="Search feedback...">
-    </mat-form-field>
+    <div class="d-flex align-items-center gap-2">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Search</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [(ngModel)]="searchText" (keyup)="applyFilter()" placeholder="Search feedback...">
+      </mat-form-field>
+      <button mat-icon-button color="primary" (click)="exportToExcel()" matTooltip="Export to Excel">
+        <mat-icon>file_download</mat-icon>
+      </button>
+    </div>
 
     @if (isLoading) {
       <div class="text-center">

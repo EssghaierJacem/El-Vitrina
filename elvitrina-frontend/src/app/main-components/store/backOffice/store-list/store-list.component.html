@@ -18,6 +18,10 @@
         <input matInput [(ngModel)]="searchText" (keyup)="applyFilter()" placeholder="Search stores...">
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
+      
+      <button mat-icon-button color="primary" (click)="exportToExcel()" matTooltip="Export to Excel">
+        <mat-icon>file_download</mat-icon>
+      </button>
     </div>
 
     <!-- Loading Spinner -->

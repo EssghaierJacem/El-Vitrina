@@ -132,5 +132,7 @@ export class ProductCreateComponent implements OnInit {
     this.snackBar.open('Form has been cleared', 'Close', {
       duration: 3000
     });
+    
+    this.router.navigate(['/dashboard/products']);
   }
 }

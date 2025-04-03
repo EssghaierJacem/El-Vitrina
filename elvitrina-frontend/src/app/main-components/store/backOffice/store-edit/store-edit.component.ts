@@ -126,5 +126,8 @@ export class StoreEditComponent implements OnInit {
     this.snackBar.open('Form has been reset', 'Close', {
       duration: 3000
     });
+    
+    // Navigate back to the list
+    this.router.navigate(['/dashboard/stores']);
   }
 }

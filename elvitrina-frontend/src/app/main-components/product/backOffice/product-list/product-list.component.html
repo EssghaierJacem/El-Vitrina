@@ -13,11 +13,16 @@
 
     <!-- Search and Filter -->
     <div class="d-flex justify-content-between align-items-center m-b-16">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Search</mat-label>
-        <input matInput [(ngModel)]="searchText" (keyup)="applyFilter()" placeholder="Search products...">
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
+      <div class="d-flex align-items-center gap-2 w-100">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Search</mat-label>
+          <input matInput [(ngModel)]="searchText" (keyup)="applyFilter()" placeholder="Search products...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+        <button mat-icon-button color="primary" (click)="exportToExcel()" matTooltip="Export to Excel">
+          <mat-icon>file_download</mat-icon>
+        </button>
+      </div>
     </div>
 
     <!-- Loading Spinner -->

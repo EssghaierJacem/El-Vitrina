@@ -102,17 +102,56 @@ export class AppFeedbackListComponent implements OnInit {
   }
 
   exportToExcel(): void {
-    const data = this.feedbacks.map(feedback => ({
-      ID: feedback.id,
-      Type: feedback.appFeedbackType,
-      Comment: feedback.comment,
-      'Created At': new Date(feedback.createdAt).toLocaleDateString()
-    }));
-
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.feedbacks);
+  
+    if (!ws['!ref']) {
+      console.error('Sheet reference range is undefined.');
+      return;
+    }
+  
+    const headerStyle = {
+      font: { bold: true, color: { rgb: 'FFFFFF' } },
+      fill: { fgColor: { rgb: '4CAF50' } }, 
+      alignment: { horizontal: 'center', vertical: 'center' },
+      border: {
+        top: { style: 'thin', color: { rgb: '000000' } },
+        left: { style: 'thin', color: { rgb: '000000' } },
+        right: { style: 'thin', color: { rgb: '000000' } },
+        bottom: { style: 'thin', color: { rgb: '000000' } },
+      }
+    };
+  
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    for (let col = range.s.c; col <= range.e.c; col++) {
+      const cellAddress = { r: range.s.r, c: col }; 
+      const cellRef = XLSX.utils.encode_cell(cellAddress);
+      if (!ws[cellRef]) continue;
+      ws[cellRef].s = headerStyle;
+    }
+  
+    const dataStyle = {
+      font: { color: { rgb: '000000' } },
+      border: {
+        top: { style: 'thin', color: { rgb: '000000' } },
+        left: { style: 'thin', color: { rgb: '000000' } },
+        right: { style: 'thin', color: { rgb: '000000' } },
+        bottom: { style: 'thin', color: { rgb: '000000' } },
+      },
+    };
+  
+    for (let row = range.s.r + 1; row <= range.e.r; row++) {
+      for (let col = range.s.c; col <= range.e.c; col++) {
+        const cellAddress = { r: row, c: col };
+        const cellRef = XLSX.utils.encode_cell(cellAddress);
+        if (!ws[cellRef]) continue;
+        ws[cellRef].s = dataStyle; 
+      }
+    }
+  
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Feedbacks');
-    XLSX.writeFile(wb, 'app_feedbacks.xlsx');
+    XLSX.utils.book_append_sheet(wb, ws, 'App Feedback');
+  
+    XLSX.writeFile(wb, 'List of App Feedback.xlsx');
   }
 
   deleteFeedback(id: number) {

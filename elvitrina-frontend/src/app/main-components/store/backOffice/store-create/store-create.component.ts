@@ -197,5 +197,8 @@ export class StoreCreateComponent implements OnInit {
     this.snackBar.open('Form has been cleared', 'Close', {
       duration: 3000
     });
+    
+    // Navigate back to the list
+    this.router.navigate(['/dashboard/stores']);
   }
 }

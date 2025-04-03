@@ -199,5 +199,8 @@ export class StoreFeedbackCreateComponent implements OnInit {
       horizontalPosition: 'end',
       verticalPosition: 'top'
     });
+    
+    // Navigate back to the list
+    this.router.navigate(['/dashboard/store-feedbacks']);
   }
 }
