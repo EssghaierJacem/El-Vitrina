@@ -1,0 +1,77 @@
+<mat-card class="cardWithShadow theme-card p-4">
+    <div class="d-flex align-items-center gap-16 m-b-24">
+      <img
+        [src]="user?.image || '/assets/images/default-avatar.png'"
+        alt="User image"
+        class="rounded-circle shadow-sm"
+        width="90"
+        height="90"
+      />
+      <div>
+        <h2 class="f-w-600 f-s-20 m-b-4">
+          {{ user?.firstname }} {{ user?.lastname }}
+        </h2>
+        <p class="text-muted f-s-14">{{ user?.role }}</p>
+        <span
+          class="f-s-12 rounded px-2 py-1 f-w-600"
+          [ngClass]="{
+            'bg-light-success text-success': user?.status,
+            'bg-light-error text-error': !user?.status
+          }"
+        >
+          {{ user?.status ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+    </div>
+  
+    <mat-divider></mat-divider>
+  
+    <!-- User Info Section -->
+    <div class="p-x-20 p-y-16">
+      <div class="row">
+        <div class="col-md-6 m-b-16">
+          <p class="f-w-500 m-b-4">📧 Email :</p>
+          <p class="text-muted">{{ user?.email }}</p>
+        </div>
+  
+        <div class="col-md-6 m-b-16">
+          <p class="f-w-500 m-b-4">📞 Phone :</p>
+          <p class="text-muted">{{ user?.phone || 'Not provided' }}</p>
+        </div>
+  
+        <div class="col-md-6 m-b-16">
+          <p class="f-w-500 m-b-4">🏠 Address :</p>
+          <p class="text-muted">{{ user?.address || 'Not provided' }}</p>
+        </div>
+  
+        <div class="col-md-6 m-b-16">
+          <p class="f-w-500 m-b-4">🗓️ Registration Date :</p>
+          <p class="text-muted">{{ user?.registrationDate | date }}</p>
+        </div>
+  
+        <div class="col-md-6">
+          <p class="f-w-500 m-b-4">🏆 Points :</p>
+          <p class="text-muted">{{ user?.points }} / 100</p>
+          <mat-progress-bar
+            mode="determinate"
+            [value]="user?.points"
+            [color]="getProgressColor(user?.points || 0)"
+          ></mat-progress-bar>
+        </div>
+      </div>
+    </div>
+  
+    <mat-divider class="m-t-24"></mat-divider>
+  
+    <!-- Actions -->
+    <div class="d-flex justify-content-end gap-8 m-t-20">
+      <button mat-flat-button color="primary" [routerLink]="['/dashboard/users', user?.id, 'edit']">
+        <mat-icon class="m-r-4">edit</mat-icon> Edit
+      </button>
+  
+      <button mat-stroked-button color="warn" (click)="confirmDelete(user?.id)">
+        <mat-icon class="m-r-4">delete</mat-icon> Delete
+      </button>
+    </div>
+  </mat-card>
+  

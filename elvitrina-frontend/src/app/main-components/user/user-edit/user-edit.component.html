@@ -1,0 +1,103 @@
+<mat-card class="cardWithShadow theme-card p-4">
+    <!-- Title Spanning Both Sections and Positioned to the Right -->
+    <mat-card-header>
+      <mat-card-title class="m-b-0">Edit User Profile</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="b-t-1">
+      <div class="row">
+        <!-- Left side: Form Fields for User Details -->
+        <div class="col-md-8">
+          <form (ngSubmit)="updateUser()">
+            <div class="row">
+              <div class="col-md-6 m-b-16">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>First Name</mat-label>
+                  <input matInput placeholder="First Name" name="firstname" [(ngModel)]="user.firstname" />
+                </mat-form-field>
+              </div>
+  
+              <div class="col-md-6 m-b-16">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Last Name</mat-label>
+                  <input matInput placeholder="Last Name" name="lastname" [(ngModel)]="user.lastname" />
+                </mat-form-field>
+              </div>
+  
+              <div class="col-md-6 m-b-16">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Email</mat-label>
+                  <input matInput placeholder="Email" name="email" [(ngModel)]="user.email" type="email" />
+                </mat-form-field>
+              </div>
+  
+              <div class="col-md-6 m-b-16">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Phone</mat-label>
+                  <input matInput placeholder="Phone" name="phone" [(ngModel)]="user.phone" />
+                </mat-form-field>
+              </div>
+  
+              <div class="col-12 m-b-16">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Address</mat-label>
+                  <textarea matInput rows="2" name="address" [(ngModel)]="user.address"></textarea>
+                </mat-form-field>
+              </div>
+  
+              <div class="col-md-6 m-b-16">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Role</mat-label>
+                  <mat-select [(ngModel)]="user.role" name="role">
+                    <mat-option value="ADMIN">Admin</mat-option>
+                    <mat-option value="USER">User</mat-option>
+                    <mat-option value="MODERATOR">Moderator</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+  
+              <div class="col-md-6 m-b-16">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Status</mat-label>
+                  <mat-select [(ngModel)]="user.status" name="status">
+                    <mat-option [value]="true">Active</mat-option>
+                    <mat-option [value]="false">Inactive</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>              
+
+            </div>
+            <!-- Save and Cancel Buttons -->
+            <div class="d-flex justify-content-center m-t-20 gap-8">
+              <button mat-stroked-button color="warn" type="button" (click)="onCancel()">
+                Cancel
+              </button>
+              <button mat-flat-button color="primary" type="submit">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+  
+        <!-- Right side: Avatar and Image URL Form -->
+        <div class="col-md-4 text-center">
+          <div class="d-flex justify-content-center align-items-center h-100 flex-column">
+            <!-- Image Preview -->
+            <img
+              [src]="user.image || '/assets/images/default-avatar.png'"
+              alt="User image"
+              class="rounded-circle shadow-sm mb-3"
+              width="150"
+              height="150"
+            />
+            
+            <!-- Image URL Update Form Below the Image -->
+            <mat-form-field appearance="outline" class="w-100 mb-0">
+              <mat-label>Profile Image URL</mat-label>
+              <input matInput placeholder="Enter image URL" [(ngModel)]="user.image" />
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  

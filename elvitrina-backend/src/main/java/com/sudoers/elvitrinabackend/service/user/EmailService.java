@@ -35,4 +35,14 @@ public class EmailService {
                 "Welcome to El Vitrina! We are excited to have you on board.";
         sendSimpleEmail(to, subject, text);
     }
+
+    public void sendResetPasswordEmail(String to, String token) {
+        String subject = "Password Reset Request - El Vitrina";
+        String resetLink = "http://localhost:4200/authentication/reset-password?token=" + token;
+        String text = "Hi,\n\n" +
+                "Click the link below to reset your password:\n" +
+                resetLink + "\n\n" +
+                "If you didn’t request a password reset, please ignore this email.";
+        sendSimpleEmail(to, subject, text);
+    }
 }

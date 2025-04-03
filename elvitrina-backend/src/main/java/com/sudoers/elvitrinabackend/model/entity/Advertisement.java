@@ -58,8 +58,8 @@ public class Advertisement {
     @Column(nullable = false)
     private String status;
 
-    @NotNull(message = "Timestamp is required")
-    @Column(nullable = false)
+   // @NotNull(message = "Timestamp is required")
+    @Column(nullable = true)
     private LocalDateTime timestamp;
 
     @Size(max = 255, message = "Video URL must be less than 255 characters")
@@ -70,12 +70,12 @@ public class Advertisement {
     @Column(nullable = true)
     private Set<String> images;
 
-    @NotNull(message = "Store is required")
+    //@NotNull(message = "Store is required")
     @ManyToOne
-    @JoinColumn(name = "store_id", nullable = false)
+    @JoinColumn(name = "store_id", nullable = true)
     private Store store;
 
-    @NotNull(message = "Creator is required")
+    //@NotNull(message = "Creator is required")
     @ManyToOne
     @JoinColumn(name = "creator_id", nullable = true)
     private Creator creator;
