@@ -1,0 +1,44 @@
+<mat-card class="cardWithShadow theme-card card">
+  <mat-card-header>
+    <mat-card-title>Liste des Questions</mat-card-title>
+    <button mat-flat-button color="primary" routerLink="/questions/create">Ajouter une Question</button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <table mat-table [dataSource]="questions" class="mat-elevation-z8 w-100">
+      <!-- ID -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let question">{{ question.id }}</td>
+      </ng-container>
+
+      <!-- Question -->
+      <ng-container matColumnDef="question">
+        <th mat-header-cell *matHeaderCellDef>Question</th>
+        <td mat-cell *matCellDef="let question">{{ question.question }}</td>
+      </ng-container>
+
+      <!-- Type de Question -->
+      <ng-container matColumnDef="questionType">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let question">{{ question.questionType }}</td>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let question">
+          <button mat-icon-button color="accent" [routerLink]="['/questions/edit', question.id]">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteQuestion(question.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['id', 'question', 'questionType', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['id', 'question', 'questionType', 'actions'];"></tr>
+    </table>
+  </mat-card-content>
+</mat-card>

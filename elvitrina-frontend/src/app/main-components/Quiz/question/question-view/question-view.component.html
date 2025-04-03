@@ -1,0 +1,22 @@
+<mat-card class="cardWithShadow theme-card card" *ngIf="question">
+  <mat-card-header>
+    <mat-card-title>Détails de la Question</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p><strong>ID :</strong> {{ question.id }}</p>
+    <p><strong>Question :</strong> {{ question.question }}</p>
+    <p><strong>Type :</strong> {{ question.questionType }}</p>
+    <p><strong>ID du Quiz :</strong> {{ question.quizId }}</p>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-stroked-button color="primary" [routerLink]="['/questions/edit', question.id]">
+      Modifier
+    </button>
+    <button mat-stroked-button color="warn" routerLink="/questions">Retour</button>
+  </mat-card-actions>
+</mat-card>
+
+<!-- Message si la question n'existe pas -->
+<p *ngIf="!question" class="text-center text-danger">Aucune question trouvée.</p>

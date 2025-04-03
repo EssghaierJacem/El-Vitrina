@@ -1,0 +1,21 @@
+<mat-card class="cardWithShadow theme-card card">
+  <mat-card-header>
+    <mat-card-title>Détails du Paiement</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content *ngIf="payment">
+    <p><strong>ID :</strong> {{ payment.id }}</p>
+    <p><strong>Montant :</strong> {{ payment.amount | currency: 'TND' }}</p>
+    <p><strong>Date de Transaction :</strong> {{ payment.transactionDate | date:'dd/MM/yyyy' }}</p>
+    <p><strong>Méthode de Paiement :</strong> {{ payment.method }}</p>
+    <p><strong>Statut :</strong>
+      <mat-chip [color]="payment.paystatus === 'CONFIRMED' ? 'primary' : payment.paystatus === 'PENDING' ? 'accent' : 'warn'">
+        {{ payment.paystatus }}
+      </mat-chip>
+    </p>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-flat-button color="primary" (click)="goBack()">Retour</button>
+  </mat-card-actions>
+</mat-card>
