@@ -12,6 +12,10 @@ import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatDivider } from '@angular/material/divider';
+import { MatNativeDateModule } from '@angular/material/core'; 
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -28,7 +32,11 @@ import { map } from 'rxjs/operators';
     MatPaginatorModule,
     DatePipe,
     RouterModule,
-    FormsModule
+    FormsModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatNativeDateModule,
+    MatDivider
   ]
 })
 export class OfferListComponent implements OnInit {
@@ -51,6 +59,13 @@ export class OfferListComponent implements OnInit {
 
   applyDateFilter(): void {
     this.filteredOffers$ = this.filterOffers();
+  }
+
+  clearFilters(): void {
+    this.searchText = '';
+    this.startDate = null;
+    this.endDate = null;
+    this.filteredOffers$ = this.offers$; 
   }
 
   filterOffers(): Observable<Offer[]> {
