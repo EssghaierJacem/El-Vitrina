@@ -8,6 +8,11 @@ export const routes: Routes = [
     path: '',
     component: FrontComponent, 
     children: [    
+      {
+        path: 'offers',
+        loadChildren: () =>
+          import('./main-components/offer/frontoffice/frontoffice_offer.routes').then((m) => m.FrontOfferRoutes),
+      },
     ],
   },
 
