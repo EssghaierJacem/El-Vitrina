@@ -13,7 +13,12 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Router, RouterModule } from '@angular/router';
 import { StoreFeedbackService } from 'src/app/core/services/storeFeedback/store-feedback.service';
-import { StoreFeedbackType, getStoreFeedbackTypeDisplayName } from 'src/app/core/models/storeFeedback/store-feedback-type.type';
+import { StoreService } from 'src/app/core/services/store/store.service';
+import { AuthService } from 'src/app/core/services/auth/auth.service';
+import { StoreFeedbackType, getStoreFeedbackTypeDisplayName } from 'src/app/core/models/storeFeedback/store-feedback-type.enum';
+import { Store } from 'src/app/core/models/store/store.model';
+import { StoreFeedback } from 'src/app/core/models/storeFeedback/store-feedback.model';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-store-feedback-create',
@@ -39,6 +44,7 @@ import { StoreFeedbackType, getStoreFeedbackTypeDisplayName } from 'src/app/core
 export class StoreFeedbackCreateComponent implements OnInit {
   feedbackForm: FormGroup;
   isSubmitting = false;
+  stores: Store[] = [];
   
   feedbackTypeOptions = Object.values(StoreFeedbackType).map(type => ({
     value: type,
@@ -48,13 +54,31 @@ export class StoreFeedbackCreateComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private storeFeedbackService: StoreFeedbackService,
+    private storeService: StoreService,
+    private authService: AuthService,
     private snackBar: MatSnackBar,
     private router: Router
   ) {
     this.initForm();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.loadStores();
+  }
+
+  private loadStores(): void {
+    this.storeService.getAll().subscribe({
+      next: (stores: Store[]) => {
+        this.stores = stores;
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Error loading stores:', error);
+        this.snackBar.open('Error loading stores', 'Close', {
+          duration: 5000
+        });
+      }
+    });
+  }
 
   private initForm(): void {
     this.feedbackForm = this.fb.group({
@@ -62,9 +86,71 @@ export class StoreFeedbackCreateComponent implements OnInit {
       comment: ['', [Validators.required, Validators.minLength(10)]],
       wouldRecommend: [true],
       storeFeedbackType: [StoreFeedbackType.PRODUCT_QUALITY, Validators.required],
-      storeId: [1, Validators.required], // We'll need to get this from a store selection
-      userId: [1]   // We'll need to get this from the authenticated user
+      storeId: ['', Validators.required],
     });
+  }
+
+  onSubmit(): void {
+    if (this.feedbackForm.valid && !this.isSubmitting) {
+      this.isSubmitting = true;
+      
+      const currentUser = this.authService.getCurrentUser();
+      
+      if (!currentUser) {
+        this.snackBar.open('You must be logged in to submit feedback', 'Close', {
+          duration: 5000
+        });
+        this.isSubmitting = false;
+        return;
+      }
+
+      const feedbackData: StoreFeedback = {
+        rating: this.feedbackForm.value.rating,
+        comment: this.feedbackForm.value.comment,
+        wouldRecommend: this.feedbackForm.value.wouldRecommend,
+        storeFeedbackType: this.feedbackForm.value.storeFeedbackType,
+        storeId: Number(this.feedbackForm.value.storeId),
+        userId: currentUser.id,
+        userEmail: currentUser.email,
+        userName: currentUser.name,
+        createdAt: new Date().toISOString()
+      };
+
+      console.log('Submitting feedback:', feedbackData);
+      
+      this.storeFeedbackService.create(feedbackData).subscribe({
+        next: (response: StoreFeedback) => {
+          console.log('Feedback created successfully:', response);
+          this.snackBar.open('Feedback created successfully', 'Close', {
+            duration: 3000
+          });
+          this.router.navigate(['/dashboard/store-feedback']);
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Error creating feedback:', error);
+          let errorMessage = 'Error creating feedback';
+          if (error.error?.message) {
+            errorMessage = error.error.message;
+          }
+          this.snackBar.open(errorMessage, 'Close', {
+            duration: 5000
+          });
+          this.isSubmitting = false;
+        }
+      });
+    } else {
+      Object.keys(this.feedbackForm.controls).forEach(key => {
+        const control = this.feedbackForm.get(key);
+        if (control?.errors) {
+          console.log(`Validation errors for ${key}:`, control.errors);
+        }
+        control?.markAsTouched();
+      });
+    }
+  }
+
+  getRatingStars(rating: number): string {
+    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
   }
 
   resetForm(): void {
@@ -73,8 +159,7 @@ export class StoreFeedbackCreateComponent implements OnInit {
       comment: '',
       wouldRecommend: true,
       storeFeedbackType: StoreFeedbackType.PRODUCT_QUALITY,
-      storeId: 1,
-      userId: 1
+      storeId: ''
     });
     
     this.snackBar.open('Form has been cleared', 'Close', {
@@ -82,71 +167,5 @@ export class StoreFeedbackCreateComponent implements OnInit {
       horizontalPosition: 'end',
       verticalPosition: 'top'
     });
-  }
-
-  onSubmit(): void {
-    if (this.feedbackForm.valid && !this.isSubmitting) {
-      this.isSubmitting = true;
-      
-      const feedbackData = {
-        ...this.feedbackForm.value,
-        createdAt: new Date().toISOString(),
-        // Make sure storeFeedbackType is a string enum value
-        storeFeedbackType: this.feedbackForm.value.storeFeedbackType as StoreFeedbackType,
-        // Convert storeId to number if it's a string
-        storeId: Number(this.feedbackForm.value.storeId),
-        // Add mock user data (replace with actual user data in production)
-        userName: 'Test User',
-        userEmail: 'test@example.com',
-        userImage: null
-      };
-
-      console.log('Submitting feedback:', feedbackData);
-      
-      this.storeFeedbackService.create(feedbackData).subscribe({
-        next: (response) => {
-          console.log('Feedback created successfully:', response);
-          this.snackBar.open('Feedback created successfully', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top'
-          });
-          this.router.navigate(['/dashboard/store-feedback']);
-        },
-        error: (error) => {
-          console.error('Error creating feedback:', error);
-          let errorMessage = 'Error creating feedback';
-          if (error.error?.message) {
-            errorMessage = error.error.message;
-          } else if (error.status === 400) {
-            errorMessage = 'Invalid feedback data. Please check all fields.';
-          } else if (error.status === 401) {
-            errorMessage = 'You must be logged in to create feedback.';
-          }
-          this.snackBar.open(errorMessage, 'Close', {
-            duration: 5000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top'
-          });
-          this.isSubmitting = false;
-        },
-        complete: () => {
-          this.isSubmitting = false;
-        }
-      });
-    } else {
-      // Mark all fields as touched to trigger validation messages
-      Object.keys(this.feedbackForm.controls).forEach(key => {
-        const control = this.feedbackForm.get(key);
-        control?.markAsTouched();
-        if (control?.errors) {
-          console.log(`Validation errors for ${key}:`, control.errors);
-        }
-      });
-    }
-  }
-
-  getRatingStars(rating: number): string {
-    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
   }
 }

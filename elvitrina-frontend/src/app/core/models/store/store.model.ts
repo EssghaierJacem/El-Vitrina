@@ -1,5 +1,5 @@
 // src/app/models/store/store.model.ts
-import { StoreCategoryType } from './store-category.type';
+import { StoreCategoryType } from './store-category-type.enum';
 //import { StoreFeedback } from '../storeFeedback/store-feedback.model';
 //import { Product } from '../product/product.model';
 //import { Donation } from '../donation/donation.model';
@@ -13,12 +13,13 @@ export interface Store {
   storeName: string;
   description?: string;
   category: StoreCategoryType;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: string;
+  updatedAt?: string;
   status: boolean;
   address: string;
   image?: string;
   featured: boolean;
+  userId: number;
   
   // Relationships (optional - include only what you need)
   user?: User;

@@ -70,13 +70,23 @@ export class AppFeedbackListComponent implements OnInit {
 
   loadFeedbacks() {
     this.isLoading = true;
-    this.feedbackService.getAll().subscribe({
-      next: (data) => {
-        this.feedbacks = data;
-        this.dataSource.data = data;
+    this.feedbackService.getAll(
+      this.paginator?.pageIndex || 0,
+      this.paginator?.pageSize || 10,
+      this.searchText
+    ).subscribe({
+      next: (response) => {
+        this.feedbacks = response.content;
+        this.dataSource.data = response.content;
+        if (this.paginator) {
+          this.paginator.length = response.totalElements;
+          this.paginator.pageSize = response.size;
+          this.paginator.pageIndex = response.number;
+        }
         this.isLoading = false;
       },
-      error: () => {
+      error: (error) => {
+        console.error('Error loading feedbacks:', error);
         this.isLoading = false;
       }
     });
@@ -111,5 +121,9 @@ export class AppFeedbackListComponent implements OnInit {
         this.loadFeedbacks();
       });
     }
+  }
+
+  onPageChange(event: any) {
+    this.loadFeedbacks();
   }
 }

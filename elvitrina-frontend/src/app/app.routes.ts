@@ -6,15 +6,16 @@ import { UserTableComponent } from './main-components/user/user-table/user-table
 
 export const routes: Routes = [
   {
-    path: '',
-    component: FrontComponent, 
-    children: [    
-    ],
+    path: 'authentication',
+    component: BlankComponent,
+    loadChildren: () =>
+      import('./pages/authentication/authentication.routes').then(
+        (m) => m.AuthenticationRoutes
+      ),
   },
-
   {
-    path: 'dashboard', 
-    component: FullComponent, 
+    path: 'dashboard',
+    component: FullComponent,
     children: [
       {
         path: '',
@@ -44,36 +45,34 @@ export const routes: Routes = [
           import('./main-components/appFeedback/backOffice/app-feedback.routes').then(m => m.AppFeedbackRoutes),
       },
       {
-        path: 'extra',
-        loadChildren: () =>
-          import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
-      },
-      {
         path: 'store-feedback',
         loadChildren: () =>
           import('./main-components/storeFeedback/backOffice/store-feedback.routes')
             .then(m => m.StoreFeedbackRoutes)
       },
-    ],
-  },
-
-  {
-    path: '',
-    redirectTo: 'authentication',
-    pathMatch: 'full'
-  },
-  {
-    path: '',
-    component: BlankComponent,
-    children: [
       {
-        path: 'authentication',
+        path: 'stores',
         loadChildren: () =>
-          import('./pages/authentication/authentication.routes').then(
-            (m) => m.AuthenticationRoutes
-          ),
+          import('./main-components/store/backOffice/store.routes')
+            .then(m => m.StoreRoutes)
+      },
+      {
+        path: 'products',
+        loadChildren: () =>
+          import('./main-components/product/backOffice/product.routes')
+            .then(m => m.ProductRoutes)
+      },
+      {
+        path: 'extra',
+        loadChildren: () =>
+          import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
       },
     ],
+  },
+  {
+    path: '',
+    component: FrontComponent,
+    children: [],
   },
   {
     path: '**',

@@ -36,17 +36,56 @@ public class StoreService implements IStoreService{
 
     @Transactional
     public StoreDTO createStore(StoreDTO storeDTO) {
-        Store store = new Store();
-        copyDtoToEntity(storeDTO, store);
+        try {
+            System.out.println("Received storeDTO: " + storeDTO);
+            
+            // Validate required fields
+            if (storeDTO.getStoreName() == null || storeDTO.getStoreName().trim().isEmpty()) {
+                throw new IllegalArgumentException("Store name is required");
+            }
+            if (storeDTO.getCategory() == null) {
+                throw new IllegalArgumentException("Category is required");
+            }
+            if (storeDTO.getUserId() == null) {
+                throw new IllegalArgumentException("User ID is required");
+            }
+            if (storeDTO.getAddress() == null || storeDTO.getAddress().trim().isEmpty()) {
+                throw new IllegalArgumentException("Address is required");
+            }
 
-        if (storeDTO.getUserId() != null) {
+            // Validate category
+            try {
+                System.out.println("Validating category: " + storeDTO.getCategory());
+                StoreCategoryType.valueOf(storeDTO.getCategory().name());
+            } catch (IllegalArgumentException e) {
+                System.err.println("Invalid category: " + storeDTO.getCategory());
+                throw new IllegalArgumentException("Invalid category type: " + storeDTO.getCategory());
+            }
+
+            // Check if user exists
+            System.out.println("Looking for user with ID: " + storeDTO.getUserId());
             User user = userRepository.findById(storeDTO.getUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            store.setUser(user);
-        }
+                    .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + storeDTO.getUserId()));
 
-        Store savedStore = storeRepository.save(store);
-        return copyEntityToDto(savedStore);
+            Store store = new Store();
+            System.out.println("Copying DTO to entity");
+            copyDtoToEntity(storeDTO, store);
+            store.setUser(user);
+            
+            // Set default values
+            store.setStatus(true); // Default to active
+            store.setFeatured(false); // Default to not featured
+            
+            System.out.println("Saving store: " + store);
+            Store savedStore = storeRepository.save(store);
+            System.out.println("Store saved successfully");
+            
+            return copyEntityToDto(savedStore);
+        } catch (Exception e) {
+            System.err.println("Error creating store: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Transactional(readOnly = true)
@@ -106,12 +145,21 @@ public class StoreService implements IStoreService{
     }
 
     private void copyDtoToEntity(StoreDTO dto, Store entity) {
-        entity.setStoreName(dto.getStoreName());
-        entity.setDescription(dto.getDescription());
-        entity.setCategory(dto.getCategory());
-        entity.setStatus(dto.isStatus());
-        entity.setAddress(dto.getAddress());
-        entity.setImage(dto.getImage());
+        try {
+            System.out.println("Copying DTO to entity - DTO: " + dto);
+            entity.setStoreName(dto.getStoreName().trim());
+            entity.setDescription(dto.getDescription() != null ? dto.getDescription().trim() : null);
+            entity.setCategory(dto.getCategory());
+            entity.setStatus(dto.isStatus());
+            entity.setAddress(dto.getAddress().trim());
+            entity.setImage(dto.getImage() != null ? dto.getImage().trim() : null);
+            entity.setFeatured(dto.isFeatured());
+            System.out.println("Entity after copy: " + entity);
+        } catch (Exception e) {
+            System.err.println("Error in copyDtoToEntity: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
     @Transactional(readOnly = true)
     public List<StoreDTO> getStoresByCategory(String category) {

@@ -3,11 +3,10 @@ package com.sudoers.elvitrinabackend.controller.appFeedback;
 import com.sudoers.elvitrinabackend.model.dto.AppFeedbackDTO;
 import com.sudoers.elvitrinabackend.service.feedback.appFeedback.IAppFeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/app-feedbacks")
@@ -23,8 +22,11 @@ public class AppFeedbackController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AppFeedbackDTO>> getAllAppFeedbacks() {
-        List<AppFeedbackDTO> feedbacks = appFeedbackService.getAllAppFeedbacks();
+    public ResponseEntity<Page<AppFeedbackDTO>> getAllAppFeedbacks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String searchTerm) {
+        Page<AppFeedbackDTO> feedbacks = appFeedbackService.getAllAppFeedbacks(page, size, searchTerm);
         return ResponseEntity.ok(feedbacks);
     }
 

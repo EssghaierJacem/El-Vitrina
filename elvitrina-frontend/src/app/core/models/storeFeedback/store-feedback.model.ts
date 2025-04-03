@@ -1,16 +1,18 @@
-import { StoreFeedbackType } from "./store-feedback-type.type";
+import { StoreFeedbackType } from "./store-feedback-type.enum";
 
 // src/app/models/storeFeedback/store-feedback.model.ts
 export interface StoreFeedback {
     storeFeedbackId?: number;
-    rating: number;
-    comment: string;
-    createdAt?: string;
-    wouldRecommend: boolean;
-    storeFeedbackType: StoreFeedbackType;
     storeId: number;
     userId: number;
+    storeName?: string;
     userName?: string;
     userEmail?: string;
-    userImage?: string;
-  }
+    userImage?: string | null;
+    storeFeedbackType: StoreFeedbackType;
+    rating: number;
+    comment: string;
+    wouldRecommend: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+}

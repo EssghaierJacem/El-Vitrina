@@ -1,1 +1,93 @@
-<p>store-create works!</p>
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <!-- Header with Back Button -->
+    <div class="d-flex justify-content-between align-items-center m-b-16">
+      <div class="d-flex align-items-center">
+        <button mat-icon-button color="primary" [routerLink]="['../']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <mat-card-title>Create Store</mat-card-title>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="storeForm" (ngSubmit)="onSubmit()" class="m-t-16">
+      <!-- Store Name -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Store Name</mat-label>
+        <input matInput formControlName="storeName" required>
+        <mat-error *ngIf="storeForm.get('storeName')?.hasError('required')">
+          Store name is required
+        </mat-error>
+        <mat-error *ngIf="storeForm.get('storeName')?.hasError('maxlength')">
+          Store name must be less than 100 characters
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="4"></textarea>
+        <mat-error *ngIf="storeForm.get('description')?.hasError('maxlength')">
+          Description must be less than 500 characters
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Category -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="category">
+          <mat-option *ngFor="let category of categoryOptions" [value]="category.value">
+            {{ category.displayName }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="storeForm.get('category')?.errors?.['required']">
+          Category is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Address -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Address</mat-label>
+        <input matInput formControlName="address" required>
+        <mat-error *ngIf="storeForm.get('address')?.hasError('required')">
+          Address is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Image URL -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Image URL</mat-label>
+        <input matInput formControlName="image">
+      </mat-form-field>
+
+      <!-- Status -->
+      <div class="m-b-16">
+        <mat-checkbox formControlName="status" color="primary">
+          Active
+        </mat-checkbox>
+      </div>
+
+      <!-- Featured -->
+      <div class="m-b-16">
+        <mat-checkbox formControlName="featured" color="primary">
+          Featured Store
+        </mat-checkbox>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 m-t-16">
+        <button mat-button type="button" (click)="resetForm()" [disabled]="isSubmitting">
+          Cancel
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="storeForm.invalid || isSubmitting">
+          @if (isSubmitting) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            Create Store
+          }
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

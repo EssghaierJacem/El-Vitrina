@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { StoreFeedback } from '../../models/storeFeedback/store-feedback.model';
-import { StoreFeedbackType } from '../../models/storeFeedback/store-feedback-type.type';
+import { StoreFeedbackType } from '../../models/storeFeedback/store-feedback-type.enum';
 
 @Injectable({ providedIn: 'root' })
 export class StoreFeedbackService {

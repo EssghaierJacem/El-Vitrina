@@ -1,0 +1,40 @@
+.product-details {
+  .product-images {
+    .image-gallery {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding: 8px 0;
+
+      .product-image {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+    }
+  }
+
+  .product-info {
+    h2 {
+      margin-bottom: 8px;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+
+      .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        strong {
+          min-width: 120px;
+        }
+      }
+    }
+  }
+}

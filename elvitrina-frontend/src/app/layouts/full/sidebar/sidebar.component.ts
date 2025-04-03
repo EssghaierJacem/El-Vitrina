@@ -2,9 +2,7 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnInit,
   Output,
-  ViewChild,
 } from '@angular/core';
 import { BrandingComponent } from './branding.component';
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -13,6 +11,9 @@ import { navItems } from './sidebar-data';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { NgScrollbarModule } from 'ngx-scrollbar';
+import { AppNavItemComponent } from './nav-item/nav-item.component';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-sidebar',
@@ -23,17 +24,15 @@ import { MatIconModule } from '@angular/material/icon';
     TablerIconsModule, 
     MaterialModule, 
     RouterModule,
-    MatIconModule
+    MatIconModule,
+    NgScrollbarModule,
+    AppNavItemComponent,
+    MatListModule
   ],
   templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent implements OnInit {
-  navItems = navItems;
-  constructor() {}
+export class SidebarComponent {
   @Input() showToggle = true;
   @Output() toggleMobileNav = new EventEmitter<void>();
-  @Output() toggleCollapsed = new EventEmitter<void>();
-
-  ngOnInit(): void {}
+  navItems = navItems;
 }

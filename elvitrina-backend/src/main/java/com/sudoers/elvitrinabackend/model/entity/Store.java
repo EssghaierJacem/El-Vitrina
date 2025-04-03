@@ -26,11 +26,11 @@ public class Store implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long storeId;
 
-    @NotBlank(message = "Store name is required")
-    @Size(max = 100, message = "Store name must be less than 100 characters")
+    //@NotBlank(message = "Store name is required")
+    //@Size(max = 100, message = "Store name must be less than 100 characters")
     private String storeName;
 
-    @Size(max = 500, message = "Description must be less than 500 characters")
+    //@Size(max = 500, message = "Description must be less than 500 characters")
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -44,8 +44,7 @@ public class Store implements Serializable {
 
     private boolean status;
 
-    // not very logical here
-    @NotBlank(message = "Address is required")
+    //@NotBlank(message = "Address is required")
     private String address;
 
     //@URL(message = "Image must be a valid URL")

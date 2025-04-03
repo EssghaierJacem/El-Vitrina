@@ -10,22 +10,6 @@ export const navItems: NavItem[] = [
     route: '/dashboard',
   },
   {
-    navCap: 'Store',
-  },
-  {
-    displayName: 'Store',
-    iconName: 'store',
-    route: '/store', // Adjust this route based on your actual routing setup
-  },
-  {
-    navCap: 'Products',
-  },
-  {
-    displayName: 'Product',
-    iconName: 'shopping-cart',
-    route: '/products',
-  },
-  {
     navCap: 'Feedback',
   },
   {
@@ -37,6 +21,22 @@ export const navItems: NavItem[] = [
     displayName: 'Store Feedback',
     iconName: 'feedback',
     route: '/dashboard/store-feedback',
+  },
+  {
+    navCap: 'Store',
+  },
+  {
+    displayName: 'Store',
+    iconName: 'store',
+    route: '/dashboard/stores', // Adjust this route based on your actual routing setup
+  },
+  {
+    navCap: 'Products',
+  },
+  {
+    displayName: 'Product',
+    iconName: 'shopping-cart',
+    route: '/dashboard/products',
   },
   // {
   //   displayName: 'Analytical',

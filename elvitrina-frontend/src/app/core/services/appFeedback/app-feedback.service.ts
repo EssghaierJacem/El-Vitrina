@@ -1,6 +1,6 @@
 // src/app/core/services/appFeedback/app-feedback.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AppFeedback } from '../../models/appFeedback/app-feedback.model';
 
@@ -12,8 +12,13 @@ export class AppFeedbackService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<AppFeedback[]> {
-    return this.http.get<AppFeedback[]>(this.apiUrl);
+  getAll(page: number = 0, size: number = 10, searchTerm: string = ''): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('searchTerm', searchTerm);
+
+    return this.http.get<any>(this.apiUrl, { params });
   }
 
   getById(id: number): Observable<AppFeedback> {

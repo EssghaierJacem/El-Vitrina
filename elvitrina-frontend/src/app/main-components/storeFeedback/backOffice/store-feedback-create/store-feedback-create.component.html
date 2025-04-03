@@ -16,9 +16,9 @@
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Select Store</mat-label>
         <mat-select formControlName="storeId" required>
-          <!-- You'll need to populate this with actual stores -->
-          <mat-option value="1">Store 1</mat-option>
-          <mat-option value="2">Store 2</mat-option>
+          @for (store of stores; track store.storeId) {
+            <mat-option [value]="store.storeId">{{ store.storeName }}</mat-option>
+          }
         </mat-select>
         <mat-error *ngIf="feedbackForm.get('storeId')?.hasError('required')">
           Store selection is required

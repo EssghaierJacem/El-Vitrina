@@ -33,7 +33,7 @@ public class ProductService implements IProductService {
     private StoreRepository storeRepository;
     // ---- CRUD Operations ----
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public ProductDTO createProduct(ProductCreationDTO productDTO) {
         Product product = new Product();
         copyCreationDtoToEntity(productDTO, product);

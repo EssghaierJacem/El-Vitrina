@@ -1,0 +1,23 @@
+.table-responsive {
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+
+.mat-mdc-row {
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.mat-mdc-cell {
+  padding: 8px 16px;
+}
+
+.mat-mdc-header-cell {
+  padding: 8px 16px;
+  font-weight: 500;
+}
+
+.m-l-8 {
+  margin-left: 8px;
+}
