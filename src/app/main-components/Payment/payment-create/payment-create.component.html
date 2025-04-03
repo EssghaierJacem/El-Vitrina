@@ -1,0 +1,72 @@
+<mat-card class="cardWithShadow theme-card card">
+  <mat-card-header>
+    <mat-card-title>Créer un Paiement</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form (ngSubmit)="createPayment()">
+      <div class="row">
+        <!-- Montant -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Montant (TND)</mat-label>
+            <input matInput type="number" [(ngModel)]="payment.amount" name="amount" placeholder="Montant" required />
+          </mat-form-field>
+        </div>
+
+        <!-- Date de Transaction -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Date de Transaction</mat-label>
+            <input matInput type="date" [(ngModel)]="payment.transactionDate" name="transactionDate" required />
+          </mat-form-field>
+        </div>
+
+        <!-- Méthode de paiement -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Méthode de Paiement</mat-label>
+            <input matInput [(ngModel)]="payment.method" name="method" placeholder="Méthode" required />
+          </mat-form-field>
+        </div>
+
+        <!-- Statut -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Statut</mat-label>
+            <mat-select [(ngModel)]="payment.paystatus" name="paystatus" required>
+              <mat-option value="PENDING">En attente</mat-option>
+              <mat-option value="CONFIRMED">Confirmée</mat-option>
+              <mat-option value="FAILED">Échouée</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Commandes associées -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Commandes associées</mat-label>
+            <mat-select [(ngModel)]="payment.customOrders" name="customOrders" multiple required>
+              <mat-option *ngFor="let order of availableOrders" [value]="order.id">
+                {{ order.products }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- ID Utilisateur -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>ID Utilisateur</mat-label>
+            <input matInput type="number" [(ngModel)]="payment.userID" name="userID" placeholder="ID Utilisateur" required />
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="m-t-12">
+        <button mat-flat-button color="primary" type="submit">Créer</button>
+        <button mat-stroked-button color="warn" routerLink="/payments">Annuler</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
