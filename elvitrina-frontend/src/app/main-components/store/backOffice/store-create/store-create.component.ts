@@ -13,7 +13,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Router, RouterModule } from '@angular/router';
 import { StoreService } from 'src/app/core/services/store/store.service';
 import { StoreCategoryType } from 'src/app/core/models/store/store-category-type.enum';
-import { AuthService } from 'src/app/core/services/auth/auth.service';
+import { AuthService } from 'src/app/core/services/user/AuthService';
+import { TokenService } from 'src/app/core/services/user/TokenService';
 import { Store } from 'src/app/core/models/store/store.model';
 
 @Component({
@@ -41,6 +42,9 @@ export class StoreCreateComponent implements OnInit {
   isSubmitting = false;
   isLoading = false;
   currentUser: any;
+  userId: number | null = null;
+  firstName = '';
+  email = '';
   
   categoryOptions = Object.entries(StoreCategoryType).map(([value, key]) => ({
     value: key,
@@ -51,6 +55,7 @@ export class StoreCreateComponent implements OnInit {
     private fb: FormBuilder,
     private storeService: StoreService,
     private authService: AuthService,
+    private tokenService: TokenService,
     private snackBar: MatSnackBar,
     private router: Router
   ) {
@@ -58,13 +63,31 @@ export class StoreCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.currentUser = this.authService.getCurrentUser();
-    if (!this.currentUser) {
+    const token = this.tokenService.getToken();
+    if (!token) {
         this.snackBar.open('Please log in to create a store', 'Close', {
             duration: 3000,
             panelClass: ['error-snackbar']
         });
-        this.router.navigate(['/auth/login']);
+        this.router.navigate(['/authentication/login']);
+    } else {
+        this.loadCurrentUser();
+    }
+  }
+
+  private loadCurrentUser(): void {
+    const decodedToken = this.tokenService.getDecodedToken();
+    if (decodedToken) {
+      this.userId = decodedToken.id ?? null;
+      this.firstName = decodedToken.firstname || '';
+      this.email = decodedToken.email || '';
+      
+      // For backward compatibility
+      this.currentUser = {
+        id: this.userId,
+        name: this.firstName,
+        email: this.email
+      };
     }
   }
 
@@ -110,12 +133,12 @@ export class StoreCreateComponent implements OnInit {
         return;
     }
 
-    if (!this.currentUser) {
+    if (!this.userId) {
         this.snackBar.open('Please log in to create a store', 'Close', {
             duration: 3000,
             panelClass: ['error-snackbar']
         });
-        this.router.navigate(['/auth/login']);
+        this.router.navigate(['/authentication/login']);
         return;
     }
 
@@ -130,7 +153,7 @@ export class StoreCreateComponent implements OnInit {
         image: formValue.image?.trim(),
         status: formValue.status ?? true,
         featured: formValue.featured ?? false,
-        userId: this.currentUser.id
+        userId: this.userId
     };
 
     console.log('Submitting store data:', storeData);
@@ -152,8 +175,8 @@ export class StoreCreateComponent implements OnInit {
                 errorMessage = error.error.message;
             } else if (error.status === 404) {
                 errorMessage = 'User not found. Please log in again.';
-                this.authService.logout();
-                this.router.navigate(['/auth/login']);
+                localStorage.removeItem('token');
+                this.router.navigate(['/authentication/login']);
             }
             
             this.snackBar.open(errorMessage, 'Close', {

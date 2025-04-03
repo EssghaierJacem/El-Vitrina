@@ -9,7 +9,7 @@ import { StoreFeedbackType } from '../../models/storeFeedback/store-feedback-typ
 
 @Injectable({ providedIn: 'root' })
 export class StoreFeedbackService {
-  private apiUrl = 'http://localhost:9009/api/store-feedbacks';
+  private apiUrl = 'http://localhost:8080/api/store-feedbacks';
 
   constructor(private http: HttpClient) {}
 

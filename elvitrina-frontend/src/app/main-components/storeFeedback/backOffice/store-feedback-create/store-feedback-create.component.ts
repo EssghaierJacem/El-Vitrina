@@ -14,7 +14,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Router, RouterModule } from '@angular/router';
 import { StoreFeedbackService } from 'src/app/core/services/storeFeedback/store-feedback.service';
 import { StoreService } from 'src/app/core/services/store/store.service';
-import { AuthService } from 'src/app/core/services/auth/auth.service';
+import { AuthService } from 'src/app/core/services/user/AuthService';
+import { TokenService } from 'src/app/core/services/user/TokenService';
 import { StoreFeedbackType, getStoreFeedbackTypeDisplayName } from 'src/app/core/models/storeFeedback/store-feedback-type.enum';
 import { Store } from 'src/app/core/models/store/store.model';
 import { StoreFeedback } from 'src/app/core/models/storeFeedback/store-feedback.model';
@@ -45,6 +46,10 @@ export class StoreFeedbackCreateComponent implements OnInit {
   feedbackForm: FormGroup;
   isSubmitting = false;
   stores: Store[] = [];
+  currentUser: any;
+  userId: number | null = null;
+  firstName = '';
+  email = '';
   
   feedbackTypeOptions = Object.values(StoreFeedbackType).map(type => ({
     value: type,
@@ -56,6 +61,7 @@ export class StoreFeedbackCreateComponent implements OnInit {
     private storeFeedbackService: StoreFeedbackService,
     private storeService: StoreService,
     private authService: AuthService,
+    private tokenService: TokenService,
     private snackBar: MatSnackBar,
     private router: Router
   ) {
@@ -64,6 +70,23 @@ export class StoreFeedbackCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadStores();
+    this.loadCurrentUser();
+  }
+
+  private loadCurrentUser(): void {
+    const decodedToken = this.tokenService.getDecodedToken();
+    if (decodedToken) {
+      this.userId = decodedToken.id ?? null;
+      this.firstName = decodedToken.firstname || '';
+      this.email = decodedToken.email || '';
+      
+      // For backward compatibility
+      this.currentUser = {
+        id: this.userId,
+        name: this.firstName,
+        email: this.email
+      };
+    }
   }
 
   private loadStores(): void {
@@ -94,12 +117,21 @@ export class StoreFeedbackCreateComponent implements OnInit {
     if (this.feedbackForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
       
-      const currentUser = this.authService.getCurrentUser();
+      const token = this.tokenService.getToken();
       
-      if (!currentUser) {
+      if (!token) {
         this.snackBar.open('You must be logged in to submit feedback', 'Close', {
           duration: 5000
         });
+        this.isSubmitting = false;
+        return;
+      }
+
+      if (!this.userId) {
+        this.snackBar.open('User information not found. Please log in again.', 'Close', {
+          duration: 5000
+        });
+        this.router.navigate(['/authentication/login']);
         this.isSubmitting = false;
         return;
       }
@@ -110,9 +142,9 @@ export class StoreFeedbackCreateComponent implements OnInit {
         wouldRecommend: this.feedbackForm.value.wouldRecommend,
         storeFeedbackType: this.feedbackForm.value.storeFeedbackType,
         storeId: Number(this.feedbackForm.value.storeId),
-        userId: currentUser.id,
-        userEmail: currentUser.email,
-        userName: currentUser.name,
+        userId: this.userId,
+        userEmail: this.email,
+        userName: this.firstName,
         createdAt: new Date().toISOString()
       };
 

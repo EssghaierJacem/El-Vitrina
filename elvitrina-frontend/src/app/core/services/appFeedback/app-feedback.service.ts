@@ -8,7 +8,7 @@ import { AppFeedback } from '../../models/appFeedback/app-feedback.model';
   providedIn: 'root'
 })
 export class AppFeedbackService {
-  private apiUrl = 'http://localhost:9009/api/app-feedbacks';
+  private apiUrl = 'http://localhost:8080/api/app-feedbacks';
 
   constructor(private http: HttpClient) { }
 

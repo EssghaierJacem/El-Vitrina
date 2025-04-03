@@ -28,7 +28,7 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Store',
     iconName: 'store',
-    route: '/dashboard/stores', // Adjust this route based on your actual routing setup
+    route: '/dashboard/stores',
   },
   {
     navCap: 'Products',
