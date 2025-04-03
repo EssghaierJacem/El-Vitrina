@@ -6,12 +6,10 @@ import { UserTableComponent } from './main-components/user/user-table/user-table
 
 export const routes: Routes = [
   {
-    path: 'authentication',
-    component: BlankComponent,
-    loadChildren: () =>
-      import('./pages/authentication/authentication.routes').then(
-        (m) => m.AuthenticationRoutes
-      ),
+    path: '',
+    component: FrontComponent, 
+    children: [    
+    ],
   },
   {
     path: 'dashboard',
