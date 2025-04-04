@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/payments")
+@RequiredArgsConstructor
 public class paymentController {
     private final PaymentService paymentService;
 
@@ -25,7 +27,7 @@ public class paymentController {
         return ResponseEntity.ok(paymentService.createPayment(payment));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getById/{id}")
     public ResponseEntity<Payment> getPaymentById(@PathVariable Long id) {
         Optional<Payment> payment = paymentService.getPaymentById(id);
         return payment.map(ResponseEntity::ok)
@@ -37,7 +39,7 @@ public class paymentController {
         return ResponseEntity.ok(paymentService.getAllPayments());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<Payment> updatePayment(@PathVariable Long id, @RequestBody Payment payment) {
         return ResponseEntity.ok(paymentService.updatePayment(id, payment));
     }

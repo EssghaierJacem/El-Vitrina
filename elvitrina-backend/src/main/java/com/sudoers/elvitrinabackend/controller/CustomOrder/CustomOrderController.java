@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/orders")
+@RequiredArgsConstructor
 public class CustomOrderController {
 
         private final CustomOrderService customOrderService;
@@ -28,7 +30,7 @@ public class CustomOrderController {
             return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
         }
 
-        @GetMapping("/{id}")
+        @GetMapping("/getById/{id}")
         public ResponseEntity<CustomOrder> getOrderById(@PathVariable Long id) {
             Optional<CustomOrder> customOrder = customOrderService.getOrderById(id);
             return customOrder.map(ResponseEntity::ok)
@@ -41,7 +43,7 @@ public class CustomOrderController {
             return ResponseEntity.ok(orders);
         }
 
-        @PutMapping("/{id}")
+        @PutMapping("/update/{id}")
         public ResponseEntity<CustomOrder> updateOrder(@PathVariable Long id, @RequestBody CustomOrder customOrder) {
             CustomOrder updatedOrder = customOrderService.updateOrder(id, customOrder);
             return updatedOrder != null ? ResponseEntity.ok(updatedOrder)
