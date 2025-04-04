@@ -27,4 +27,5 @@ public class UserDTO {
     private boolean isActive;
     private RoleType role;
     private String password;
+    private String image;
 }
