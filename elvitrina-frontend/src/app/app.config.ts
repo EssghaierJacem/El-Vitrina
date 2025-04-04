@@ -13,6 +13,7 @@ import {
   provideRouter,
   withComponentInputBinding,
   withInMemoryScrolling,
+  RouteReuseStrategy,
 } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideClientHydration } from '@angular/platform-browser';

@@ -1,0 +1,125 @@
+<div class="container">
+  <mat-card class="cardWithShadow">
+    <mat-card-content>
+      <!-- Header with Back Button -->
+      <div class="d-flex justify-content-between align-items-center m-b-16">
+        <div class="d-flex align-items-center">
+          <button mat-icon-button color="primary" [routerLink]="['../']">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <mat-card-title>Store Feedback Details</mat-card-title>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      @if (isLoading) {
+        <div class="text-center p-y-32">
+          <mat-spinner diameter="40" class="m-auto"></mat-spinner>
+        </div>
+      }
+
+      <!-- Error State -->
+      @if (!isLoading && !feedback) {
+        <div class="text-center p-y-32 text-danger">
+          <mat-icon>error</mat-icon>
+          <p>Feedback not found</p>
+          <button mat-raised-button color="primary" [routerLink]="['../']">
+            Back to List
+          </button>
+        </div>
+      }
+
+      <!-- Feedback Details -->
+      @if (!isLoading && feedback) {
+        <div class="feedback-details">
+          <!-- Store -->
+          <div class="detail-section">
+            <h3 class="m-b-8 text-secondary">Store</h3>
+            <p>{{ feedback.storeName || 'N/A' }}</p>
+          </div>
+
+          <mat-divider class="m-y-16"></mat-divider>
+
+          <!-- Type -->
+          <div class="detail-section">
+            <h3 class="m-b-8 text-secondary">Feedback Type</h3>
+            <mat-chip-listbox>
+              <mat-chip [color]="'primary'" selected>
+                {{ getFeedbackTypeDisplayName(feedback.storeFeedbackType) }}
+              </mat-chip>
+            </mat-chip-listbox>
+          </div>
+
+          <mat-divider class="m-y-16"></mat-divider>
+
+          <!-- Rating -->
+          <div class="detail-section">
+            <h3 class="m-b-8 text-secondary">Rating</h3>
+            <div class="rating-display">
+              {{ getRatingStars(feedback.rating) }}
+            </div>
+          </div>
+
+          <mat-divider class="m-y-16"></mat-divider>
+
+          <!-- Comment -->
+          <div class="detail-section">
+            <h3 class="m-b-8 text-secondary">Comment</h3>
+            <p class="comment-text">{{ feedback.comment }}</p>
+          </div>
+
+          <mat-divider class="m-y-16"></mat-divider>
+
+          <!-- Would Recommend -->
+          <div class="detail-section">
+            <h3 class="m-b-8 text-secondary">Would Recommend</h3>
+            <div class="d-flex align-items-center">
+              <mat-icon [class.recommended]="feedback.wouldRecommend" class="m-r-8">
+                {{ feedback.wouldRecommend ? 'thumb_up' : 'thumb_down' }}
+              </mat-icon>
+              <span>{{ feedback.wouldRecommend ? 'Yes' : 'No' }}</span>
+            </div>
+          </div>
+
+          <mat-divider class="m-y-16"></mat-divider>
+
+          <!-- Metadata -->
+          <div class="detail-section">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h3 class="m-b-8 text-secondary">Submitted By</h3>
+                <div class="user-info">
+                  <img [src]="feedback.userImage || 'assets/images/default-avatar.png'" 
+                       [alt]="feedback.userName" 
+                       class="user-avatar">
+                  <div class="user-details">
+                    <div class="user-name">{{ feedback.userName }}</div>
+                    <div class="user-email">{{ feedback.userEmail }}</div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3 class="m-b-8 text-secondary">Submitted On</h3>
+                <p>{{ formatDate(feedback.createdAt) }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="actions m-t-32">
+            <div class="d-flex gap-2">
+              <button mat-button color="primary" [routerLink]="['../edit', feedbackId]">
+                <mat-icon>edit</mat-icon>
+                Edit Feedback
+              </button>
+              <button mat-button color="warn" (click)="deleteFeedback()">
+                <mat-icon>delete</mat-icon>
+                Delete Feedback
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,11 +1,12 @@
 export interface NavItem {
+    navCap?: string;
     displayName?: string;
     iconName?: string;
-    navCap?: string;
     route?: string;
-    children?: NavItem[];
+    disabled?: boolean;
     chip?: boolean;
-    chipContent?: string;
     chipClass?: string;
+    chipContent?: string;
+    children?: NavItem[];
     external?: boolean;
 }

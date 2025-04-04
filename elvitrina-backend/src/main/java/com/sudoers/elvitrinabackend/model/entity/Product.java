@@ -2,6 +2,7 @@ package com.sudoers.elvitrinabackend.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sudoers.elvitrinabackend.model.enums.ProductCategoryType;
+import com.sudoers.elvitrinabackend.model.enums.ProductStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -52,6 +53,9 @@ public class Product implements Serializable {
 
     private boolean hasDiscount;
 
+    @Enumerated(EnumType.STRING)
+    private ProductStatus status;
+
     @ElementCollection
     private List<@URL(message = "Image must be a valid URL") String> images;
 
@@ -60,8 +64,11 @@ public class Product implements Serializable {
     private Store store;
 
     @ManyToMany(mappedBy = "products", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
+    //@JsonIgnore
     private List<CustomOrder> customOrders;
 
+    public boolean isActive() {
+        return status == ProductStatus.ACTIVE;
+    }
 
 }
