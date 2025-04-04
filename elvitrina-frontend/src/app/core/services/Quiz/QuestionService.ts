@@ -7,7 +7,7 @@ import { Question } from 'src/app/core/models/Quiz/question';
   providedIn: 'root'
 })
 export class QuestionService {
-  private apiUrl = 'http://example.com/api/questions';  // Remplace par ton URL d'API
+  private apiUrl = 'http://localhost:8080/api/questions';  // Remplace par ton URL d'API
 
   constructor(private http: HttpClient) {}
 

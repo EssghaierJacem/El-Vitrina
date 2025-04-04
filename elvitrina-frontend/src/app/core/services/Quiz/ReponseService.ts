@@ -7,8 +7,7 @@ import { Response } from 'src/app/core/models/Quiz/reponse';
   providedIn: 'root'
 })
 export class ResponseService {
-  private apiUrl = 'http://example.com/api/responses';  // Remplace par ton URL d'API
-
+  private apiUrl = 'http://localhost:8080/api/payment;'  
   constructor(private http: HttpClient) {}
 
   createResponse(response: Response): Observable<Response> {

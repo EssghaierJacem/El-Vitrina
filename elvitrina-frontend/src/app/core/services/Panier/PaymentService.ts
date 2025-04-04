@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class PaymentService {
 
-  private apiUrl = 'http://example.com/api/payments';  // Remplacez par votre URL d'API
+  private apiUrl = 'http://localhost:8080/api/payment'; // Remplacez par votre URL d'API
 
   constructor(private http: HttpClient) {}
 

@@ -21,7 +21,7 @@ export const navItems: NavItem[] = [
 
   {
     navCap: 'Apps',
-  }, 
+  },
   {
     displayName: 'Users & Offers',
     iconName: 'user',
@@ -89,7 +89,7 @@ export const navItems: NavItem[] = [
           }
         ],
       },
-     
+
     ],
   },
   {
@@ -131,9 +131,21 @@ export const navItems: NavItem[] = [
         ]
       },
       {
-        displayName: 'Réponse',
+        displayName: 'Reponse ',
         iconName: 'point',
         route: 'dashboard/quiz/reponse',
+            children: [
+             {
+            displayName: 'Reponse List',
+            iconName: 'list',
+            route: 'dashboard/reponse/list'
+          },
+          {
+            displayName: 'Reponse Create',
+            iconName: 'plus-circle',
+            route: 'dashboard/reponse/create'
+          }
+        ]
       },
     ],
   },
@@ -232,7 +244,7 @@ export const navItems: NavItem[] = [
         iconName: 'point',
         external: true,
         chip: true,
-        chipClass: 'bg-secondary text-white', 
+        chipClass: 'bg-secondary text-white',
         chipContent: 'PRO',
         route: 'https://modernize-angular-main.netlify.app/authentication/login',
       },
