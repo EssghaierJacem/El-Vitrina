@@ -1439,13 +1439,13 @@
     
               <!-- Toggle -->
               <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
-                <img class="mb-1 me-1" src="assets/images/flags/usa.svg" alt="..." /> United States
+                <img class="mb-1 me-1" src="assets/images/flags/tunisia.svg" alt="..." /> Tunisia
               </a>
     
               <!-- Menu -->
               <div class="dropdown-menu min-w-0">
                 <a class="dropdown-item" href="#!">
-                  <img class="mb-1 me-2" src="assets/images/flags/usa.svg" alt="USA">United States
+                  <img class="mb-1 me-2" src="assets/images/flags/tunisia.svg" alt="USA"> Tunisia
                 </a>
                 <a class="dropdown-item" href="#!">
                   <img class="mb-1 me-2" src="assets/images/flags/canada.svg" alt="Canada">Canada
@@ -1459,7 +1459,7 @@
             <li class="nav-item dropdown">
     
               <!-- Toggle -->
-              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">USD</a>
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">TND</a>
     
               <!-- Menu -->
               <div class="dropdown-menu min-w-0">
@@ -1487,9 +1487,6 @@
           <ul class="nav navbar-nav me-8">
             <li class="nav-item">
               <a class="nav-link" href="#">Shipping</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">FAQ</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Contact</a>
@@ -2005,7 +2002,7 @@
     
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Docs</a>
+              <a class="nav-link" *ngIf="isLoggedIn" href="#">Hello, {{ firstName || ' Guest' }}</a>
             </li>
           </ul>
     
@@ -2016,11 +2013,37 @@
                 <i class="fe fe-search"></i>
               </a>
             </li>
-            <li class="nav-item ms-lg-n4">
-              <a class="nav-link" href="#">
-                <i class="fe fe-user"></i>
-              </a>
-            </li>
+
+          <!-- User Dropdown -->
+          <li class="nav-item ms-lg-n4 dropdown">
+            <a class="nav-link" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fe fe-user"></i>
+            </a>
+
+            <!-- Dropdown Menu -->
+            <div class="dropdown-menu">
+              <div class="card card-lg">
+                <div class="card-body">
+                  <ul class="list-styled fs-sm">
+                    <li class="list-styled-item" *ngIf="isLoggedIn()">
+                      <a class="list-styled-link" href="#" [routerLink]="['/user', userId, 'profile']">Profile</a>
+                    </li>
+                    <li class="list-styled-item" *ngIf="isLoggedIn()">
+                      <a class="list-styled-link" href="#" (click)="logout()">Logout</a>
+                    </li>
+                    <!-- Login/Register when user is not logged in -->
+                    <li class="list-styled-item" *ngIf="!isLoggedIn()">
+                      <a class="list-styled-link" routerLink="/authentication/login">Login</a>
+                    </li>
+                    <li class="list-styled-item" *ngIf="!isLoggedIn()">
+                      <a class="list-styled-link" routerLink="/authentication/register">Register</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+
             <li class="nav-item ms-lg-n4">
               <a class="nav-link" href="#">
                 <i class="fe fe-heart"></i>

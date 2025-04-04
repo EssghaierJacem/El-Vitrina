@@ -5,7 +5,7 @@ export interface Offer {
     discount: number;
     startDate: string;  
     endDate: string;    
-    offer: string;      
+    offer?: 'BUYERSERVICE' | 'SELLERSERVICE' | 'INVESTORSERVICE';    
     userId: number;     
   }
   

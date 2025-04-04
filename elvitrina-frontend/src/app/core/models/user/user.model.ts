@@ -12,6 +12,6 @@ export interface User {
     points?: number;
     password?: string;
     isActive?: boolean;
-    role?: 'ADMIN' | 'USER' | 'MODERATOR'; 
+    role?: 'ADMIN' | 'USER' | 'SELLER' | 'INVESTOR'; 
   }
   
