@@ -33,8 +33,6 @@ export const routes: Routes = [
     path: 'dashboard', 
     component: FullComponent,
     canActivate: [AdminGuard], 
-    path: 'dashboard',
-    component: FullComponent,
     children: [
       {
         path: '',

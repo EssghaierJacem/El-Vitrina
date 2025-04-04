@@ -8,10 +8,3 @@
   </a>
   }
 </div>
-<ng-scrollbar class="position-relative" style="height: calc(100% - 64px)">
-  <mat-nav-list class="sidebar-list">
-    @for(item of navItems; track item) {
-      <app-nav-item [item]="item" (notify)="toggleMobileNav.emit()"></app-nav-item>
-    }
-  </mat-nav-list>
-</ng-scrollbar>

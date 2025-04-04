@@ -49,36 +49,18 @@ export const navItems: NavItem[] = [
   // },
   
   {
-    navCap: 'Apps',
-  }, 
-  {
-    displayName: 'Users & Offers',
-    iconName: 'user',
-    chip: true,
-    // chipClass: 'bg-secondary text-white',
-    // chipContent: 'PRO',
-    route: 'users',
-    children: [
-      {
-        displayName: 'Users',
-        iconName: 'point',
-        external: true,
-        chip: true,
-        chipClass: 'bg-secondary text-white',
-        chipContent: 'ADMIN',
-        route: 'dashboard/users',
-      },
-      {
-        displayName: 'Offers',
-        iconName: 'point',
-        external: true,
-        chip: true,
-        chipClass: 'bg-secondary text-white',
-        chipContent: 'ADMIN',
-        route: 'dashboard/offers',
-      },
-    ],
+    navCap: 'Users and Offers',
   },
+  {
+    displayName: 'Users',
+    iconName: 'user',
+    route: '/dashboard/users',
+  },
+  {
+    displayName: 'Offers',
+    iconName: 'point',
+    route: '/dashboard/offers',
+  }, 
 
   {
     navCap: 'Ui Components',
