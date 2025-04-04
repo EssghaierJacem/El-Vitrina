@@ -38,7 +38,13 @@ export class LoginComponent {
     this.authService.login(request).subscribe({
       next: (res) => {
         this.tokenService.saveToken(res.token);
-        this.router.navigate(['/dashboard']);
+        const userRole = this.tokenService.getRole();  
+
+        if (userRole === 'ADMIN') {
+          this.router.navigate(['/dashboard']); 
+        } else {
+          this.router.navigate(['/']);  
+        }
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Invalid credentials';

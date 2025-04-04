@@ -31,7 +31,7 @@ import { RouterModule } from '@angular/router';
   ]
 })
 export class OfferEditComponent implements OnInit {
-  offer: Offer = { name: '', description: '', discount: 0, startDate: '', endDate: '', offer: '', userId: 1 };
+  offer: Offer = { name: '', description: '', discount: 0, startDate: '', endDate: '', offer: 'BUYERSERVICE', userId: 1 };
 
   constructor(
     private offerService: OfferService,

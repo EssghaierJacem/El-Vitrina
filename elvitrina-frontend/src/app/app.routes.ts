@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
+import { AdminGuard } from './main-components/user/adminGuard.component';
 
 export const routes: Routes = [
   {
@@ -12,6 +13,11 @@ export const routes: Routes = [
         path: 'offers',
         loadChildren: () =>
           import('./main-components/offer/frontoffice/frontoffice_offer.routes').then((m) => m.FrontOfferRoutes),
+      },
+      {
+        path: 'user',
+        loadChildren: () =>
+          import('./main-components/user/frontoffice/frontuser.routes').then((m) => m.FrontUserRoutes),
       },
     ],
   },
@@ -24,6 +30,9 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'dashboard', 
+    component: FullComponent,
+    canActivate: [AdminGuard], 
     path: 'dashboard',
     component: FullComponent,
     children: [
