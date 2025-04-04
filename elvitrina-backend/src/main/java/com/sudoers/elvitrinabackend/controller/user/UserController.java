@@ -66,4 +66,16 @@ public class UserController {
         userService.deleteUser(id);
     }
 
+    @PutMapping("/change-password/{id}")
+    public ResponseEntity<String> changePassword(@PathVariable Long id, @RequestParam String currentPassword,
+            @RequestParam String newPassword) {
+        try {
+            userService.changePassword(id, currentPassword, newPassword);
+            return ResponseEntity.ok("Password changed successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+
 }

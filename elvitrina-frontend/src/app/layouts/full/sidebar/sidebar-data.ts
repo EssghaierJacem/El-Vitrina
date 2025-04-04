@@ -9,6 +9,35 @@ export const navItems: NavItem[] = [
     iconName: 'layout-grid-add',
     route: '/dashboard',
   },
+  {
+    navCap: 'Feedback',
+  },
+  {
+    displayName: 'App Feedback',
+    iconName: 'feedback',
+    route: '/dashboard/app-feedback',
+  },
+  {
+    displayName: 'Store Feedback',
+    iconName: 'feedback',
+    route: '/dashboard/store-feedback',
+  },
+  {
+    navCap: 'Store',
+  },
+  {
+    displayName: 'Store',
+    iconName: 'store',
+    route: '/dashboard/stores',
+  },
+  {
+    navCap: 'Products',
+  },
+  {
+    displayName: 'Product',
+    iconName: 'shopping-cart',
+    route: '/dashboard/products',
+  },
   // {
   //   displayName: 'Analytical',
   //   iconName: 'aperture',
@@ -18,39 +47,20 @@ export const navItems: NavItem[] = [
   //   chipClass: 'bg-secondary text-white',
   //   chipContent: 'PRO',
   // },
-
+  
   {
-    navCap: 'Apps',
-  }, 
-  {
-    displayName: 'Users & Offers',
-    iconName: 'user',
-    chip: true,
-    // chipClass: 'bg-secondary text-white',
-    // chipContent: 'PRO',
-    route: 'users',
-    children: [
-      {
-        displayName: 'Users',
-        iconName: 'point',
-        external: true,
-        chip: true,
-        chipClass: 'bg-secondary text-white',
-        chipContent: 'ADMIN',
-        route: 'dashboard/users',
-      },
-      {
-        displayName: 'Offers',
-        iconName: 'point',
-        external: true,
-        chip: true,
-        chipClass: 'bg-secondary text-white',
-        chipContent: 'ADMIN',
-        route:
-          'dashboard/offers',
-      },
-    ],
+    navCap: 'Users and Offers',
   },
+  {
+    displayName: 'Users',
+    iconName: 'user',
+    route: '/dashboard/users',
+  },
+  {
+    displayName: 'Offers',
+    iconName: 'point',
+    route: '/dashboard/offers',
+  }, 
 
   {
     navCap: 'Ui Components',

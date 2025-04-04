@@ -1,0 +1,55 @@
+.w-100 {
+  width: 100%;
+}
+
+.max-w-300 {
+  max-width: 300px;
+}
+
+.m-auto {
+  margin: auto;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.d-block {
+  display: block;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rating {
+  color: #ffd700;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+}
+
+.f-w-600 {
+  font-weight: 600;
+}
+
+.f-s-14 {
+  font-size: 14px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
