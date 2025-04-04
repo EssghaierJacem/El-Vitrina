@@ -1,0 +1,122 @@
+.p-4 {
+  padding: 1rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+table {
+  width: 100%;
+}
+
+.light-theme {
+  background-color: transparent;
+}
+
+.cardWithShadow {
+  margin: 15px;
+  padding: 0;
+  border-radius: 8px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  margin: 15px 0;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.m-b-16 {
+  margin-bottom: 16px;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.m-auto {
+  margin: auto;
+}
+
+.f-w-600 {
+  font-weight: 600;
+}
+
+.f-s-14 {
+  font-size: 14px;
+}
+
+.f-s-12 {
+  font-size: 12px;
+}
+
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.max-w-300 {
+  max-width: 300px;
+}
+
+.bg-light-primary {
+  background-color: rgba(63, 81, 181, 0.1);
+}
+
+.text-primary {
+  color: #3f51b5;
+}
+
+.rounded {
+  border-radius: 4px;
+}
+
+.p-6 {
+  padding: 6px;
+}
+
+.p-y-4 {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.pagination-container {
+  margin-top: 16px;
+}

@@ -1,0 +1,57 @@
+.m-t-16 {
+  margin-top: 16px;
+}
+
+.m-b-16 {
+  margin-bottom: 16px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.justify-content-end {
+  justify-content: flex-end;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.rating-container {
+  .rating-label {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 14px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .rating-display {
+    color: #ffd700;
+    font-size: 24px;
+    text-align: center;
+    margin-top: 8px;
+  }
+}
+
+mat-form-field {
+  margin-bottom: 16px;
+}
+
+::ng-deep {
+  .mat-mdc-slider {
+    margin: 16px 0;
+  }
+}

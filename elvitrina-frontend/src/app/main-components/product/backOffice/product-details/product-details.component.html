@@ -1,0 +1,86 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <!-- Header with Back Button -->
+    <div class="d-flex justify-content-between align-items-center m-b-16">
+      <div class="d-flex align-items-center">
+        <button mat-icon-button color="primary" [routerLink]="['../']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <mat-card-title>Product Details</mat-card-title>
+      </div>
+      @if (product) {
+        <button mat-raised-button color="primary" [routerLink]="['../edit', product.productId]">
+          <mat-icon>edit</mat-icon>
+          Edit Product
+        </button>
+      }
+    </div>
+
+    @if (isLoading) {
+      <div class="d-flex justify-content-center m-t-16">
+        <mat-spinner></mat-spinner>
+      </div>
+    } @else if (product) {
+      <div class="product-details">
+        <!-- Product Images -->
+        @if (product.images && product.images.length > 0) {
+          <div class="product-images m-b-16">
+            <div class="image-gallery">
+              @for (image of product.images; track image) {
+                <img [src]="image" [alt]="product.productName" class="product-image">
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Product Information -->
+        <div class="product-info">
+          <h2>{{ product.productName }}</h2>
+          <p class="text-muted">{{ product.description }}</p>
+
+          <div class="details-grid">
+            <div class="detail-item">
+              <strong>Price:</strong>
+              <span>{{ product.price | currency }}</span>
+              @if (product.hasDiscount) {
+                <mat-chip color="accent" class="m-l-8">Sale</mat-chip>
+              }
+            </div>
+            <div class="detail-item">
+              <strong>Stock Quantity:</strong>
+              <mat-chip [color]="product.stockQuantity > 0 ? 'primary' : 'warn'">
+                {{ product.stockQuantity }}
+              </mat-chip>
+            </div>
+            <div class="detail-item">
+              <strong>Category:</strong>
+              <span>{{ product.category }}</span>
+            </div>
+            <div class="detail-item">
+              <strong>Status:</strong>
+              <mat-chip [color]="product.status === 'ACTIVE' ? 'primary' : 'warn'">
+                {{ product.status }}
+              </mat-chip>
+            </div>
+            <div class="detail-item">
+              <strong>Store:</strong>
+              <span>{{ product.store?.storeName }}</span>
+            </div>
+            <div class="detail-item">
+              <strong>Created At:</strong>
+              <span>{{ product.createdAt | date:'medium' }}</span>
+            </div>
+            <div class="detail-item">
+              <strong>Last Updated:</strong>
+              <span>{{ product.updatedAt | date:'medium' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="text-center m-t-16">
+        <p>Product not found</p>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

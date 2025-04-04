@@ -1,0 +1,73 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <!-- Header with Back Button -->
+    <div class="d-flex justify-content-between align-items-center m-b-16">
+      <div class="d-flex align-items-center">
+        <button mat-icon-button color="primary" [routerLink]="['../../', feedbackId]">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <mat-card-title>Edit Feedback</mat-card-title>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading) {
+      <div class="text-center p-y-32">
+        <mat-spinner diameter="40" class="m-auto"></mat-spinner>
+      </div>
+    }
+
+    <!-- Form -->
+    @if (!isLoading) {
+      <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" class="m-t-16">
+        <!-- Type Selection -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Feedback Type</mat-label>
+          <mat-select formControlName="appFeedbackType" required>
+            @for (option of feedbackTypeOptions; track option.value) {
+              <mat-option [value]="option.value">{{ option.label }}</mat-option>
+            }
+          </mat-select>
+          <mat-error *ngIf="feedbackForm.get('appFeedbackType')?.hasError('required')">
+            Feedback type is required
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Comment -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Comment</mat-label>
+          <textarea matInput formControlName="comment" rows="4" required></textarea>
+          <mat-error *ngIf="feedbackForm.get('comment')?.hasError('required')">
+            Comment is required
+          </mat-error>
+          <mat-error *ngIf="feedbackForm.get('comment')?.hasError('minlength')">
+            Comment must be at least 10 characters
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Contact Email -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Contact Email (Optional)</mat-label>
+          <input matInput formControlName="contactEmail" type="email">
+          <mat-error *ngIf="feedbackForm.get('contactEmail')?.hasError('email')">
+            Please enter a valid email address
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-end gap-2 m-t-16">
+          <button mat-button type="button" [routerLink]="['../../', feedbackId]" [disabled]="isSubmitting">
+            Cancel
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="feedbackForm.invalid || isSubmitting">
+            @if (isSubmitting) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              Save Changes
+            }
+          </button>
+        </div>
+      </form>
+    }
+  </mat-card-content>
+</mat-card>

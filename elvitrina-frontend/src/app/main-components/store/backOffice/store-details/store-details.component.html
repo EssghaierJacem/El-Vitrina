@@ -1,0 +1,75 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <!-- Header with Back Button -->
+    <div class="d-flex justify-content-between align-items-center m-b-16">
+      <div class="d-flex align-items-center">
+        <button mat-icon-button color="primary" [routerLink]="['../']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <mat-card-title>Store Details</mat-card-title>
+      </div>
+      @if (store) {
+        <button mat-raised-button color="primary" [routerLink]="['../edit', store.storeId]">
+          <mat-icon>edit</mat-icon>
+          Edit Store
+        </button>
+      }
+    </div>
+
+    @if (isLoading) {
+      <div class="d-flex justify-content-center m-t-16">
+        <mat-spinner></mat-spinner>
+      </div>
+    } @else if (store) {
+      <div class="store-details">
+        <!-- Store Image -->
+        @if (store.image) {
+          <div class="store-image m-b-16">
+            <img [src]="store.image" [alt]="store.storeName" class="w-100">
+          </div>
+        }
+
+        <!-- Store Information -->
+        <div class="store-info">
+          <h2>{{ store.storeName }}</h2>
+          <p class="text-muted">{{ store.description }}</p>
+
+          <div class="details-grid">
+            <div class="detail-item">
+              <strong>Category:</strong>
+              <span>{{ store.category }}</span>
+            </div>
+            <div class="detail-item">
+              <strong>Status:</strong>
+              <mat-chip [color]="store.status ? 'primary' : 'warn'">
+                {{ store.status ? 'Active' : 'Inactive' }}
+              </mat-chip>
+            </div>
+            <div class="detail-item">
+              <strong>Featured:</strong>
+              <mat-icon [color]="store.featured ? 'primary' : ''">
+                {{ store.featured ? 'star' : 'star_border' }}
+              </mat-icon>
+            </div>
+            <div class="detail-item">
+              <strong>Address:</strong>
+              <span>{{ store.address }}</span>
+            </div>
+            <div class="detail-item">
+              <strong>Created At:</strong>
+              <span>{{ store.createdAt | date:'medium' }}</span>
+            </div>
+            <div class="detail-item">
+              <strong>Last Updated:</strong>
+              <span>{{ store.updatedAt | date:'medium' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="text-center m-t-16">
+        <p>Store not found</p>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

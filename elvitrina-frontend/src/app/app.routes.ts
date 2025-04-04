@@ -7,8 +7,8 @@ import { AdminGuard } from './main-components/user/adminGuard.component';
 export const routes: Routes = [
   {
     path: '',
-    component: FrontComponent, 
-    children: [    
+    component: FrontComponent,
+    children: [
       {
         path: 'offers',
         loadChildren: () =>
@@ -21,7 +21,14 @@ export const routes: Routes = [
       },
     ],
   },
-
+  {
+    path: 'authentication',
+    component: BlankComponent,
+    loadChildren: () =>
+      import('./pages/authentication/authentication.routes').then(
+        (m) => m.AuthenticationRoutes
+      ),
+  },
   {
     path: 'dashboard', 
     component: FullComponent,
@@ -50,32 +57,35 @@ export const routes: Routes = [
           import('./main-components/offer/backoffice/backoffice_offer.routes').then(m => m.OfferRoutes),
       },
       {
+        path: 'app-feedback',
+        loadChildren: () =>
+          import('./main-components/appFeedback/backOffice/app-feedback.routes').then(m => m.AppFeedbackRoutes),
+      },
+      {
+        path: 'store-feedback',
+        loadChildren: () =>
+          import('./main-components/storeFeedback/backOffice/store-feedback.routes')
+            .then(m => m.StoreFeedbackRoutes)
+      },
+      {
+        path: 'stores',
+        loadChildren: () =>
+          import('./main-components/store/backOffice/store.routes')
+            .then(m => m.StoreRoutes)
+      },
+      {
+        path: 'products',
+        loadChildren: () =>
+          import('./main-components/product/backOffice/product.routes')
+            .then(m => m.ProductRoutes)
+      },
+      {
         path: 'extra',
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
       },
     ],
   },
-
-  {
-    path: '',
-    redirectTo: 'authentication',
-    pathMatch: 'full'
-  },
-  {
-    path: '',
-    component: BlankComponent,
-    children: [
-      {
-        path: 'authentication',
-        loadChildren: () =>
-          import('./pages/authentication/authentication.routes').then(
-            (m) => m.AuthenticationRoutes
-          ),
-      },
-    ],
-  },
-
   {
     path: '**',
     redirectTo: 'authentication/error',
