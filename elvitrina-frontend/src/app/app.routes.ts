@@ -2,14 +2,26 @@ import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
-import { UserTableComponent } from './main-components/user/user-table/user-table.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: FrontComponent, 
-    children: [    
+    component: FrontComponent,
+    children: [
+      {
+        path: 'offers',
+        loadChildren: () =>
+          import('./main-components/offer/frontoffice/frontoffice_offer.routes').then((m) => m.FrontOfferRoutes),
+      },
     ],
+  },
+  {
+    path: 'authentication',
+    component: BlankComponent,
+    loadChildren: () =>
+      import('./pages/authentication/authentication.routes').then(
+        (m) => m.AuthenticationRoutes
+      ),
   },
   {
     path: 'dashboard',
@@ -66,11 +78,6 @@ export const routes: Routes = [
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
       },
     ],
-  },
-  {
-    path: '',
-    component: FrontComponent,
-    children: [],
   },
   {
     path: '**',
