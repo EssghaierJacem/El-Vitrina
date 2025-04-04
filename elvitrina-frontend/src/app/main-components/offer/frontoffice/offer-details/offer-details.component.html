@@ -1,0 +1,69 @@
+<!-- offer-details.component.html -->
+<div class="offer-container">
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading offer details...</p>
+    </div>
+  
+    <div *ngIf="errorMessage && !isLoading" class="error-container">
+      <mat-icon color="warn">error</mat-icon>
+      <p>{{ errorMessage }}</p>
+    </div>
+  
+    <mat-card *ngIf="offer && !isLoading" class="offer-card">
+      <mat-card-header>
+        <mat-card-title>{{ offer.name }}</mat-card-title>
+        <mat-card-subtitle>
+          <mat-chip-set>
+            <mat-chip [ngClass]="getDiscountClass()" highlighted>
+              {{ offer.discount }}% OFF
+            </mat-chip>
+            <mat-chip *ngIf="isOfferActive()" color="primary" highlighted>
+              <mat-icon>check_circle</mat-icon> Active
+            </mat-chip>
+            <mat-chip *ngIf="isOfferExpired()" color="warn" highlighted>
+              <mat-icon>cancel</mat-icon> Expired
+            </mat-chip>
+          </mat-chip-set>
+        </mat-card-subtitle>
+      </mat-card-header>
+  
+      <mat-card-content>
+        <div class="offer-details">
+          <span class="title-label">Description:</span> 
+          <div>&nbsp;</div>
+          <p class="offer-description">{{ offer.description }}</p>
+          
+          <mat-divider></mat-divider>
+          
+          <div class="detail-row">
+            <span class="detail-label">Start Date:</span>
+            <span class="detail-value">{{ offer.startDate | date:'mediumDate' }}</span>
+          </div>
+          
+          <div class="detail-row">
+            <span class="detail-label">End Date:</span>
+            <span class="detail-value">{{ offer.endDate | date:'mediumDate' }}</span>
+          </div>
+          
+          <div class="detail-row">
+            <span class="detail-label">Offer Code:</span>
+            <span class="detail-value code-value">{{ offer.offer }}</span>
+          </div>
+          
+        </div>
+      </mat-card-content>
+  
+      <mat-card-actions align="end">
+        <button mat-button color="accent" [routerLink]="['/offers']" >
+            <mat-icon>arrow_back</mat-icon> Back to Offers
+          </button>
+        <button mat-button color="primary">
+          <mat-icon>content_copy</mat-icon> Copy Code
+        </button>
+        <button mat-raised-button color="primary">
+          <mat-icon>redeem</mat-icon> Apply Offer
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>

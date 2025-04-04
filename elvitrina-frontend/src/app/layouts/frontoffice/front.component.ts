@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, Renderer2, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';  // Import DOCUMENT to access the DOM
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { CoreService } from 'src/app/services/core.service';
 import { FrontHeaderComponent } from './header/front-header.component';
 import { FrontTopstripComponent } from './top-strip/front-topstrip.component';
@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../full/sidebar/sidebar.component';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { TablerIconsModule } from 'angular-tabler-icons';
+import { FooterComponent } from './footer/footer.component';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -29,9 +30,9 @@ const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
     SidebarComponent,
     NgScrollbarModule,
     TablerIconsModule,
+    FooterComponent,
  ],
   templateUrl: './front.component.html',
-  styleUrls: [],
   encapsulation: ViewEncapsulation.None,
 })
 export class FrontComponent implements OnInit {
@@ -45,6 +46,8 @@ export class FrontComponent implements OnInit {
     private settings: CoreService,
     private router: Router,
     private breakpointObserver: BreakpointObserver,
+    private renderer: Renderer2,  // Inject Renderer2
+    @Inject(DOCUMENT) private document: Document  // Inject DOCUMENT to access the DOM
   ) {
     this.layoutChangesSubscription = this.breakpointObserver
       .observe([MOBILE_VIEW, TABLET_VIEW])
@@ -52,16 +55,39 @@ export class FrontComponent implements OnInit {
         this.isMobileScreen = state.breakpoints[MOBILE_VIEW];
       });
 
-    // this.router.events
-    //   .pipe(filter((event) => event instanceof NavigationEnd))
-    //   .subscribe(() => {
-    //     this.content.scrollTo({ top: 0 });
-    //   });
+    // Inject CSS and JS
+    this.addExternalFiles();
   }
 
   ngOnInit(): void {}
 
   ngOnDestroy() {
     this.layoutChangesSubscription.unsubscribe();
+  }
+
+  private addExternalFiles() {
+    // Add CSS
+    const cssLinks = [
+      'assets/css/libs.bundle.css',
+      'assets/css/theme.bundle.css'
+    ];
+    cssLinks.forEach((cssLink) => {
+      const linkElement = this.renderer.createElement('link');
+      this.renderer.setAttribute(linkElement, 'rel', 'stylesheet');
+      this.renderer.setAttribute(linkElement, 'href', cssLink);
+      this.renderer.appendChild(this.document.head, linkElement);
+    });
+
+    // Add JS
+    const jsScripts = [
+      'assets/js/vendor.bundle.js',
+      'assets/js/theme.bundle.js'
+    ];
+    jsScripts.forEach((jsScript) => {
+      const scriptElement = this.renderer.createElement('script');
+      this.renderer.setAttribute(scriptElement, 'src', jsScript);
+      this.renderer.setAttribute(scriptElement, 'type', 'text/javascript');
+      this.renderer.appendChild(this.document.body, scriptElement);
+    });
   }
 }

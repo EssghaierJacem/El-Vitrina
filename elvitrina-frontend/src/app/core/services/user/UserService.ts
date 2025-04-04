@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { User } from '../../models/user/user.model';
+import { TokenService } from './TokenService';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -9,7 +10,7 @@ import { Observable } from 'rxjs';
 export class UserService {
   private baseUrl = 'http://localhost:8080/users';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private tokenService: TokenService) {}
 
   register(user: User): Observable<User> {
     return this.http.post<User>(`${this.baseUrl}/register`, user);
@@ -44,4 +45,12 @@ export class UserService {
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+  changePassword(changePasswordData: { userId: number, currentPassword: string, newPassword: string }): Observable<any> {
+    const { userId, currentPassword, newPassword } = changePasswordData;
+    return this.http.put<any>(`http://localhost:8080/users/change-password/${userId}`, null, {
+      params: { currentPassword, newPassword }
+    });
+  }
+  
 }

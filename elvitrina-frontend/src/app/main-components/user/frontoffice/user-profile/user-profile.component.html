@@ -1,0 +1,120 @@
+<div class="profile-container">
+    <mat-card class="profile-card">
+      <mat-card-header>
+        <mat-card-title>Profile Settings</mat-card-title>
+        <mat-card-subtitle>Update your personal information</mat-card-subtitle>
+        
+        <!-- Home button in the header -->
+        <button mat-icon-button color="primary" routerLink="/" class="home-button">
+          <mat-icon>home</mat-icon>
+        </button>
+      </mat-card-header>
+  
+      <mat-card-content>
+        <div *ngIf="isLoading" class="loading-spinner">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+        
+        <div *ngIf="!isLoading" class="profile-content">
+          <!-- Profile Image Section -->
+          <div class="profile-image-container">
+            <div class="profile-image-circle" [style.background-image]="user.image ? 'url(' + user.image + ')' : ''">
+              <div *ngIf="!user.image" class="profile-image-placeholder">
+                {{ user.firstname?.charAt(0) || '' }}{{ user.lastname?.charAt(0) || '' }}
+              </div>
+            </div>
+            
+            <mat-form-field appearance="outline" class="image-url-field">
+              <mat-label>Profile Image URL</mat-label>
+              <input matInput [(ngModel)]="user.image" name="imageUrl" placeholder="Enter image URL">
+            </mat-form-field>
+          </div>
+  
+          <mat-divider class="section-divider"></mat-divider>
+          
+          <!-- Personal Information Section -->
+          <div class="form-section">
+            <h3>Personal Information</h3>
+            
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>First Name</mat-label>
+                <input matInput [(ngModel)]="user.firstname" name="firstname" required>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Last Name</mat-label>
+                <input matInput [(ngModel)]="user.lastname" name="lastname" required>
+              </mat-form-field>
+            </div>
+            
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" [(ngModel)]="user.email" name="email" required>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Phone</mat-label>
+                <input matInput [(ngModel)]="user.phone" name="phone">
+              </mat-form-field>
+            </div>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Address</mat-label>
+              <textarea matInput [(ngModel)]="user.address" name="address" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+          
+          <mat-divider class="section-divider"></mat-divider>
+          
+          <!-- Account Information Section -->
+          <div class="form-section">
+            <h3>Account Information</h3>
+            
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Role</mat-label>
+                <mat-select [(ngModel)]="user.role" name="role" [disabled]="true">
+                  <mat-option *ngFor="let role of roles" [value]="role">
+                    {{role}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Points</mat-label>
+                <input matInput [(ngModel)]="user.points" name="points" type="number" [disabled]="true">
+              </mat-form-field>
+            </div>
+            
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Registration Date</mat-label>
+                <input matInput [(ngModel)]="user.registrationDate" name="registrationDate" [disabled]="true">
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Status</mat-label>
+                <input matInput [value]="user.isActive ? 'Active' : 'Inactive'" [disabled]="true">
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions class="action-buttons">
+        <div class="action-buttons-left">
+          <button mat-raised-button color="accent" routerLink="/user/change-password">
+            <mat-icon>key</mat-icon> Change Password
+          </button>
+        </div>
+        <div class="action-buttons-right">
+          <button mat-button routerLink="/">Cancel</button>
+          <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="isLoading">
+            Save Changes
+          </button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </div>

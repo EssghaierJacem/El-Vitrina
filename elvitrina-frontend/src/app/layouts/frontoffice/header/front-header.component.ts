@@ -33,9 +33,7 @@ export class FrontHeaderComponent {
   @Output() toggleMobileNav = new EventEmitter<void>();
 
   firstName = '';
-  email = '';
   userId: number | null = null;
-  userImage = ''; 
 
   constructor(
     private tokenService: TokenService,
@@ -43,11 +41,11 @@ export class FrontHeaderComponent {
   ) {}
 
   ngOnInit(): void {
-    const user = this.tokenService.getDecodedToken();
-    this.firstName = user?.firstname || 'Guest';
-    this.email = user?.email || '';
-    this.userId = user?.id ?? null;
-    this.userImage = user?.['image'] || '';
+    if (this.isLoggedIn()) {
+      const user = this.tokenService.getDecodedToken();
+      this.firstName = user?.firstname || 'Guest';
+      this.userId = user?.id ?? null;
+    }
   }
 
   logout(): void {
@@ -57,7 +55,11 @@ export class FrontHeaderComponent {
 
   goToProfile(): void {
     if (this.userId) {
-      this.router.navigate([`/users/${this.userId}/edit`]); 
+      this.router.navigate([`/user/${this.userId}/profile`]);
     }
+  }
+
+  isLoggedIn(): boolean {
+    return this.tokenService.getToken() !== null;
   }
 }

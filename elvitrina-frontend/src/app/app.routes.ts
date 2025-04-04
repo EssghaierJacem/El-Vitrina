@@ -2,18 +2,30 @@ import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
+import { AdminGuard } from './main-components/user/adminGuard.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: FrontComponent, 
     children: [    
+      {
+        path: 'offers',
+        loadChildren: () =>
+          import('./main-components/offer/frontoffice/frontoffice_offer.routes').then((m) => m.FrontOfferRoutes),
+      },
+      {
+        path: 'user',
+        loadChildren: () =>
+          import('./main-components/user/frontoffice/frontuser.routes').then((m) => m.FrontUserRoutes),
+      },
     ],
   },
 
   {
     path: 'dashboard', 
-    component: FullComponent, 
+    component: FullComponent,
+    canActivate: [AdminGuard], 
     children: [
       {
         path: '',
