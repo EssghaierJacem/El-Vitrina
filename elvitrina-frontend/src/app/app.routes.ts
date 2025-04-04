@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
+import { customOrderRoutes } from './main-components/custom-order/custom-order.routes';
 
 export const routes: Routes = [
   {
@@ -32,6 +33,22 @@ export const routes: Routes = [
             (m) => m.UiComponentsRoutes
           ),
       },
+      {
+        path: 'custom-order',
+        loadChildren: () =>
+          import('./main-components/custom-order/custom-order.routes').then(m => m.customOrderRoutes),
+      },
+      {
+        path: 'payment',
+        loadChildren: () =>
+          import('./main-components/payment/payment.routes').then(m => m.PaymentRoutes),
+      },
+      {
+        path: 'quiz',
+        loadChildren: () =>
+          import('./main-components/Quiz/quiz/quiz.routes').then(m => m.QuizRoutes),
+      },
+      
       {
         path: 'users',
         loadChildren: () =>

@@ -51,7 +51,92 @@ export const navItems: NavItem[] = [
       },
     ],
   },
-
+  {
+    displayName: 'Order & Payment',
+    iconName: 'shopping-cart',
+    children: [
+      {
+        displayName: 'Custom Order',
+        iconName: 'shopping-cart',
+        route: 'dashboard/custom-order',
+        children: [
+          {
+            displayName: 'List',
+            iconName: 'list',
+            route: 'dashboard/custom-order/list',
+          },
+          {
+            displayName: 'Create',
+            iconName: 'plus-circle',
+            route: 'dashboard/custom-order/create',
+          }
+        ],
+      },
+      {
+        displayName: 'Payment',
+        iconName: 'credit-card',
+        route: 'dashboard/payment',
+        children: [
+          {
+            displayName: 'List',
+            iconName: 'list',
+            route: 'dashboard/payment/list',
+          },
+          {
+            displayName: 'Create',
+            iconName: 'plus-circle',
+            route: 'dashboard/payment/create',
+          }
+        ],
+      },
+     
+    ],
+  },
+  {
+    displayName: 'Quiz',
+    iconName: 'clipboard-list',
+    children: [
+      {
+        displayName: 'Quiz',
+        iconName: 'clipboard-list',
+        route: 'dashboard/quiz',
+        children: [
+          {
+            displayName: 'Quiz List',
+            iconName: 'list',
+            route: 'dashboard/quiz/list',
+          },
+          {
+            displayName: 'Create Quiz',
+            iconName: 'plus-circle',
+            route: 'dashboard/quiz/create',
+          }
+        ],
+      },
+      {
+        displayName: 'Question',
+        iconName: 'point',
+        route: 'dashboard/quiz/question',
+        children: [
+          {
+            displayName: 'Quesion List',
+            iconName: 'help-circle',
+            route: 'dashboard/question/list'
+          },
+          {
+            displayName: 'Question Create',
+            iconName: 'plus-circle',
+            route: 'dashboard/question/create'
+          }
+        ]
+      },
+      {
+        displayName: 'Réponse',
+        iconName: 'point',
+        route: 'dashboard/quiz/reponse',
+      },
+    ],
+  },
   {
     navCap: 'Ui Components',
   },
