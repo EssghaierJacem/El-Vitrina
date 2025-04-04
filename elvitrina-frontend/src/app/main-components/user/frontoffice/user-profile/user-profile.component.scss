@@ -1,0 +1,126 @@
+.profile-container {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .profile-card {
+    max-width: 800px;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+  }
+  
+  .profile-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .profile-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+  }
+  
+  .profile-image-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    border: 3px solid #3f51b5;
+  }
+  
+  .profile-image-placeholder {
+    font-size: 42px;
+    font-weight: 500;
+    color: #616161;
+  }
+  
+  .image-url-field {
+    width: 80%;
+    max-width: 400px;
+  }
+  
+  .section-divider {
+    margin: 10px 0 20px 0;
+  }
+  
+  .form-section {
+    h3 {
+      color: #3f51b5;
+      font-weight: 500;
+      margin-bottom: 15px;
+    }
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 20px;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 0;
+    }
+    
+    mat-form-field {
+      flex: 1;
+    }
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    align-items: center;
+  }
+  
+  .action-buttons-left {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .action-buttons-right {
+    display: flex;
+    gap: 10px;
+  }
+  
+  mat-card-header {
+    position: relative;
+  }
+  
+  .home-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  
+  @media (max-width: 600px) {
+    .action-buttons {
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .action-buttons-left, 
+    .action-buttons-right {
+      width: 100%;
+      justify-content: center;
+    }
+  }
