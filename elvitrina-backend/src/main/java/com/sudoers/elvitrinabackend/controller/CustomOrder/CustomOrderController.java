@@ -3,6 +3,7 @@ package com.sudoers.elvitrinabackend.controller.CustomOrder;
 import com.sudoers.elvitrinabackend.model.entity.CustomOrder;
 import com.sudoers.elvitrinabackend.model.enums.OrderStatusType;
 import com.sudoers.elvitrinabackend.service.customOrder.CustomOrderService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/orders")
-@RequiredArgsConstructor
+
 public class CustomOrderController {
 
         private final CustomOrderService customOrderService;

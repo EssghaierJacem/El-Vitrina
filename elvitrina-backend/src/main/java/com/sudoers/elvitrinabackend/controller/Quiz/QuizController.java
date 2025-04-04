@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequiredArgsConstructor
+
 @RequestMapping("/api/quizzes")
 public class QuizController {
     private final QuizService quizService;

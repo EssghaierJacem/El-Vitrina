@@ -8,13 +8,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Payment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,17 +23,16 @@ public class Payment {
     private LocalDateTime transactionDate;
 
     @Enumerated(EnumType.STRING)
-    private PaymentMethodType method ;
-
+    private PaymentMethodType method;
 
     @Enumerated(EnumType.STRING)
-    private PaymentStatusType Paystatus;
+    private PaymentStatusType paystatus;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "payment_id")
-    private Payment payment;
-
-
-
-
+    @OneToMany
+    @JoinTable(
+            name = "payment_orders",  // Table de jointure
+            joinColumns = @JoinColumn(name = "payment_id"),  // Clé étrangère vers `payment`
+            inverseJoinColumns = @JoinColumn(name = "order_id")  // Clé étrangère vers `custom_order`
+    )
+    private List<CustomOrder> orders;
 }

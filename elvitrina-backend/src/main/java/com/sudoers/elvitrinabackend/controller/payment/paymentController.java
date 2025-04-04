@@ -2,6 +2,7 @@ package com.sudoers.elvitrinabackend.controller.payment;
 
 import com.sudoers.elvitrinabackend.model.entity.Payment;
 import com.sudoers.elvitrinabackend.service.payment.PaymentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +15,7 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/payments")
-@RequiredArgsConstructor
+
 public class paymentController {
     private final PaymentService paymentService;
 
