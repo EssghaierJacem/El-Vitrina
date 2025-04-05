@@ -1,9 +1,232 @@
-<h3>Friend Requests</h3>
-<div *ngFor="let request of friendRequests" class="request-card">
-  <p><strong>Sender:</strong> {{ request.senderFirstName }} {{ request.senderLastName }}</p>
-  <p><strong>Receiver:</strong> {{ request.receiverFirstName }} {{ request.receiverLastName }}</p>
-  <p>Status: {{ request.status }}</p>
-  <button *ngIf="request.status === 'PENDING'" (click)="acceptFriendRequest(request.id)">Accept</button>
-  <button *ngIf="request.status === 'PENDING'" (click)="rejectFriendRequest(request.id)">Reject</button>
-  <button (click)="deleteFriendRequest(request.id)">Delete</button>
+<div class="dashboard-container">
+  <h3>Connect with People.</h3>
+  Chat with your favorite store owners, find investors and more !
+  <div>&nbsp;</div>
+  <div class="dashboard-header">
+    <mat-card class="stat-card">
+      <mat-icon class="stat-icon friends">diversity_3</mat-icon>
+      <div class="stat-content">
+        <span class="stat-number">{{ acceptedFriends.length }}</span>
+        <span class="stat-label">Friends</span>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-icon class="stat-icon pending">pending</mat-icon>
+      <div class="stat-content">
+        <span class="stat-number">{{ receivedRequests.length }}</span>
+        <span class="stat-label">Pending</span>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-icon class="stat-icon sent">send</mat-icon>
+      <div class="stat-content">
+        <span class="stat-number">{{ sentRequests.length }}</span>
+        <span class="stat-label">Sent</span>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Main content with tabs -->
+  <mat-card class="main-content">
+    <mat-tab-group animationDuration="300ms" mat-stretch-tabs="false" mat-align-tabs="start">
+      <!-- Friends Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">people</mat-icon>
+          <span>Friends</span>
+          <span class="badge-count" *ngIf="acceptedFriends.length > 0">{{ acceptedFriends.length }}</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <div *ngIf="acceptedFriends.length === 0" class="empty-state">
+            <img src="assets/images/profile/empty.png" alt="No friends yet" class="empty-illustration">
+            <h3>No friends yet</h3>
+            <p>When you connect with others, they'll appear here</p>
+            <button mat-flat-button color="primary">
+              <mat-icon>person_add</mat-icon>
+              Find Friends
+            </button>
+          </div>
+
+          <div *ngIf="acceptedFriends.length > 0" class="friends-grid">
+            <div *ngFor="let friend of acceptedFriends" class="friend-card-container">
+              <mat-card class="friend-card">
+                <div class="friend-header">
+                  <div class="avatar-container">
+                    <img [src]="friend.sender?.image || 'assets/images/profile/Sokka.webp'" 
+                         alt="Friend's avatar" 
+                         class="friend-avatar"
+                         (error)="onImageError($event)">
+                    <span class="status-indicator" 
+                          [class.online]="friend.sender?.status"
+                          [class.offline]="!friend.sender?.status"></span>
+                  </div>
+                  <div class="friend-meta">
+                    <h3>{{ friend.senderFirstName }} {{ friend.senderLastName }}</h3>
+                    <span class="mutual-info" *ngIf="getMutualFriendsRandom(friend) > 0">
+                      {{ getMutualFriendsRandom(friend) }} mutual friends
+                    </span>
+                    <span class="since-info">
+                      Friends since {{ formatFriendshipDate(friend.sentAt) }}
+                    </span>
+                  </div>
+                  <mat-icon [matMenuTriggerFor]="friendMenu" class="more-options">more_vert</mat-icon>
+                  <mat-menu #friendMenu="matMenu" xPosition="before">
+                    <button mat-menu-item>
+                      <mat-icon>message</mat-icon>
+                      <span>Send Message</span>
+                    </button>
+                    <button mat-menu-item>
+                      <mat-icon>block</mat-icon>
+                      <span>Block</span>
+                    </button>
+                    <mat-divider></mat-divider>
+                    <button mat-menu-item color="warn">
+                      <mat-icon color="warn">person_remove</mat-icon>
+                      <span class="warn-text">Remove Friend</span>
+                    </button>
+                  </mat-menu>
+                </div>
+
+                <div class="friend-actions">
+                  <button mat-stroked-button class="action-button">
+                    <mat-icon>chat</mat-icon>
+                    Message
+                  </button>
+                  <button mat-stroked-button class="action-button">
+                    <mat-icon>person_pin</mat-icon>
+                    Profile
+                  </button>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Received Requests Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon" [matBadge]="receivedRequests.length" 
+                   [matBadgeHidden]="receivedRequests.length === 0" 
+                   matBadgeColor="accent">inbox</mat-icon>
+          <span>Requests</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <div *ngIf="receivedRequests.length === 0" class="empty-state">
+            <img src="assets/images/profile/empty.png" alt="No requests" class="empty-illustration">
+            <h3>No pending requests</h3>
+            <p>When someone sends you a friend request, it will appear here</p>
+          </div>
+
+          <div *ngIf="receivedRequests.length > 0" class="requests-list">
+            <div *ngFor="let request of receivedRequests" class="request-item-container">
+              <mat-card class="request-card">
+                <div class="request-content">
+                  <div class="request-avatar">
+                    <img [src]="request.sender?.image || 'assets/images/profile/Sokka.webp'" 
+                         alt="User avatar"
+                         (error)="onImageError($event)">
+                  </div>
+                  <div class="request-details">
+                    <h3>{{ request.senderFirstName }} {{ request.senderLastName }}</h3>
+                    <div class="request-meta">
+                      <span class="request-time">
+                        <mat-icon class="meta-icon">schedule</mat-icon>
+                        {{ formatRequestTime(request.sentAt) }}
+                      </span>
+                      <span class="mutual-info" *ngIf="getMutualFriendsRandom(request) > 0">
+                        <mat-icon class="meta-icon">people</mat-icon>
+                        {{ getMutualFriendsRandom(request) }} mutual
+                      </span>
+                    </div>
+                  </div>
+                  <mat-chip-set *ngIf="request.status !== 'PENDING'">
+                    <mat-chip [color]="getStatusColor(request.status)" selected>
+                      {{ request.status }}
+                    </mat-chip>
+                  </mat-chip-set>
+                </div>
+
+                <div class="request-actions" *ngIf="request.status === 'PENDING'">
+                  <button mat-flat-button color="primary" class="action-button" (click)="acceptFriendRequest(request.id)">
+                    <mat-icon>check</mat-icon>
+                    Accept
+                  </button>
+                  <button mat-stroked-button color="warn" class="action-button" (click)="rejectFriendRequest(request.id)">
+                    <mat-icon>close</mat-icon>
+                    Decline
+                  </button>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Sent Requests Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">outbox</mat-icon>
+          <span>Sent</span>
+          <span class="badge-count" *ngIf="sentRequests.length > 0">{{ sentRequests.length }}</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <div *ngIf="sentRequests.length === 0" class="empty-state">
+            <img src="assets/images/profile/empty.png" alt="No sent requests" class="empty-illustration">
+            <h3>No sent requests</h3>
+            <p>Friend requests you've sent will appear here</p>
+            <button mat-flat-button color="primary">
+              <mat-icon>person_search</mat-icon>
+              Find People
+            </button>
+          </div>
+
+          <div *ngIf="sentRequests.length > 0" class="requests-list">
+            <div *ngFor="let request of sentRequests" class="request-item-container">
+              <mat-card class="request-card">
+                <div class="request-content">
+                  <div class="request-avatar">
+                    <img [src]="request.receiver?.image || 'assets/images/default-avatar.png'" 
+                         alt="User avatar"
+                         (error)="onImageError($event)">
+                  </div>
+                  <div class="request-details">
+                    <h3>{{ request.receiverFirstName }} {{ request.receiverLastName }}</h3>
+                    <div class="request-meta">
+                      <span class="request-time">
+                        <mat-icon class="meta-icon">schedule</mat-icon>
+                        Sent {{ formatRequestTime(request.sentAt) }}
+                      </span>
+                    </div>
+                  </div>
+                  <mat-chip-set>
+                    <mat-chip [color]="getStatusColor(request.status)" selected>
+                      {{ request.status }}
+                    </mat-chip>
+                  </mat-chip-set>
+                </div>
+
+                <div class="request-actions" *ngIf="request.status === 'PENDING'">
+                  <button mat-stroked-button color="warn" class="action-button full-width" (click)="cancelFriendRequest(request.id)">
+                    <mat-icon>cancel</mat-icon>
+                    Cancel Request
+                  </button>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <mat-spinner [diameter]="50"></mat-spinner>
+  <p>Loading...</p>
 </div>

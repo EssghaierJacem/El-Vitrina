@@ -49,4 +49,12 @@ export class FriendRequestService {
   getMutualFriends(userId: number | null): Observable<FriendRequest[]> {
     return this.http.get<FriendRequest[]>(`${this.apiUrl}/mutualFriends/${userId}`);
   }
+
+  getSentRequests(userId: number | null): Observable<FriendRequest[]> {
+    return this.http.get<FriendRequest[]>(`${this.apiUrl}/sentRequests/${userId}`);
+  }
+  
+  getReceivedRequests(userId: number | null): Observable<FriendRequest[]> {
+    return this.http.get<FriendRequest[]>(`${this.apiUrl}/receivedRequests/${userId}`);
+  }
 }
