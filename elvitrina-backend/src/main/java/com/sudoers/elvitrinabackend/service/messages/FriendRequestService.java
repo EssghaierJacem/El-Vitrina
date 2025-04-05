@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class FriendRequestService {
@@ -139,37 +140,45 @@ public class FriendRequestService {
 
     public List<FriendRequestDTO> getMutualFriends(Long userId) {
         List<FriendRequest> requests = friendRequestRepository.findByStatusAndSenderIdOrReceiverId(RequestStatus.ACCEPTED, userId, userId);
+        Set<Long> processedIds = new HashSet<>();
 
         return requests.stream()
-                .map(request -> {
+                .flatMap(request -> {
                     if (request.getSender().getId().equals(userId)) {
-                        return new FriendRequestDTO(
-                                request.getId(),
-                                request.getSender().getId(),
-                                request.getSender().getFirstname(),
-                                request.getSender().getLastname(),
-                                request.getReceiver().getId(),
-                                request.getReceiver().getFirstname(),
-                                request.getReceiver().getLastname(),
-                                request.getStatus(),
-                                request.getSentAt()
-                        );
-                    } else {
-                        return new FriendRequestDTO(
-                                request.getId(),
-                                request.getReceiver().getId(),
-                                request.getReceiver().getFirstname(),
-                                request.getReceiver().getLastname(),
-                                request.getSender().getId(),
-                                request.getSender().getFirstname(),
-                                request.getSender().getLastname(),
-                                request.getStatus(),
-                                request.getSentAt()
-                        );
+                        if (processedIds.add(request.getReceiver().getId())) {
+                            return Stream.of(new FriendRequestDTO(
+                                    request.getId(),
+                                    request.getReceiver().getId(),
+                                    request.getReceiver().getFirstname(),
+                                    request.getReceiver().getLastname(),
+                                    request.getSender().getId(),
+                                    request.getSender().getFirstname(),
+                                    request.getSender().getLastname(),
+                                    request.getStatus(),
+                                    request.getSentAt()
+                            ));
+                        }
                     }
+                    if (request.getReceiver().getId().equals(userId)) {
+                        if (processedIds.add(request.getSender().getId())) {
+                            return Stream.of(new FriendRequestDTO(
+                                    request.getId(),
+                                    request.getSender().getId(),
+                                    request.getSender().getFirstname(),
+                                    request.getSender().getLastname(),
+                                    request.getReceiver().getId(),
+                                    request.getReceiver().getFirstname(),
+                                    request.getReceiver().getLastname(),
+                                    request.getStatus(),
+                                    request.getSentAt()
+                            ));
+                        }
+                    }
+                    return Stream.empty();
                 })
                 .collect(Collectors.toList());
     }
+
 
     public List<FriendRequestDTO> getSentRequests(Long userId) {
         List<FriendRequest> requests = friendRequestRepository.findBySenderId(userId);
