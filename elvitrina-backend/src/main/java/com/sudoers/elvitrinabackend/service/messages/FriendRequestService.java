@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -167,6 +169,58 @@ public class FriendRequestService {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    public List<FriendRequestDTO> getSentRequests(Long userId) {
+        List<FriendRequest> requests = friendRequestRepository.findBySenderId(userId);
+
+        Set<Long> uniqueReceiverIds = new HashSet<>();
+
+        List<FriendRequestDTO> sentRequests = requests.stream()
+                .filter(request -> {
+                    boolean isUnique = uniqueReceiverIds.add(request.getReceiver().getId());
+                    return isUnique;
+                })
+                .map(request -> new FriendRequestDTO(
+                        request.getId(),
+                        request.getSender().getId(),
+                        request.getSender().getFirstname(),
+                        request.getSender().getLastname(),
+                        request.getReceiver().getId(),
+                        request.getReceiver().getFirstname(),
+                        request.getReceiver().getLastname(),
+                        request.getStatus(),
+                        request.getSentAt()
+                ))
+                .collect(Collectors.toList());
+
+        return sentRequests;
+    }
+
+    public List<FriendRequestDTO> getReceivedRequests(Long userId) {
+        List<FriendRequest> requests = friendRequestRepository.findByReceiverId(userId);
+
+        Set<Long> uniqueSenderIds = new HashSet<>();
+
+        List<FriendRequestDTO> receivedRequests = requests.stream()
+                .filter(request -> {
+                    boolean isUnique = uniqueSenderIds.add(request.getSender().getId());
+                    return isUnique;
+                })
+                .map(request -> new FriendRequestDTO(
+                        request.getId(),
+                        request.getSender().getId(),
+                        request.getSender().getFirstname(),
+                        request.getSender().getLastname(),
+                        request.getReceiver().getId(),
+                        request.getReceiver().getFirstname(),
+                        request.getReceiver().getLastname(),
+                        request.getStatus(),
+                        request.getSentAt()
+                ))
+                .collect(Collectors.toList());
+
+        return receivedRequests;
     }
 
 }

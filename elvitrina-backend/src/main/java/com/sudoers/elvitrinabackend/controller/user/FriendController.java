@@ -41,6 +41,17 @@ public class FriendController {
         return friendRequestService.getRequestsForUser(userId);
     }
 
+    @GetMapping("/sentRequests/{userId}")
+    public List<FriendRequestDTO> getSentRequests(@PathVariable Long userId) {
+        return friendRequestService.getSentRequests(userId);
+    }
+
+    // Endpoint to get received requests
+    @GetMapping("/receivedRequests/{userId}")
+    public List<FriendRequestDTO> getReceivedRequests(@PathVariable Long userId) {
+        return friendRequestService.getReceivedRequests(userId);
+    }
+
     @DeleteMapping("/deleteRequest")
     public void deleteFriendRequest(@RequestParam Long requestId) {
         friendRequestService.deleteFriendRequest(requestId);
