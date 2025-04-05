@@ -6,7 +6,7 @@
     <mat-card class="stat-card">
       <mat-icon class="stat-icon friends">diversity_3</mat-icon>
       <div class="stat-content">
-        <span class="stat-number">{{ acceptedFriends.length }}</span>
+        <span class="stat-number">{{ mutualFriends.length }}</span>
         <span class="stat-label">Friends</span>
       </div>
     </mat-card>
@@ -36,11 +36,11 @@
         <ng-template mat-tab-label>
           <mat-icon class="tab-icon">people</mat-icon>
           <span>Friends</span>
-          <span class="badge-count" *ngIf="acceptedFriends.length > 0">{{ acceptedFriends.length }}</span>
+          <span class="badge-count" *ngIf="mutualFriends.length > 0">{{ mutualFriends.length }}</span>
         </ng-template>
 
         <div class="tab-content">
-          <div *ngIf="acceptedFriends.length === 0" class="empty-state">
+          <div *ngIf="mutualFriends.length === 0" class="empty-state">
             <img src="assets/images/profile/empty.png" alt="No friends yet" class="empty-illustration">
             <h3>No friends yet</h3>
             <p>When you connect with others, they'll appear here</p>
@@ -50,8 +50,8 @@
             </button>
           </div>
 
-          <div *ngIf="acceptedFriends.length > 0" class="friends-grid">
-            <div *ngFor="let friend of acceptedFriends" class="friend-card-container">
+          <div *ngIf="mutualFriends.length > 0" class="friends-grid">
+            <div *ngFor="let friend of mutualFriends" class="friend-card-container">
               <mat-card class="friend-card">
                 <div class="friend-header">
                   <div class="avatar-container">
@@ -64,7 +64,7 @@
                           [class.offline]="!friend.sender?.status"></span>
                   </div>
                   <div class="friend-meta">
-                    <h3>{{ friend.senderFirstName }} {{ friend.senderLastName }}</h3>
+                    <h3>{{ friend.firstName }} {{ friend.lastName }}</h3>
                     <span class="mutual-info" *ngIf="getMutualFriendsRandom(friend) > 0">
                       {{ getMutualFriendsRandom(friend) }} mutual friends
                     </span>

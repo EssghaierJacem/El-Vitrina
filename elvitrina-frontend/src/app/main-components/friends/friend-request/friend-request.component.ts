@@ -104,15 +104,12 @@ export class FriendRequestComponent implements OnInit {
       this.friendRequestService.getSentRequests(this.userId).pipe(
         catchError(error => {
           this.showNotification('Error loading sent requests', 'error');
-          console.error('Error fetching sent friend requests:', error);
           return of([]);
         })
-      ).subscribe(
-        (requests) => {
-          this.sentRequests = requests;
-          resolve();
-        }
-      );
+      ).subscribe((requests) => {
+        this.sentRequests = requests;
+        resolve();
+      });
     });
   }
 
@@ -121,15 +118,12 @@ export class FriendRequestComponent implements OnInit {
       this.friendRequestService.getReceivedRequests(this.userId).pipe(
         catchError(error => {
           this.showNotification('Error loading received requests', 'error');
-          console.error('Error fetching received friend requests:', error);
           return of([]);
         })
-      ).subscribe(
-        (requests) => {
-          this.receivedRequests = requests;
-          resolve();
-        }
-      );
+      ).subscribe((requests) => {
+        this.receivedRequests = requests;
+        resolve();
+      });
     });
   }
 
@@ -138,15 +132,13 @@ export class FriendRequestComponent implements OnInit {
       this.friendRequestService.getFriends(this.userId).pipe(
         catchError(error => {
           this.showNotification('Error loading friends list', 'error');
-          console.error('Error fetching accepted friends:', error);
           return of([]);
         })
-      ).subscribe(
-        (friends) => {
-          this.acceptedFriends = friends;
-          resolve();
-        }
-      );
+      ).subscribe((friends) => {
+        // Remove duplicates based on userId and receiverId
+        this.acceptedFriends = this.removeDuplicates(friends);
+        resolve();
+      });
     });
   }
 
@@ -256,5 +248,17 @@ export class FriendRequestComponent implements OnInit {
         console.error('Error fetching mutual friends:', error);
       }
     );
+  }
+  
+  removeDuplicates(friendsList: any[]): any[] {
+    const uniqueFriends = [];
+    const seenIds = new Set();
+    for (const friend of friendsList) {
+      if (!seenIds.has(friend.id)) {
+        seenIds.add(friend.id);
+        uniqueFriends.push(friend);
+      }
+    }
+    return uniqueFriends;
   }
 }
