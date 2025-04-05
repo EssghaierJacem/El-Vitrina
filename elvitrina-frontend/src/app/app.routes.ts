@@ -19,6 +19,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/user/frontoffice/frontuser.routes').then((m) => m.FrontUserRoutes),
       },
+      {
+        path: 'friends',
+        loadChildren: () =>
+          import('./main-components/friends/friend.routes').then((m) => m.FriendRoutes),
+      },
     ],
   },
   {

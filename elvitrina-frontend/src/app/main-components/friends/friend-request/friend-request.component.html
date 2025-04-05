@@ -1,0 +1,9 @@
+<h3>Friend Requests</h3>
+<div *ngFor="let request of friendRequests" class="request-card">
+  <p><strong>Sender:</strong> {{ request.senderFirstName }} {{ request.senderLastName }}</p>
+  <p><strong>Receiver:</strong> {{ request.receiverFirstName }} {{ request.receiverLastName }}</p>
+  <p>Status: {{ request.status }}</p>
+  <button *ngIf="request.status === 'PENDING'" (click)="acceptFriendRequest(request.id)">Accept</button>
+  <button *ngIf="request.status === 'PENDING'" (click)="rejectFriendRequest(request.id)">Reject</button>
+  <button (click)="deleteFriendRequest(request.id)">Delete</button>
+</div>

@@ -1,0 +1,16 @@
+<div class="user-cards-container">
+    <div *ngFor="let user of users" class="user-card">
+      <img *ngIf="user.image" [src]="user.image" alt="{{ user.name }}" class="user-image" />
+      <h3>{{ user.firstname }} {{ user.lastname }}</h3>
+      <p>{{ user.email }}</p>
+  
+      <button *ngIf="user.id && !sentRequests.has(user.id)" (click)="sendFriendRequest(user.id)">
+        Send Friend Request
+      </button>
+  
+      <button *ngIf="user.id && sentRequests.has(user.id)" (click)="handleRequestChange(user.id)">
+        Delete or Reject Request
+      </button>
+    </div>
+  </div>
+  
