@@ -23,6 +23,7 @@ public class RequestPerso {
     //@JsonManagedReference  // The "forward" side of the relationship
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     private String title;
@@ -36,6 +37,10 @@ public class RequestPerso {
     private String image;
 
     private LocalDateTime deliveryTime;
+
+    private int viewCount;
+
+    private List<String> tags;
 
     // One RequestPerson can have many ProposalPersons (One-to-Many)
 

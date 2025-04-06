@@ -3,9 +3,10 @@ import { BlankComponent } from './layouts/blank/blank.component';
 import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
 import { AdminGuard } from './main-components/user/adminGuard.component';
+import { RequestPersoCreateComponent } from './main-components/requestPerso/frontOffice/request-perso-create/request-perso-create.component';
 
-export const routes: Routes = [
-  {
+export const routes: Routes = [   // { path: 'createRequestperso', component:RequestPersoCreateComponent },
+  {  
     path: '',
     component: FrontComponent,
     children: [
@@ -18,6 +19,13 @@ export const routes: Routes = [
         path: 'user',
         loadChildren: () =>
           import('./main-components/user/frontoffice/frontuser.routes').then((m) => m.FrontUserRoutes),
+      },
+
+      //hazem try  
+      {
+        path: 'requestperso',
+        loadChildren: () =>
+          import('./main-components/requestPerso/frontOffice/frontoffice_requestPerso.routes').then((m) => m.RequestPersoCreate),
       },
     ],
   },
@@ -84,6 +92,7 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
       },
+      
     ],
   },
   {

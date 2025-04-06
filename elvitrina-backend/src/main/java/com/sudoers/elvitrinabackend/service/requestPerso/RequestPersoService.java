@@ -22,9 +22,15 @@ public class RequestPersoService implements IRequestPersoService{
     UserRepository userRepository;
     @Override
     public RequestPerso addRequestPerso(RequestPerso request) {
-        User user;
+       /* User user;
+        System.out.println("aaaa");
+        System.out.println(request.getUser());
       user=userRepository.findById(request.getUser().getId()).orElseThrow(null);
-    request.setUser(user);
+        System.out.println("aaaa1");
+      request.setUser(user);
+        System.out.println("aaaa");
+        System.out.println(user);
+        */
         return requestPersoRepository.save(request);
     }
     @Override

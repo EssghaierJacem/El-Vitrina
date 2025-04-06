@@ -2001,6 +2001,32 @@
               </div>
     
             </li>
+
+
+            <li class="nav-item dropdown">
+    
+              <!-- Toggle -->
+              <a class="nav-link" data-bs-toggle="dropdown" href="#">Request</a>
+    
+              <!-- Menu -->
+              <div class="dropdown-menu">
+                <div class="card card-lg">
+                  <div class="card-body">
+                    <ul class="list-styled fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" routerLink="/requestperso/createRequestperso">Make a request</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" routerLink="/requestperso/getAllRequestPerso">dive in</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+    
+            </li>
+
+
             <li class="nav-item">
               <a class="nav-link" *ngIf="isLoggedIn" href="#">Hello, {{ firstName || ' Guest' }}</a>
             </li>
