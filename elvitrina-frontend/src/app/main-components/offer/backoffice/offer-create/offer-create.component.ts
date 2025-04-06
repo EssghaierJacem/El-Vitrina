@@ -38,7 +38,7 @@ export class OfferCreateComponent implements OnInit {
     discount: 0,
     startDate: '',
     endDate: '',
-    offer: '',
+    offer: 'BUYERSERVICE',
     userId: 1,
   };
 

@@ -9,6 +9,35 @@ export const navItems: NavItem[] = [
     iconName: 'layout-grid-add',
     route: '/dashboard',
   },
+  {
+    navCap: 'Feedback',
+  },
+  {
+    displayName: 'App Feedback',
+    iconName: 'feedback',
+    route: '/dashboard/app-feedback',
+  },
+  {
+    displayName: 'Store Feedback',
+    iconName: 'feedback',
+    route: '/dashboard/store-feedback',
+  },
+  {
+    navCap: 'Store',
+  },
+  {
+    displayName: 'Store',
+    iconName: 'store',
+    route: '/dashboard/stores',
+  },
+  {
+    navCap: 'Products',
+  },
+  {
+    displayName: 'Product',
+    iconName: 'shopping-cart',
+    route: '/dashboard/products',
+  },
   // {
   //   displayName: 'Analytical',
   //   iconName: 'aperture',
@@ -135,8 +164,7 @@ export const navItems: NavItem[] = [
         iconName: 'point',
         route: 'dashboard/quiz/reponse',
             children: [
-             {
-            displayName: 'Reponse List',
+             { displayName: 'Reponse List',
             iconName: 'list',
             route: 'dashboard/reponse/list'
           },

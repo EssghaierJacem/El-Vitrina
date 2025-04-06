@@ -1,21 +1,36 @@
-<mat-card class="cardWithShadow theme-card card">
+<mat-card class="payment-card">
   <mat-card-header>
-    <mat-card-title>Détails du Paiement</mat-card-title>
+    <mat-card-title>Payment Details</mat-card-title>
+    <mat-card-subtitle>ID: {{payment.id}}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content *ngIf="payment">
-    <p><strong>ID :</strong> {{ payment.id }}</p>
-    <p><strong>Montant :</strong> {{ payment.amount | currency: 'TND' }}</p>
-    <p><strong>Date de Transaction :</strong> {{ payment.transactionDate | date:'dd/MM/yyyy' }}</p>
-    <p><strong>Méthode de Paiement :</strong> {{ payment.method }}</p>
-    <p><strong>Statut :</strong>
-      <mat-chip [color]="payment.paystatus === 'CONFIRMED' ? 'primary' : payment.paystatus === 'PENDING' ? 'accent' : 'warn'">
-        {{ payment.paystatus }}
-      </mat-chip>
-    </p>
-  </mat-card-content>
+    <div class="detail-row">
+      <span class="detail-label">Amount:</span>
+      <span class="detail-value">{{payment.amount | currency}}</span>
+    </div>
 
-  <mat-card-actions>
-    <button mat-flat-button color="primary" (click)="goBack()">Retour</button>
-  </mat-card-actions>
+    <div class="detail-row">
+      <span class="detail-label">Date:</span>
+      <span class="detail-value">{{payment.transactionDate | date}}</span>
+    </div>
+
+    <div class="detail-row">
+      <span class="detail-label">Method:</span>
+      <span class="detail-value">{{payment.method}}</span>
+    </div>
+
+    <div class="detail-row">
+      <span class="detail-label">Status:</span>
+      <mat-chip [class]="statusClass">
+        {{getStatusText(payment.paystatus)}}
+      </mat-chip>
+    </div>
+
+    <div class="actions">
+      <button mat-raised-button color="primary" (click)="navigateToPayments()">
+        <mat-icon>arrow_back</mat-icon> Back to Payments
+      </button>
+    </div>
+  </mat-card-content>
 </mat-card>

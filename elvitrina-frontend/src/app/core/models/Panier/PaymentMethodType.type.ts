@@ -1,0 +1,5 @@
+export enum PaymentMethodType {
+  CREDIT_CARD = 'CREDIT_CARD',
+  PAYPAL = 'PAYPAL',
+  CASHONDELIVER = 'CASHONDELIVER'
+}

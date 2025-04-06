@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CustomOrder } from 'src/app/core/models/Panier/CustomOrder';
 import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
 import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -30,7 +31,9 @@ import { MatIconModule } from '@angular/material/icon';
 export class CustomOrderViewComponent implements OnInit  {
   order: CustomOrder | null = null;
 
-  constructor(private orderService: CustomOrderService, private route: ActivatedRoute) {}
+
+  constructor(private orderService: CustomOrderService,
+    private route: ActivatedRoute) {}
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -44,13 +47,21 @@ export class CustomOrderViewComponent implements OnInit  {
     }
   }
 
-  deleteOrder() {
-    if (this.order) {
-      this.orderService.deleteOrder(this.order.id).subscribe(() => {
-        alert('Commande supprimée avec succès');
-       // this.router.navigate(['/orders']);
-      });
+  deleteOrder(id: number | undefined): void {
+    if (id === undefined) {
+      console.error('Cannot delete order: ID is undefined');
+      return;
     }
+
+    this.orderService.deleteOrder(id).subscribe({
+      next: () => {
+        // Handle successful deletion
+      //  this.route.navigate(['/orders']);
+      },
+      error: (err) => {
+        console.error('Error deleting order:', err);
+      }
+    });
   }
 
   nextOrder() {

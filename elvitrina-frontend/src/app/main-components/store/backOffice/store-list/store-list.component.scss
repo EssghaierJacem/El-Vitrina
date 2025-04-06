@@ -1,0 +1,35 @@
+.cardWithShadow {
+  margin: 16px;
+  padding: 16px;
+}
+
+.m-b-16 {
+  margin-bottom: 16px;
+}
+
+.m-t-16 {
+  margin-top: 16px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+mat-chip {
+  margin: 4px;
+}
+
+mat-icon {
+  cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+mat-paginator {
+  margin-top: 16px;
+}

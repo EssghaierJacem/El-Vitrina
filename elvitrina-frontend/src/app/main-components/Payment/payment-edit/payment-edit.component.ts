@@ -10,9 +10,17 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Payment } from 'src/app/core/models/Panier/payment';
+import { Payment } from 'src/app/core/models/Panier/Payment';
 import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
 import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
+import { PaymentMethodType } from 'src/app/core/models/Panier/PaymentMethodType.type';
+import { PaymentStatusType } from 'src/app/core/models/Panier/PaymentStatusType.type';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 @Component({
   selector: 'app-payment-edit',
   imports: [
@@ -23,21 +31,42 @@ import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule,
+    MatDatepickerModule,
+    MatSliderModule,
+    MatCheckboxModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
+
+
   ],
   templateUrl: './payment-edit.component.html',
   styleUrl: './payment-edit.component.scss'
 })
 export class PaymentEditComponent implements OnInit {
-  payment: Payment = {
-    id: 0,
-    amount: 0,
-    transactionDate: '',
-    method: '',
-    paystatus: '',
-    customOrders: [],
-    userID: 0
-  };
+
+    payment: Payment = {
+      id: 0,
+      amount: 0,
+      transactionDate: new Date(),
+      method: PaymentMethodType.CREDIT_CARD ,
+      paystatus: PaymentStatusType.PENDING ,
+      orders: []
+    };
+    paymentMethods = [
+      { value: 'CREDIT_CARD', viewValue: 'Credit Card' },
+      { value: 'PAYPAL', viewValue: 'PayPal' },
+      { value: 'BANK_TRANSFER', viewValue: 'Bank Transfer' },
+      { value: 'CASH', viewValue: 'Cash' }
+    ];
+
+    paymentStatuses = [
+      { value: 'PENDING', viewValue: 'Pending' },
+      { value: 'COMPLETED', viewValue: 'Completed' },
+      { value: 'FAILED', viewValue: 'Failed' },
+      { value: 'REFUNDED', viewValue: 'Refunded' }
+    ];
   availableOrders: any[] = [];
 
   constructor(
@@ -66,5 +95,7 @@ export class PaymentEditComponent implements OnInit {
       this.router.navigate(['/payments']);
     });
   }
-
+  navigateToPayments() {
+    this.router.navigate(['/payments']);
+  }
 }

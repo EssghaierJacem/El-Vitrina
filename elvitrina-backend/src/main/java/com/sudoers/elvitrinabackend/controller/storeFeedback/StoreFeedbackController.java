@@ -1,7 +1,6 @@
 package com.sudoers.elvitrinabackend.controller.storeFeedback;
 
-
-import com.sudoers.elvitrinabackend.model.entity.StoreFeedback;
+import com.sudoers.elvitrinabackend.model.dto.StoreFeedbackDTO;
 import com.sudoers.elvitrinabackend.service.feedback.storeFeedback.IStoreFeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,38 +16,47 @@ public class StoreFeedbackController {
     @Autowired
     private IStoreFeedbackService storeFeedbackService;
 
-    // Create
     @PostMapping
-    public ResponseEntity<StoreFeedback> createStoreFeedback(@RequestBody StoreFeedback storeFeedback) {
-        StoreFeedback savedStoreFeedback = storeFeedbackService.saveStoreFeedback(storeFeedback);
-        return new ResponseEntity<>(savedStoreFeedback, HttpStatus.CREATED);
+    public ResponseEntity<StoreFeedbackDTO> createStoreFeedback(@RequestBody StoreFeedbackDTO storeFeedbackDTO) {
+        StoreFeedbackDTO savedFeedback = storeFeedbackService.saveStoreFeedback(storeFeedbackDTO);
+        return new ResponseEntity<>(savedFeedback, HttpStatus.CREATED);
     }
 
-    // Read (All)
     @GetMapping
-    public ResponseEntity<List<StoreFeedback>> getAllStoreFeedbacks() {
-        List<StoreFeedback> storeFeedbacks = storeFeedbackService.getAllStoreFeedbacks();
-        return new ResponseEntity<>(storeFeedbacks, HttpStatus.OK);
+    public ResponseEntity<List<StoreFeedbackDTO>> getAllStoreFeedbacks() {
+        List<StoreFeedbackDTO> feedbacks = storeFeedbackService.getAllStoreFeedbacks();
+        return ResponseEntity.ok(feedbacks);
     }
 
-    // Read (ById)
     @GetMapping("/{id}")
-    public ResponseEntity<StoreFeedback> getStoreFeedbackById(@PathVariable Long id) {
-        StoreFeedback storeFeedback = storeFeedbackService.getStoreFeedbackById(id);
-        return new ResponseEntity<>(storeFeedback, HttpStatus.OK);
+    public ResponseEntity<StoreFeedbackDTO> getStoreFeedbackById(@PathVariable Long id) {
+        StoreFeedbackDTO feedback = storeFeedbackService.getStoreFeedbackById(id);
+        return ResponseEntity.ok(feedback);
     }
 
-    // Update
     @PutMapping("/{id}")
-    public ResponseEntity<StoreFeedback> updateStoreFeedback(@PathVariable Long id, @RequestBody StoreFeedback storeFeedback) {
-        StoreFeedback updatedStoreFeedback = storeFeedbackService.updateStoreFeedback(id, storeFeedback);
-        return new ResponseEntity<>(updatedStoreFeedback, HttpStatus.OK);
+    public ResponseEntity<StoreFeedbackDTO> updateStoreFeedback(
+            @PathVariable Long id,
+            @RequestBody StoreFeedbackDTO storeFeedbackDTO) {
+        StoreFeedbackDTO updatedFeedback = storeFeedbackService.updateStoreFeedback(id, storeFeedbackDTO);
+        return ResponseEntity.ok(updatedFeedback);
     }
 
-    // Delete
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStoreFeedback(@PathVariable Long id) {
         storeFeedbackService.deleteStoreFeedback(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/store/{storeId}/average-rating")
+    public ResponseEntity<Double> getAverageRatingByStoreId(@PathVariable Long storeId) {
+        Double averageRating = storeFeedbackService.getAverageRatingByStoreId(storeId);
+        return ResponseEntity.ok(averageRating);
+    }
+
+    @GetMapping("/store/{storeId}/count")
+    public ResponseEntity<Long> countByStoreId(@PathVariable Long storeId) {
+        Long count = storeFeedbackService.countByStoreId(storeId);
+        return ResponseEntity.ok(count);
     }
 }

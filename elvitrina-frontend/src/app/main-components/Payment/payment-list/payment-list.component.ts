@@ -1,6 +1,6 @@
 import { Component,  OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Payment } from 'src/app/core/models/Panier/payment';
+import { Payment } from 'src/app/core/models/Panier/Payment';
 import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Payment } from 'src/app/core/models/Panier/payment';  // Importer l'interface Payment
+import { Payment } from 'src/app/core/models/Panier/Payment';  // Importer l'interface Payment
 import { Observable } from 'rxjs';
 
 @Injectable({

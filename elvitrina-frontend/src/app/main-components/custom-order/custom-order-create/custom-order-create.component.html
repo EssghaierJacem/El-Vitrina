@@ -5,55 +5,95 @@
     </path>
   </svg>
   <mat-card-header>
-    <mat-card-title class="message-text">Créer une Commande</mat-card-title>
+    <mat-card-title class="message-text">Create Custom Order</mat-card-title>
   </mat-card-header>
   <mat-card-content class="b-t-1">
     <form (ngSubmit)="createOrder()">
       <div class="row">
+        <!-- Products Section -->
+       <!-- <div class="col-12">
+          <h3>Products</h3>
+          <div *ngFor="let product of order.products; let i = index" class="product-item">
+            <div class="row">
+              <div class="col-lg-8">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Product {{i + 1}}</mat-label>
+                  <input matInput [(ngModel)]="product." [name]="'productName' + i" placeholder="Product name" required />
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Price</mat-label>
+                  <input matInput type="number" [(ngModel)]="product.price" [name]="'productPrice' + i" placeholder="Price" required min="0" step="0.01" />
+                </mat-form-field>
+              </div>
+              <div class="col-lg-2">
+                <button mat-icon-button color="warn" (click)="removeProduct(i)" type="button">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+          <button mat-button type="button" color="primary" (click)="addProduct()">
+            <mat-icon>add</mat-icon> Add Product
+          </button>
+        </div>
+      -->
+        <!-- Quantity and Price -->
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Produits</mat-label>
-            <input matInput [(ngModel)]="order.products" name="products" placeholder="Liste des produits" required />
+            <mat-label>Total Quantity</mat-label>
+            <input matInput type="number" [(ngModel)]="order.quantity" name="quantity" placeholder="Quantity" required min="1" />
           </mat-form-field>
         </div>
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Quantité</mat-label>
-            <input matInput type="number" [(ngModel)]="order.quantity" name="quantity" placeholder="Quantité" required />
+            <mat-label>Total Price (USD)</mat-label>
+            <input matInput type="number" [(ngModel)]="order.price" name="price" placeholder="Price" required min="0" step="0.01" />
+          </mat-form-field>
+        </div>
+
+        <!-- Order Date and Status -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Order Date</mat-label>
+            <input matInput [matDatepicker]="picker" [(ngModel)]="order.orderDate" name="orderDate" required />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
         </div>
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Prix (TND)</mat-label>
-            <input matInput type="number" [(ngModel)]="order.price" name="price" placeholder="Prix" required />
-          </mat-form-field>
-        </div>
-        <div class="col-lg-6">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Date de commande</mat-label>
-            <input matInput type="date" [(ngModel)]="order.orderDate" name="orderDate" required />
-          </mat-form-field>
-        </div>
-        <div class="col-lg-6">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Statut</mat-label>
+            <mat-label>Status</mat-label>
             <mat-select [(ngModel)]="order.status" name="status" required>
-              <mat-option value="PENDING">En attente</mat-option>
-              <mat-option value="CONFIRMED">Confirmée</mat-option>
-              <mat-option value="SHIPPED">Expédiée</mat-option>
+              <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+                {{status.viewValue}}
+              </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
+
+        <!-- Customer Information -->
+        <div class="col-12">
+          <h3>Customer Information</h3>
+        </div>
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
-            <mat-label>ID Utilisateur</mat-label>
-            <input matInput type="number" [(ngModel)]="order.userId" name="userId" placeholder="ID Utilisateur" required />
+            <mat-label>Customer Name</mat-label>
+            <input matInput [(ngModel)]="order.user.name" name="userName" placeholder="Full name" required />
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Customer Email</mat-label>
+            <input matInput type="email" [(ngModel)]="order.user.email" name="userEmail" placeholder="Email" required />
           </mat-form-field>
         </div>
       </div>
+
       <div class="m-t-12">
-        <button mat-flat-button color="primary" type="submit">Créer</button>
-        <button mat-stroked-button color="warn" routerLink="/orders">Annuler</button>
+        <button mat-flat-button color="primary" type="submit">Create Order</button>
+        <button mat-stroked-button color="warn" type="button" routerLink="/orders">Cancel</button>
       </div>
     </form>
   </mat-card-content>

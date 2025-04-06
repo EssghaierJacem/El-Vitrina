@@ -70,7 +70,7 @@ displayedColumns: any;
     // Filter based on client name and status
     this.filteredOrders = this.orders.filter(order => {
 
-      const matchesName = order.userId?.toString().toLowerCase().includes(this.searchText.toLowerCase()) || false;//+
+      const matchesName = order.user?.toString().toLowerCase().includes(this.searchText.toLowerCase()) || false;//+
       const matchesStatus = order.status.toLowerCase().includes(this.statusFilter.toLowerCase());
 
       return matchesName && matchesStatus;

@@ -1,13 +1,16 @@
-import { Payment } from './payment';
+import { Product } from '../product/product.model';
+import { User } from '../user/user.model';
+import { OrderStatusType } from './OrderStatusType.type';
+import { Payment } from './Payment' ;
 
 export interface CustomOrder {
-  id: number;
-  products: any[];
+  id?: number;
+  products: Product[];
   quantity: number;
   price: number;
-  orderDate: string;
-  status: string;
-  payment?: Payment | null;  // Optionnel
-  userId: number;
- // paymentID?: number; // Référence à l'ID du paiement
+  orderDate?: Date;
+  calculateTotal: number;
+  status: OrderStatusType;
+  user: User;
+  payment?: Payment | null;
 }

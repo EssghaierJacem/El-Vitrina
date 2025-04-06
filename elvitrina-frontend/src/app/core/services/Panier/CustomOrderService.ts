@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class CustomOrderService {
 
-  private apiUrl = 'http://localhost:8080/api/custom-orders';
+  private apiUrl = 'http://localhost:8080/api/custom-orders';// backend  endpoint
 
   constructor(private http: HttpClient) {}
 
