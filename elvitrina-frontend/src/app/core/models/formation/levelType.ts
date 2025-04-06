@@ -1,0 +1,5 @@
+export enum LevelType {
+    BEGINNER = 'BEGINNER',
+    INTERMEDIATE = 'INTERMEDIATE',
+    ADVANCED = 'ADVANCED'
+  }

@@ -79,6 +79,14 @@ export const routes: Routes = [
           import('./main-components/product/backOffice/product.routes')
             .then(m => m.ProductRoutes)
       },
+
+      {
+        path: 'formations',
+        loadChildren: () =>
+          import('./main-components/formation/backoffice/backoffice_formation.routes')
+            .then(m => m.FormationRoutes)
+      },
+
       {
         path: 'extra',
         loadChildren: () =>
