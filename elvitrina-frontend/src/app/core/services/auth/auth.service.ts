@@ -41,7 +41,6 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    // Try to load user from localStorage on service initialization
     const storedUser = localStorage.getItem('currentUser');
     const token = localStorage.getItem('token');
     if (storedUser && token) {
@@ -50,7 +49,7 @@ export class AuthService {
         this.currentUserSubject.next(user);
       } catch (error) {
         console.error('Error parsing stored user:', error);
-        this.logout(); // Clear invalid data
+        this.logout(); 
       }
     }
   }
