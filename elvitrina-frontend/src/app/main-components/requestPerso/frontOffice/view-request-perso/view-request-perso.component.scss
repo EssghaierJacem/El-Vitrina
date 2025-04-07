@@ -1,0 +1,263 @@
+/* Main container */
+.card-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  
+  /* Request card styling */
+  .request-card {
+    margin-bottom: 2rem;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    background: white;
+  }
+  
+  .request-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Image container with fallback */
+  .image-container {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+  }
+  
+  .request-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Fallback if image fails to load */
+  .request-image:after {
+    content: "Image not available";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  /* User avatar */
+  .user-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #f5f5f5;
+    margin-right: 1rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+  }
+  
+  .user-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .user-avatar:hover .user-image {
+    transform: scale(1.1);
+  }
+  
+  /* Card header */
+  mat-card-header {
+    padding: 1.5rem 1.5rem 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  mat-card-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #2c3e50;
+  }
+  
+  mat-card-subtitle {
+    color: #666;
+    line-height: 1.4;
+    font-size: 0.9rem;
+  }
+  
+  /* Card content */
+  mat-card-content {
+    padding: 0 1.5rem 1rem;
+    color: #444;
+    line-height: 1.6;
+  }
+  
+  /* Tags */
+  mat-chip-listbox {
+    margin: 0 1.5rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  mat-chip-option {
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+  }
+  
+  mat-chip-option:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Card actions */
+  mat-card-actions {
+    padding: 0 1.5rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 1rem;
+  }
+  
+  /* Proposal form card */
+  .proposal-form-card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: white;
+  }
+  
+  /* Form styling */
+  .form-field {
+    margin-bottom: 1.5rem;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  mat-form-field {
+    width: 100%;
+  }
+  
+  textarea.mat-input {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+  
+  /* Submit button */
+  .submit-button {
+    margin-top: 1rem;
+    padding: 0.5rem 2.5rem;
+    font-weight: 500;
+    float: right;
+    transition: all 0.3s ease;
+  }
+  
+  .submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Error messages */
+  mat-error {
+    font-size: 0.75rem;
+    color: #e53935;
+  }
+  
+  /* Page title */
+  .page-title {
+    font-size: 2.2rem;
+    margin: 0 0 2.5rem 0;
+    padding: 0.5rem 0;
+    color: #2c3e50;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    position: relative;
+    text-align: center;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  }
+  
+  .page-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    width: 50%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #3f51b5, transparent);
+    border-radius: 3px;
+    animation: titleUnderline 0.8s ease-out forwards;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .card-container {
+      padding: 0 0.5rem;
+    }
+    
+    .request-image {
+      max-height: 300px;
+    }
+    
+    mat-card-header, 
+    mat-card-content,
+    mat-card-actions {
+      padding: 1rem;
+    }
+    
+    .user-avatar {
+      width: 48px;
+      height: 48px;
+    }
+    
+    .page-title {
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+    }
+    
+    .page-title::after {
+      height: 2px;
+      left: 20%;
+      width: 60%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .request-image {
+      max-height: 200px;
+    }
+    
+    mat-card-title {
+      font-size: 1.2rem;
+    }
+    
+    .submit-button {
+      width: 100%;
+    }
+    
+    .page-title {
+      font-size: 1.5rem;
+      padding-bottom: 0.75rem;
+    }
+  }
+  
+  /* Animations */
+  @keyframes titleUnderline {
+    0% { width: 0; left: 50%; }
+    100% { width: 50%; left: 25%; }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .request-card {
+    animation: fadeIn 0.5s ease-out;
+  }

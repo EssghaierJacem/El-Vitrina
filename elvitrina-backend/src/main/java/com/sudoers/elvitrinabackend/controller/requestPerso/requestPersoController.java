@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -36,24 +37,40 @@ public class requestPersoController {
         request.setDeliveryTime(requestDTO.getDeliveryTime());
         request.setViewCount(requestDTO.getViewCount());
         request.setTags(requestDTO.getTags());
+        request.setDate(new Date());
 
         // Save the entity
         RequestPerso createdRequest = requestPersoService.addRequestPerso(request);
         return new ResponseEntity<>(createdRequest, HttpStatus.CREATED);
     }
-
+/*
     @GetMapping("/{id}")
-    public ResponseEntity<RequestPerso> getRequestPersoById(@PathVariable Long id) {
-        RequestPerso request = requestPersoService.getRequestPersoById(id);
-        return new ResponseEntity<>(request, HttpStatus.OK);
+    public ResponseEntity<?> getRequestPersoById(@PathVariable Long id) {
+        try {
+            RequestPerso request = requestPersoService.getRequestPersoById(id);
+            return ResponseEntity.ok(request);
+        }
+
+       catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+       }
+
     }
+*/
+@GetMapping("/{id}")
+public ResponseEntity<?> getRequestPersoById(@PathVariable Long id) {
+    try {
+        RequestPersoDTO requestPersoDTO = requestPersoService.getRequestPersoByIdd(id);
+        return ResponseEntity.ok(requestPersoDTO);
+    } catch (EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+}
 
     @GetMapping
-    public ResponseEntity<List<RequestPerso>> getAllRequestPerso() {
-        List<RequestPerso> requests = requestPersoService.getAllRequestPerso();
-        return new ResponseEntity<>(requests, HttpStatus.OK);
+    public List<RequestPersoDTO> getAllRequestPerso() {
+        return requestPersoService.getAllRequestPersoDTO();
     }
-
     @PutMapping("/{id}")
     public ResponseEntity<RequestPerso> updateRequestPerso(@PathVariable Long id, @RequestBody RequestPerso requestDetails) {
         RequestPerso updatedRequest = requestPersoService.updateRequestPerso(id,requestDetails);

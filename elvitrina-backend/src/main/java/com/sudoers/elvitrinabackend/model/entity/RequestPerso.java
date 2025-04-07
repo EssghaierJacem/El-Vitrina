@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -36,11 +37,12 @@ public class RequestPerso {
 
     private String image;
 
-    private LocalDateTime deliveryTime;
+    private Date deliveryTime;
 
     private int viewCount;
 
     private List<String> tags;
+    private Date date;
 
     // One RequestPerson can have many ProposalPersons (One-to-Many)
 

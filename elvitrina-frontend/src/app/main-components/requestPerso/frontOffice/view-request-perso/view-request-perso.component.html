@@ -1,0 +1,122 @@
+<div *ngIf="requestData" class="card-container">
+  <h1 class="page-title">{{requestData.title}}</h1>
+  <!-- Request Card -->
+  <mat-card class="request-card">
+    <mat-card-header>
+      <div mat-card-avatar class="user-avatar">
+        <img [src]="requestData.user.image" 
+             class="user-image" 
+             alt="User avatar" />
+      </div>
+    
+      <mat-card-subtitle>
+        Requested by: {{requestData.user.name}} | 
+        Posted On: {{requestData.date | date: 'short'}} | 
+        Delivery By: {{requestData.deliveryTime | date: 'short'}}
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <img mat-card-image 
+         [src]="requestData.image" 
+         alt="Request image" 
+         class="request-image" />
+
+    <mat-card-content>
+      <p>{{requestData.description}}</p>
+    </mat-card-content>
+
+    <mat-chip-listbox>
+      <mat-chip-option *ngFor="let tag of requestData.tags" color="primary" selected>
+        {{tag}}
+      </mat-chip-option>
+    </mat-chip-listbox>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary">
+        {{requestData.viewCount}} <mat-icon>visibility</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Proposal Form Card -->
+  <mat-card class="proposal-form-card">
+    <mat-card-header>
+      <mat-card-title>Submit Proposal</mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form [formGroup]="proposalForm" (ngSubmit)="createProposal()">
+        <!-- Description -->
+        <div class="form-field">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput 
+                     formControlName="description" 
+                     rows="5" 
+                     placeholder="Explain your approach and deliverables"></textarea>
+            <mat-error *ngIf="proposalForm.get('description')?.invalid && 
+                            proposalForm.get('description')?.touched">
+              Description is required (minimum 50 characters).
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Price -->
+        <div class="form-field">
+          <mat-form-field appearance="outline">
+            <mat-label>Price ($)</mat-label>
+            <input matInput 
+                   type="number" 
+                   formControlName="price"
+                   min="1">
+            <span matTextPrefix>$&nbsp;</span>
+            <mat-error *ngIf="proposalForm.get('price')?.invalid && 
+                            proposalForm.get('price')?.touched">
+              Valid price required (minimum $1).
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <button mat-raised-button 
+                color="primary" 
+                class="submit-button" 
+                [disabled]="!proposalForm.valid" 
+                type="submit">
+          Submit Proposal
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+
+
+<div style="margin-top: 20px;" >
+    
+<h4> Comments</h4>
+<div>
+<mat-card style="margin-top: 10px;" *ngFor="let proposal of ProposalRequests">
+  <mat-card-header>
+    <div mat-card-avatar class="user-avatar">
+      <img [src]="proposal.user.image" 
+           class="user-image" 
+           alt="User avatar" />
+    </div>
+    <mat-card-title>{{proposal.user.name}}</mat-card-title>
+    <mat-card-subtitle>{{proposal.date | date: 'short'}}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p>{{proposal.description}}</p>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-raised-button color="primary">
+      {{proposal.price}} $
+    </button>
+  </mat-card-actions>
+
+
+
+</mat-card>
+</div>
+</div>

@@ -34,5 +34,8 @@ private handleError(error: any): Observable<never> {
 
 }
 
+getRequestPersoById(id: number): Observable<RequestPerso> { 
+  return this.http.get<RequestPerso>(`${this.apiUrl}/${id}`).pipe(catchError(this.handleError));
+}
 
 }

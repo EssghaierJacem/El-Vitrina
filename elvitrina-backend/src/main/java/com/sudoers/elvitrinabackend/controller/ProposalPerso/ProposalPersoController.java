@@ -1,5 +1,6 @@
 package com.sudoers.elvitrinabackend.controller.ProposalPerso;
 
+import com.sudoers.elvitrinabackend.model.dto.ProposalPersoDTO;
 import com.sudoers.elvitrinabackend.model.entity.ProposalPerso;
 import com.sudoers.elvitrinabackend.model.entity.RequestPerso;
 import com.sudoers.elvitrinabackend.service.ProposalPerso.IProposalPersoService;
@@ -15,11 +16,11 @@ import java.util.List;
 @AllArgsConstructor
 public class ProposalPersoController {
     IProposalPersoService proposalPersoService;
-    @PostMapping
+   /* @PostMapping
     public ResponseEntity<ProposalPerso> createProposalPerso(@RequestBody ProposalPerso prop) {
         ProposalPerso createdRequest = proposalPersoService.addProposalPerso(prop);
         return new ResponseEntity<>(createdRequest, HttpStatus.CREATED);
-    }
+    }*/
 
     @GetMapping("/{id}")
     public ResponseEntity<ProposalPerso> getProposalPersoById(@PathVariable Long id) {
@@ -44,5 +45,22 @@ public class ProposalPersoController {
         proposalPersoService.deleteProposalPersoById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+
+    @PostMapping
+    public ResponseEntity<ProposalPerso> createProposalPersoDTO(@RequestBody ProposalPersoDTO proposalDTO) {
+        ProposalPerso createdProposal = proposalPersoService.addProposalPerso(proposalDTO);
+        return new ResponseEntity<>(createdProposal, HttpStatus.CREATED);
+    }
+
+@GetMapping("proposal-request/{RequestPersoID}")
+    public ResponseEntity<?> getProposalRequestByRequestPersoId(@PathVariable Long RequestPersoID)
+{
+    try {
+        return ResponseEntity.ok(proposalPersoService.getProposalPersoByrequestPersoID(RequestPersoID));
+    } catch (Exception e){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("something went wrong.");
+    }
+}
 
 }
