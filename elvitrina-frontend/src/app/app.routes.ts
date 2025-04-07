@@ -29,6 +29,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/product/frontOffice/product.routes').then((m) => m.ProductRoutes),
       },
+      {
+        path: 'friends',
+        loadChildren: () =>
+          import('./main-components/friends/friend.routes').then((m) => m.FriendRoutes),
+      },
     ],
   },
   {
