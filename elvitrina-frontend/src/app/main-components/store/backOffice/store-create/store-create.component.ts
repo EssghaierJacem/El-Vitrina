@@ -98,6 +98,7 @@ export class StoreCreateComponent implements OnInit {
       category: ['', Validators.required],
       address: ['', Validators.required],
       image: [''],
+      coverImage: [''],
       status: [true],
       featured: [false]
     });
@@ -151,6 +152,7 @@ export class StoreCreateComponent implements OnInit {
         category: formValue.category,
         address: formValue.address?.trim(),
         image: formValue.image?.trim(),
+        coverImage: formValue.coverImage?.trim(),
         status: formValue.status ?? true,
         featured: formValue.featured ?? false,
         userId: this.userId

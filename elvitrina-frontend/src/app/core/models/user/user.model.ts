@@ -1,3 +1,5 @@
+import { Store } from "../store/store.model";
+
 export interface User {
     id?: number;
     name?: string;

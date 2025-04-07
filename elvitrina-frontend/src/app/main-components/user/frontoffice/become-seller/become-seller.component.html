@@ -1,0 +1,91 @@
+<div class="seller-form-container">
+    <mat-card class="seller-card">
+      <mat-card-header>
+        <div mat-card-avatar>
+          <mat-icon color="primary">store</mat-icon>
+        </div>
+        <mat-card-title>Become a Seller</mat-card-title>
+        <mat-card-subtitle>Complete your profile information to get started</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-divider></mat-divider>
+      
+      <div *ngIf="isLoading" class="loading-spinner">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+      
+      <mat-card-content *ngIf="!isLoading">
+        <div class="profile-image-container" *ngIf="user.image">
+          <img [src]="user.image" alt="Profile Image" class="profile-image"
+               (error)="handleImageError($event)">
+        </div>
+        
+        <form (ngSubmit)="becomeSeller()" #sellerForm="ngForm" class="seller-form">
+          <div class="form-row">
+            <!-- Display User's First Name (Non-modifiable) -->
+            <mat-form-field appearance="outline">
+              <mat-label>First Name</mat-label>
+              <input matInput [value]="user.firstname" disabled>
+              <mat-icon matSuffix>person</mat-icon>
+            </mat-form-field>
+      
+            <!-- Display User's Last Name (Non-modifiable) -->
+            <mat-form-field appearance="outline">
+              <mat-label>Last Name</mat-label>
+              <input matInput [value]="user.lastname" disabled>
+              <mat-icon matSuffix>person</mat-icon>
+            </mat-form-field>
+          </div>
+      
+          <!-- Display User's Email (Non-modifiable) -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput [value]="user.email" disabled>
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
+      
+          <!-- Phone Input (Editable) -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Phone</mat-label>
+            <input matInput [(ngModel)]="user.phone" name="phone" required 
+                   [ngClass]="{'error-input': formSubmitted && !user.phone}">
+            <mat-icon matSuffix>phone</mat-icon>
+            <mat-error *ngIf="formSubmitted && !user.phone">Phone number is required</mat-error>
+          </mat-form-field>
+        
+          <!-- Address Input (Editable) -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Address</mat-label>
+            <input matInput [(ngModel)]="user.address" name="address" required
+                   [ngClass]="{'error-input': formSubmitted && !user.address}">
+            <mat-icon matSuffix>home</mat-icon>
+            <mat-error *ngIf="formSubmitted && !user.address">Address is required</mat-error>
+          </mat-form-field>
+        
+          <!-- Profile Image URL (Editable) with preview button -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Profile Image URL</mat-label>
+            <input matInput [(ngModel)]="user.image" name="image" (input)="onImageUrlChange()">
+            <button *ngIf="user.image" mat-icon-button matSuffix type="button" 
+                    [matTooltip]="isImageValid ? 'View image' : 'Invalid image URL'" 
+                    (click)="previewImage()">
+              <mat-icon [color]="isImageValid ? 'primary' : 'warn'">visibility</mat-icon>
+            </button>
+            <mat-icon *ngIf="!user.image" matSuffix>image</mat-icon>
+            <mat-hint>Enter a valid image URL to display your profile image</mat-hint>
+          </mat-form-field>
+      
+          <div class="actions-container">
+            <button mat-stroked-button type="button" (click)="cancel()">
+              <mat-icon>close</mat-icon> Cancel
+            </button>
+            <button mat-raised-button color="primary" type="submit" 
+                    [disabled]="isLoading || user.role === 'SELLER'">
+              <mat-icon>verified</mat-icon>
+              {{ isLoading ? 'Processing...' : 'Become a Seller' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>

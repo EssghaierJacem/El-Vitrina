@@ -139,6 +139,7 @@ public class StoreService implements IStoreService{
                 .status(store.isStatus())
                 .address(store.getAddress())
                 .image(store.getImage())
+                .coverImage(store.getCoverImage())
                 .userId(store.getUser() != null ? store.getUser().getId() : null)
                 .featured(store.isFeatured())
                 .build();
@@ -153,6 +154,7 @@ public class StoreService implements IStoreService{
             entity.setStatus(dto.isStatus());
             entity.setAddress(dto.getAddress().trim());
             entity.setImage(dto.getImage() != null ? dto.getImage().trim() : null);
+            entity.setCoverImage(dto.getCoverImage() != null ? dto.getCoverImage().trim() : null);
             entity.setFeatured(dto.isFeatured());
             System.out.println("Entity after copy: " + entity);
         } catch (Exception e) {
