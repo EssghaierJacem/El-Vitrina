@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { StoreService } from '../../../../core/services/store/store.service';
 import { StoreCategoryType } from '../../../../core/models/store/store-category-type.enum';
 import { AuthService } from '../../../../core/services/auth/auth.service';
+import { TokenService } from 'src/app/core/services/user/TokenService';
 
 @Component({
   selector: 'app-store-create',
@@ -26,17 +27,20 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
     MatProgressSpinnerModule
   ],
   templateUrl: './store-create.component.html',
-  styleUrl: './store-create.component.scss'
+  styleUrls: ['./store-create.component.scss']
 })
 export class StoreCreateComponent implements OnInit {
+  role: string = '';  
   storeForm: FormGroup;
   loading = false;
   categories = Object.values(StoreCategoryType);
+  canCreateStore: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private storeService: StoreService,
     private authService: AuthService,
+    private tokenService: TokenService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {
@@ -51,39 +55,40 @@ export class StoreCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.currentUser$.subscribe(user => {
-      if (!user) {
-        console.log('No user found in store create component');
-        return;
+    if (this.isLoggedIn()) {
+      const decodedToken = this.tokenService.getDecodedToken();
+      if (decodedToken) {
+        this.role = decodedToken?.role ?? 'USER';  
+        console.log(this.role);
+        if (this.role === 'SELLER') {
+          this.canCreateStore = true;
+        } else {
+          this.snackBar.open('You must be a seller to create a store', 'Close', { duration: 3000 });
+          this.router.navigate(['/']);
+        }
       }
-
-      if (user.role !== 'SELLER') {
-        this.snackBar.open('Only sellers can create stores', 'Close', { duration: 3000 });
-        this.router.navigate(['/']);
-      }
-    });
+    }
   }
 
   onSubmit(): void {
-    if (this.storeForm.valid && !this.loading) {
+    if (this.storeForm.valid && !this.loading && this.canCreateStore) {
       this.loading = true;
+  
       const formData = this.storeForm.value;
-      const user = this.authService.getCurrentUser();
-
-      if (!user) {
-        this.snackBar.open('Please log in to create a store', 'Close', { duration: 3000 });
+      if (this.role !== 'SELLER') {
+        this.snackBar.open('You must be a seller to create a store', 'Close', { duration: 3000 });
         this.loading = false;
-        this.router.navigate(['/authentication/login']);
+        this.router.navigate(['/']);
         return;
       }
-
+  
       const storeData = {
         ...formData,
-        userId: user.id,
+        userId: this.tokenService.getDecodedToken()?.id, 
         status: true,
         featured: false
       };
-
+  
       this.storeService.create(storeData).subscribe({
         next: (response) => {
           this.snackBar.open('Store created successfully', 'Close', { duration: 3000 });
@@ -91,11 +96,7 @@ export class StoreCreateComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error creating store:', error);
-          this.snackBar.open(
-            error.error?.message || 'Error creating store. Please try again.',
-            'Close',
-            { duration: 3000 }
-          );
+          this.snackBar.open(error.error?.message || 'Error creating store. Please try again.', 'Close', { duration: 3000 });
           this.loading = false;
         },
         complete: () => {
@@ -103,7 +104,6 @@ export class StoreCreateComponent implements OnInit {
         }
       });
     } else {
-      // Mark all fields as touched to trigger validation messages
       Object.keys(this.storeForm.controls).forEach(key => {
         const control = this.storeForm.get(key);
         control?.markAsTouched();
@@ -116,5 +116,9 @@ export class StoreCreateComponent implements OnInit {
     if (imgElement) {
       imgElement.src = '/assets/images/stores/no-image.jpg';
     }
+  }
+
+  isLoggedIn(): boolean {
+    return this.tokenService.getToken() !== null;
   }
 }

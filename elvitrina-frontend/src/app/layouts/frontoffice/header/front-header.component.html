@@ -2004,6 +2004,11 @@
             <li class="nav-item">
               <a class="nav-link" *ngIf="isLoggedIn" href="#">Hello, {{ firstName || ' Guest' }}</a>
             </li>
+            <li class="nav-item">
+              <button class="nav-link" *ngIf="isLoggedIn()" (click)="handleStoreButton()" mat-button>
+                {{ role !== 'SELLER' ? 'Create a Store' : hasStore ? 'My Store' : 'Start Selling' }}
+              </button>
+            </li>                    
           </ul>
     
           <!-- Nav -->

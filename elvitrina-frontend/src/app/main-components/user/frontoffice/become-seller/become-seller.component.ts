@@ -85,7 +85,6 @@ export class BecomeSellerComponent implements OnInit {
           this.router.navigate(['/']);
         }
         
-        // Check if we have a valid image URL
         if (this.user.image) {
           this.checkImageValidity(this.user.image);
         }
@@ -120,7 +119,7 @@ export class BecomeSellerComponent implements OnInit {
       },
       error: (error) => {
         this.isLoading = false;
-        this.user.role = 'USER'; // Revert the role change on error
+        this.user.role = 'USER'; 
         this.showNotification('Failed to update role', 'error');
         console.error('Error updating user:', error);
       }
@@ -151,7 +150,7 @@ export class BecomeSellerComponent implements OnInit {
   }
 
   handleImageError(event: any): void {
-    event.target.src = 'assets/images/default-profile.png'; // Fallback image
+    event.target.src = 'assets/images/profile/Sokka.webp'; 
     this.isImageValid = false;
   }
 
