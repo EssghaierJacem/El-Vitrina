@@ -1,0 +1,213 @@
+<div class="connection-hub">
+  <!-- Dynamic Header with Gradient -->
+  <div class="hub-header">
+    <div class="header-content">
+      <div class="title-group">
+        <h1 class="main-title">Discover People</h1>
+        <div class="floating-accent-shapes">
+          <div class="accent-shape shape-1"></div>
+          <div class="accent-shape shape-2"></div>
+          <div class="accent-shape shape-3"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Creative Search Bar -->
+    <div class="dynamic-search">
+      <div class="search-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input 
+          type="text" 
+          placeholder="Find new connections..." 
+          [(ngModel)]="searchQuery" 
+          (input)="filterUsers()">
+        <button 
+          *ngIf="searchQuery" 
+          class="clear-search" 
+          (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Playful Filter Toggles -->
+    <div class="filter-toggles">
+      <button 
+        class="toggle-pill" 
+        [class.active]="activeFilter === 'all'" 
+        (click)="setFilter('all')">
+        <span class="toggle-text">Everyone</span>
+      </button>
+      <button 
+        class="toggle-pill" 
+        [class.active]="activeFilter === 'new'" 
+        (click)="setFilter('new')">
+        <div class="pill-icon">
+          <mat-icon>auto_awesome</mat-icon>
+        </div>
+        <span class="toggle-text">New</span>
+      </button>
+      <button 
+        class="toggle-pill" 
+        [class.active]="activeFilter === 'nearby'" 
+        (click)="setFilter('nearby')">
+        <div class="pill-icon">
+          <mat-icon>near_me</mat-icon>
+        </div>
+        <span class="toggle-text">Nearby</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Creative Loading State -->
+  <div class="creative-loader" *ngIf="isLoading">
+    <div class="pulse-circles">
+      <div class="pulse-circle circle-1"></div>
+      <div class="pulse-circle circle-2"></div>
+      <div class="pulse-circle circle-3"></div>
+    </div>
+    <p class="loader-text">Discovering interesting people...</p>
+  </div>
+  
+  <!-- Playful Empty State -->
+  <div class="playful-empty-state" *ngIf="filteredUsers.length === 0 && !isLoading">
+    <div class="empty-illustration">
+      <div class="empty-shapes">
+        <div class="empty-shape shape-1"></div>
+        <div class="empty-shape shape-2"></div>
+        <div class="empty-people-group">
+          <div class="empty-person person-1"></div>
+          <div class="empty-person person-2"></div>
+          <div class="empty-person person-3"></div>
+        </div>
+      </div>
+    </div>
+    <h3 class="empty-title">No connections found</h3>
+    <p class="empty-subtitle">{{ searchQuery ? 'Try searching with different keywords' : 'We\'ll find some awesome people for you soon' }}</p>
+    <button class="refresh-action" (click)="refreshUsers()">
+      <mat-icon>refresh</mat-icon>
+      <span>Try Again</span>
+    </button>
+  </div>
+
+  <!-- Modern Card Grid with Hover Effects -->
+  <div class="connection-grid">
+    <div 
+      *ngFor="let user of filteredUsers" 
+      class="connection-card" 
+      [@cardEntrance]>
+      
+      <!-- Colorful Card Header -->
+      <div class="card-pattern-header">
+        <div class="pattern-overlay"></div>
+        <div class="header-content">
+          <div class="profile-image-container">
+            <img 
+              [src]="user.image || 'assets/images/default-avatar.svg'" 
+              [alt]="user.firstname + ' ' + user.lastname"
+              (error)="onImageError($event)">
+            <div 
+              class="online-indicator" 
+              *ngIf="user.id && isUserActive(user.id)">
+            </div>
+          </div>
+          
+          <button 
+            class="quick-actions-trigger" 
+            [matMenuTriggerFor]="quickActions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          
+          <mat-menu #quickActions="matMenu" class="quick-actions-menu">
+            <button mat-menu-item>
+              <mat-icon>visibility</mat-icon>
+              <span>View Full Profile</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>block</mat-icon>
+              <span>Block User</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item class="report-action">
+              <mat-icon>report_problem</mat-icon>
+              <span>Report User</span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+      
+      <!-- User Identity Section -->
+      <div class="user-identity">
+        <h3 class="user-name">{{ user.firstname }} {{ user.lastname }}</h3>
+        <div class="user-tags">
+          <div 
+            *ngIf="user.id && getMutualFriends(user.id) > 0" 
+            class="user-tag mutual-tag">
+            <mat-icon>people</mat-icon>
+            <span>{{ getMutualFriends(user.id) }} mutual</span>
+          </div>
+          <div *ngIf="user.address" class="user-tag location-tag">
+            <mat-icon>place</mat-icon>
+            <span>{{ user.address }}</span>
+          </div>
+        </div>
+        <p class="user-email">{{ user.email }}</p>
+      </div>
+      
+      <!-- Connection Status Badge -->
+      <div 
+        *ngIf="user.id && getConnectionStatus(user.id) as status" 
+        class="connection-status" 
+        [ngClass]="status">
+        <div class="status-icon">
+          <mat-icon *ngIf="status === 'sent'">schedule</mat-icon>
+          <mat-icon *ngIf="status === 'connected'">check_circle</mat-icon>
+        </div>
+        <span class="status-text">
+          {{ status === 'sent' ? 'Request Sent' : (status === 'connected' ? 'Connected' : '') }}
+        </span>
+      </div>
+      
+      <!-- Interactive Action Buttons -->
+      <div class="action-buttons">
+        <button 
+          *ngIf="user.id && !sentRequests.has(user.id)"
+          class="connect-action action-button" 
+          (click)="sendFriendRequest(user.id)">
+          <div class="button-icon">
+            <mat-icon>person_add</mat-icon>
+          </div>
+          <span class="button-text">Connect</span>
+        </button>
+        
+        <button 
+          *ngIf="user.id && sentRequests.has(user.id)"
+          class="cancel-action action-button" 
+          (click)="handleRequestChange(user.id)">
+          <div class="button-icon">
+            <mat-icon>close</mat-icon>
+          </div>
+          <span class="button-text">Cancel</span>
+        </button>
+        
+        <button class="message-action action-button">
+          <div class="button-icon">
+            <mat-icon>chat</mat-icon>
+          </div>
+          <span class="button-text">Message</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Creative Load More Button -->
+  <div class="load-more-container" *ngIf="filteredUsers.length > 0 && hasMoreUsers">
+    <button class="load-more-action" (click)="loadMoreUsers()">
+      <div class="action-content">
+        <span>Discover More People</span>
+        <mat-icon>expand_more</mat-icon>
+      </div>
+      <div class="button-glow"></div>
+    </button>
+  </div>
+</div>
