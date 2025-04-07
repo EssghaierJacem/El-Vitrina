@@ -39,11 +39,11 @@ import { Store } from 'src/app/core/models/store/store.model';
 })
 export class ProductEditComponent implements OnInit {
   productForm: FormGroup;
-  isSubmitting = false;
+  loading = false;
   productId: number | null = null;
   stores: Store[] = [];
   
-  categoryOptions = Object.values(ProductCategoryType);
+  categories: ProductCategoryType[] = Object.values(ProductCategoryType);
   statusOptions = Object.values(ProductStatus);
 
   constructor(
@@ -74,22 +74,48 @@ export class ProductEditComponent implements OnInit {
       category: ['', Validators.required],
       status: ['ACTIVE', Validators.required],
       hasDiscount: [false],
-      images: [[]],
+      discountPercentage: [0, [Validators.min(0), Validators.max(100)]],
+      freeShipping: [false],
+      isBestseller: [false],
+      images: [''],
       storeId: ['', Validators.required]
+    });
+
+    // Disable discount percentage by default
+    this.productForm.get('discountPercentage')?.disable();
+
+    // Enable/disable discount percentage based on hasDiscount checkbox
+    this.productForm.get('hasDiscount')?.valueChanges.subscribe(hasDiscount => {
+      const discountControl = this.productForm.get('discountPercentage');
+      if (hasDiscount) {
+        discountControl?.enable();
+      } else {
+        discountControl?.disable();
+        discountControl?.setValue(0);
+      }
     });
   }
 
   loadProduct(id: number): void {
+    this.loading = true;
     this.productService.getById(id).subscribe({
       next: (product) => {
-        this.productForm.patchValue(product);
+        // Convert images array to comma-separated string
+        const productData = {
+          ...product,
+          images: product.images ? product.images.join(', ') : ''
+        };
+        this.productForm.patchValue(productData);
       },
       error: (error) => {
         console.error('Error loading product:', error);
         this.snackBar.open('Error loading product', 'Close', {
           duration: 5000
         });
-        this.router.navigate(['../']);
+        this.router.navigate(['/dashboard/products']);
+      },
+      complete: () => {
+        this.loading = false;
       }
     });
   }
@@ -109,10 +135,26 @@ export class ProductEditComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.productForm.valid && !this.isSubmitting && this.productId) {
-      this.isSubmitting = true;
+    if (this.productForm.valid && !this.loading && this.productId) {
+      this.loading = true;
       
       const productData = this.productForm.value;
+      
+      // Convert comma-separated image URLs to array
+      if (productData.images) {
+        productData.images = productData.images.split(',').map((url: string) => url.trim()).filter((url: string) => url);
+      } else {
+        productData.images = [];
+      }
+
+      // Ensure category is a valid ProductCategoryType
+      if (!Object.values(ProductCategoryType).includes(productData.category)) {
+        this.snackBar.open('Invalid product category', 'Close', {
+          duration: 5000
+        });
+        this.loading = false;
+        return;
+      }
 
       this.productService.update(this.productId, productData).subscribe({
         next: (response) => {
@@ -120,14 +162,17 @@ export class ProductEditComponent implements OnInit {
           this.snackBar.open('Product updated successfully', 'Close', {
             duration: 3000
           });
-          this.router.navigate(['../details', this.productId]);
+          this.router.navigate(['/dashboard/products']);
         },
         error: (error) => {
           console.error('Error updating product:', error);
           this.snackBar.open(error.message || 'Error updating product', 'Close', {
             duration: 5000
           });
-          this.isSubmitting = false;
+          this.loading = false;
+        },
+        complete: () => {
+          this.loading = false;
         }
       });
     } else {
@@ -141,16 +186,13 @@ export class ProductEditComponent implements OnInit {
     }
   }
 
-  resetForm(): void {
-    if (this.productId) {
-      this.loadProduct(this.productId);
-    }
-    
-    this.snackBar.open('Form has been reset', 'Close', {
-      duration: 3000
-    });
-    
-    // Navigate back to the list
+  onCancel(): void {
     this.router.navigate(['/dashboard/products']);
+  }
+
+  getCategoryDisplayName(category: ProductCategoryType): string {
+    return category.split('_').map(word => 
+      word.charAt(0) + word.slice(1).toLowerCase()
+    ).join(' ');
   }
 }
