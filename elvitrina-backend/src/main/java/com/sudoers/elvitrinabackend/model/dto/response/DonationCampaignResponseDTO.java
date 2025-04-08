@@ -17,13 +17,21 @@ public class DonationCampaignResponseDTO {
     private Long id;
     private String title;
     private String description;
+    private String cause;
     private BigDecimal goalAmount;
     private BigDecimal currentAmount;
-    private Double progressPercentage;
+    private double progressPercentage;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String status;
+    private boolean featured;
+    private boolean verified;
     private LocalDateTime createdAt;
-    private Integer donorCount;
+    private LocalDateTime updatedAt;
+    private int donorCount;
+    private Long storeId;
+    private String storeName;
+    private Long userId;
+    private String userName;
     private List<DonorRewardResponseDTO> rewards;
 }

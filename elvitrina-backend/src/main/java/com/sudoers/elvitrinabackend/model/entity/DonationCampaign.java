@@ -35,7 +35,9 @@ public class DonationCampaign {
     private LocalDateTime endDate;
 
     private String status;
-
+    private boolean featured = false;
+    private boolean verified = false;
+    private Double campaignCost;
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
