@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface EventParticipantRepository extends JpaRepository<EventParticipant, Long> {
-
+    List<EventParticipant> findByVirtualEventEventId(Long eventId);
 }

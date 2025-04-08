@@ -1,12 +1,15 @@
 package com.sudoers.elvitrinabackend.service.DonorReward;
 
 
-import com.sudoers.elvitrinabackend.model.entity.DonorReward;
+import com.sudoers.elvitrinabackend.model.dto.request.DonorRewardRequestDTO;
+import com.sudoers.elvitrinabackend.model.dto.response.DonorRewardResponseDTO;
+
+import java.util.List;
 
 public interface DonorRewardService {
-    DonorReward saveDonorReward(DonorReward donorReward);
-    DonorReward getDonorRewardById(Long id);
+    DonorRewardResponseDTO saveDonorReward(DonorRewardRequestDTO dto);
+    DonorRewardResponseDTO getDonorRewardById(Long id);
     void deleteDonorReward(Long id);
-    DonorReward updateDonorReward(Long id, DonorReward donorReward);
-
+    DonorRewardResponseDTO updateDonorReward(Long id, DonorRewardRequestDTO dto);
+    List<DonorRewardResponseDTO> getAllRewards();
 }
