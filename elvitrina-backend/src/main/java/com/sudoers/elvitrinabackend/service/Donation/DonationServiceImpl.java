@@ -48,7 +48,7 @@ public class DonationServiceImpl implements DonationService {
     @Transactional
     public DonationResponseDTO saveDonation(DonationRequestDTO requestDTO) {
         Donation donation = donationMapper.toEntity(requestDTO);
-        donation.setTimestamp(LocalDateTime.now());
+        donation.setCreatedAt(LocalDateTime.now());
 
         if (requestDTO.getCampaignId() != null) {
             DonationCampaign campaign = donationCampaignRepository.findById(requestDTO.getCampaignId())
@@ -98,7 +98,7 @@ public class DonationServiceImpl implements DonationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Donation not found with id: " + id));
 
         donationMapper.updateEntityFromDTO(requestDTO, existingDonation);
-        existingDonation.setTimestamp(LocalDateTime.now());
+        existingDonation.setUpdatedAt(LocalDateTime.now());
 
         if (requestDTO.getCampaignId() != null) {
             DonationCampaign campaign = donationCampaignRepository.findById(requestDTO.getCampaignId())
