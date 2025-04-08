@@ -10,5 +10,7 @@ import java.util.List;
 @Repository
 public interface DonorRewardRepository extends JpaRepository<DonorReward, Long> {
     List<DonorReward> findByAvailableQuantityGreaterThan(int quantity);
+    List<DonorReward> findByCampaignCampaignId(Long campaignId);
+
 }
 
