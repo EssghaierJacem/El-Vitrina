@@ -1,15 +1,18 @@
 package com.sudoers.elvitrinabackend.service.Donation;
 
-
-import com.sudoers.elvitrinabackend.model.entity.Donation;
+import com.sudoers.elvitrinabackend.model.dto.request.DonationRequestDTO;
+import com.sudoers.elvitrinabackend.model.dto.response.DonationResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface DonationService {
-    Donation saveDonation(Donation donation);
-    List<Donation> getAllDonations();
-    Donation getDonationById(Long id);
+    DonationResponseDTO saveDonation(DonationRequestDTO requestDTO);
+    List<DonationResponseDTO> getAllDonations();
+    DonationResponseDTO getDonationById(Long id);
     void deleteDonation(Long id);
-    Donation updateDonation(Long id, Donation donation);
-
+    DonationResponseDTO updateDonation(Long id, DonationRequestDTO requestDTO);
+    Page<DonationResponseDTO> getDonationsPaginated(Pageable pageable);
+    List<DonationResponseDTO> getDonationsByCampaignId(Long campaignId);
 }

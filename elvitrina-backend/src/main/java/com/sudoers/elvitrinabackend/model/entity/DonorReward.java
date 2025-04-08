@@ -3,56 +3,45 @@ package com.sudoers.elvitrinabackend.model.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class DonorReward {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rewardId;
 
-    @NotBlank(message = "Type is required")
-    @Size(max = 50, message = "Type must be less than 50 characters")
-    @Column(nullable = false)
-    private String type;
+    private String title;
+    private String description;
+    private Double minimumDonationAmount;
+    private Integer availableQuantity;
+    private Integer claimedQuantity = 0;
+    private String imageUrl;
 
-    @NotBlank(message = "Details are required")
-    @Size(max = 500, message = "Details must be less than 500 characters")
-    @Column(nullable = false)
-    private String details;
-
-    @NotNull(message = "Issuance date is required")
-    @Column(nullable = false)
-    private LocalDateTime issuanceDate;
-
-    @NotNull(message = "Expiration date is required")
-    @Future(message = "Expiration date must be in the future")
-    @Column(nullable = false)
+    private LocalDateTime issuanceDate = LocalDateTime.now();
     private LocalDateTime expirationDate;
-
-    @NotBlank(message = "Redemption status is required")
-    @Size(max = 50, message = "Redemption status must be less than 50 characters")
-    @Column(nullable = false)
+    private LocalDateTime redemptionDate;
+    private String redemptionCode;
     private String redemptionStatus;
 
-    @Column(nullable = true)
-    private LocalDateTime redemptionDate;
 
-    @Size(max = 50, message = "Redemption code must be less than 50 characters")
-    @Column(nullable = true)
-    private String redemptionCode;
+    @OneToMany(mappedBy = "donorReward")
+    private List<Gift> gifts;
 
-    //@NotNull(message = "Timestamp is required")
-    @Column(nullable = true)
-    private LocalDateTime timestamp;
 
-    //@NotNull(message = "Donation is required")
-    @OneToOne
-    @JoinColumn(name = "donation_id", nullable = true)
-    private Donation donation;
+    @ManyToOne
+    private DonationCampaign campaign;
+
+    public boolean isAvailable() {
+        return (availableQuantity == null || claimedQuantity < availableQuantity) &&
+                (expirationDate == null || expirationDate.isAfter(LocalDateTime.now()));
+    }
 }
