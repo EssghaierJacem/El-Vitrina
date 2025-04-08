@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DonorRewardRepository extends JpaRepository<DonorReward, Long> {
-
 }
 
