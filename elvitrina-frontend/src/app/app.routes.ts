@@ -3,6 +3,7 @@ import { BlankComponent } from './layouts/blank/blank.component';
 import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
 import { AdminGuard } from './main-components/user/adminGuard.component';
+import { NotFoundComponent } from './layouts/not-found/not-found.component';
 
 export const routes: Routes = [
   {
@@ -15,7 +16,7 @@ export const routes: Routes = [
           import('./main-components/offer/frontoffice/frontoffice_offer.routes').then((m) => m.FrontOfferRoutes),
       },
       {
-        path: 'user',
+        path: 'users',
         loadChildren: () =>
           import('./main-components/user/frontoffice/frontuser.routes').then((m) => m.FrontUserRoutes),
       },
@@ -102,7 +103,6 @@ export const routes: Routes = [
     ],
   },
   {
-    path: '**',
-    redirectTo: 'authentication/error',
+    path: '**', component: NotFoundComponent
   },
 ];

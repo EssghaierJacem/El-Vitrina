@@ -1489,6 +1489,9 @@
               <a class="nav-link" href="#">Shipping</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="/offers">Offers</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="#">Contact</a>
             </li>
           </ul>
@@ -2001,8 +2004,25 @@
               </div>
     
             </li>
-            <li class="nav-item">
-              <a class="nav-link" *ngIf="isLoggedIn" href="#">Hello, {{ firstName || ' Guest' }}</a>
+            <li class="nav-item dropdown">
+              <a class="nav-link" *ngIf="isLoggedIn" data-bs-toggle="dropdown" href="/users">Hello, {{ firstName || ' Guest' }}</a>
+              <div class="dropdown-menu" *ngIf="isLoggedIn()">
+                <div class="card card-lg">
+                  <div class="card-body">
+                    <ul class="list-styled fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" *ngIf="isLoggedIn()" href="/users">Connect +</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" *ngIf="isLoggedIn()" href="/friends/friend-requests">My Friends</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" *ngIf="isLoggedIn()" href="#">Messages</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </li>
             <li class="nav-item">
               <button class="nav-link" *ngIf="isLoggedIn()" (click)="handleStoreButton()" mat-button>
@@ -2031,7 +2051,10 @@
                 <div class="card-body">
                   <ul class="list-styled fs-sm">
                     <li class="list-styled-item" *ngIf="isLoggedIn()">
-                      <a class="list-styled-link" href="#" [routerLink]="['/user', userId, 'profile']">Profile</a>
+                      <a class="list-styled-link" href="#" [routerLink]="['/users', userId]">My Profile</a>
+                    </li>
+                    <li class="list-styled-item" *ngIf="isLoggedIn()">
+                      <a class="list-styled-link" href="#" [routerLink]="['/users', userId, 'profile']">Update Profile</a>
                     </li>
                     <li class="list-styled-item" *ngIf="isLoggedIn()">
                       <a class="list-styled-link" href="#" (click)="logout()">Logout</a>

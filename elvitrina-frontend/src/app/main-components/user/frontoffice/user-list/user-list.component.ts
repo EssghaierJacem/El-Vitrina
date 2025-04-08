@@ -5,6 +5,7 @@ import { UserService } from 'src/app/core/services/user/UserService';
 import { CommonModule } from '@angular/common';
 import { TokenService } from 'src/app/core/services/user/TokenService';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,7 +29,8 @@ import { Subject } from 'rxjs';
     MatMenuModule,
     MatDividerModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    RouterModule
   ],
   animations: [
     trigger('cardEntrance', [

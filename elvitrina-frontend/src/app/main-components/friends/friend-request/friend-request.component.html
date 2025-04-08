@@ -95,7 +95,8 @@
                     <mat-icon>chat</mat-icon>
                     Message
                   </button>
-                  <button mat-stroked-button class="action-button">
+                  <button mat-stroked-button class="action-button"
+                    [routerLink]="['/users', friend.id]">
                     <mat-icon>person_pin</mat-icon>
                     Profile
                   </button>
