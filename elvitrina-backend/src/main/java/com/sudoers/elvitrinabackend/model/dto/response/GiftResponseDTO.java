@@ -8,8 +8,10 @@ public class GiftResponseDTO {
     private String name;
     private String description;
     private String imageUrl;
-    private Boolean won;
     private Long donationId;
     private Long rewardId;
     private Long userId;
+    private Boolean isRedeemed;
+    private String giftCode;
 }
+

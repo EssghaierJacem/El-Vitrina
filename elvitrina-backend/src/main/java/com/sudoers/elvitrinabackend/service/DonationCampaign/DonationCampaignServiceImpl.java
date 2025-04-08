@@ -53,7 +53,7 @@ public class DonationCampaignServiceImpl implements DonationCampaignService {
     @Override
     public DonationCampaignResponseDTO save(DonationCampaignRequestDTO requestDTO) {
         DonationCampaign campaign = donationCampaignMapper.toEntity(requestDTO);
-        campaign.setTimestamp(LocalDateTime.now());
+        campaign.setCreatedAt(LocalDateTime.now());
 
         campaign.setUser(getUserIfExists(requestDTO.getUserId()));
         campaign.setStore(getStoreIfExists(requestDTO.getStoreId()));
@@ -90,7 +90,7 @@ public class DonationCampaignServiceImpl implements DonationCampaignService {
                 .orElseThrow(() -> new ResourceNotFoundException("Donation campaign not found with id: " + id));
 
         donationCampaignMapper.updateEntity(requestDTO, existing);
-        existing.setTimestamp(LocalDateTime.now());
+        existing.setUpdatedAt(LocalDateTime.now());
         existing.setUser(getUserIfExists(requestDTO.getUserId()));
         existing.setStore(getStoreIfExists(requestDTO.getStoreId()));
 

@@ -50,14 +50,13 @@ public class DonationCampaignMapper {
                 .title(campaign.getTitle())
                 .description(campaign.getDescription())
 
-                // Convert double back to BigDecimal for response DTO
                 .goalAmount(BigDecimal.valueOf(campaign.getGoal()))
                 .currentAmount(BigDecimal.valueOf(campaign.getCurrentAmount()))
                 .progressPercentage(campaign.getProgressPercentage())
                 .startDate(campaign.getStartDate())
                 .endDate(campaign.getEndDate())
                 .status(campaign.getStatus())
-                .createdAt(campaign.getTimestamp())
+                .createdAt(campaign.getCreatedAt())
                 .donorCount(campaign.getDonations() != null ? campaign.getDonations().size() : 0)
                 .rewards(campaign.getRewards() != null ?
                         campaign.getRewards().stream()
