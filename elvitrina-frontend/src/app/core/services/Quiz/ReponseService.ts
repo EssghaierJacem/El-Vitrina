@@ -7,14 +7,16 @@ import { Response } from 'src/app/core/models/Quiz/reponse';
   providedIn: 'root'
 })
 export class ResponseService {
-  private apiUrl = 'http://localhost:8080/api/payment;'  
+  private apiUrl = 'http://localhost:8081/api/responses';
+
   constructor(private http: HttpClient) {}
+
 
   createResponse(response: Response): Observable<Response> {
     return this.http.post<Response>(this.apiUrl, response);
   }
 
-  editResponse(id: number, response: Response): Observable<Response> {
+  updateResponse(id: number, response: Response): Observable<Response> {
     return this.http.put<Response>(`${this.apiUrl}/${id}`, response);
   }
 

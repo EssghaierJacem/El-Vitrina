@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class PaymentService {
 
-  private apiUrl = 'http://localhost:8080/api/payment'; // Remplacez par votre URL d'API
+  private apiUrl = 'http://localhost:8081/api/payments'; // Remplacez par votre URL d'API
 
   constructor(private http: HttpClient) {}
 
@@ -29,19 +29,36 @@ export class PaymentService {
   }
 
   // Récupérer un paiement par ID
-  getPaymentById(id: number): Observable<Payment> {
-    const url = `${this.apiUrl}/${id}`;
-    return this.http.get<Payment>(url);
-  }
-  updatePayment(id: number, payment: Payment): Observable<Payment> {
-    return this.http.put<Payment>(`${this.apiUrl}/${id}`, payment);
-  }
+ // getPaymentById → ajoute /getById
+getPaymentById(id: number): Observable<Payment> {
+  const url = `${this.apiUrl}/getById/${id}`;
+  return this.http.get<Payment>(url);
+}
 
-  getAllPayments(): Observable<Payment[]> {
-    return this.http.get<Payment[]>(this.apiUrl);
-  }
+// updatePayment → ajoute /update
+updatePayment(id: number, payment: Payment): Observable<Payment> {
+  return this.http.put<Payment>(`${this.apiUrl}/update/${id}`, payment);
+}
+
+// getAllPayments → appelle /list
+getAllPayments(): Observable<Payment[]> {
+  return this.http.get<Payment[]>(`${this.apiUrl}/list`);
+}
 
   deletePayment(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+  processPayment(orderId: number, amount: number, paymentMethod: string): Observable<Payment> {
+    return this.http.post<Payment>(`${this.apiUrl}/process`, null, {
+      params: {
+        orderId,
+        amount,
+        paymentMethod
+      }
+    });
+  }
+
+  validatePayment(paymentId: number): Observable<Payment> {
+    return this.http.post<Payment>(`${this.apiUrl}/validate/${paymentId}`, {});
   }
 }

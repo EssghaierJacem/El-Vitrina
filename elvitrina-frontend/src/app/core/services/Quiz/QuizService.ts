@@ -8,7 +8,7 @@ import { Quiz } from 'src/app/core/models/Quiz/quiz';
 })
 export class QuizService {
 
-  private apiUrl = 'http://example.com/api/quizzes';  // Remplace par ton URL d'API
+  private apiUrl = 'http://localhost:8081/api/quizzes';
 
   constructor(private http: HttpClient) {}
 
@@ -16,27 +16,21 @@ export class QuizService {
     return this.http.post<Quiz>(this.apiUrl, quiz);
   }
 
-  editQuiz(id: number, quiz: Quiz): Observable<Quiz> {
-    return this.http.put<Quiz>(`${this.apiUrl}/${id}`, quiz);
-  }
-
   getAllQuizzes(): Observable<Quiz[]> {
     return this.http.get<Quiz[]>(this.apiUrl);
   }
 
   getQuizById(id: number): Observable<Quiz> {
-    return this.http.get<Quiz>(`${this.apiUrl}/${id}`);
+    return this.http.get<Quiz>(`${this.apiUrl}/getById/${id}`);
+  }
+
+  updateQuiz(id: number, quiz: Quiz): Observable<Quiz> {
+    return this.http.put<Quiz>(`${this.apiUrl}/update/${id}`, quiz);
   }
 
   deleteQuiz(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/delete/${id}`);
   }
 
-  // Mettre à jour un quiz
-  updateQuiz(quiz: Quiz): Observable<Quiz> {
-    return this.http.put<Quiz>(`${this.apiUrl}/${quiz.id}`, quiz);
-  }
-
-   // Récupérer un quiz par ID
 }
 

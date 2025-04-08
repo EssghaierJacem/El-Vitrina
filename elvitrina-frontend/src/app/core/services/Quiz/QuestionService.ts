@@ -7,7 +7,7 @@ import { Question } from 'src/app/core/models/Quiz/question';
   providedIn: 'root'
 })
 export class QuestionService {
-  private apiUrl = 'http://localhost:8080/api/questions';  // Remplace par ton URL d'API
+  private apiUrl = 'http://localhost:8081/api/questions';  // Remplace par ton URL d'API
 
   constructor(private http: HttpClient) {}
 
@@ -15,8 +15,8 @@ export class QuestionService {
     return this.http.post<Question>(this.apiUrl, question);
   }
 
-  editQuestion(id: number, question: Question): Observable<Question> {
-    return this.http.put<Question>(`${this.apiUrl}/${id}`, question);
+  updateQuestion(id: number, question: Question): Observable<Question> {
+    return this.http.put<Question>(`${this.apiUrl}/update/${id}`, question);
   }
 
   getAllQuestions(): Observable<Question[]> {
@@ -24,10 +24,9 @@ export class QuestionService {
   }
 
   getQuestionById(id: number): Observable<Question> {
-    return this.http.get<Question>(`${this.apiUrl}/${id}`);
+    return this.http.get<Question>(`${this.apiUrl}/getById/${id}`);
   }
 
   deleteQuestion(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
-}
+  }}

@@ -28,7 +28,8 @@ public class QuizController {
         return new ResponseEntity<>(createdQuiz, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
+
+    @GetMapping("/getById/{id}")
     public ResponseEntity<Quiz> getQuizById(@PathVariable Long id) {
         Optional<Quiz> quiz = quizService.getQuizById(id);
         return quiz.map(ResponseEntity::ok)
@@ -41,14 +42,14 @@ public class QuizController {
         return ResponseEntity.ok(quizzes);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<Quiz> updateQuiz(@PathVariable Long id, @RequestBody Quiz quiz) {
         Quiz updatedQuiz = quizService.updateQuiz(id, quiz);
         return updatedQuiz != null ? ResponseEntity.ok(updatedQuiz)
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteQuiz(@PathVariable Long id) {
         quizService.deleteQuiz(id);
         return ResponseEntity.noContent().build();

@@ -8,13 +8,11 @@ import { Observable } from 'rxjs';
 })
 export class CustomOrderService {
 
-  private apiUrl = 'http://localhost:8080/api/custom-orders';// backend  endpoint
+  private apiUrl = 'http://localhost:8081/api/orders';
 
   constructor(private http: HttpClient) {}
 
-  getOrders(): Observable<CustomOrder[]> {
-    return this.http.get<CustomOrder[]>(this.apiUrl);
-  }
+
 
   getOrderById(id: number): Observable<CustomOrder> {
     return this.http.get<CustomOrder>(`${this.apiUrl}/${id}`);
@@ -32,7 +30,28 @@ export class CustomOrderService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
   getAllOrders(): Observable<CustomOrder[]> {
-    return this.http.get<CustomOrder[]>('URL_API/custom-orders');
+    return this.http.get<CustomOrder[]>(`${this.apiUrl}/all`);
+  }
+  updateOrderStatus(orderId: number, userId: number, newStatus: string): Observable<CustomOrder> {
+    return this.http.put<CustomOrder>(
+      `${this.apiUrl}/${orderId}/status?userId=${userId}&newStatus=${newStatus}`, {}
+    );
+  }
+
+  getOrdersByUser(userId: number): Observable<CustomOrder[]> {
+    return this.http.get<CustomOrder[]>(`${this.apiUrl}/user/${userId}`);
+  }
+
+  getUserOrdersByStatus(userId: number, status: string): Observable<CustomOrder[]> {
+    return this.http.get<CustomOrder[]>(`${this.apiUrl}/user/${userId}/status/${status}`);
+  }
+
+  addProductToOrder(orderId: number, productId: number): Observable<CustomOrder> {
+    return this.http.post<CustomOrder>(`${this.apiUrl}/${orderId}/addProduct/${productId}`, {});
+  }
+
+  removeProductFromOrder(orderId: number, productId: number): Observable<CustomOrder> {
+    return this.http.delete<CustomOrder>(`${this.apiUrl}/${orderId}/removeProduct/${productId}`);
   }
 
 }

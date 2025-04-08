@@ -28,11 +28,6 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentStatusType paystatus;
 
-    @OneToMany
-    @JoinTable(
-            name = "payment_orders",  // Table de jointure
-            joinColumns = @JoinColumn(name = "payment_id"),  // Clé étrangère vers `payment`
-            inverseJoinColumns = @JoinColumn(name = "order_id")  // Clé étrangère vers `custom_order`
-    )
+    @OneToMany(mappedBy = "payment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CustomOrder> orders;
 }

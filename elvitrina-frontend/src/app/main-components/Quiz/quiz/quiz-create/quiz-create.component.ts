@@ -10,11 +10,13 @@ import { MatButtonModule } from '@angular/material/button';  // Pour les boutons
 import { MatCardModule } from '@angular/material/card';  // Pour mat-card
 import { MatSelectModule } from '@angular/material/select';  // Pour mat-select (si nécessaire)
 import { MatOptionModule } from '@angular/material/core';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-quiz-create',
   imports: [
    MatFormFieldModule,
-   FormsModule,  // Pour ngModel
+   FormsModule,
+   CommonModule ,// Pour ngModel
    MatInputModule,  // Pour matInput
     MatButtonModule,  // Pour les boutons
     MatCardModule,  // Pour mat-card

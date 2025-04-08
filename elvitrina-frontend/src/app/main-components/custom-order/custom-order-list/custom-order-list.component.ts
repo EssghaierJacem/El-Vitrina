@@ -1,35 +1,35 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ViewChild } from '@angular/core';
-import { CustomOrder } from 'src/app/core/models/Panier/CustomOrder';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { FormsModule } from '@angular/forms';
+
+import { CustomOrder } from 'src/app/core/models/Panier/CustomOrder';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import * as XLSX from 'xlsx';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
+
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { CdkTableDataSourceInput } from '@angular/cdk/table';
+import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
+
+import { MatSortModule } from '@angular/material/sort';
 @Component({
   selector: 'app-custom-order-list',
   imports: [
+    FormsModule,
+    RouterModule,
     MatInputModule,
     CommonModule,
     MatCardModule,
     MatFormFieldModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatSelectModule,
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
@@ -37,58 +37,70 @@ import { CdkTableDataSourceInput } from '@angular/cdk/table';
     MatButtonModule,
     MatSidenavModule,
     MatMenuModule,
-    MatToolbarModule
+
   ],
   templateUrl: './custom-order-list.component.html',
-  styleUrl: './custom-order-list.component.scss'
+  styleUrls: ['./custom-order-list.component.scss']
 })
 export class CustomOrderListComponent implements OnInit {
   orders: CustomOrder[] = [];
-  filteredOrders: CustomOrder[] = [];
-  filterText: string = '';
-  statusFilter: string = '';
+  dataSource: MatTableDataSource<CustomOrder> = new MatTableDataSource<CustomOrder>();
+  displayedColumns: string[] = ['client', 'date', 'montant', 'statut', 'actions'];
   searchText: string = '';
-filteredDataSource: CdkTableDataSourceInput<any>;
-displayedColumns: any;
 
-@ViewChild(MatPaginator) paginator!: MatPaginator; // Ajout du paginator
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private orderService: CustomOrderService) { }
+  constructor(private orderService: CustomOrderService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadOrders();
   }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 
-  loadOrders() {
-    this.orderService.getOrders().subscribe((data) => {
+  loadOrders(): void {
+    this.orderService.getAllOrders().subscribe((data: CustomOrder[]) => {
       this.orders = data;
-      this.filteredOrders = data;
+      this.dataSource.data = data;
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
     });
   }
 
-  applyFilter() {
-    // Filter based on client name and status
-    this.filteredOrders = this.orders.filter(order => {
+  applyFilter(): void {
+    const filterValue = this.searchText?.trim().toLowerCase() || '';
 
-      const matchesName = order.user?.toString().toLowerCase().includes(this.searchText.toLowerCase()) || false;//+
-      const matchesStatus = order.status.toLowerCase().includes(this.statusFilter.toLowerCase());
+    this.dataSource.filterPredicate = (data: CustomOrder, filter: string): boolean => {
+      const client = data.user?.name?.toLowerCase() || '';
+      const status = data.status?.toLowerCase() || '';
+      return client.includes(filter) || status.includes(filter);
+    };
 
-      return matchesName && matchesStatus;
-    });
+    this.dataSource.filter = filterValue;
   }
 
-  deleteOrder(id: number) {
+  exportToExcel(): void {
+    const exportData = this.dataSource.filteredData.map(order => ({
+    //  Client: order.user?.username,
+   // Date: order.dateCustomOrder,
+    //  Montant: order.totalAmount,
+      Statut: order.status
+    }));
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Commandes');
+    XLSX.writeFile(wb, 'commandes_personnalisees.xlsx');
+  }
+
+  deleteOrder(id: number): void {
     this.orderService.deleteOrder(id).subscribe(() => {
       this.orders = this.orders.filter(order => order.id !== id);
-      this.applyFilter(); // Reapply filter after deletion
+      this.dataSource.data = this.orders;
+      this.applyFilter();
     });
-  }
-
-  exportToExcel() {
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredOrders);
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Orders');
-    XLSX.writeFile(wb, 'orders.xlsx');
   }
 
   getStatusClass(status: string): string {

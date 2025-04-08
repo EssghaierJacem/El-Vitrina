@@ -2,17 +2,14 @@ package com.sudoers.elvitrinabackend.controller.payment;
 
 import com.sudoers.elvitrinabackend.model.entity.Payment;
 import com.sudoers.elvitrinabackend.service.payment.PaymentService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:51937")
 @RestController
 @RequestMapping("/api/payments")
 
@@ -35,7 +32,7 @@ public class paymentController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<List<Payment>> getAllPayments() {
         return ResponseEntity.ok(paymentService.getAllPayments());
     }

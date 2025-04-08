@@ -10,35 +10,6 @@
   <mat-card-content class="b-t-1">
     <form (ngSubmit)="createOrder()">
       <div class="row">
-        <!-- Products Section -->
-       <!-- <div class="col-12">
-          <h3>Products</h3>
-          <div *ngFor="let product of order.products; let i = index" class="product-item">
-            <div class="row">
-              <div class="col-lg-8">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Product {{i + 1}}</mat-label>
-                  <input matInput [(ngModel)]="product." [name]="'productName' + i" placeholder="Product name" required />
-                </mat-form-field>
-              </div>
-              <div class="col-lg-4">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Price</mat-label>
-                  <input matInput type="number" [(ngModel)]="product.price" [name]="'productPrice' + i" placeholder="Price" required min="0" step="0.01" />
-                </mat-form-field>
-              </div>
-              <div class="col-lg-2">
-                <button mat-icon-button color="warn" (click)="removeProduct(i)" type="button">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </div>
-          </div>
-          <button mat-button type="button" color="primary" (click)="addProduct()">
-            <mat-icon>add</mat-icon> Add Product
-          </button>
-        </div>
-      -->
         <!-- Quantity and Price -->
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
@@ -73,20 +44,11 @@
           </mat-form-field>
         </div>
 
-        <!-- Customer Information -->
-        <div class="col-12">
-          <h3>Customer Information</h3>
-        </div>
+        <!-- Customer Information (Only Name or ID) -->
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Customer Name</mat-label>
-            <input matInput [(ngModel)]="order.user.name" name="userName" placeholder="Full name" required />
-          </mat-form-field>
-        </div>
-        <div class="col-lg-6">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Customer Email</mat-label>
-            <input matInput type="email" [(ngModel)]="order.user.email" name="userEmail" placeholder="Email" required />
+            <mat-label>Customer Name or ID</mat-label>
+            <input matInput [(ngModel)]="order.user.id" name="userNameOrId" placeholder="Customer Name or ID" required />
           </mat-form-field>
         </div>
       </div>

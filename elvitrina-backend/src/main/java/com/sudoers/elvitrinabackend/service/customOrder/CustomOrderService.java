@@ -1,36 +1,46 @@
 package com.sudoers.elvitrinabackend.service.customOrder;
 
 import com.sudoers.elvitrinabackend.model.entity.CustomOrder;
+import com.sudoers.elvitrinabackend.model.entity.Product;
+import com.sudoers.elvitrinabackend.model.entity.User;
 import com.sudoers.elvitrinabackend.model.enums.OrderStatusType;
 import com.sudoers.elvitrinabackend.repository.CustomOrderRepository;
+import com.sudoers.elvitrinabackend.repository.PaymentRepository;
+import com.sudoers.elvitrinabackend.repository.ProductRepository;
 import com.sudoers.elvitrinabackend.repository.UserRepository;
-import org.hibernate.query.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sudoers.elvitrinabackend.model.enums.OrderStatusType.*;
-
 @Service
-public class CustomOrderService implements ICustomOrderService{
+public class CustomOrderService implements ICustomOrderService {
 
 
-    private final CustomOrderRepository customOrderRepository;
     @Autowired
     private UserRepository userRepository;
+    private final ProductRepository ProductRepository;
+    private final CustomOrderRepository customOrderRepository;
+    private final PaymentRepository PaymentRepository;
 
-
-    @Autowired
-    public CustomOrderService(CustomOrderRepository customOrderRepository) {
+    public CustomOrderService(com.sudoers.elvitrinabackend.repository.ProductRepository productRepository, CustomOrderRepository customOrderRepository, PaymentRepository PaymentRepository) {
+        this.ProductRepository = productRepository;
         this.customOrderRepository = customOrderRepository;
+        this.PaymentRepository = PaymentRepository;
     }
     @Override
-    public CustomOrder createOrder(CustomOrder customOrder) {
-        return customOrderRepository.save(customOrder);
+    public CustomOrder createOrderWithUser(CustomOrder order, Long userId) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        order.setUser(existingUser);
+        order.setPayment(null);
+        return customOrderRepository.save(order);
+    }
+    @Override
+    public CustomOrder createOrder(CustomOrder order) {
+        order.setPayment(null);
+        return customOrderRepository.save(order);
     }
 
     @Override
@@ -44,69 +54,63 @@ public class CustomOrderService implements ICustomOrderService{
     }
 
     @Override
-    public CustomOrder updateOrder(Long id, CustomOrder customOrder) {
-        if (!customOrderRepository.existsById(id)) {
-            return null; // Or throw an exception like ResourceNotFoundException
-        }
-        customOrder.setId(id);
-        return customOrderRepository.save(customOrder);
-        }
+    public CustomOrder updateOrder(Long id, CustomOrder order) {
+        return customOrderRepository.findById(id).map(existingOrder -> {
+            existingOrder.setProducts(order.getProducts());
+            existingOrder.setQuantity(order.getQuantity());
+            existingOrder.setPrice(order.getPrice());
+            existingOrder.setOrderDate(order.getOrderDate());
+            existingOrder.setStatus(order.getStatus());
+            existingOrder.setUser(order.getUser());
+            return customOrderRepository.save(existingOrder);
+        }).orElse(null);
+    }
 
     @Override
     public void deleteOrder(Long id) {
         customOrderRepository.deleteById(id);
-
     }
 
-
-
-    @Transactional
+    @Override
     public CustomOrder updateOrderStatus(Long orderId, Long userId, OrderStatusType newStatus) {
-        // Find the order and verify it exists
-        CustomOrder order = customOrderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
-
-        // Verify the order belongs to the specified user
-        if (!order.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Order does not belong to the specified user");
-        }
-
-        // Validate status transition
-        validateStatusTransition(order.getStatus(), newStatus);
-
-        // Update the status
-        order.setStatus(newStatus);
-
-        // Save and return the updated order
-        return customOrderRepository.save(order);
+        return customOrderRepository.findById(orderId).map(order -> {
+            if (order.getUser() != null && order.getUser().getId().equals(userId)) {
+                order.setStatus(newStatus);
+                return customOrderRepository.save(order);
+            } else {
+                throw new RuntimeException("Unauthorized or user mismatch");
+            }
+        }).orElseThrow(() -> new RuntimeException("Order not found"));
     }
 
-    private void validateStatusTransition(OrderStatusType currentStatus, OrderStatusType newStatus) {
-        // Add validation rules for status transitions
-        switch (currentStatus) {
-            case PENDING:
-                if (newStatus != OrderStatusType.PAID) {
-                    throw new IllegalStateException("Order in PENDING state can only transition to PAID state");
-                }
-                break;
-            case PAID:
-                if (newStatus != OrderStatusType.DELIVERED) {
-                    throw new IllegalStateException("Order in PAID state can only transition to DELIVERED state");
-                }
-                break;
-            case DELIVERED:
-                throw new IllegalStateException("Cannot change status of a DELIVERED order");
-            default:
-                throw new IllegalStateException("Unknown order status: " + currentStatus);
-        }
-    }
-    // Méthode pour obtenir toutes les commandes d'un utilisateur
+    @Override
     public List<CustomOrder> getUserOrders(Long userId) {
         return customOrderRepository.findByUserId(userId);
     }
 
-    // Méthode pour obtenir les commandes d'un utilisateur filtrées par statut
+    @Override
     public List<CustomOrder> getUserOrdersByStatus(Long userId, OrderStatusType status) {
         return customOrderRepository.findByUserIdAndStatus(userId, status);
+    }
+
+@Override
+    public CustomOrder addProductToOrder(Long orderId, Long productId) {
+        CustomOrder order = customOrderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Commande non trouvée"));
+        Product product = ProductRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
+
+        order.getProducts().add(product);
+        return customOrderRepository.save(order);
+    }
+@Override
+    public CustomOrder removeProductFromOrder(Long orderId, Long productId) {
+        CustomOrder order = customOrderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Commande non trouvée"));
+        Product product = ProductRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
+
+        order.getProducts().remove(product);
+        return customOrderRepository.save(order);
     }
 }

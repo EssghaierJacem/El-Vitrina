@@ -1,34 +1,38 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { CustomOrder } from 'src/app/core/models/Panier/CustomOrder';
-import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
+import { MatNativeDateModule } from '@angular/material/core';
+
+import { CustomOrder } from 'src/app/core/models/Panier/CustomOrder';
+import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
 import { Product } from 'src/app/core/models/product/product.model';
 import { User } from 'src/app/core/models/user/user.model';
 import { OrderStatusType } from 'src/app/core/models/Panier/OrderStatusType.type';
+
 @Component({
   selector: 'app-custom-order-create',
+  standalone: true,
+  templateUrl: './custom-order-create.component.html',
+  styleUrl: './custom-order-create.component.scss',
   imports: [
-    MatInputModule,
-    MatCardModule,
-    MatFormFieldModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatCardModule,
     MatSelectModule,
     MatDatepickerModule,
     MatIconModule,
-    CommonModule
-  ],
-  standalone: true,
-  templateUrl: './custom-order-create.component.html',
-  styleUrl: './custom-order-create.component.scss'
+    MatNativeDateModule
+  ]
 })
 export class CustomOrderCreateComponent {
   order: CustomOrder = {
@@ -53,8 +57,7 @@ export class CustomOrderCreateComponent {
   constructor(private orderService: CustomOrderService, private router: Router) {}
 
   createOrder() {
-    this.order.calculateTotal = this.order.price * this.order.quantity;
-
+    this.order.calculateTotal = this.order.quantity * this.order.price;
     this.orderService.createOrder(this.order).subscribe(() => {
       this.router.navigate(['/orders']);
     });

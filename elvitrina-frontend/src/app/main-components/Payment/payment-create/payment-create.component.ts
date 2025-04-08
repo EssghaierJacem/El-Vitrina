@@ -7,7 +7,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Router } from '@angular/router';  // Pour la navigation après la création du paiement
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -15,7 +16,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PaymentMethodType } from 'src/app/core/models/Panier/PaymentMethodType.type';
 import { PaymentStatusType } from 'src/app/core/models/Panier/PaymentStatusType.type';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 @Component({
   selector: 'app-create-payment',
   imports: [CommonModule,
@@ -26,6 +26,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatInputModule,
     MatDatepickerModule,
     MatSelectModule,
+    MatNativeDateModule ,
     MatButtonModule],
   templateUrl: './payment-create.component.html',
   styleUrls: ['./payment-create.component.scss'],

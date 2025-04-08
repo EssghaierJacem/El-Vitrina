@@ -10,5 +10,8 @@ public interface IQuestionService {
     Optional<Question> getQuestionById(Long id);
     List<Question> getAllQuestions();
     Question updateQuestion(Long id, Question question);
+
+    List<Question> getQuestionsByQuizId(Long quizId);
+
     void deleteQuestion(Long id);
 }
