@@ -14,9 +14,10 @@ public class EventTicketMapper {
         EventTicket ticket = new EventTicket();
         ticket.setType(dto.getTicketType());
         ticket.setDescription(dto.getDescription());
-        ticket.setPrice(dto.getPrice().doubleValue());
+        ticket.setPrice(dto.getPrice() != null ? dto.getPrice().doubleValue() : null);
         ticket.setQuantityAvailable(dto.getQuantity());
         ticket.setQuantityRemaining(dto.getQuantity());
+        ticket.setEarlyBirdPricing(dto.getEarlyBirdPricing() != null ? dto.getEarlyBirdPricing().doubleValue() : null);
         return ticket;
     }
 
@@ -25,13 +26,17 @@ public class EventTicketMapper {
         dto.setId(ticket.getTicketId());
         dto.setTicketType(ticket.getType());
         dto.setDescription(ticket.getDescription());
-        dto.setPrice(BigDecimal.valueOf(ticket.getPrice()));
+        dto.setPrice(ticket.getPrice() != null ? BigDecimal.valueOf(ticket.getPrice()) : null);
         dto.setQuantity(ticket.getQuantityAvailable());
         dto.setSoldCount(ticket.getQuantityAvailable() - ticket.getQuantityRemaining());
         dto.setRemainingCount(ticket.getQuantityRemaining());
         dto.setEventId(ticket.getVirtualEvent() != null ? ticket.getVirtualEvent().getEventId() : null);
         dto.setEventTitle(ticket.getVirtualEvent() != null ? ticket.getVirtualEvent().getTitle() : null);
-        dto.setIsActive(true); // Could be dynamic if added to entity
+        dto.setIsValid(ticket.getIsValid());
+        dto.setQrCodeUrl(ticket.getQrCodeHash() != null ? "/qrcodes/" + ticket.getQrCodeHash() + ".png" : null);
+        dto.setValidUntil(ticket.getValidUntil());
+        dto.setEarlyBirdPricing(ticket.getEarlyBirdPricing() != null ? BigDecimal.valueOf(ticket.getEarlyBirdPricing()) : null);
+        dto.setSessionIds(null); // Set in service if linked to sessions
         return dto;
     }
 
@@ -41,8 +46,8 @@ public class EventTicketMapper {
         if (dto.getPrice() != null) ticket.setPrice(dto.getPrice().doubleValue());
         if (dto.getQuantity() != null) {
             ticket.setQuantityAvailable(dto.getQuantity());
-            ticket.setQuantityRemaining(dto.getQuantity()); // Reset remaining; adjust in service if needed
+            // Quantity remaining adjusted in service, not here
         }
-        // eventId handled in service layer
+        if (dto.getEarlyBirdPricing() != null) ticket.setEarlyBirdPricing(dto.getEarlyBirdPricing().doubleValue());
     }
 }

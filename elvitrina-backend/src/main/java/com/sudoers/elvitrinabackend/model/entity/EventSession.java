@@ -13,30 +13,21 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventParticipant {
+public class EventSession {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    private Long sessionId;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private String sessionTitle;
 
-    private Boolean attended;
 
-    private LocalDateTime registrationDate;
-    private Boolean hasAccessToChat = false;
-    private Boolean hasAccessToRecordings = false;
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    @OneToOne
-    @JoinColumn(name = "user_id", unique = true)
-    private User user;
-
     @ManyToOne
-    @JoinColumn(name = "virtual_event_id")
     private VirtualEvent virtualEvent;
 
-    @OneToOne(mappedBy = "eventParticipant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private EventTicket eventTicket;
 }

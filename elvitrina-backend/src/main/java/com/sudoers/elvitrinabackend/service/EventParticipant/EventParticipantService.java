@@ -15,4 +15,10 @@ public interface EventParticipantService {
     EventParticipantResponseDTO updateEventParticipant(Long id, EventParticipantRequestDTO requestDTO);
     Page<EventParticipantResponseDTO> getEventParticipantsPaginated(Pageable pageable);
     List<EventParticipantResponseDTO> getParticipantsByEventId(Long eventId);
+
+    EventParticipantResponseDTO registerParticipant(EventParticipantRequestDTO requestDTO);
+    EventParticipantResponseDTO grantChatAccess(Long participantId, boolean enable);
+    EventParticipantResponseDTO provideRecordingAccess(Long participantId, boolean enable);
+    EventParticipantResponseDTO trackSessionAttendance(Long participantId, boolean attended);
+    boolean validateParticipantTicket(Long participantId);
 }

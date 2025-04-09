@@ -1,9 +1,14 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
+import com.sudoers.elvitrinabackend.model.enums.EventMode;
+import com.sudoers.elvitrinabackend.model.enums.EventType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,13 +27,29 @@ public class VirtualEvent {
 
     private LocalDateTime eventDate;
 
-    private String eventType;
 
     private Double ticketPrice;
 
     private String status;
 
-    private LocalDateTime timestamp;
+
+
+
+    private EventType eventType;
+    private EventMode eventMode;
+
+    @OneToMany(mappedBy = "virtualEvent", cascade = CascadeType.ALL)
+    private List<EventSession> sessions;
+
+    private Integer maxParticipants;
+    private String streamUrl;
+    private String chatChannelId;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "store_id")
@@ -44,3 +65,4 @@ public class VirtualEvent {
     @JoinColumn(name = "user_id")
     private User user;
 }
+

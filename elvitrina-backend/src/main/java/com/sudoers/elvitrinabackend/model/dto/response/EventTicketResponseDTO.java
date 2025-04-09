@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -19,5 +21,9 @@ public class EventTicketResponseDTO {
     private Integer remainingCount;
     private Long eventId;
     private String eventTitle;
-    private Boolean isActive;
+    private Boolean isValid;
+    private String qrCodeUrl; // URL to the generated QR code
+    private LocalDateTime validUntil;
+    private BigDecimal earlyBirdPricing;
+    private List<Long> sessionIds; // Sessions this ticket applies to
 }

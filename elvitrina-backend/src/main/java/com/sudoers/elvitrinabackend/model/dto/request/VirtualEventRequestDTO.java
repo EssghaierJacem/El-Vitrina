@@ -1,5 +1,7 @@
 package com.sudoers.elvitrinabackend.model.dto.request;
 
+import com.sudoers.elvitrinabackend.model.enums.EventMode;
+import com.sudoers.elvitrinabackend.model.enums.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,10 +15,15 @@ import java.util.List;
 public class VirtualEventRequestDTO {
     private String title;
     private String description;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
-    private String eventType;
-    private String eventUrl;
+    private LocalDateTime startDateTime; // Maps to eventDate
+    private Double ticketPrice;
     private String status;
-    private List<EventTicketRequestDTO> tickets;
+    private EventType eventType;
+    private EventMode eventMode;
+    private Integer maxParticipants;
+    private String streamUrl;
+    private String chatChannelId;
+    private List<EventSessionRequestDTO> sessions; // For multi-session events
+    private Long storeId; // For store relationship
+    private Long userId; // For user relationship
 }

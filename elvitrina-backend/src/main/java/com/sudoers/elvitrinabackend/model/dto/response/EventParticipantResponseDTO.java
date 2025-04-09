@@ -18,9 +18,10 @@ public class EventParticipantResponseDTO {
     private String eventTitle;
     private Long ticketId;
     private String ticketType;
-    private Boolean checkedIn;
+    private Boolean attended; // Renamed from checkedIn for clarity
     private LocalDateTime registrationDate;
-    private LocalDateTime checkInDate;
-    private String registrationNotes;
-    private String registrationCode;
+    private Boolean hasAccessToChat;
+    private Boolean hasAccessToRecordings;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
