@@ -4,7 +4,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -28,8 +32,16 @@ public class EventTicket {
     private Double earlyBirdPricing;
 
     private String type;
+    private String qrCodeHash;  // Unique identifier for QR
+    private Boolean isValid = true;
+    private LocalDateTime validUntil;
 
-    private LocalDateTime timestamp;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "virtual_event_id")
@@ -38,4 +50,10 @@ public class EventTicket {
     @OneToOne
     @JoinColumn(name = "event_participant_id", unique = true)
     private EventParticipant eventParticipant;
+
+
+    @PrePersist
+    public void generateQrCode() {
+        this.qrCodeHash = UUID.randomUUID().toString();
+    }
 }
