@@ -50,6 +50,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: FullComponent,
+    canActivate: [AdminGuard],
     children: [
       {
         path: '',
