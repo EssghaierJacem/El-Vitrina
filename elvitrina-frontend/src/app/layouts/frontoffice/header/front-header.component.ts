@@ -66,7 +66,7 @@ export class FrontHeaderComponent implements OnInit {
 
   handleStoreButton(): void {
     if (this.role !== 'SELLER') {
-      this.router.navigate(['/user/become-seller']); 
+      this.router.navigate(['/users/become-seller']); 
     } else if (this.hasStore) {
       this.router.navigate([`/stores/${this.storeId}`]); 
     } else {
