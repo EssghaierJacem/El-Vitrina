@@ -1,1 +1,71 @@
-<p>store-feedback-list works!</p>
+<div class="feedbacks-container">
+    <!-- Loading State -->
+    <div class="loading-spinner" *ngIf="loading">
+      <mat-spinner [diameter]="40"></mat-spinner>
+    </div>
+    
+    <!-- Error State -->
+    <div class="error-message" *ngIf="error">
+      <p>{{ error }}</p>
+    </div>
+    
+    <!-- No Feedbacks State -->
+    <div class="no-feedbacks" *ngIf="!loading && !error && feedbacks.length === 0">
+      <mat-icon>feedback</mat-icon>
+      <p>No feedbacks yet for this store.</p>
+    </div>
+    
+    <!-- Feedbacks Content -->
+    <div class="feedbacks-content" *ngIf="!loading && !error && feedbacks.length > 0">
+      <!-- Summary Section -->
+      <div class="feedback-summary">
+        <div class="average-rating">
+          <div class="rating-number">{{ averageRating | number:'1.1-1' }}</div>
+          <div class="rating-stars">
+            <div class="stars">
+              <ng-container *ngFor="let star of getStarArray(averageRating)">
+                <mat-icon *ngIf="star === 1">star</mat-icon>
+                <mat-icon *ngIf="star === 0">star_border</mat-icon>
+              </ng-container>
+            </div>
+            <div class="total-reviews">{{ feedbacks.length }} {{ feedbacks.length === 1 ? 'review' : 'reviews' }}</div>
+          </div>
+        </div>
+        
+        <div class="rating-breakdown">
+          <div class="rating-bar" *ngFor="let rating of [5, 4, 3, 2, 1]">
+            <div class="rating-label">{{ rating }} stars</div>
+            <div class="progress-container">
+              <div class="progress-bar" [style.width.%]="getRatingPercentage(rating.toString())"></div>
+            </div>
+            <div class="rating-count">{{ ratingCounts[rating.toString()] }}</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Feedback List -->
+      <div class="feedback-list">
+        <mat-card class="feedback-item" *ngFor="let feedback of feedbacks">
+          <mat-card-header>
+            <div mat-card-avatar class="user-avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <mat-card-title>{{ feedback.user?.firstName || 'Anonymous' }} {{ feedback.user?.lastName || '' }}</mat-card-title>
+            <mat-card-subtitle>
+              <div class="rating-stars">
+                <ng-container *ngFor="let star of getStarArray(feedback.rating)">
+                  <mat-icon *ngIf="star === 1" class="star-filled">star</mat-icon>
+                  <mat-icon *ngIf="star === 0" class="star-empty">star_border</mat-icon>
+                </ng-container>
+              </div>
+              <span class="feedback-date">{{ formatDate(feedback.createdAt) }}</span>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="feedback-comment">{{ feedback.comment }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,51 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <h2 class="text-center">Send an App Feedback</h2>
+    <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()">
+      <!-- Feedback Type -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Feedback Type</mat-label>
+        <mat-select formControlName="appFeedbackType" required>
+          <mat-option *ngFor="let option of feedbackTypeOptions" [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="feedbackForm.get('appFeedbackType')?.hasError('required')">
+          Feedback type is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Comment -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Comment</mat-label>
+        <textarea matInput formControlName="comment" rows="4" required></textarea>
+        <mat-error *ngIf="feedbackForm.get('comment')?.hasError('required')">
+          Comment is required
+        </mat-error>
+        <mat-error *ngIf="feedbackForm.get('comment')?.hasError('minlength')">
+          Comment must be at least 10 characters
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Contact Email -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Contact Email (Optional)</mat-label>
+        <input matInput formControlName="contactEmail" type="email">
+        <mat-error *ngIf="feedbackForm.get('contactEmail')?.hasError('email')">
+          Please enter a valid email address
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 m-t-16">
+        <button mat-button type="button" (click)="onCancel()">
+          Cancel
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="feedbackForm.invalid || isSubmitting">
+          <span *ngIf="isSubmitting">Submitting...</span>
+          <span *ngIf="!isSubmitting">Submit</span>
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

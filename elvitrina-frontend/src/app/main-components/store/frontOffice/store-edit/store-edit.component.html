@@ -1,1 +1,62 @@
-<p>store-edit works!</p>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Edit Store</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="storeForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Store Name</mat-label>
+        <input matInput formControlName="storeName" required>
+        <mat-error *ngIf="storeForm.get('storeName')?.hasError('required')">
+          Store name is required.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="category" required>
+          <mat-option *ngFor="let option of categoryOptions" [value]="option.value">
+            {{ option.displayName }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="storeForm.get('category')?.hasError('required')">
+          Category is required.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Address</mat-label>
+        <input matInput formControlName="address" required>
+        <mat-error *ngIf="storeForm.get('address')?.hasError('required')">
+          Address is required.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Image URL</mat-label>
+        <input matInput formControlName="image">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Cover Image URL</mat-label>
+        <input matInput formControlName="coverImage">
+      </mat-form-field>
+
+      <mat-checkbox formControlName="status">Active</mat-checkbox>
+      <mat-checkbox formControlName="featured">Featured</mat-checkbox>
+
+      <div class="button-group">
+        <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
+          <mat-icon *ngIf="isLoading">autorenew</mat-icon>
+          {{ isLoading ? 'Updating...' : 'Update Store' }}
+        </button>
+        <button mat-button (click)="resetForm()">Cancel</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

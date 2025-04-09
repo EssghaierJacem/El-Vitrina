@@ -99,21 +99,21 @@ export class AllProductComponent implements OnInit {
 
   getCategoryDescription(category: ProductCategoryType): string {
     const descriptions: { [key in ProductCategoryType]?: string } = {
-      HANDMADE_JEWELRY: 'Beautiful handcrafted jewelry pieces',
-      POTTERY_CERAMICS: 'Unique pottery and ceramic creations',
-      TEXTILES_FABRICS: 'High-quality textiles and fabrics',
-      ART_PAINTINGS: 'Original artwork and paintings',
-      HOME_DECOR: 'Beautiful home decor and accessories',
-      CLOTHING_ACCESSORIES: 'Stylish clothing and accessories',
-      ECO_FRIENDLY: 'Environmentally conscious products',
-      LOCAL_FOODS: 'Delicious local food specialties',
-      HEALTH_WELLNESS: 'Products for your health and wellness',
-      BOOKS_STATIONERY: 'Books and beautiful stationery items',
-      TOYS_GAMES: 'Fun and educational toys and games',
-      VINTAGE_ANTIQUES: 'Unique vintage and antique items',
-      DIGITAL_PRODUCTS: 'Digital downloads and products',
-      CRAFTS_DIY: 'Craft supplies and DIY materials',
-      PET_SUPPLIES: 'Supplies for your beloved pets'
+      "Handmade Jewelry": 'Beautiful handcrafted jewelry pieces',
+      "Pottery Ceramics": 'Unique pottery and ceramic creations',
+      "Textiles & Fabrics": 'High-quality textiles and fabrics',
+      "Art & Paintings": 'Original artwork and paintings',
+      "Home Decor": 'Beautiful home decor and accessories',
+      "Clothing Accessories": 'Stylish clothing and accessories',
+      "Eco-Friendly": 'Environmentally conscious products',
+      "Local Foods": 'Delicious local food specialties',
+      "Health & Wellness": 'Products for your health and wellness',
+      "Books & Stationery": 'Books and beautiful stationery items',
+      "Toys & Games": 'Fun and educational toys and games',
+      "Vintage Antiques": 'Unique vintage and antique items',
+      "Digital Products": 'Digital downloads and products',
+      "Crafts & DIY": 'Craft supplies and DIY materials',
+      "Pet Supplies": 'Supplies for your beloved pets'
     };
     return descriptions[category] || 'Quality products selected just for you';
   }

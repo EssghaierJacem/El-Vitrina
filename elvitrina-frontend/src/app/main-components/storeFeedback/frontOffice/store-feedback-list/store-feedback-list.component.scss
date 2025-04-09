@@ -1,0 +1,195 @@
+.feedbacks-container {
+    padding: 1rem;
+    
+    .loading-spinner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 200px;
+    }
+    
+    .error-message {
+      text-align: center;
+      color: #f44336;
+      padding: 2rem;
+    }
+    
+    .no-feedbacks {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1rem;
+      color: rgba(0, 0, 0, 0.6);
+      
+      mat-icon {
+        font-size: 3rem;
+        height: 3rem;
+        width: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+      
+      p {
+        font-size: 1.2rem;
+      }
+    }
+    
+    .feedbacks-content {
+      .feedback-summary {
+        display: flex;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        
+        @media (max-width: 768px) {
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+        
+        .average-rating {
+          flex: 0 0 200px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding-right: 2rem;
+          border-right: 1px solid rgba(0, 0, 0, 0.12);
+          
+          @media (max-width: 768px) {
+            border-right: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+            padding-right: 0;
+            padding-bottom: 1.5rem;
+          }
+          
+          .rating-number {
+            font-size: 3rem;
+            font-weight: 500;
+            color: #1976d2;
+          }
+          
+          .rating-stars {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            
+            .stars {
+              display: flex;
+              margin-bottom: 0.5rem;
+              
+              mat-icon {
+                color: #ffc107;
+                width: 20px;
+                height: 20px;
+                font-size: 20px;
+              }
+            }
+            
+            .total-reviews {
+              color: rgba(0, 0, 0, 0.6);
+              font-size: 0.9rem;
+            }
+          }
+        }
+        
+        .rating-breakdown {
+          flex: 1;
+          padding-left: 2rem;
+          
+          @media (max-width: 768px) {
+            padding-left: 0;
+            padding-top: 1.5rem;
+          }
+          
+          .rating-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            
+            .rating-label {
+              flex: 0 0 70px;
+              font-size: 0.9rem;
+              color: rgba(0, 0, 0, 0.7);
+            }
+            
+            .progress-container {
+              flex: 1;
+              height: 8px;
+              background-color: rgba(0, 0, 0, 0.1);
+              border-radius: 4px;
+              margin: 0 1rem;
+              overflow: hidden;
+              
+              .progress-bar {
+                height: 100%;
+                background-color: #ffc107;
+                border-radius: 4px;
+              }
+            }
+            
+            .rating-count {
+              flex: 0 0 30px;
+              text-align: right;
+              font-size: 0.9rem;
+              color: rgba(0, 0, 0, 0.7);
+            }
+          }
+        }
+      }
+      
+      .feedback-list {
+        .feedback-item {
+          margin-bottom: 1rem;
+          
+          .user-avatar {
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            mat-icon {
+              color: #757575;
+            }
+          }
+          
+          mat-card-subtitle {
+            display: flex;
+            align-items: center;
+            
+            .rating-stars {
+              display: flex;
+              margin-right: 1rem;
+              
+              mat-icon {
+                width: 16px;
+                height: 16px;
+                font-size: 16px;
+                
+                &.star-filled {
+                  color: #ffc107;
+                }
+                
+                &.star-empty {
+                  color: #e0e0e0;
+                }
+              }
+            }
+            
+            .feedback-date {
+              color: rgba(0, 0, 0, 0.6);
+              font-size: 0.8rem;
+            }
+          }
+          
+          .feedback-comment {
+            margin-top: 0.5rem;
+            color: rgba(0, 0, 0, 0.87);
+            white-space: pre-line;
+          }
+        }
+      }
+    }
+  }
+  

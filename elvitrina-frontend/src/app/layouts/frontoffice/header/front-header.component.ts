@@ -5,6 +5,8 @@ import { TokenService } from 'src/app/core/services/user/TokenService';
 import { StoreService } from 'src/app/core/services/store/store.service'; 
 import { RouterModule } from '@angular/router';
 import { Store } from 'src/app/core/models/store/store.model';
+import { MatDialog } from '@angular/material/dialog';
+import { AppFeedbackDialogComponent } from 'src/app/main-components/appFeedback/frontOffice/app-feedback-dialog/app-feedback-dialog.component';
 
 @Component({
   selector: 'front-header',
@@ -26,7 +28,8 @@ export class FrontHeaderComponent implements OnInit {
   constructor(
     private tokenService: TokenService,
     private router: Router,
-    private storeService: StoreService 
+    private storeService: StoreService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -72,5 +75,17 @@ export class FrontHeaderComponent implements OnInit {
     } else {
       this.router.navigate(['/stores/create']); 
     }
+  }
+
+  openFeedbackDialog(): void {
+    const dialogRef = this.dialog.open(AppFeedbackDialogComponent, {
+      width: '400px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Handle the result if needed
+      }
+    });
   }
 }

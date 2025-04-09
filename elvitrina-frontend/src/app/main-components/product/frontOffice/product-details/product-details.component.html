@@ -1,1 +1,189 @@
-<p>product-details works!</p>
+<div class="product-details-container">
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb-nav">
+      <ul>
+        <li><a [routerLink]="['/']">Home Page</a></li>
+        <li><a [routerLink]="['/categories']">Categories</a></li>
+        <li *ngIf="product && product.category">
+          <a [routerLink]="['/categories', product.category]">{{ formatCategoryName(product.category) }}</a>
+        </li>
+        <li *ngIf="product">{{ product.productName }}</li>
+      </ul>
+    </nav>
+  
+    <!-- Loading State -->
+    @if (loading) {
+      <div class="loading-state">
+        <mat-spinner></mat-spinner>
+        <h3>Loading product details...</h3>
+      </div>
+    }
+  
+    <!-- Error State -->
+    @else if (error) {
+      <div class="error-state">
+        <mat-icon color="warn">error</mat-icon>
+        <h3>{{ error }}</h3>
+        <button mat-raised-button color="primary" [routerLink]="['/products']">
+          Back to Products
+        </button>
+      </div>
+    }
+  
+    <!-- Product Content -->
+    @else if (product) {
+      <div class="product-content">
+        <!-- Thumbnail Gallery (Left Side) -->
+        <div class="thumbnail-column">
+          @if (product.images && product.images.length > 0) {
+            <div class="thumbnail-list">
+              @for (image of product.images; track image; let i = $index) {
+                <div 
+                  class="thumbnail" 
+                  [class.active]="i === selectedImageIndex"
+                  (click)="selectImage(i)"
+                >
+                  <img [src]="image" [alt]="product.productName" (error)="onImageError($event)">
+                </div>
+              }
+            </div>
+          }
+        </div>
+  
+        <!-- Main Product Image (Center) -->
+        <div class="main-image-container">
+          <div class="main-image">
+            <img 
+              [src]="product.images && product.images.length > 0 ? product.images[selectedImageIndex] : 'assets/images/default-product.png'" 
+              [alt]="product.productName"
+              class="featured-image"
+              (error)="onImageError($event)"
+            >
+          </div>
+          
+          <div class="image-navigation">
+            @if (product.images && product.images.length > 1) {
+              <button mat-icon-button class="nav-button prev" (click)="previousImage()">
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+              <button mat-icon-button class="nav-button next" (click)="nextImage()">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            }
+          </div>
+          
+          <button 
+            mat-icon-button 
+            [color]="isInWishlist ? 'warn' : ''" 
+            (click)="toggleWishlist()"
+            class="wishlist-button"
+          >
+            <mat-icon>{{ isInWishlist ? 'favorite' : 'favorite_border' }}</mat-icon>
+          </button>
+        </div>
+  
+        <!-- Product Info (Right Side) -->
+        <div class="product-info">
+          <!-- Inventory Status -->
+          @if (product.stockQuantity <= 5 && product.stockQuantity > 0) {
+            <div class="inventory-alert">
+              Only {{ product.stockQuantity }} left, currently in {{ inBaskets }} baskets
+            </div>
+          }
+  
+          <!-- Price Section -->
+          <div class="price-section">
+            <div class="price-display">
+              <span class="current-price" [class.has-discount]="product.hasDiscount">
+                €{{ product.price }}+
+              </span>
+              @if (product.hasDiscount && product.originalPrice) {
+                <span class="original-price">€{{ product.originalPrice }}</span>
+                <span class="discount-badge">-{{ product.discountPercentage }}%</span>
+              }
+            </div>
+            <div class="price-info">
+              <span class="vat-info">VAT included (if applicable), <a href="#">plus delivery charges</a></span>
+            </div>
+          </div>
+  
+          <!-- Product Title -->
+          <h1 class="product-title">{{ product.productName }}</h1>
+  
+          <!-- Seller/Store Info -->
+          <div class="seller-info">
+            @if (product.store) {
+              <a [routerLink]="['/stores', product.storeId]" class="store-link">
+                {{ product.store.storeName }}
+              </a>
+              <div class="store-rating">
+                <mat-icon>star</mat-icon>
+                <mat-icon>star</mat-icon>
+                <mat-icon>star</mat-icon>
+                <mat-icon>star</mat-icon>
+                <mat-icon>star</mat-icon>
+              </div>
+            }
+          </div>
+  
+          <!-- Product Features -->
+          <div class="product-features">
+            <div class="feature-item">
+              <mat-icon>swap_horiz</mat-icon>
+              <span>Returns and exchanges accepted</span>
+            </div>
+            <div class="feature-item promotion">
+              <mat-icon>local_offer</mat-icon>
+              <span>Save 20% when you buy 3 items in this store</span>
+              <a href="#" class="promotion-link">Take advantage of the promotion</a>
+            </div>
+            @if (product.freeShipping) {
+              <div class="feature-item">
+                <mat-icon>local_shipping</mat-icon>
+                <span>Free Shipping</span>
+              </div>
+            }
+            @if (product.isBestseller) {
+              <div class="feature-item">
+                <mat-icon>star</mat-icon>
+                <span>Bestseller</span>
+              </div>
+            }
+          </div>
+  
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button 
+              mat-raised-button 
+              class="buy-now-button" 
+              [disabled]="product.stockQuantity === 0"
+            >
+              Buy now
+            </button>
+            <button 
+              mat-raised-button 
+              class="add-to-cart-button" 
+              (click)="addToCart()"
+              [disabled]="product.stockQuantity === 0 || product.status === 'OUT_OF_STOCK'"
+            >
+              Add to cart
+            </button>
+          </div>
+  
+          <!-- Product Description -->
+          @if (product.description) {
+            <div class="description-section">
+              <h2>Description</h2>
+              <p>{{ product.description }}</p>
+            </div>
+          }
+          
+          <!-- Category -->
+          <div class="category-section">
+            <h2>Category</h2>
+            <p>{{ formatCategoryName(product.category) }}</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>

@@ -17,6 +17,7 @@ import { ProductStatus } from '../../../../core/models/product/product-status.en
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { StoreService } from '../../../../core/services/store/store.service';
 import { Store } from '../../../../core/models/store/store.model';
+import { TokenService } from 'src/app/core/services/user/TokenService';
 
 @Component({
   selector: 'app-product-create',
@@ -44,12 +45,15 @@ export class ProductCreateComponent implements OnInit {
   loading = false;
   categories = Object.values(ProductCategoryType);
   userStores: Store[] = [];
+  role: string = '';
+  canCreateProduct: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private productService: ProductService,
     private authService: AuthService,
     private storeService: StoreService,
+    private tokenService: TokenService,
     private snackBar: MatSnackBar,
     private router: Router
   ) {
@@ -57,22 +61,28 @@ export class ProductCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Check if user is logged in and is a seller
-    const user = this.authService.getCurrentUser();
-    if (!user) {
+    if (this.isLoggedIn()) {
+      const decodedToken = this.tokenService.getDecodedToken();
+      if (decodedToken && decodedToken.id) {
+        this.role = decodedToken?.role ?? 'USER';
+        console.log('User role:', this.role);
+        
+        if (this.role === 'SELLER') {
+          this.canCreateProduct = true;
+          // Load user's stores
+          this.loadUserStores(decodedToken.id);
+        } else {
+          this.snackBar.open('You must be a seller to create a product', 'Close', { duration: 3000 });
+          this.router.navigate(['/']);
+        }
+      } else {
+        this.snackBar.open('Invalid user token', 'Close', { duration: 3000 });
+        this.router.navigate(['/authentication/login']);
+      }
+    } else {
       this.snackBar.open('Please log in to create a product', 'Close', { duration: 3000 });
       this.router.navigate(['/authentication/login']);
-      return;
     }
-
-    if (user.role !== 'SELLER') {
-      this.snackBar.open('Only sellers can create products', 'Close', { duration: 3000 });
-      this.router.navigate(['/']);
-      return;
-    }
-
-    // Load user's stores
-    this.loadUserStores(user.id);
   }
 
   private loadUserStores(userId: number): void {
@@ -132,13 +142,20 @@ export class ProductCreateComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.productForm.valid && !this.loading) {
+    if (this.productForm.valid && !this.loading && this.canCreateProduct) {
       this.loading = true;
       
-      const user = this.authService.getCurrentUser();
-      if (!user) {
+      const decodedToken = this.tokenService.getDecodedToken();
+      if (!decodedToken) {
         this.snackBar.open('Please log in to create a product', 'Close', { duration: 3000 });
         this.router.navigate(['/authentication/login']);
+        return;
+      }
+
+      if (this.role !== 'SELLER') {
+        this.snackBar.open('You must be a seller to create a product', 'Close', { duration: 3000 });
+        this.loading = false;
+        this.router.navigate(['/']);
         return;
       }
 
@@ -168,7 +185,7 @@ export class ProductCreateComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error creating product:', error);
-          this.snackBar.open(error.message || 'Error creating product', 'Close', {
+          this.snackBar.open(error.error?.message || 'Error creating product. Please try again.', 'Close', {
             duration: 5000
           });
           this.loading = false;
@@ -208,19 +225,24 @@ export class ProductCreateComponent implements OnInit {
     ).join(' ');
   }
 
-  handleImagePreview(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.value) {
-      const imgElement = document.createElement('img');
-      imgElement.src = input.value;
-      imgElement.onerror = () => {
-        this.snackBar.open('Invalid image URL', 'Close', { duration: 3000 });
-        input.value = '';
-        const control = this.productForm.get('images');
-        if (control) {
-          control.setValue('');
-        }
-      };
+  handleImageError(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    if (imgElement) {
+      imgElement.src = '/assets/images/products/no-image.jpg';
     }
+  }
+
+  getImageUrls(): string[] {
+    const imagesValue = this.productForm.get('images')?.value;
+    if (!imagesValue) return [];
+    
+    return imagesValue
+      .split(',')
+      .map((url: string) => url.trim())
+      .filter((url: string) => url && url.startsWith('http'));
+  }
+
+  isLoggedIn(): boolean {
+    return this.tokenService.getToken() !== null;
   }
 }
