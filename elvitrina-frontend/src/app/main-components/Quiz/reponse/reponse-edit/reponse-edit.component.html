@@ -1,0 +1,19 @@
+<mat-card class="cardWithShadow theme-card card">
+  <mat-card-header>
+    <mat-card-title>Modifier la Réponse</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form #responseForm="ngForm" (ngSubmit)="editResponse(responseForm)">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Réponse</mat-label>
+        <input matInput type="text" [(ngModel)]="response.response" name="response" required #responseInput="ngModel" />
+        <mat-error *ngIf="responseInput.invalid && responseInput.touched">La réponse est requise.</mat-error>
+      </mat-form-field>
+
+      <div class="m-t-12">
+        <button mat-flat-button color="primary" type="submit" [disabled]="responseForm.invalid">Modifier</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

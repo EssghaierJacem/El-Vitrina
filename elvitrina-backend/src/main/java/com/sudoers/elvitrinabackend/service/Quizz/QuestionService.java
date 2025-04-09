@@ -1,4 +1,5 @@
 package com.sudoers.elvitrinabackend.service.Quizz;
+
 import com.sudoers.elvitrinabackend.model.entity.Question;
 import com.sudoers.elvitrinabackend.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,8 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.stereotype.Service;
 
 @Service
 public class QuestionService implements IQuestionService{
@@ -41,7 +40,10 @@ public class QuestionService implements IQuestionService{
         question.setId(id);
         return questionRepository.save(question);
     }
-
+    @Override
+    public List<Question> getQuestionsByQuizId(Long quizId) {
+        return questionRepository.findByQuizId(quizId);
+    }
     @Override
     public void deleteQuestion(Long id) {
         questionRepository.deleteById(id);

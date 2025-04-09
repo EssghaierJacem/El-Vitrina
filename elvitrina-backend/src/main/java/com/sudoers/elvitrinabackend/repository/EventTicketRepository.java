@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface EventTicketRepository extends JpaRepository<EventTicket, Long> {
-
+    List<EventTicket> findByVirtualEventEventId(Long eventId);
+    void deleteByVirtualEventEventId(Long eventId);
 }

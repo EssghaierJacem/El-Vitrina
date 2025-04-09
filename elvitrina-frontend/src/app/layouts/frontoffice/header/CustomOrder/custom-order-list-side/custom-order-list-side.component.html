@@ -1,0 +1,23 @@
+<mat-sidenav-container>
+  <mat-sidenav mode="side" opened>
+    <mat-nav-list>
+      <h3>Commande #{{ order.id }}</h3>
+      <mat-divider></mat-divider>
+
+      <p><strong>Date :</strong> {{ order.orderDate | date }}</p>
+      <p><strong>Client :</strong> {{ order.user?.name }}</p>
+      <p><strong>Statut :</strong> {{ order.status }}</p>
+      <p><strong>Montant total :</strong> {{ order.calculateTotal | currency:'EUR' }}</p>
+
+      <mat-divider></mat-divider>
+      <h4>Produits :</h4>
+      <ul>
+        <li *ngFor="let product of order.products">
+        </li>
+      </ul>
+
+      <mat-divider></mat-divider>
+      <p><strong>Paiement :</strong> {{ order.payment ? 'Effectué' : 'Non effectué' }}</p>
+    </mat-nav-list>
+  </mat-sidenav>
+</mat-sidenav-container>

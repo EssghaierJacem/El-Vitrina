@@ -4,6 +4,8 @@ import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
 import { AdminGuard } from './main-components/user/adminGuard.component';
 import { NotFoundComponent } from './layouts/not-found/not-found.component';
+import { customOrderRoutes } from './main-components/custom-order/custom-order.routes';
+import { Question } from './core/models/Quiz/question';
 
 export const routes: Routes = [
   {
@@ -46,9 +48,8 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'dashboard', 
+    path: 'dashboard',
     component: FullComponent,
-    canActivate: [AdminGuard], 
     children: [
       {
         path: '',
@@ -62,6 +63,33 @@ export const routes: Routes = [
             (m) => m.UiComponentsRoutes
           ),
       },
+      {
+        path: 'custom-order',
+        loadChildren: () =>
+          import('./main-components/custom-order/custom-order.routes').then(m => m.customOrderRoutes),
+      },
+      {
+        path: 'payment',
+        loadChildren: () =>
+          import('./main-components/Payment/payment.routes').then(m => m.PaymentRoutes),
+      },
+      {
+        path: 'quiz',
+        loadChildren: () =>
+          import('./main-components/Quiz/quiz/quiz.routes').then(m => m.QuizRoutes),
+      },
+      {
+        path: 'question',
+        loadChildren: () =>
+          import('./main-components/Quiz/question/question.routes').then(m => m.QuestionRoutes),
+      },
+      {
+        path: 'reponse',
+        loadChildren: () =>
+          import('./main-components/Quiz/reponse/reponse.routes').then(m => m.ReponseRoutes),
+      },
+
+
       {
         path: 'users',
         loadChildren: () =>
