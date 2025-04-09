@@ -29,4 +29,8 @@ export class QuestionService {
 
   deleteQuestion(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }}
+  }
+  getQuestionsByQuizId(quizId: number): Observable<Question[]> {
+    return this.http.get<Question[]>(`${this.apiUrl}/quiz/${quizId}`);
+  }
+}

@@ -16,12 +16,15 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PaymentMethodType } from 'src/app/core/models/Panier/PaymentMethodType.type';
 import { PaymentStatusType } from 'src/app/core/models/Panier/PaymentStatusType.type';
+import { HttpClientModule } from '@angular/common/http';
 @Component({
   selector: 'app-create-payment',
   imports: [CommonModule,
     FormsModule,
     RouterModule,
     MatCardModule,
+    HttpClientModule,
+
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,

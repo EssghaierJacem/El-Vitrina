@@ -57,17 +57,24 @@ export class CustomOrderCreateComponent {
   constructor(private orderService: CustomOrderService, private router: Router) {}
 
   createOrder() {
-    this.order.calculateTotal = this.order.quantity * this.order.price;
-    this.orderService.createOrder(this.order).subscribe(() => {
-      this.router.navigate(['/orders']);
-    });
+
+      // Calcul du total de la commande
+      this.order.calculateTotal = this.order.quantity * this.order.price;
+
+      // Appel du service pour créer la commande
+      this.orderService.createOrder(this.order).subscribe(
+        (response) => {
+          // Gérer la réponse de succès, par exemple en redirigeant l'utilisateur
+          this.router.navigate(['/list']); // Redirection vers la page des commandes après succès
+        },
+        (error) => {
+          // Gérer l'erreur si quelque chose se passe mal
+          console.error('Erreur lors de la création de la commande:', error);
+          alert('Une erreur est survenue lors de la création de la commande.');
+        }
+      );
+    }
+
   }
 
-  addProduct() {
-    this.order.products.push({} as Product);
-  }
 
-  removeProduct(index: number) {
-    this.order.products.splice(index, 1);
-  }
-}

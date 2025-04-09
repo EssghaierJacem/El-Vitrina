@@ -12,10 +12,8 @@ export class CustomOrderService {
 
   constructor(private http: HttpClient) {}
 
-
-
   getOrderById(id: number): Observable<CustomOrder> {
-    return this.http.get<CustomOrder>(`${this.apiUrl}/${id}`);
+    return this.http.get<CustomOrder>(`${this.apiUrl}/getById/${id}`);
   }
 
   createOrder(order: CustomOrder): Observable<CustomOrder> {
@@ -23,15 +21,17 @@ export class CustomOrderService {
   }
 
   updateOrder(order: CustomOrder): Observable<CustomOrder> {
-    return this.http.put<CustomOrder>(`${this.apiUrl}/${order.id}`, order);
+    return this.http.put<CustomOrder>(`${this.apiUrl}/update/${order.id}`, order);
   }
 
   deleteOrder(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
   getAllOrders(): Observable<CustomOrder[]> {
-    return this.http.get<CustomOrder[]>(`${this.apiUrl}/all`);
+    return this.http.get<CustomOrder[]>(`${this.apiUrl}`);
   }
+
   updateOrderStatus(orderId: number, userId: number, newStatus: string): Observable<CustomOrder> {
     return this.http.put<CustomOrder>(
       `${this.apiUrl}/${orderId}/status?userId=${userId}&newStatus=${newStatus}`, {}
