@@ -1,6 +1,8 @@
 package com.sudoers.elvitrinabackend.controller.DonorReward;
 
 import com.sudoers.elvitrinabackend.model.dto.request.DonorRewardRequestDTO;
+import com.sudoers.elvitrinabackend.model.dto.request.RewardFulfillmentRequestDTO;
+import com.sudoers.elvitrinabackend.model.dto.request.RewardTierRequestDTO;
 import com.sudoers.elvitrinabackend.model.dto.response.DonorRewardResponseDTO;
 import com.sudoers.elvitrinabackend.service.DonorReward.DonorRewardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +44,28 @@ public class DonorRewardController {
     @GetMapping
     public ResponseEntity<List<DonorRewardResponseDTO>> getAllRewards() {
         return ResponseEntity.ok(donorRewardService.getAllRewards());
+    }
+
+
+    // Add these endpoints to your existing DonorRewardController class
+
+    // Admin Functions
+
+    @GetMapping("/analytics")
+    public ResponseEntity<?> getRewardAnalytics() {
+        return ResponseEntity.ok(donorRewardService.getRewardAnalytics());
+    }
+
+    // Store Owner/Seller Functions
+    @GetMapping("/store/{storeId}")
+    public ResponseEntity<List<DonorRewardResponseDTO>> getStoreRewards(@PathVariable Long storeId) {
+        return ResponseEntity.ok(donorRewardService.getRewardsByStoreId(storeId));
+    }
+
+    @PatchMapping("/{id}/fulfillment")
+    public ResponseEntity<DonorRewardResponseDTO> updateRewardFulfillment(
+            @PathVariable Long id,
+            @RequestBody RewardFulfillmentRequestDTO dto) {
+        return ResponseEntity.ok(donorRewardService.updateRewardFulfillment(id, dto));
     }
 }

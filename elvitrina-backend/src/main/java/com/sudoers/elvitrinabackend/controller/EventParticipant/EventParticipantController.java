@@ -64,4 +64,37 @@ public class EventParticipantController {
         List<EventParticipantResponseDTO> participants = eventParticipantService.getParticipantsByEventId(eventId);
         return ResponseEntity.ok(participants);
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<EventParticipantResponseDTO> registerParticipant(
+            @RequestBody EventParticipantRequestDTO requestDTO) {
+        return new ResponseEntity<>(eventParticipantService.registerParticipant(requestDTO), HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{participantId}/chat")
+    public ResponseEntity<EventParticipantResponseDTO> grantChatAccess(
+            @PathVariable Long participantId,
+            @RequestParam boolean enable) {
+        return ResponseEntity.ok(eventParticipantService.grantChatAccess(participantId, enable));
+    }
+
+    @PatchMapping("/{participantId}/recordings")
+    public ResponseEntity<EventParticipantResponseDTO> provideRecordingAccess(
+            @PathVariable Long participantId,
+            @RequestParam boolean enable) {
+        return ResponseEntity.ok(eventParticipantService.provideRecordingAccess(participantId, enable));
+    }
+
+    @PatchMapping("/{participantId}/attendance")
+    public ResponseEntity<EventParticipantResponseDTO> trackSessionAttendance(
+            @PathVariable Long participantId,
+            @RequestParam boolean attended) {
+        return ResponseEntity.ok(eventParticipantService.trackSessionAttendance(participantId, attended));
+    }
+
+    @GetMapping("/{participantId}/ticket/validate")
+    public ResponseEntity<Boolean> validateParticipantTicket(
+            @PathVariable Long participantId) {
+        return ResponseEntity.ok(eventParticipantService.validateParticipantTicket(participantId));
+    }
 }

@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,7 +20,14 @@ public class EventParticipant {
 
     private Boolean attended;
 
-    private LocalDateTime timestamp;
+    private LocalDateTime registrationDate;
+    private Boolean hasAccessToChat = false;
+    private Boolean hasAccessToRecordings = false;
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)

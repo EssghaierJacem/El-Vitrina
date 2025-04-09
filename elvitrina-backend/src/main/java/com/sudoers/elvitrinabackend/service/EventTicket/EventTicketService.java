@@ -15,4 +15,11 @@ public interface EventTicketService {
     EventTicketResponseDTO updateEventTicket(Long id, EventTicketRequestDTO requestDTO);
     Page<EventTicketResponseDTO> getEventTicketsPaginated(Pageable pageable);
     List<EventTicketResponseDTO> getTicketsByEventId(Long eventId);
+
+    EventTicketResponseDTO generateQRCodeForTicket(Long ticketId);
+    boolean validateTicket(Long ticketId);
+    List<EventTicketResponseDTO> issueMultiSessionTickets(EventTicketRequestDTO requestDTO, int quantity);
+    EventTicketResponseDTO applyEarlyBirdPricing(Long ticketId);
+    EventTicketResponseDTO trackTicketAvailability(Long ticketId);
+    EventTicketResponseDTO cancelTicket(Long ticketId);
 }

@@ -64,4 +64,41 @@ public class EventTicketController {
         List<EventTicketResponseDTO> tickets = eventTicketService.getTicketsByEventId(eventId);
         return ResponseEntity.ok(tickets);
     }
+
+    @PostMapping("/{ticketId}/qrcode")
+    public ResponseEntity<EventTicketResponseDTO> generateQRCodeForTicket(
+            @PathVariable Long ticketId) {
+        return ResponseEntity.ok(eventTicketService.generateQRCodeForTicket(ticketId));
+    }
+
+    @GetMapping("/{ticketId}/validate")
+    public ResponseEntity<Boolean> validateTicket(
+            @PathVariable Long ticketId) {
+        return ResponseEntity.ok(eventTicketService.validateTicket(ticketId));
+    }
+
+    @PostMapping("/multi-session")
+    public ResponseEntity<List<EventTicketResponseDTO>> issueMultiSessionTickets(
+            @RequestBody EventTicketRequestDTO requestDTO,
+            @RequestParam(defaultValue = "1") int quantity) {
+        return new ResponseEntity<>(eventTicketService.issueMultiSessionTickets(requestDTO, quantity), HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{ticketId}/early-bird")
+    public ResponseEntity<EventTicketResponseDTO> applyEarlyBirdPricing(
+            @PathVariable Long ticketId) {
+        return ResponseEntity.ok(eventTicketService.applyEarlyBirdPricing(ticketId));
+    }
+
+    @GetMapping("/{ticketId}/availability")
+    public ResponseEntity<EventTicketResponseDTO> trackTicketAvailability(
+            @PathVariable Long ticketId) {
+        return ResponseEntity.ok(eventTicketService.trackTicketAvailability(ticketId));
+    }
+
+    @PatchMapping("/{ticketId}/cancel")
+    public ResponseEntity<EventTicketResponseDTO> cancelTicket(
+            @PathVariable Long ticketId) {
+        return ResponseEntity.ok(eventTicketService.cancelTicket(ticketId));
+    }
 }

@@ -35,7 +35,7 @@ public class DonationMapper {
                 .userId(donation.getUser() != null ? donation.getUser().getId() : null)
                 .donorName(donation.getUser() != null ? donation.getUser().getName() : null)
                 .isAnonymous(donation.getAnonymitySetting())
-                .donationDate(donation.getTimestamp())
+                .donationDate(donation.getCreatedAt())
                 .giftId(donation.getGift() != null ? donation.getGift().getGiftId() : null)
                 .status(null)
                 .build();

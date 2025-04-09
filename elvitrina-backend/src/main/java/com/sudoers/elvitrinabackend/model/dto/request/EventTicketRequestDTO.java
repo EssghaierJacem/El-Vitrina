@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,4 +18,7 @@ public class EventTicketRequestDTO {
     private Integer quantity;
     private Long eventId;
     private Boolean isActive;
+    private BigDecimal earlyBirdPricing; // For early bird pricing
+    private LocalDateTime earlyBirdDeadline; // Deadline for early bird pricing
+    private List<Long> sessionIds; // For multi-session tickets
 }

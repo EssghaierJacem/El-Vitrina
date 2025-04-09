@@ -4,10 +4,12 @@ import com.sudoers.elvitrinabackend.exception.ResourceNotFoundException;
 import com.sudoers.elvitrinabackend.model.dto.request.EventParticipantRequestDTO;
 import com.sudoers.elvitrinabackend.model.dto.response.EventParticipantResponseDTO;
 import com.sudoers.elvitrinabackend.model.entity.EventParticipant;
+import com.sudoers.elvitrinabackend.model.entity.EventTicket;
 import com.sudoers.elvitrinabackend.model.entity.User;
 import com.sudoers.elvitrinabackend.model.entity.VirtualEvent;
 import com.sudoers.elvitrinabackend.model.mapper.EventParticipantMapper;
 import com.sudoers.elvitrinabackend.repository.EventParticipantRepository;
+import com.sudoers.elvitrinabackend.repository.EventTicketRepository;
 import com.sudoers.elvitrinabackend.repository.UserRepository;
 import com.sudoers.elvitrinabackend.repository.VirtualEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,18 +26,21 @@ import java.util.stream.Collectors;
 public class EventParticipantServiceImpl implements EventParticipantService {
 
     private final EventParticipantRepository eventParticipantRepository;
-    private final UserRepository userRepository;
     private final VirtualEventRepository virtualEventRepository;
+    private final UserRepository userRepository;
+    private final EventTicketRepository eventTicketRepository;
     private final EventParticipantMapper eventParticipantMapper;
 
     @Autowired
     public EventParticipantServiceImpl(EventParticipantRepository eventParticipantRepository,
-                                       UserRepository userRepository,
                                        VirtualEventRepository virtualEventRepository,
+                                       UserRepository userRepository,
+                                       EventTicketRepository eventTicketRepository,
                                        EventParticipantMapper eventParticipantMapper) {
         this.eventParticipantRepository = eventParticipantRepository;
-        this.userRepository = userRepository;
         this.virtualEventRepository = virtualEventRepository;
+        this.userRepository = userRepository;
+        this.eventTicketRepository = eventTicketRepository;
         this.eventParticipantMapper = eventParticipantMapper;
     }
 
@@ -43,7 +48,7 @@ public class EventParticipantServiceImpl implements EventParticipantService {
     @Transactional
     public EventParticipantResponseDTO saveEventParticipant(EventParticipantRequestDTO requestDTO) {
         EventParticipant participant = eventParticipantMapper.toEntity(requestDTO);
-        participant.setTimestamp(LocalDateTime.now());
+        participant.setCreatedAt(LocalDateTime.now());
 
         // Link to User
         if (requestDTO.getUserId() != null) {
@@ -93,7 +98,7 @@ public class EventParticipantServiceImpl implements EventParticipantService {
                 .orElseThrow(() -> new ResourceNotFoundException("Event participant not found with id: " + id));
 
         eventParticipantMapper.updateEntityFromDTO(requestDTO, existingParticipant);
-        existingParticipant.setTimestamp(LocalDateTime.now());
+        existingParticipant.setUpdatedAt(LocalDateTime.now());
 
         // Update User link if provided
         if (requestDTO.getUserId() != null) {
@@ -127,5 +132,72 @@ public class EventParticipantServiceImpl implements EventParticipantService {
         return eventParticipantRepository.findByVirtualEventEventId(eventId).stream()
                 .map(eventParticipantMapper::toResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public EventParticipantResponseDTO registerParticipant(EventParticipantRequestDTO requestDTO) {
+        if (eventParticipantRepository.existsByUserIdAndVirtualEventEventId(requestDTO.getUserId(), requestDTO.getEventId())) {
+            throw new IllegalStateException("User is already registered for this event");
+        }
+
+        User user = userRepository.findById(requestDTO.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + requestDTO.getUserId()));
+        VirtualEvent event = virtualEventRepository.findById(requestDTO.getEventId())
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + requestDTO.getEventId()));
+        EventTicket ticket = requestDTO.getTicketId() != null ? eventTicketRepository.findById(requestDTO.getTicketId())
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + requestDTO.getTicketId())) : null;
+
+        EventParticipant participant = eventParticipantMapper.toEntity(requestDTO);
+        participant.setUser(user);
+        participant.setVirtualEvent(event);
+        participant.setEventTicket(ticket);
+        participant.setRegistrationDate(LocalDateTime.now());
+        participant.setAttended(false); // Default value
+
+        EventParticipant savedParticipant = eventParticipantRepository.save(participant);
+        if (ticket != null) {
+            ticket.setEventParticipant(savedParticipant);
+            eventTicketRepository.save(ticket);
+        }
+
+        return eventParticipantMapper.toResponseDTO(savedParticipant);
+    }
+
+    @Override
+    public EventParticipantResponseDTO grantChatAccess(Long participantId, boolean enable) {
+        EventParticipant participant = eventParticipantRepository.findById(participantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Participant not found with id: " + participantId));
+        participant.setHasAccessToChat(enable);
+        participant.setUpdatedAt(LocalDateTime.now());
+        return eventParticipantMapper.toResponseDTO(eventParticipantRepository.save(participant));
+    }
+
+    @Override
+    public EventParticipantResponseDTO provideRecordingAccess(Long participantId, boolean enable) {
+        EventParticipant participant = eventParticipantRepository.findById(participantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Participant not found with id: " + participantId));
+        participant.setHasAccessToRecordings(enable);
+        participant.setUpdatedAt(LocalDateTime.now());
+        return eventParticipantMapper.toResponseDTO(eventParticipantRepository.save(participant));
+    }
+
+    @Override
+    public EventParticipantResponseDTO trackSessionAttendance(Long participantId, boolean attended) {
+        EventParticipant participant = eventParticipantRepository.findById(participantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Participant not found with id: " + participantId));
+        participant.setAttended(attended);
+        participant.setUpdatedAt(LocalDateTime.now());
+        return eventParticipantMapper.toResponseDTO(eventParticipantRepository.save(participant));
+    }
+
+    @Override
+    public boolean validateParticipantTicket(Long participantId) {
+        EventParticipant participant = eventParticipantRepository.findById(participantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Participant not found with id: " + participantId));
+        EventTicket ticket = participant.getEventTicket();
+        if (ticket == null) {
+            return false;
+        }
+        return ticket.getIsValid() && (ticket.getValidUntil() == null || ticket.getValidUntil().isAfter(LocalDateTime.now()));
     }
 }

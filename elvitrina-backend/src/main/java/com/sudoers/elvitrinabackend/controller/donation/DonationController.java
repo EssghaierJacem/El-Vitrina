@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.sudoers.elvitrinabackend.model.dto.response.*;
 import java.util.List;
 
 @RestController
@@ -63,5 +63,38 @@ public class DonationController {
     public ResponseEntity<List<DonationResponseDTO>> getDonationsByCampaignId(@PathVariable Long campaignId) {
         List<DonationResponseDTO> donations = donationService.getDonationsByCampaignId(campaignId);
         return ResponseEntity.ok(donations);
+    }
+
+    @GetMapping("/analytics")
+    public ResponseEntity<DonationAnalyticsResponseDTO> getDonationAnalytics() {
+        return ResponseEntity.ok(donationService.getDonationAnalytics());
+    }
+
+    @GetMapping("/top-donors")
+    public ResponseEntity<List<TopDonorResponseDTO>> getTopDonors(
+            @RequestParam(required = false) Long campaignId,
+            @RequestParam(required = false) String timePeriod) {
+        return ResponseEntity.ok(donationService.getTopDonors(campaignId, timePeriod));
+    }
+
+    // Store Owner/Seller Functions
+    @GetMapping("/store/{storeId}")
+    public ResponseEntity<StoreDonationInsightsDTO> getStoreDonationInsights(@PathVariable Long storeId) {
+        return ResponseEntity.ok(donationService.getStoreDonationInsights(storeId));
+    }
+
+    @GetMapping("/store/{storeId}/receipts")
+    public ResponseEntity<List<DonationReceiptDTO>> getStoreDonationReceipts(@PathVariable Long storeId) {
+        return ResponseEntity.ok(donationService.getStoreDonationReceipts(storeId));
+    }
+
+    // Regular User Functions
+    @GetMapping("/history")
+    public ResponseEntity<List<DonationHistoryDTO>> getDonationHistory(
+            @RequestParam Long userId,
+            @RequestParam(required = false) Long campaignId,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+        return ResponseEntity.ok(donationService.getDonationHistory(userId, campaignId, startDate, endDate));
     }
 }

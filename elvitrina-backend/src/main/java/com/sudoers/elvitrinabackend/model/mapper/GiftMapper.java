@@ -16,7 +16,7 @@ public class GiftMapper {
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .imageUrl(dto.getImageUrl())
-                .won(dto.getWon())
+                .isRedeemed(dto.getIsRedeemed() != null ? dto.getIsRedeemed() : false)
                 .donation(donation)
                 .donorReward(reward)
                 .user(user)
@@ -29,10 +29,11 @@ public class GiftMapper {
         dto.setName(gift.getName());
         dto.setDescription(gift.getDescription());
         dto.setImageUrl(gift.getImageUrl());
-        dto.setWon(gift.getWon());
         dto.setDonationId(gift.getDonation() != null ? gift.getDonation().getDonationId() : null);
         dto.setRewardId(gift.getDonorReward() != null ? gift.getDonorReward().getRewardId() : null);
         dto.setUserId(gift.getUser() != null ? gift.getUser().getId() : null);
+        dto.setIsRedeemed(gift.getIsRedeemed());
+        dto.setGiftCode(gift.getGiftCode());
         return dto;
     }
 }
