@@ -51,19 +51,19 @@ public class ProposalPersoService implements IProposalPersoService{
 
     @Override
     public ProposalPerso addProposalPerso(ProposalPersoDTO proposalDTO) {
-        // Fetch the RequestPerso entity
         RequestPerso requestPerso = requestPersoRepository.findById(proposalDTO.getRequestPersoId())
                 .orElseThrow(() -> new EntityNotFoundException("RequestPerso not found"));
-        // Convert DTO to entity
+
+        User user = userRepository.findById(proposalDTO.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
         ProposalPerso proposalPerso = new ProposalPerso();
         proposalPerso.setRequestPerso(requestPerso);
-       // proposalPerso.setTitle(proposalDTO.getTitle());
+        proposalPerso.setUser(user);
         proposalPerso.setDescription(proposalDTO.getDescription());
         proposalPerso.setPrice(proposalDTO.getPrice());
-        //proposalPerso.setImage(proposalDTO.getImage());
         proposalPerso.setDate(proposalDTO.getDate());
 
-        // Save the entity
         return proposalPersoRepository.save(proposalPerso);
     }
 
@@ -81,7 +81,9 @@ public class ProposalPersoService implements IProposalPersoService{
         dto.setDescription(proposal.getDescription());
         dto.setPrice(proposal.getPrice());
         dto.setDate(proposal.getDate());
-        dto.setUser(copyUserToDto(proposal.getRequestPerso().getUser()));
+        //
+        dto.setUser(copyUserToDto(proposal.getUser()));
+     //   dto.setProposalPersoID(proposal.getProposalPersoID());
         // Set other DTO fields as needed
         return dto;
     }

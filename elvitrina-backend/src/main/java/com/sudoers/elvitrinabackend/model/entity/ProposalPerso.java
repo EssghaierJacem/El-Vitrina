@@ -25,6 +25,12 @@ public class ProposalPerso {
     @ManyToOne
     @JoinColumn(name = "request_perso_id")
     private RequestPerso requestPerso;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
+
  //   private String title;
     private String description;
 
@@ -34,4 +40,5 @@ public class ProposalPerso {
 
     private Date date;
 
+   // private Long ProposalPersoID;
 }

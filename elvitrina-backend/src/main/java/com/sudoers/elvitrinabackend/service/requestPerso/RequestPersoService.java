@@ -98,6 +98,7 @@ public class RequestPersoService implements IRequestPersoService{
                 .price(proposalPerso.getPrice())
                // .image(proposalPerso.getImage())
                 .date(proposalPerso.getDate())
+
                 .build();
     }
 

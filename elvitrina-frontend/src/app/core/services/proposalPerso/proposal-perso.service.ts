@@ -27,8 +27,10 @@ export class ProposalPersoService {
     throw error;
   }
 
-getAllProposalPersoByRequestPerso(requestPersoId:number): Observable<ProposalPerso[]> {
-  return this.http.get<ProposalPerso[]>(`${this.apiUrl}/${requestPersoId}`).pipe(catchError(this.handleError));
+  getAllProposalPersoByRequestPerso(requestPersoId: number): Observable<ProposalPerso[]> {
+    return this.http.get<ProposalPerso[]>(`${this.apiUrl}/proposal-request/${requestPersoId}`).pipe(
+      catchError(this.handleError)
+    );
+  }
 
-
-}}
+}

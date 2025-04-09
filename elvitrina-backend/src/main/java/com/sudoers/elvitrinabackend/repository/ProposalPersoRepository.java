@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ProposalPersoRepository extends JpaRepository<ProposalPerso, Long> {
-List<ProposalPerso>findProposalPersoByRequestPersoId(Long requestPersoID);
+    List<ProposalPerso> findProposalPersoByRequestPersoId(Long requestPersoId);
+
 }

@@ -22,4 +22,7 @@ public class ProposalPersoDTO {
         private Date date;
         // Constructors, getters, and setters
         private UserDTO user;
+    private Long userId;
+     //   private Long proposalPersoID;
+
 }

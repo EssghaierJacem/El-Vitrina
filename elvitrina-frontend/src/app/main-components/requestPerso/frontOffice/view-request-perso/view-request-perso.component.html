@@ -4,9 +4,10 @@
   <mat-card class="request-card">
     <mat-card-header>
       <div mat-card-avatar class="user-avatar">
-        <img [src]="requestData.user.image" 
-             class="user-image" 
-             alt="User avatar" />
+        <img [src]="requestData.user.image || '/assets/images/ProposalRequest/default-avatar_Request.png'" 
+        class="user-image" 
+        alt="User avatar" 
+        onerror="this.src='/assets/images/ProposalRequest/default-avatar.png'" />
       </div>
     
       <mat-card-subtitle>
@@ -17,9 +18,10 @@
     </mat-card-header>
 
     <img mat-card-image 
-         [src]="requestData.image" 
-         alt="Request image" 
-         class="request-image" />
+    [src]="requestData.image || '/assets/images//ProposalRequest/Default.png'" 
+    alt="Request image" 
+    class="request-image"
+    onerror="this.src='/assets/images//ProposalRequest/Default.png'" />
 
     <mat-card-content>
       <p>{{requestData.description}}</p>
@@ -97,9 +99,11 @@
 <mat-card style="margin-top: 10px;" *ngFor="let proposal of ProposalRequests">
   <mat-card-header>
     <div mat-card-avatar class="user-avatar">
-      <img [src]="proposal.user.image" 
-           class="user-image" 
-           alt="User avatar" />
+       <img [src]="proposal.user.image || '/assets/images/ProposalRequest/default-avatar.png'" 
+       class="user-image" 
+       alt="User avatar"
+       onerror="this.src='/assets/images/ProposalRequest/default-avatar.png'" />
+
     </div>
     <mat-card-title>{{proposal.user.name}}</mat-card-title>
     <mat-card-subtitle>{{proposal.date | date: 'short'}}</mat-card-subtitle>
