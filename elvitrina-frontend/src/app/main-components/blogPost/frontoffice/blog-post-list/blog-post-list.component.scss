@@ -1,0 +1,174 @@
+.blogpost-page {
+  max-width: 900px; /* Limite la largeur pour garder un style épuré */
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #333;
+}
+
+.page-subtitle {
+  color: #777;
+  font-size: 1.2em;
+  margin-top: 10px;
+}
+
+.add-post-button {
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-post-button:hover {
+  background-color: #165eae;
+}
+
+.blogpost-container {
+  display: block; /* Une carte par ligne */
+  margin-top: 30px;
+}
+
+.blogpost-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 30px; /* Ajoute de l'espace entre les cartes */
+  transition: all 0.3s ease-in-out;
+}
+
+.blogpost-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post-header-left {
+  flex: 1;
+}
+
+.post-title {
+  font-size: 1.6em;
+  color: #333;
+  font-weight: bold;
+  margin: 0;
+}
+
+.post-meta {
+  color: #777;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+.edit-button-container {
+  text-align: right;
+}
+
+.edit-button {
+  background-color: #ff6f61;
+  color: white;
+  border-radius: 5px;
+  padding: 6px 12px;
+}
+
+.card-content {
+  margin-top: 20px;
+}
+
+.card-content p {
+  color: #333;
+  font-size: 1.1em;
+  line-height: 1.6;
+}
+
+.post-image {
+  width: 100%;
+  height: auto;
+  margin-top: 15px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-tags {
+  margin-top: 10px;
+}
+
+.tag-label {
+  background-color: #f0f2f5;
+  color: #555;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.9em;
+}
+
+.post-comments {
+  margin-top: 20px;
+}
+
+.post-comments h4 {
+  color: #333;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.post-comments p {
+  font-size: 0.9em;
+  color: #555;
+}
+
+.add-comment {
+  display: flex;
+  margin-top: 10px;
+  justify-content: space-between;
+}
+
+.comment-input {
+  width: 80%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+
+.comment-button {
+  background-color: #1877f2;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  font-size: 0.9em;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.comment-button:hover {
+  background-color: #165eae;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #777;
+}
+
+.empty-state i {
+  font-size: 3em;
+  color: #f0f2f5;
+}

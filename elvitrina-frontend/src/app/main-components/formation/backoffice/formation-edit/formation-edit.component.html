@@ -1,1 +1,52 @@
-<p>formation-edit works!</p>
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+      <div class="d-flex justify-content-between align-items-center m-b-16">
+        <div class="d-flex align-items-center">
+          <button mat-icon-button color="primary" [routerLink]="['../']">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+            <mat-card-title>Edit Formation</mat-card-title>
+          </div>
+
+      </div>
+  
+      <form [formGroup]="formationForm" (ngSubmit)="onSubmit()" *ngIf="!isSubmitting">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Course Title</mat-label>
+          <input matInput formControlName="courseTitle" required>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description"></textarea>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Duration (hours)</mat-label>
+          <input matInput formControlName="duration" type="number" required>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Language</mat-label>
+          <input matInput formControlName="language" required>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Price</mat-label>
+          <input matInput formControlName="price" type="number" required>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Level</mat-label>
+          <mat-select formControlName="level" required>
+            <mat-option *ngFor="let level of levelOptions" [value]="level">{{ level }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <button mat-raised-button color="primary" type="submit" [disabled]="formationForm.invalid">Update Formation</button>
+      </form>
+  
+      <mat-spinner *ngIf="isSubmitting"></mat-spinner>
+    </mat-card-content>
+  </mat-card>
+  

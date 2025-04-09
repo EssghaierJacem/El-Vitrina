@@ -19,6 +19,21 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/user/frontoffice/frontuser.routes').then((m) => m.FrontUserRoutes),
       },
+
+      {
+        path: 'blog',
+        loadChildren: () =>
+          import('./main-components/blogPost/frontoffice/frontoffice_blogPost.routes').then((m) => m.BlogPostRoutes),
+      },
+
+
+      {
+        path: 'formation',
+        loadChildren: () =>
+          import('./main-components/formation/frontoffice/frontoffice_formation.routes').then((m) => m.FormationRoutes),
+      },
+
+
     ],
   },
   {
@@ -86,6 +101,15 @@ export const routes: Routes = [
           import('./main-components/formation/backoffice/backoffice_formation.routes')
             .then(m => m.FormationRoutes)
       },
+
+
+      {
+        path: 'blogPosts',
+        loadChildren: () =>
+          import('./main-components/blogPost/backoffice/backoffice_blogPost.routes')
+            .then(m => m.BlogPostRoutes)
+      },
+
 
       {
         path: 'extra',

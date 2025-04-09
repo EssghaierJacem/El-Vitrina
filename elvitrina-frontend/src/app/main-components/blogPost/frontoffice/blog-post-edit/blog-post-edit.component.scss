@@ -1,0 +1,79 @@
+.edit-blog-post-card {
+  max-width: 900px; /* Même largeur que le formulaire de création */
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 2em;
+  color: #333;
+  font-weight: bold;
+}
+
+.subtitle {
+  color: #777;
+  font-size: 1.1em;
+}
+
+.form-field {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: #f9f9f9;
+  border-radius: 5px;
+}
+
+.submit-button {
+  width: 48%;
+  padding: 12px;
+  font-size: 1em;
+}
+
+.reset-button {
+  width: 48%;
+  padding: 12px;
+  font-size: 1em;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+button {
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #4a97ef;
+}
+
+.mat-form-field-label {
+  color: #efe1e1;
+}
+
+.mat-form-field {
+  margin-bottom: 15px;
+}
+
+input.mat-input-element, textarea.mat-input-element {
+  font-size: 1em;
+}
+
+.mat-error {
+  color: rgb(52, 73, 158);
+  font-size: 0.9em;
+}

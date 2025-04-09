@@ -1,1 +1,40 @@
-<p>formation-details works!</p>
+
+  <div class="formation-details" *ngIf="formation">
+    
+  <!-- Retour à la liste des formations -->
+  <div class="back-button">
+    <button mat-icon-button [routerLink]="['/formation']">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Loading formation details...</p>
+  </div>
+
+  <!-- Formation Details Section -->
+  <mat-card class="formation-details-card">
+    <mat-card-header>
+      <mat-card-title class="title">{{ formation.courseTitle }} - {{ formation.formationCategory }} </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content class="card-content">
+      <p class="description">{{ formation.description }}</p>
+      
+      <div class="formation-info">
+        <p><strong>Duration:</strong> {{ formation.duration }} hours</p>
+        <p><strong>Price:</strong> ${{ formation.price }}</p>
+        <p><strong>Language:</strong> {{ formation.language }}</p>
+        <p><strong>Level:</strong> {{ formation.level }}</p>
+      </div>
+      
+      <div class="enroll-section">
+        <button mat-raised-button color="primary" (click)="enroll()">Enroll Now</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+   

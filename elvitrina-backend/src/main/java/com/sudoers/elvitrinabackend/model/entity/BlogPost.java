@@ -1,5 +1,6 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sudoers.elvitrinabackend.model.enums.ReactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ public class BlogPost {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 

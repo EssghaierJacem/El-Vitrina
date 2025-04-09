@@ -12,7 +12,7 @@ export class FormationService {
   constructor(private http: HttpClient) {}
 
   getAllFormations(): Observable<Formation[]> {
-    return this.http.get<Formation[]>(this.apiUrl);
+    return this.http.get<Formation[]>(this.apiUrl + "/getformations");
   }
 
   getFormationById(id: number): Observable<Formation> {
@@ -20,14 +20,16 @@ export class FormationService {
   }
 
   createFormation(formation: Formation): Observable<Formation> {
-    return this.http.post<Formation>(this.apiUrl, formation);
+    return this.http.post<Formation>(`${this.apiUrl}/addformation`, formation); 
+
   }
 
+
   updateFormation(id: number, formation: Formation): Observable<Formation> {
-    return this.http.put<Formation>(`${this.apiUrl}/${id}`, formation);
+    return this.http.put<Formation>(`${this.apiUrl}/${id}/updateformation`, formation);
   }
 
   deleteFormation(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}` + "/removeformation");
   }
 }

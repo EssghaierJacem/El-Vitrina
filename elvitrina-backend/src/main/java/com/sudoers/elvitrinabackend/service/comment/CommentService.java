@@ -34,4 +34,9 @@ public class CommentService implements ICommentService{
     public void removeComment(long id) {
         commentRepository.deleteById(id);
     }
+
+    @Override
+    public List<Comment> getCommentsByBlogPost(Long blogPostId) {
+        return commentRepository.findByBlogPostId(blogPostId);
+    }
 }

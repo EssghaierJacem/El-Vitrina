@@ -1,1 +1,77 @@
-<p>formation-details works!</p>
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+  
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center m-b-24">
+        <div class="d-flex align-items-center gap-8">
+          <button mat-icon-button color="primary" [routerLink]="['../']">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <mat-card-title class="text-xl font-bold">Formation Details</mat-card-title>
+        </div>
+  
+        <button *ngIf="formation" mat-raised-button color="primary" [routerLink]="[formation.id, 'edit']">
+          <mat-icon>edit</mat-icon>
+          Edit Formation
+        </button>
+      </div>
+  
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="d-flex justify-content-center m-t-24">
+        <mat-spinner></mat-spinner>
+      </div>
+  
+      <!-- Formation Not Found -->
+      <div *ngIf="!isLoading && !formation" class="text-center m-t-24">
+        <p>Formation not found</p>
+      </div>
+  
+      <!-- Formation Content -->
+      <div *ngIf="formation && !isLoading" class="formation-details">
+  
+        <!-- Title and Description -->
+        <h2 class="m-b-8">{{ formation.courseTitle }}</h2>
+        <p class="text-muted m-b-24">{{ formation.description }}</p>
+  
+        <!-- Details Grid -->
+        <div class="details-grid m-b-24">
+          <div class="detail-item">
+            <mat-icon color="primary">category</mat-icon>
+            <strong>Category:</strong>
+            <span>{{ formation.formationCategory }}</span>
+          </div>
+          <div class="detail-item">
+            <mat-icon color="accent">trending_up</mat-icon>
+            <strong>Level:</strong>
+            <span>{{ formation.level }}</span>
+          </div>
+          <div class="detail-item">
+            <mat-icon color="warn">schedule</mat-icon>
+            <strong>Duration:</strong>
+            <span>{{ formation.duration }} hours</span>
+          </div>
+          <div class="detail-item">
+            <mat-icon color="primary">workspace_premium</mat-icon>
+            <strong>Certificate:</strong>
+            <mat-chip [color]="formation.certificateAvailable ? 'primary' : 'warn'" selected>
+              {{ formation.certificateAvailable ? 'Available' : 'Not Available' }}
+            </mat-chip>
+          </div>
+          <div class="detail-item">
+            <mat-icon>language</mat-icon>
+            <strong>Language:</strong>
+            <span>{{ formation.language }}</span>
+          </div>
+          <div class="detail-item">
+            <mat-icon>attach_money</mat-icon>
+            <strong>Price:</strong>
+            <span>{{ formation.price | currency }}</span>
+          </div>
+        </div>
+  
+        
+  
+      </div>
+    </mat-card-content>
+  </mat-card>
+  

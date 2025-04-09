@@ -1,6 +1,7 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sudoers.elvitrinabackend.model.enums.RoleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

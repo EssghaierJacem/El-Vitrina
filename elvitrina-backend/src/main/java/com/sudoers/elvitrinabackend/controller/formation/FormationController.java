@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*") // Optional: allow frontend access
-@RequestMapping ("/formation")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
+@RequestMapping ("/api/formations")
 public class FormationController {
     @Autowired
     IFormationService formationService;
@@ -24,18 +24,21 @@ public class FormationController {
         return formationService.addFormation(formation);
     }
 
-    @PutMapping("/updateformation")
-    public Formation updateFormation (@RequestBody Formation formation){
+    @PutMapping("/{id}/updateformation")
+    public Formation updateFormation(@PathVariable("id") Long id, @RequestBody Formation formation) {
+        formation.setId(id);  // On définit l'ID de la formation à mettre à jour
         return formationService.updateFormation(formation);
     }
 
-    @GetMapping("/getformation/{id}")
+    @GetMapping("/{id}")
     public Formation getFormation (@PathVariable("id") long id){
         return formationService.retrieveFormation(id);
     }
 
-    @DeleteMapping("/removeformation/{id}")
+    @DeleteMapping("/{id}/removeformation")
     public void removeFormation (@PathVariable("id") long id){
         formationService.removeFormation(id);
     }
 }
+
+

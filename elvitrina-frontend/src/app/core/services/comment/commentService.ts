@@ -20,7 +20,7 @@ export class CommentService {
   }
 
   createComment(comment: Comment): Observable<Comment> {
-    return this.http.post<Comment>(this.apiUrl, comment);
+    return this.http.post<Comment>(`${this.apiUrl}/addcomment`, comment);
   }
 
   updateComment(id: number, comment: Comment): Observable<Comment> {
@@ -28,6 +28,10 @@ export class CommentService {
   }
 
   deleteComment(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`  + "/removecomment");
+  }
+
+  getCommentsByBlogPost(blogPostId: number): Observable<Comment[]> {
+    return this.http.get<Comment[]>(`${this.apiUrl}/blog-post/${blogPostId}`);
   }
 }

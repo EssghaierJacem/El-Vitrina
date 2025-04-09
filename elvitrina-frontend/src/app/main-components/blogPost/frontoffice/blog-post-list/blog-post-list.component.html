@@ -1,0 +1,76 @@
+<div class="blogpost-page">
+  <!-- Page Header -->
+  <header class="page-header">
+    <h1 class="page-title">Explore Our Latest Blog Posts</h1>
+    <p class="page-subtitle">Stay updated with insights, stories, and updates from our community.</p>
+
+    <!-- New Blog Post Button -->
+    <button class="add-post-button" [routerLink]="'create'">
+      <i class="fas fa-plus"></i> New Blog Post
+    </button>
+  </header>
+
+  <!-- Main Container -->
+  <div class="blogpost-container">
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading blog posts...</p>
+    </div>
+
+    <!-- No Posts -->
+    <div *ngIf="!isLoading && blogPosts.length === 0" class="empty-state">
+      <i class="fas fa-newspaper empty-icon"></i>
+      <p>No blog posts available.</p>
+    </div>
+
+    <!-- Blog Post Cards -->
+    <div *ngFor="let post of blogPosts" class="blogpost-card">
+      <!-- Post Header -->
+      <div class="card-header">
+        <div class="post-header-left">
+          <h2 class="post-title">{{ post.title }}</h2>
+          <p class="post-meta">By <strong>Eya JEDDA</strong> · {{ formatDate(post.createdAt!) }}</p>
+        </div>
+      </div>
+
+      <!-- Edit Button below title -->
+      <div class="edit-button-container">
+        <button mat-raised-button color="accent" [routerLink]="['/blog/edit', post.id]" class="edit-button">
+          <i class="fas fa-edit"></i> Edit
+        </button>
+      </div>
+
+      <!-- Post Content -->
+      <div class="card-content">
+        <p>{{ post.content }}</p>
+        <img *ngIf="post.image" [src]="post.image" alt="Blog post image" class="post-image" />
+      </div>
+
+      <!-- Tags -->
+      <div class="post-tags" *ngIf="post.tag">
+        <span class="tag-label">#{{ post.tag }}</span>
+      </div>
+
+      <!-- Comments Section -->
+      <div class="post-comments">
+        <h4>Comments</h4>
+
+        <!-- List of Comments -->
+        <div *ngFor="let comment of comments[post.id!]">
+          <p><strong>Eya JEDDA:</strong> {{ comment.content }}</p>
+        </div>
+
+        <!-- Add Comment -->
+        <div class="add-comment">
+          <input
+            [(ngModel)]="commentInputs[post.id!]"
+            placeholder="Write a comment..."
+            class="comment-input"
+          />
+          <button (click)="addComment(post.id!)" class="comment-button">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

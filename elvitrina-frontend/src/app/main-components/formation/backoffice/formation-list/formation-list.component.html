@@ -1,1 +1,81 @@
-<p>formation-list works!</p>
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+      <div class="d-flex justify-content-between align-items-center m-b-16">
+        <mat-card-title>Formations</mat-card-title>
+        <button mat-raised-button color="primary" [routerLink]="['create']">
+          <mat-icon>add</mat-icon>
+          Add Formation
+        </button>
+      </div>
+  
+      <div class="d-flex justify-content-between align-items-center m-b-16">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Search</mat-label>
+          <input matInput [(ngModel)]="searchText" (keyup)="applyFilter()" placeholder="Search formations...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+        <button mat-icon-button color="primary" (click)="exportToPDF()" matTooltip="Export to PDF">
+          <mat-icon>file_download</mat-icon>
+        </button>
+      </div>
+  
+      @if (isLoading) {
+        <div class="d-flex justify-content-center m-t-16">
+          <mat-spinner></mat-spinner>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table mat-table [dataSource]="dataSource" matSort class="w-100">
+  
+            <ng-container matColumnDef="courseTitle">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
+              <td mat-cell *matCellDef="let formation">{{ formation.courseTitle }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="formationCategory">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Category</th>
+              <td mat-cell *matCellDef="let formation">{{ formation.formationCategory }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="language">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Language</th>
+              <td mat-cell *matCellDef="let formation">{{ formation.language }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="duration">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Duration</th>
+              <td mat-cell *matCellDef="let formation">{{ formation.duration }}h</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="certificateAvailable">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Certificate</th>
+              <td mat-cell *matCellDef="let formation">
+                <mat-icon [color]="formation.certificateAvailable ? 'primary' : 'warn'">
+                  {{ formation.certificateAvailable ? 'check_circle' : 'cancel' }}
+                </mat-icon>
+              </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let formation">
+                <button mat-icon-button [routerLink]="[formation.id, 'edit']" matTooltip="Edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button [routerLink]="[formation.id]" matTooltip="View Details">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button mat-icon-button (click)="deleteFormation(formation.id)" matTooltip="Delete">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+  
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+  

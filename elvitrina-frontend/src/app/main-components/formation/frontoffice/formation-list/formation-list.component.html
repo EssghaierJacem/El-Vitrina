@@ -1,1 +1,40 @@
-<p>formation-list works!</p>
+<div class="formation-list">
+    <!-- Page Header -->
+    <header class="page-header">
+      <h1 class="page-title">Explore Our Formations</h1>
+      <p class="page-subtitle">Enhance your skills with these comprehensive courses!</p>
+    </header>
+  
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading formations...</p>
+    </div>
+  
+    <!-- No Formations Available -->
+    <div *ngIf="!isLoading && formations.length === 0" class="empty-state">
+      <p>No formations available.</p>
+    </div>
+  
+    <!-- Formation Cards -->
+    <div class="formation-cards-container">
+      <div class="formation-card" *ngFor="let formation of formations">
+        <mat-card class="formation-card-item">
+          <mat-card-header>
+            <mat-card-title>{{ formation.courseTitle }}</mat-card-title>
+            <mat-card-subtitle>{{ formation.formationCategory }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p><strong>Duration:</strong> {{ formation.duration }} hours</p>
+            <p><strong>Price:</strong> ${{ formation.price }}</p>
+            <p><strong>Language:</strong> {{ formation.language }}</p>
+            <p><strong>Level:</strong> {{ formation.level }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" [routerLink]="['/formation', formation.id]">View Details</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  

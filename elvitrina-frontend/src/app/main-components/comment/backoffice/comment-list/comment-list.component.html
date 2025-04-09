@@ -1,0 +1,36 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center m-b-16">
+      <div class="d-flex align-items-center">
+        <button mat-icon-button color="primary" [routerLink]="'/dashboard/blogPosts'">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <mat-card-title>Comments associated to : {{ blogPost?.title }}</mat-card-title>
+      </div>
+      <button mat-raised-button color="primary" (click)="addComment()">Add New Comment</button>
+    </div>
+
+    <mat-divider class="m-b-16"></mat-divider>
+
+    <!-- Comments List -->
+    <div *ngIf="comments.length > 0; else noComments">
+      <div *ngFor="let comment of comments" class="m-b-16 p-3 border rounded shadow-sm">
+        <div class="d-flex justify-content-between align-items-center m-b-8">
+          <span class="fw-bold">{{ comment.user?.name || 'Eya JEDDA' }}</span>
+          <span class="text-muted small">{{ comment.createdAt | date: 'short' }}</span>
+        </div>
+        <p class="m-0">{{ comment.content || 'No content provided' }}</p>
+        <div class="d-flex justify-content-end gap-2 m-t-8">
+          <button mat-stroked-button color="accent" [routerLink]="['edit-comment', comment.id]">Edit</button>
+          <button mat-stroked-button color="warn" (click)="deleteComment(comment.id!)">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <ng-template #noComments>
+      <p class="text-muted">No comments found for this blog post.</p>
+    </ng-template>
+  </mat-card-content>
+</mat-card>

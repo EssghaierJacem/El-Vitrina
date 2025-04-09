@@ -1,0 +1,41 @@
+<mat-card class="blog-post-card">
+  <mat-card-content>
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between m-b-16">
+      <div class="d-flex align-items-center gap-2">
+        <button mat-icon-button color="primary" [routerLink]="['../']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <mat-card-title>Blog Post Details</mat-card-title>
+      </div>
+    </div>
+
+    <mat-divider class="m-b-16"></mat-divider>
+
+    <!-- Blog Post Content -->
+    <div class="m-b-24">
+      <h3 class="post-title">{{ blogPost.title }}</h3>
+      <p class="post-content">{{ blogPost.content }}</p>
+    </div>
+
+    <mat-divider class="m-b-16"></mat-divider>
+
+    <!-- View Comments Button -->
+    <div class="d-flex justify-content-end m-b-24">
+      <button mat-stroked-button color="primary" [routerLink]="['comments']">
+        View Comments
+      </button>
+    </div>
+
+    <!-- Additional Info -->
+    <div class="additional-info">
+      <h4 class="section-subtitle">Additional Information</h4>
+      <p><strong>Created at:</strong> {{ blogPost.createdAt | date: 'short' }}</p>
+      <p><strong>Updated at:</strong> {{ blogPost.updatedAt | date: 'short' }}</p>
+      <p><strong>Status:</strong> {{ blogPost.status ? 'Published' : 'Draft' }}</p>
+      <p><strong>Tags:</strong> {{ blogPost.tag || 'None' }}</p>
+      <p><strong>Reactions:</strong> {{ blogPost.reactionNumber }}</p>
+      <p><strong>Reaction Type:</strong> {{ blogPost.reaction?.toString() || 'None' }}</p>
+    </div>
+  </mat-card-content>
+</mat-card>
