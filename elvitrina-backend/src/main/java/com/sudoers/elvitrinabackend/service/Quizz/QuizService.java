@@ -62,22 +62,7 @@ public class QuizService  implements IQuizService {
 
 
 
-    @Override
 
-    public int calculateScore(Long quizId, List<Long> responses) {
-        int score = 0;
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new RuntimeException("Quiz not found"));
-        List<Question> questions = quiz.getQuestions();
-
-        // Logique de calcul du score
-        for (Question question : questions) {
-            Response selectedResponse = responseRepository.findById(responses.get(question.getId().intValue()))
-                    .orElseThrow(() -> new RuntimeException("Response not found"));
-            score += selectedResponse.getId().equals(question.getCorrectAnswer().getId()) ? 1 : 0;
-        }
-
-        return score;
-    }
     @Override
     public String analyzePersonality(int score) {
         // Logique d'analyse de la personnalité en fonction du score

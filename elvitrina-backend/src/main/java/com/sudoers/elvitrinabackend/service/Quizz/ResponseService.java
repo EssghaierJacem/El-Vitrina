@@ -48,8 +48,13 @@ public class ResponseService implements IResponseService  {
     public Response submitResponse(Response response) {
         return responseRepository.save(response);
     }
-@Override
+
+    @Override
     public List<Response> getResponsesByUserId(Long userId) {
-        return responseRepository.findByUserId(userId);
+        return null;
     }
+
+    // public List<Response> getResponsesByUserId(Long userId) {
+      //  return responseRepository.findByUserId(userId);
+   // }
 }

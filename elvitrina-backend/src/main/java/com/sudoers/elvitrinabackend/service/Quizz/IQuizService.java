@@ -13,7 +13,7 @@ public interface IQuizService {
     void deleteQuiz(Long id);
 
 
-    int calculateScore(Long quizId, List<Long> responses);
+    //int calculateScore(Long quizId, List<Long> responses);
 
     String analyzePersonality(int score);
 

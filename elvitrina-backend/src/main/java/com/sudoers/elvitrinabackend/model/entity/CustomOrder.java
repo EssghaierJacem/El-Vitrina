@@ -1,6 +1,5 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sudoers.elvitrinabackend.model.enums.OrderStatusType;
 import jakarta.persistence.*;
@@ -21,7 +20,7 @@ public class CustomOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinTable(
             name = "Order_product",
@@ -38,12 +37,13 @@ public class CustomOrder {
     @Enumerated(EnumType.STRING)
     private OrderStatusType status;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_id")
-    private Payment payment; // Peut
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, optional = true)
+    @JoinColumn(name = "payment_id", nullable = true)
+    private Payment payment;
+
 }
