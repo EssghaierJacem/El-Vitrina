@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,11 +20,10 @@ public class CustomOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinTable(
-            name = "order_product",
+            name = "Order_product",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
@@ -32,15 +32,18 @@ public class CustomOrder {
     private int quantity;
     private double price;
     private LocalDateTime orderDate;
+    private double calculateTotal;
 
     @Enumerated(EnumType.STRING)
     private OrderStatusType status;
 
-    @OneToOne
-    @JsonIgnore
-    private Payment payment;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, optional = true)
+    @JoinColumn(name = "payment_id", nullable = true)
+    private Payment payment;
+
 }

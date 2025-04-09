@@ -1,0 +1,41 @@
+<mat-card class="cardWithShadow theme-card card">
+  <mat-card-header>
+    <mat-card-title>Liste des Réponses</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <table mat-table [dataSource]="responses" class="mat-elevation-z8 w-100">
+      <!-- ID -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let response">{{ response.id }}</td>
+      </ng-container>
+
+      <!-- Réponse -->
+      <ng-container matColumnDef="response">
+        <th mat-header-cell *matHeaderCellDef>Réponse</th>
+        <td mat-cell *matCellDef="let response">{{ response.response }}</td>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let response">
+          <button mat-icon-button color="primary" (click)="editResponse(response.id)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteResponse(response.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['id', 'response', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['id', 'response', 'actions'];"></tr>
+    </table>
+
+    <div class="m-t-12">
+      <button mat-flat-button color="primary" routerLink="/responses/create">Ajouter une Réponse</button>
+    </div>
+  </mat-card-content>
+</mat-card>

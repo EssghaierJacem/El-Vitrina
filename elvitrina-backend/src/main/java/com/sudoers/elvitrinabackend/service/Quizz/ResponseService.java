@@ -44,4 +44,17 @@ public class ResponseService implements IResponseService  {
     public void deleteResponse(Long id) {
         responseRepository.deleteById(id);
     }
+    @Override
+    public Response submitResponse(Response response) {
+        return responseRepository.save(response);
+    }
+
+    @Override
+    public List<Response> getResponsesByUserId(Long userId) {
+        return null;
+    }
+
+    // public List<Response> getResponsesByUserId(Long userId) {
+      //  return responseRepository.findByUserId(userId);
+   // }
 }

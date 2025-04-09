@@ -29,4 +29,6 @@ public class Quiz {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+
 }

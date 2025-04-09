@@ -5,4 +5,5 @@ import { OfferDetailsComponent } from "../frontoffice/offer-details/offer-detail
 export const FrontOfferRoutes: Routes = [
     { path: '', component: OfferListComponent },
     { path: ':id', component:OfferDetailsComponent}
+    
 ];

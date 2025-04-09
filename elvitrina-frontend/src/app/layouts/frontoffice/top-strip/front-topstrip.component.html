@@ -34,52 +34,52 @@
               Front Office
             </div>
           </button>
-          
+
 
         <!-- Buy Now -->
-        <button class="d-flex align-items-center gap-4 text-white" mat-flat-button [matMenuTriggerFor]="beforeMenutow">
-            <div class="d-flex align-items-center gap-6">
-                <i-tabler name="shopping-cart" class="icon-20 d-flex"></i-tabler>
-                Buy Now
-            </div>
+        <button mat-flat-button class="d-flex align-items-center gap-4 text-white" [matMenuTriggerFor]="menu">
+          <div class="d-flex align-items-center gap-6">
+            <i-tabler name="shopping-cart" class="icon-20 d-flex"></i-tabler>
+            Buy Now
+          </div>
         </button>
-        <mat-menu #beforeMenutow="matMenu" xPosition="before">
-            <a mat-menu-item href="https://adminmart.com/product/modernize-angular-material-dashboard/?ref=56" target="_blank">
-                <div class="d-flex align-items-center gap-4">
-                    <i-tabler name="external-link" class="icon-18 d-flex"></i-tabler>
-                    Angular Preview
-                </div>
-            </a>
-            <a mat-menu-item href="https://adminmart.com/product/modernize-vuetify-vue-admin-dashboard/?ref=56" target="_blank">
-                <div class="d-flex align-items-center gap-4">
-                    <i-tabler name="external-link" class="icon-18 d-flex"></i-tabler>
-                    VueJs Preview
-                </div>
-            </a>
-            <a mat-menu-item href="https://adminmart.com/product/modernize-next-js-admin-dashboard/?ref=56" target="_blank">
-                <div class="d-flex align-items-center gap-4">
-                    <i-tabler name="external-link" class="icon-18 d-flex"></i-tabler>
-                    NextJs Preview
-                </div>
-            </a>
-            <a mat-menu-item href="https://adminmart.com/product/modernize-react-mui-dashboard-theme/?ref=56" target="_blank">
-                <div class="d-flex align-items-center gap-4">
-                    <i-tabler name="external-link" class="icon-18 d-flex"></i-tabler>
-                    React Preview
-                </div>
-            </a>
-            <a mat-menu-item href="https://adminmart.com/product/modernize-bootstrap-5-admin-template/?ref=56" target="_blank">
-                <div class="d-flex align-items-center gap-4">
-                    <i-tabler name="external-link" class="icon-18 d-flex"></i-tabler>
-                    Bootstrap Preview
-                </div>
-            </a>
-            <a mat-menu-item href="https://adminmart.com/product/modernize-tailwind-nextjs-dashboard-template/?ref=56" target="_blank">
-                <div class="d-flex align-items-center gap-4">
-                    <i-tabler name="external-link" class="icon-18 d-flex"></i-tabler>
-                    Tailwind Preview
-                </div>
-            </a>
+
+        <!-- Menu -->
+        <mat-menu #menu="matMenu">
+          <div class="p-3">
+            <h3>Orders</h3>
+            <div class="table-container">
+              <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+                <!-- Client Column -->
+                <ng-container matColumnDef="client">
+                  <th mat-header-cell *matHeaderCellDef>Client</th>
+                  <td mat-cell *matCellDef="let order">{{ order.user?.username }}</td>
+                </ng-container>
+
+                <!-- Date Column -->
+                <ng-container matColumnDef="date">
+                  <th mat-header-cell *matHeaderCellDef>Date</th>
+                  <td mat-cell *matCellDef="let order">{{ order.dateCustomOrder | date }}</td>
+                </ng-container>
+
+                <!-- Montant Column -->
+                <ng-container matColumnDef="montant">
+                  <th mat-header-cell *matHeaderCellDef>Montant</th>
+                  <td mat-cell *matCellDef="let order">{{ order.totalAmount | currency:'TND' }}</td>
+                </ng-container>
+
+                <!-- Statut Column -->
+                <ng-container matColumnDef="statut">
+                  <th mat-header-cell *matHeaderCellDef>Statut</th>
+                  <td mat-cell *matCellDef="let order">{{ order.status }}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+            </div>
+          </div>
         </mat-menu>
 
     </div>

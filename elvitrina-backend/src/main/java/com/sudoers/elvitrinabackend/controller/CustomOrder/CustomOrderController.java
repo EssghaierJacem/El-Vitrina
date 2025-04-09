@@ -2,54 +2,46 @@ package com.sudoers.elvitrinabackend.controller.CustomOrder;
 
 import com.sudoers.elvitrinabackend.model.entity.CustomOrder;
 import com.sudoers.elvitrinabackend.service.customOrder.CustomOrderService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
+@CrossOrigin(origins = "http://localhost:4200")
 
 @RestController
+
 @RequestMapping("/api/orders")
+@RequiredArgsConstructor
 public class CustomOrderController {
 
-        private final CustomOrderService customOrderService;
+    private final CustomOrderService customOrderService;
+    @GetMapping
+    public List<CustomOrder> getAllOrders() {
+                      return customOrderService.findAll();
+                  }
 
-        @Autowired
-        public CustomOrderController(CustomOrderService customOrderService) {
-            this.customOrderService = customOrderService;
-        }
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<CustomOrder> getOrderById(@PathVariable Long id) {
+        return customOrderService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
-        @PostMapping
-        public ResponseEntity<CustomOrder> createOrder(@RequestBody CustomOrder customOrder) {
-            CustomOrder createdOrder = customOrderService.createOrder(customOrder);
-            return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
-        }
+    @PostMapping
+    public ResponseEntity<CustomOrder> createOrder(@RequestBody CustomOrder order) {
+        return ResponseEntity.ok(customOrderService.saveCustomOrder(order));
+    }
 
-        @GetMapping("/{id}")
-        public ResponseEntity<CustomOrder> getOrderById(@PathVariable Long id) {
-            Optional<CustomOrder> customOrder = customOrderService.getOrderById(id);
-            return customOrder.map(ResponseEntity::ok)
-                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-        }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<CustomOrder> updateOrder(@PathVariable Long id, @RequestBody CustomOrder updatedOrder) {
+        return ResponseEntity.ok(customOrderService.update(id, updatedOrder));
+    }
 
-        @GetMapping
-        public ResponseEntity<List<CustomOrder>> getAllOrders() {
-            List<CustomOrder> orders = customOrderService.getAllOrders();
-            return ResponseEntity.ok(orders);
-        }
-
-        @PutMapping("/{id}")
-        public ResponseEntity<CustomOrder> updateOrder(@PathVariable Long id, @RequestBody CustomOrder customOrder) {
-            CustomOrder updatedOrder = customOrderService.updateOrder(id, customOrder);
-            return updatedOrder != null ? ResponseEntity.ok(updatedOrder)
-                    : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        @DeleteMapping("/{id}")
-        public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
-            customOrderService.deleteOrder(id);
-            return ResponseEntity.noContent().build();
-        }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
+        customOrderService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
