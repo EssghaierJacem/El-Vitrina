@@ -1,0 +1,70 @@
+.store-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+
+  .card-img-top {
+    border-radius: 8px 8px 0 0;
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .card-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .store-details {
+    font-size: 0.875rem;
+
+    i {
+      color: #6c757d;
+    }
+  }
+
+  .btn-primary {
+    margin-top: auto;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// Loading spinner styles
+mat-spinner {
+  margin: 2rem auto;
+}
+
+// Empty state styles
+.empty-state {
+  padding: 3rem 0;
+  text-align: center;
+
+  h3 {
+    color: #343a40;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: #6c757d;
+  }
+}

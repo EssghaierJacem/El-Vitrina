@@ -20,6 +20,21 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/user/frontoffice/frontuser.routes').then((m) => m.FrontUserRoutes),
       },
+      {
+        path: 'stores',
+        loadChildren: () =>
+          import('./main-components/store/frontOffice/store.routes').then((m) => m.routes),
+      },
+      {
+        path: 'products',
+        loadChildren: () =>
+          import('./main-components/product/frontOffice/product.routes').then((m) => m.ProductRoutes),
+      },
+      {
+        path: 'friends',
+        loadChildren: () =>
+          import('./main-components/friends/friend.routes').then((m) => m.FriendRoutes),
+      },
     ],
   },
   {

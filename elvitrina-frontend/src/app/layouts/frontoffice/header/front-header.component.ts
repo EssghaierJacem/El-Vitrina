@@ -1,43 +1,32 @@
-import {
-  Component,
-  Output,
-  EventEmitter,
-  Input,
-  ViewEncapsulation,
-} from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { TablerIconsModule } from 'angular-tabler-icons';
-import { MaterialModule } from 'src/app/material.module';
-import { NgScrollbarModule } from 'ngx-scrollbar';
+import { Router } from '@angular/router';
 import { TokenService } from 'src/app/core/services/user/TokenService';
+import { StoreService } from 'src/app/core/services/store/store.service'; 
+import { RouterModule } from '@angular/router';
+import { Store } from 'src/app/core/models/store/store.model';
 
 @Component({
   selector: 'front-header',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule,
-    NgScrollbarModule,
-    TablerIconsModule,
-    MaterialModule,
+    RouterModule
   ],
   templateUrl: './front-header.component.html',
-  styleUrls: ['./front-header.component.scss'],
-  encapsulation: ViewEncapsulation.None,
+  styleUrls: ['./front-header.component.scss']
 })
-export class FrontHeaderComponent {
-  @Input() showToggle = true;
-  @Input() toggleChecked = false;
-  @Output() toggleMobileNav = new EventEmitter<void>();
-
+export class FrontHeaderComponent implements OnInit {
   firstName = '';
   userId: number | null = null;
+  role = '';
+  hasStore: boolean = false; 
+  storeId: number | null = null;  
 
   constructor(
     private tokenService: TokenService,
-    private router: Router
+    private router: Router,
+    private storeService: StoreService 
   ) {}
 
   ngOnInit(): void {
@@ -45,6 +34,18 @@ export class FrontHeaderComponent {
       const user = this.tokenService.getDecodedToken();
       this.firstName = user?.firstname || 'Guest';
       this.userId = user?.id ?? null;
+      this.role = user?.role || '';
+      console.log(user);
+
+      if (this.userId) {
+        this.storeService.getAll().subscribe((stores) => {
+          const userStore = stores.find(store => store.userId === this.userId);
+          if (userStore) {
+            this.hasStore = true;
+            this.storeId = userStore.storeId;  
+          }
+        });
+      }
     }
   }
 
@@ -61,5 +62,15 @@ export class FrontHeaderComponent {
 
   isLoggedIn(): boolean {
     return this.tokenService.getToken() !== null;
+  }
+
+  handleStoreButton(): void {
+    if (this.role !== 'SELLER') {
+      this.router.navigate(['/user/become-seller']); 
+    } else if (this.hasStore) {
+      this.router.navigate([`/stores/${this.storeId}`]); 
+    } else {
+      this.router.navigate(['/stores/create']); 
+    }
   }
 }

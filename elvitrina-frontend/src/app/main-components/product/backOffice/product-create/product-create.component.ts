@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,7 +11,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Router, RouterModule } from '@angular/router';
 import { ProductService } from 'src/app/core/services/product/product.service';
 import { ProductCategoryType } from 'src/app/core/models/product/product-category-type.enum';
 import { ProductStatus } from 'src/app/core/models/product/product-status.enum';
@@ -39,10 +39,10 @@ import { Store } from 'src/app/core/models/store/store.model';
 })
 export class ProductCreateComponent implements OnInit {
   productForm: FormGroup;
-  isSubmitting = false;
+  loading = false;
   stores: Store[] = [];
   
-  categoryOptions = Object.values(ProductCategoryType);
+  categories: ProductCategoryType[] = Object.values(ProductCategoryType);
   statusOptions = Object.values(ProductStatus);
 
   constructor(
@@ -68,30 +68,66 @@ export class ProductCreateComponent implements OnInit {
       category: ['', Validators.required],
       status: ['ACTIVE', Validators.required],
       hasDiscount: [false],
-      images: [[]],
+      discountPercentage: [0, [Validators.min(0), Validators.max(100)]],
+      freeShipping: [false],
+      isBestseller: [false],
+      images: [''],
       storeId: ['', Validators.required]
+    });
+
+    // Disable discount percentage by default
+    this.productForm.get('discountPercentage')?.disable();
+
+    // Enable/disable discount percentage based on hasDiscount checkbox
+    this.productForm.get('hasDiscount')?.valueChanges.subscribe(hasDiscount => {
+      const discountControl = this.productForm.get('discountPercentage');
+      if (hasDiscount) {
+        discountControl?.enable();
+      } else {
+        discountControl?.disable();
+        discountControl?.setValue(0);
+      }
     });
   }
 
   loadStores(): void {
+    this.loading = true;
     this.storeService.getAll().subscribe({
       next: (stores) => {
         this.stores = stores;
+        this.loading = false;
       },
       error: (error) => {
         console.error('Error loading stores:', error);
         this.snackBar.open('Error loading stores', 'Close', {
           duration: 5000
         });
+        this.loading = false;
       }
     });
   }
 
   onSubmit(): void {
-    if (this.productForm.valid && !this.isSubmitting) {
-      this.isSubmitting = true;
+    if (this.productForm.valid && !this.loading) {
+      this.loading = true;
       
       const productData = this.productForm.value;
+      
+      // Convert comma-separated image URLs to array
+      if (productData.images) {
+        productData.images = productData.images.split(',').map((url: string) => url.trim()).filter((url: string) => url);
+      } else {
+        productData.images = [];
+      }
+
+      // Ensure category is a valid ProductCategoryType
+      if (!Object.values(ProductCategoryType).includes(productData.category)) {
+        this.snackBar.open('Invalid product category', 'Close', {
+          duration: 5000
+        });
+        this.loading = false;
+        return;
+      }
 
       this.productService.create(productData).subscribe({
         next: (response) => {
@@ -106,7 +142,10 @@ export class ProductCreateComponent implements OnInit {
           this.snackBar.open(error.message || 'Error creating product', 'Close', {
             duration: 5000
           });
-          this.isSubmitting = false;
+          this.loading = false;
+        },
+        complete: () => {
+          this.loading = false;
         }
       });
     } else {
@@ -126,7 +165,7 @@ export class ProductCreateComponent implements OnInit {
       stockQuantity: 0,
       status: 'ACTIVE',
       hasDiscount: false,
-      images: []
+      images: ''
     });
     
     this.snackBar.open('Form has been cleared', 'Close', {
@@ -134,5 +173,11 @@ export class ProductCreateComponent implements OnInit {
     });
     
     this.router.navigate(['/dashboard/products']);
+  }
+
+  getCategoryDisplayName(category: ProductCategoryType): string {
+    return category.split('_').map(word => 
+      word.charAt(0) + word.slice(1).toLowerCase()
+    ).join(' ');
   }
 }

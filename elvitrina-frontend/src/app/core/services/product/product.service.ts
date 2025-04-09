@@ -25,7 +25,12 @@ export class ProductService {
       .pipe(catchError(this.handleError));
   }
 
-  create(product: Product): Observable<Product> {
+  getAllByStoreId(storeId: number): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/store/${storeId}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  create(product: Partial<Product>): Observable<Product> {
     return this.http.post<Product>(this.apiUrl, product)
       .pipe(catchError(this.handleError));
   }
@@ -41,13 +46,22 @@ export class ProductService {
   }
 
   private handleError(error: HttpErrorResponse) {
+    console.error('API Error:', error);
     let errorMessage = 'An error occurred';
+    
     if (error.error instanceof ErrorEvent) {
+      // Client-side error
       errorMessage = error.error.message;
     } else {
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      // Server-side error
+      if (error.error?.message) {
+        errorMessage = error.error.message;
+      } else {
+        errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      }
     }
-    return throwError(() => new Error(errorMessage));
+    
+    return throwError(() => ({ message: errorMessage, error }));
   }
 
   // Get available categories

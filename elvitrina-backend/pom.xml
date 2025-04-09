@@ -10,8 +10,6 @@
     </parent>
     <groupId>com.sudoers</groupId>
     <artifactId>elvitrina-backend</artifactId>
-    <packaging>jar</packaging>
-
     <version>0.0.1-SNAPSHOT</version>
     <name>elvitrina-backend</name>
     <description>elvitrina-backend</description>
@@ -89,7 +87,19 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.1.0</version>
         </dependency>
+        <!-- ZXing Core -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.5.3</version>
+        </dependency>
 
+        <!-- ZXing Java SE (for QR code generation) -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.5.3</version>
+        </dependency>
     </dependencies>
 
     <build>

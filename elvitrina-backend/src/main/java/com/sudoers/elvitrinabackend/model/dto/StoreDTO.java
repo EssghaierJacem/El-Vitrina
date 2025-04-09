@@ -1,6 +1,7 @@
 package com.sudoers.elvitrinabackend.model.dto;
 
 import com.sudoers.elvitrinabackend.model.enums.StoreCategoryType;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class StoreDTO {
     private String address;
     private String image;
     private boolean featured;
+    private String coverImage;
     private Long userId;
     private List<Long> feedbackIds;
     private List<StoreFeedbackDTO> feedbacks;

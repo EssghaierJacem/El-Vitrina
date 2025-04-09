@@ -1,1 +1,98 @@
-<p>store-create works!</p>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4">Create Your Store</h2>
+
+          <form [formGroup]="storeForm" (ngSubmit)="onSubmit()">
+            <!-- Store Name -->
+            <mat-form-field appearance="outline" class="w-100 mb-3">
+              <mat-label>Store Name</mat-label>
+              <input matInput formControlName="storeName" placeholder="Enter store name">
+              <mat-error *ngIf="storeForm.get('storeName')?.hasError('required')">
+                Store name is required
+              </mat-error>
+              <mat-error *ngIf="storeForm.get('storeName')?.hasError('maxlength')">
+                Store name must be less than 100 characters
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Description -->
+            <mat-form-field appearance="outline" class="w-100 mb-3">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="4" 
+                        placeholder="Enter store description"></textarea>
+              <mat-error *ngIf="storeForm.get('description')?.hasError('maxlength')">
+                Description must be less than 1500 characters
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Category -->
+            <mat-form-field appearance="outline" class="w-100 mb-3">
+              <mat-label>Category</mat-label>
+              <mat-select formControlName="category">
+                <mat-option *ngFor="let category of categories" [value]="category">
+                  {{category}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="storeForm.get('category')?.hasError('required')">
+                Category is required
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Address -->
+            <mat-form-field appearance="outline" class="w-100 mb-3">
+              <mat-label>Address</mat-label>
+              <input matInput formControlName="address" placeholder="Enter store address">
+              <mat-error *ngIf="storeForm.get('address')?.hasError('required')">
+                Address is required
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Store Profile Image URL -->
+            <mat-form-field appearance="outline" class="w-100 mb-3">
+              <mat-label>Store Profile Image URL</mat-label>
+              <input matInput formControlName="image" 
+                     placeholder="Enter image URL (e.g., https://example.com/image.jpg)">
+              <mat-error *ngIf="storeForm.get('image')?.hasError('pattern')">
+                Please enter a valid image URL (must start with http:// or https://)
+              </mat-error>
+              <div class="image-preview" *ngIf="storeForm.get('image')?.value">
+                <img [src]="storeForm.get('image')?.value" 
+                     alt="Store profile image preview"
+                     (error)="handleImageError($event)"
+                     class="preview-image">
+              </div>
+            </mat-form-field>
+
+            <!-- Store Cover Image URL -->
+            <mat-form-field appearance="outline" class="w-100 mb-4">
+              <mat-label>Store Cover Image URL</mat-label>
+              <input matInput formControlName="coverImage" 
+                     placeholder="Enter cover image URL (e.g., https://example.com/cover.jpg)">
+              <mat-error *ngIf="storeForm.get('coverImage')?.hasError('pattern')">
+                Please enter a valid image URL (must start with http:// or https://)
+              </mat-error>
+              <div class="image-preview" *ngIf="storeForm.get('coverImage')?.value">
+                <img [src]="storeForm.get('coverImage')?.value" 
+                     alt="Store cover image preview"
+                     (error)="handleImageError($event)"
+                     class="preview-image cover-preview">
+              </div>
+            </mat-form-field>
+
+            <!-- Submit Button -->
+            <div class="d-grid">
+              <button mat-raised-button color="primary" type="submit" 
+                      [disabled]="!storeForm.valid || loading">
+                <span *ngIf="!loading">Create Store</span>
+                <mat-spinner diameter="24" *ngIf="loading"></mat-spinner>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
