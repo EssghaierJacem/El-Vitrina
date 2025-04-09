@@ -38,10 +38,21 @@
 
       <!-- Action Buttons -->
       <div class="d-flex justify-content-end gap-2 m-t-16">
-        <button mat-button type="button" (click)="onCancel()">
+        <button 
+          mat-button 
+          type="button" 
+          (click)="onCancel()"
+          class="cancel-button"
+        >
           Cancel
         </button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="feedbackForm.invalid || isSubmitting">
+        <button 
+          mat-raised-button 
+          color="primary"
+          type="submit" 
+          [disabled]="feedbackForm.invalid || isSubmitting"
+          class="submit-button"
+        >
           <span *ngIf="isSubmitting">Submitting...</span>
           <span *ngIf="!isSubmitting">Submit</span>
         </button>

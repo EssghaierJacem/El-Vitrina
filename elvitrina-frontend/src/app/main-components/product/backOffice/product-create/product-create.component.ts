@@ -16,6 +16,7 @@ import { ProductCategoryType } from 'src/app/core/models/product/product-categor
 import { ProductStatus } from 'src/app/core/models/product/product-status.enum';
 import { StoreService } from 'src/app/core/services/store/store.service';
 import { Store } from 'src/app/core/models/store/store.model';
+import { Product } from 'src/app/core/models/product/product.model';
 
 @Component({
   selector: 'app-product-create',
@@ -71,7 +72,7 @@ export class ProductCreateComponent implements OnInit {
       discountPercentage: [0, [Validators.min(0), Validators.max(100)]],
       freeShipping: [false],
       isBestseller: [false],
-      images: [''],
+      images: [],
       storeId: ['', Validators.required]
     });
 
@@ -112,17 +113,28 @@ export class ProductCreateComponent implements OnInit {
       this.loading = true;
       
       const productData = this.productForm.value;
-      
-      // Convert comma-separated image URLs to array
-      if (productData.images) {
-        productData.images = productData.images.split(',').map((url: string) => url.trim()).filter((url: string) => url);
+
+      // Check if images is an array and process accordingly
+      if (Array.isArray(productData.images)) {
+        // If images is an array, you can directly use it or join it if needed
+        productData.images = productData.images.map((url: string) => url.trim()).filter((url: string) => url);
       } else {
-        productData.images = [];
+        // If it's a string, split it
+        productData.images = productData.images ? productData.images.split(',').map((url: string) => url.trim()).filter((url: string) => url) : [];
       }
 
       // Ensure category is a valid ProductCategoryType
       if (!Object.values(ProductCategoryType).includes(productData.category)) {
         this.snackBar.open('Invalid product category', 'Close', {
+          duration: 5000
+        });
+        this.loading = false;
+        return;
+      }
+
+      // Ensure all required fields are filled
+      if (!productData.productName || !productData.description || !productData.category || !productData.storeId) {
+        this.snackBar.open('Please fill in all required fields', 'Close', {
           duration: 5000
         });
         this.loading = false;

@@ -1,3 +1,4 @@
+import { Store } from "../store/store.model";
 import { StoreFeedbackType } from "./store-feedback-type.enum";
 
 // src/app/models/storeFeedback/store-feedback.model.ts
@@ -6,6 +7,7 @@ export interface StoreFeedback {
     storeId: number;
     userId: number;
     storeName?: string;
+    store?: Store;
     userName?: string;
     userEmail?: string;
     userImage?: string | null;

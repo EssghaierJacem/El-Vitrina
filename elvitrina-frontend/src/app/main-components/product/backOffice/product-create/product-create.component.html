@@ -97,7 +97,7 @@
           </mat-checkbox>
         </div>
 
-        <!-- Discount Percentage (enabled only if hasDiscount is checked) -->
+        <!-- Discount Percentage -->
         <mat-form-field appearance="outline" class="w-100" *ngIf="productForm.get('hasDiscount')?.value">
           <mat-label>Discount Percentage</mat-label>
           <input matInput type="number" formControlName="discountPercentage" min="0" max="100">
@@ -105,20 +105,14 @@
             Discount percentage must be greater than or equal to 0
           </mat-error>
           <mat-error *ngIf="productForm.get('discountPercentage')?.hasError('max')">
-            Discount percentage must be less than or equal to 100
+            Discount percentage cannot exceed 100
           </mat-error>
         </mat-form-field>
 
-        <!-- Additional Options -->
+        <!-- Free Shipping -->
         <div class="m-b-16">
           <mat-checkbox formControlName="freeShipping" color="primary">
             Free Shipping
-          </mat-checkbox>
-        </div>
-
-        <div class="m-b-16">
-          <mat-checkbox formControlName="isBestseller" color="primary">
-            Bestseller
           </mat-checkbox>
         </div>
 
@@ -151,11 +145,8 @@
             Cancel
           </button>
           <button mat-raised-button color="primary" type="submit" [disabled]="productForm.invalid || loading">
-            @if (loading) {
-              <mat-spinner diameter="20"></mat-spinner>
-            } @else {
-              Create Product
-            }
+            <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+            <span *ngIf="!loading">Create Product</span>
           </button>
         </div>
       </form>

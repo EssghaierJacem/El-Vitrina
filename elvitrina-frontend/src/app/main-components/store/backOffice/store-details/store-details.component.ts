@@ -12,6 +12,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { StoreCategoryType } from 'src/app/core/models/store/store-category-type.enum';
 import { ProductCategoryType } from 'src/app/core/models/product/product-category-type.enum';
 import { ProductStatus } from 'src/app/core/models/product/product-status.enum';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-store-details',
@@ -24,7 +25,8 @@ import { ProductStatus } from 'src/app/core/models/product/product-status.enum';
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatChipsModule
+    MatChipsModule,
+    MatDividerModule
   ],
   templateUrl: './store-details.component.html',
   styleUrls: ['./store-details.component.scss']
@@ -61,5 +63,30 @@ export class StoreDetailsComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  handleImageError(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    if (imgElement) {
+      imgElement.src = 'assets/images/no-image.svg'; // Path to your fallback image
+    }
+  }
+  deleteStore(id: number) {
+    if (confirm('Are you sure you want to delete this store?')) {
+      this.storeService.delete(id).subscribe({
+        next: () => {
+          this.loadStore(id);
+          this.snackBar.open('Store deleted successfully', 'Close', {
+            duration: 3000
+          });
+        },
+        error: (error) => {
+          console.error('Error deleting store:', error);
+          this.snackBar.open('Error deleting store', 'Close', {
+            duration: 5000
+          });
+        }
+      });
+    }
   }
 }

@@ -98,7 +98,7 @@ export class StoreEditComponent implements OnInit {
           this.snackBar.open('Store updated successfully', 'Close', {
             duration: 3000
           });
-          this.router.navigate(['../details', this.storeId]);
+          this.router.navigate(['/dashboard/stores']);
         },
         error: (error) => {
           console.error('Error updating store:', error);
@@ -129,6 +129,6 @@ export class StoreEditComponent implements OnInit {
     });
     
     // Navigate back to the list
-    this.router.navigate(['/dashboard/stores']);
+    this.router.navigate(['/dashboard/stores/details', this.storeId]);
   }
 }
