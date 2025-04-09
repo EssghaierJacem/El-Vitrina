@@ -12,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -45,8 +46,17 @@ public class ProposalPersoService implements IProposalPersoService{
     }
 
     @Override
-    public ProposalPerso updateProposalPerso(ProposalPerso prop) {
-        return proposalPersoRepository.save(prop);
+    public ProposalPerso updateProposalPerso(ProposalPerso proposal) {
+        // Get existing proposal
+        ProposalPerso existing = proposalPersoRepository.findById(proposal.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Proposal not found"));
+
+        // Update allowed fields
+        existing.setDescription(proposal.getDescription());
+        existing.setPrice(proposal.getPrice());
+        existing.setDate(new Date()); // Update timestamp
+
+        return proposalPersoRepository.save(existing);
     }
 
     @Override

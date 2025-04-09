@@ -38,4 +38,11 @@ getRequestPersoById(id: number): Observable<RequestPerso> {
   return this.http.get<RequestPerso>(`${this.apiUrl}/${id}`).pipe(catchError(this.handleError));
 }
 
+updateRequestPerso(id: number, requestData: any): Observable<any> {
+  return this.http.put<RequestPerso>(`${this.apiUrl}/${id}`, requestData);
+}
+deleteRequestPerso(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.apiUrl}/${id}`);
+}
+
 }

@@ -71,15 +71,27 @@ public ResponseEntity<?> getRequestPersoById(@PathVariable Long id) {
     public List<RequestPersoDTO> getAllRequestPerso() {
         return requestPersoService.getAllRequestPersoDTO();
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<RequestPerso> updateRequestPerso(@PathVariable Long id, @RequestBody RequestPerso requestDetails) {
-        RequestPerso updatedRequest = requestPersoService.updateRequestPerso(id,requestDetails);
-        return new ResponseEntity<>(updatedRequest, HttpStatus.OK);
-    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRequestPerso(@PathVariable Long id) {
         requestPersoService.deleteRequestPersoById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateRequestPerso(@PathVariable Long id, @RequestBody RequestPersoDTO requestDTO) {
+        try {
+            // Optional: fetch user if you need to update it too
+            RequestPerso updated = requestPersoService.updateRequestPerso(id, requestDTO);
+            return ResponseEntity.ok(updated);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update request");
+        }
+    }
+
+
 }

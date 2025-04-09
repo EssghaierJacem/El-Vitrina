@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable } from 'rxjs';
 import { ProposalPerso } from '../../models/proposalPerso/proposalPerso.model';
+import { UpdateProposalPersoDTO } from '../../models/proposalPerso/update-proposal-perso.dto';
+import { ProposalPersoDTO } from '../../models/proposalPerso/proposal-perso.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -32,5 +34,12 @@ export class ProposalPersoService {
       catchError(this.handleError)
     );
   }
+  deleteProposalPerso(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 
+// proposal-perso.service.ts
+updateProposalPerso(proposalId: number, updateData: any): Observable<any> {
+  return this.http.put(`${this.apiUrl}/${proposalId}`, updateData);
+}
 }

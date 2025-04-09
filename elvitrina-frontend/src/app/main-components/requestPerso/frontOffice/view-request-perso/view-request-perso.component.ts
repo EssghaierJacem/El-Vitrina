@@ -15,6 +15,9 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProposalPersoService } from 'src/app/core/services/proposalPerso/proposal-perso.service';
 import { RequestPersoService } from 'src/app/core/services/requestPerso/request-perso.service';
 import { TokenService } from 'src/app/core/services/user/TokenService';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from './confirm-dialog.component'; 
+import { EditProposalDialogComponent } from './edit-proposal-dialog.component';
 
 @Component({
   selector: 'app-view-request-perso',
@@ -53,7 +56,9 @@ export class ViewRequestPersoComponent {
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
-    private proposalPersoService: ProposalPersoService
+    private proposalPersoService: ProposalPersoService,
+    private dialog: MatDialog,
+   
   ) {}
 
   ngOnInit(): void {
@@ -162,4 +167,82 @@ export class ViewRequestPersoComponent {
       }
     );
   }
+
+  canDeleteProposal(proposalUserId: number): boolean {
+    // Current user is request owner OR proposal owner
+    return this.userId === this.requestData.user?.id || this.userId === proposalUserId;
+  }
+  
+  async deleteProposal(proposalId: number): Promise<void> {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: { 
+        title: 'Delete Proposal',
+        message: 'Are you sure you want to delete this proposal?',
+        confirmText: 'Delete',
+        cancelText: 'Cancel'
+      }
+    });
+  
+    const result = await dialogRef.afterClosed().toPromise();
+    
+    if (result) {
+      this.proposalPersoService.deleteProposalPerso(proposalId).subscribe({
+        next: () => {
+          this.snackBar.open('Proposal deleted successfully', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+          this.getProposalRequestsByProposalPerso(); // Refresh the list
+        },
+        error: (error) => {
+          console.error('Error deleting proposal:', error);
+          this.snackBar.open('Failed to delete proposal', 'Close', {
+            duration: 3000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      });
+    }
+  }
+
+
+  isProposalOwner(proposalUserId: number): boolean {
+    return this.userId === proposalUserId;
+  }
+  
+  updateProposal(proposalId: number, updateData: any): void {
+    this.proposalPersoService.updateProposalPerso(proposalId, updateData).subscribe({
+      next: (updatedProposal) => {
+        this.snackBar.open('Proposal updated successfully!', 'Close', {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        });
+        this.getProposalRequestsByProposalPerso(); // Refresh the list
+      },
+      error: (error) => {
+        console.error('Error updating proposal:', error);
+        this.snackBar.open('Failed to update proposal', 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+  
+  // Modify your openEditProposalDialog to use the update method
+  openEditProposalDialog(proposal: any): void {
+    const dialogRef = this.dialog.open(EditProposalDialogComponent, {
+      width: '500px',
+      data: { proposal }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.updateProposal(proposal.id, result);
+      }
+    });
+  }
+
+
 }

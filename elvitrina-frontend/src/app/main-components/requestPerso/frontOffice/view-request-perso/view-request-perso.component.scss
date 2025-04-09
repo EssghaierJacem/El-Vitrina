@@ -261,3 +261,36 @@
   .request-card {
     animation: fadeIn 0.5s ease-out;
   }
+  /* Global dialog styles */
+.cdk-overlay-container {
+  position: fixed;
+  z-index: 1000;
+}
+
+.cdk-global-overlay-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mat-dialog-container {
+  padding: 24px;
+  border-radius: 8px !important;
+  box-shadow: 0 11px 15px -7px rgba(0,0,0,.2) !important;
+}
+mat-card-actions {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  
+  button {
+    mat-icon {
+      margin-right: 4px;
+      font-size: 18px;
+    }
+    
+    &:not(:last-child) {
+      margin-right: 8px;
+    }
+  }
+}

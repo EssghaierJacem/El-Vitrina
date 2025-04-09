@@ -135,7 +135,22 @@ else {
     }
 
     @Override
-    public RequestPerso updateRequestPerso(Long id,RequestPerso request) {
-        return requestPersoRepository.save(request);
+    public RequestPerso updateRequestPerso(Long id, RequestPersoDTO requestDTO) {
+        RequestPerso existing = requestPersoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("RequestPerso not found with id: " + id));
+
+        existing.setTitle(requestDTO.getTitle());
+        existing.setDescription(requestDTO.getDescription());
+        existing.setMinPrice(requestDTO.getMinPrice());
+        existing.setMaxPrice(requestDTO.getMaxPrice());
+        existing.setImage(requestDTO.getImage());
+        existing.setDeliveryTime(requestDTO.getDeliveryTime());
+        existing.setTags(requestDTO.getTags());
+        existing.setDate(requestDTO.getDate()); // Optional: depends if frontend sends date
+        // Note: We don’t update viewCount or user here unless you want to allow that
+
+        return requestPersoRepository.save(existing);
     }
+
+
 }

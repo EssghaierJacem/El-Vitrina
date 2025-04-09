@@ -35,9 +35,39 @@ public class ProposalPersoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProposalPerso> updateProposalPerso(@PathVariable Long id, @RequestBody ProposalPerso prop) {
-        ProposalPerso updatedRequest = proposalPersoService.updateProposalPerso(prop);
-        return new ResponseEntity<>(updatedRequest, HttpStatus.OK);
+    public ResponseEntity<ProposalPersoDTO> updateProposalPerso(
+            @PathVariable Long id,
+            @RequestBody ProposalPersoDTO proposalDTO) {
+
+        // Convert DTO to entity
+        ProposalPerso proposal = convertToEntity(proposalDTO);
+        proposal.setId(id); // Ensure ID matches path
+
+        // Update in service
+        ProposalPerso updatedProposal = proposalPersoService.updateProposalPerso(proposal);
+
+        // Convert back to DTO
+        ProposalPersoDTO responseDTO = convertToDTO(updatedProposal);
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    private ProposalPerso convertToEntity(ProposalPersoDTO dto) {
+        ProposalPerso proposal = new ProposalPerso();
+        proposal.setDescription(dto.getDescription());
+        proposal.setPrice(dto.getPrice());
+        // Add other fields if needed
+        return proposal;
+    }
+
+    private ProposalPersoDTO convertToDTO(ProposalPerso entity) {
+        return ProposalPersoDTO.builder()
+                .id(entity.getId())
+                .description(entity.getDescription())
+                .price(entity.getPrice())
+                .date(entity.getDate())
+                .requestPersoId(entity.getRequestPerso().getId())
+                .userId(entity.getUser().getId())
+                .build();
     }
 
     @DeleteMapping("/{id}")

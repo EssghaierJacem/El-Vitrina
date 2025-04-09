@@ -12,5 +12,5 @@ public interface IRequestPersoService {
     public RequestPersoDTO getRequestPersoByIdd(Long id);
     public RequestPerso getRequestPersoById(Long id);
     public void deleteRequestPersoById(Long id);
-    public RequestPerso updateRequestPerso (Long id,RequestPerso request);
+    public RequestPerso updateRequestPerso (Long id,RequestPersoDTO request);
 }

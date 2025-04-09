@@ -366,3 +366,26 @@ button[mat-raised-button][color="accent"] {
     }
   }
 }
+/* styles.scss or your global CSS */
+.cdk-overlay-container {
+  position: fixed;
+  z-index: 1000;
+}
+
+.cdk-global-overlay-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-dialog {
+  .mat-dialog-container {
+    padding: 24px;
+    border-radius: 8px;
+    overflow: auto;
+    
+    // Prevent dialog from stretching to viewport edges
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+}
