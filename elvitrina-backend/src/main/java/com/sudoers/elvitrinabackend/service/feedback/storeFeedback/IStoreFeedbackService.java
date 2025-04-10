@@ -13,4 +13,5 @@ public interface IStoreFeedbackService {
     void deleteStoreFeedback(Long id);
     Double getAverageRatingByStoreId(Long storeId);
     Long countByStoreId(Long storeId);
+    List<StoreFeedbackDTO> getFeedbacksByStoreId(Long storeId);
 }

@@ -139,4 +139,13 @@ public class StoreController {
         StoreCategoryType categoryType = StoreCategoryType.valueOf(category.toUpperCase());
         return ResponseEntity.ok(storeService.getStoresByCategoryPaginated(categoryType, pageable));
     }
+
+    @GetMapping("/{id}/name")
+    public ResponseEntity<String> getStoreNameById(@PathVariable Long id) {
+        String storeName = storeService.getStoreNameById(id);
+        if (storeName == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(storeName);
+    }
 }

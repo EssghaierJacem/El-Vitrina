@@ -59,4 +59,13 @@ public class StoreFeedbackController {
         Long count = storeFeedbackService.countByStoreId(storeId);
         return ResponseEntity.ok(count);
     }
+
+    @GetMapping("/store/{storeId}")
+    public ResponseEntity<List<StoreFeedbackDTO>> getFeedbacksByStoreId(@PathVariable Long storeId) {
+        List<StoreFeedbackDTO> feedbacks = storeFeedbackService.getFeedbacksByStoreId(storeId);
+        if (feedbacks.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(feedbacks);
+    }
 }

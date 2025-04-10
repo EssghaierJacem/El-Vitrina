@@ -27,4 +27,5 @@ public interface IStoreService {
     // Optional filtered versions
     //Page<StoreDTO> getStoresByStatusPaginated(boolean status, Pageable pageable);
     Page<StoreDTO> getStoresByCategoryPaginated(StoreCategoryType category, Pageable pageable);
+    String getStoreNameById(Long id);
 }

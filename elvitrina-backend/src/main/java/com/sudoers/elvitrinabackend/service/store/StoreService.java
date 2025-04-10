@@ -313,4 +313,9 @@ public class StoreService implements IStoreService{
         return storeRepository.findByCategory(category, pageable)
                 .map(this::copyEntityToDto);
     }
+
+    @Transactional(readOnly = true)
+    public String getStoreNameById(Long id) {
+        return storeRepository.findStoreNameById(id);
+    }
 }

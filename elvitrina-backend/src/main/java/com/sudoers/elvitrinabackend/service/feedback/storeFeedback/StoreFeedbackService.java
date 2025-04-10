@@ -32,8 +32,12 @@ public class StoreFeedbackService implements IStoreFeedbackService {
     public StoreFeedbackDTO saveStoreFeedback(StoreFeedbackDTO storeFeedbackDTO) {
         Store store = storeRepository.findById(storeFeedbackDTO.getStoreId())
                 .orElseThrow(() -> new RuntimeException("Store not found"));
-        User user = userRepository.findById(storeFeedbackDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        User user = null;
+        if (storeFeedbackDTO.getUserId() != null) {
+            user = userRepository.findById(storeFeedbackDTO.getUserId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+        }
 
         StoreFeedback storeFeedback = new StoreFeedback();
         storeFeedback.setRating(storeFeedbackDTO.getRating());
@@ -41,12 +45,13 @@ public class StoreFeedbackService implements IStoreFeedbackService {
         storeFeedback.setWouldRecommend(storeFeedbackDTO.getWouldRecommend());
         storeFeedback.setStoreFeedbackType(storeFeedbackDTO.getStoreFeedbackType());
         storeFeedback.setStore(store);
-        storeFeedback.setUser(user);
+        storeFeedback.setUser(user); // null is acceptable if your entity allows it
         storeFeedback.setCreatedAt(LocalDateTime.now());
 
         StoreFeedback savedFeedback = storeFeedbackRepository.save(storeFeedback);
         return convertToDTO(savedFeedback);
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -97,6 +102,7 @@ public class StoreFeedbackService implements IStoreFeedbackService {
 
     private StoreFeedbackDTO convertToDTO(StoreFeedback storeFeedback) {
         User user = storeFeedback.getUser();
+
         return StoreFeedbackDTO.builder()
                 .storeFeedbackId(storeFeedback.getStoreFeedbackId())
                 .rating(storeFeedback.getRating())
@@ -105,10 +111,18 @@ public class StoreFeedbackService implements IStoreFeedbackService {
                 .wouldRecommend(storeFeedback.isWouldRecommend())
                 .storeFeedbackType(storeFeedback.getStoreFeedbackType())
                 .storeId(storeFeedback.getStore().getStoreId())
-                .userId(user.getId())
-                .userName(user.getName())
-                .userEmail(user.getEmail())
-                .userImage(user.getImage())
+                .userId(user != null ? user.getId() : null)
+                .userName(user != null ? user.getName() : null)
+                .userEmail(user != null ? user.getEmail() : null)
+                .userImage(user != null ? user.getImage() : null)
                 .build();
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<StoreFeedbackDTO> getFeedbacksByStoreId(Long storeId) {
+        return storeFeedbackRepository.findByStoreStoreId(storeId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 }
