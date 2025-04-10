@@ -20,4 +20,7 @@ public class Response {
     @ManyToOne
     @JoinColumn(name = "question_id")
     private Question question;
+
+
+
 }

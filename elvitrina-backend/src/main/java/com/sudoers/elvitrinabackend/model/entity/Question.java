@@ -29,4 +29,7 @@ public class Question {
 
     @OneToMany(mappedBy = "question")
     private List<Response> responses;
+
+
+
 }

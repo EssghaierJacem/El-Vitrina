@@ -1,0 +1,14 @@
+<h3>Your  Friends</h3>
+
+<div *ngIf="mutualFriends.length === 0" class="no-friends-message">
+  No friends yet. Start sending friend requests!
+</div>
+
+<div *ngFor="let friend of mutualFriends" class="friend-card">
+  <div class="friend-card-header">
+    <img alt="Friend's image" class="friend-image" />
+    <div class="friend-info">
+      <h4>{{ friend.firstName }} {{ friend.lastName }}</h4>
+    </div>
+  </div>
+</div>

@@ -12,4 +12,8 @@ public interface IResponseService {
     List<Response> getAllResponses();
     Response updateResponse(Long id, Response response);
     void deleteResponse(Long id);
+
+    Response submitResponse(Response response);
+
+    List<Response> getResponsesByUserId(Long userId);
 }

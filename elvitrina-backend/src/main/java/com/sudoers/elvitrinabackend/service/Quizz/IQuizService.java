@@ -11,4 +11,11 @@ public interface IQuizService {
     List<Quiz> getAllQuizzes();
     Quiz updateQuiz(Long id, Quiz quiz);
     void deleteQuiz(Long id);
+
+
+    //int calculateScore(Long quizId, List<Long> responses);
+
+    String analyzePersonality(int score);
+
+    //----------------------Methodes avancées------------//
 }

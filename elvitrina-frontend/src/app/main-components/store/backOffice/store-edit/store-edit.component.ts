@@ -65,6 +65,7 @@ export class StoreEditComponent implements OnInit {
       category: ['', Validators.required],
       address: ['', Validators.required],
       image: [''],
+      coverImage: [''],
       status: [true],
       featured: [false]
     });

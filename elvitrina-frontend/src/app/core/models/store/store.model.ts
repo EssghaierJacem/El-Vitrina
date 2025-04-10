@@ -1,11 +1,5 @@
-// src/app/models/store/store.model.ts
 import { StoreCategoryType } from './store-category-type.enum';
-//import { StoreFeedback } from '../storeFeedback/store-feedback.model';
-//import { Product } from '../product/product.model';
-//import { Donation } from '../donation/donation.model';
-//import { DonationCampaign } from '../donation/donation-campaign.model';
-//import { VirtualEvent } from '../virtual-event/virtual-event.model';
-//import { Advertisement } from '../advertisement/advertisement.model';
+import { Product } from '../product/product.model';
 import { User } from '../user/user.model';
 
 export interface Store {
@@ -13,18 +7,29 @@ export interface Store {
   storeName: string;
   description?: string;
   category: StoreCategoryType;
+  categoryDisplayName?: string;
   createdAt?: string;
   updatedAt?: string;
   status: boolean;
   address: string;
   image?: string;
+  coverImage?: string;
+  announcement?: string;
+  story?: string;
+  storyImage?: string;
   featured: boolean;
   userId: number;
+  //feedbackIds?: number[];
+  //donationIds?: number[];
+  //donationCampaignIds?: number[];
+  //virtualEventIds?: number[];
+  //advertisementIds?: number[];
+  //feedbackCount?: number;
   
   // Relationships (optional - include only what you need)
   user?: User;
   //feedbacks?: StoreFeedback[];
-  //products?: Product[];
+  products?: Product[];
   //donations?: Donation[];
   //donationCampaigns?: DonationCampaign[];
   //virtualEvents?: VirtualEvent[];
@@ -34,4 +39,5 @@ export interface Store {
   averageRating?: number;
   productCount?: number;
   activeProductCount?: number;
+  reviewCount?: number;
 }

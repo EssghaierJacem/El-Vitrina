@@ -11,4 +11,8 @@ public interface IPaymentService {
     List<Payment> getAllPayments();
     Payment updatePayment(Long id, Payment payment);
     void deletePayment(Long id);
+    public Payment processPayment(Long orderId, double amount, String paymentMethod) ;
+    Payment validatePayment(Long paymentId);
+
+
 }

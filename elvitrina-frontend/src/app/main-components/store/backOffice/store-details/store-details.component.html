@@ -29,6 +29,13 @@
           </div>
         }
 
+        <!-- Cover Image -->
+        @if (store.coverImage) {
+          <div class="store-cover-image m-b-16">
+            <img [src]="store.coverImage" [alt]="store.storeName + ' Cover'" class="w-100">
+          </div>
+        }
+
         <!-- Store Information -->
         <div class="store-info">
           <h2>{{ store.storeName }}</h2>
