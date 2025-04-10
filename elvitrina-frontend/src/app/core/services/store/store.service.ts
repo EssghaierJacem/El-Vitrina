@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Store } from '../../models/store/store.model';
 import { StoreCategoryType } from '../../models/store/store-category-type.enum';
+import { StoreStatsDTO } from '../../models/store/Store-stats.dto';
 
 @Injectable({ providedIn: 'root' })
 export class StoreService {
@@ -103,6 +104,10 @@ export class StoreService {
 
   toggleStoreStatus(id: number): Observable<void> {
     return this.http.patch<void>(`${this.apiUrl}/${id}/status`, {});
+  }
+
+  getStoreStats(storeId: number): Observable<StoreStatsDTO> {
+    return this.http.get<StoreStatsDTO>(`${this.apiUrl}/stores/${storeId}/stats`);
   }
 
   private handleError(error: HttpErrorResponse) {

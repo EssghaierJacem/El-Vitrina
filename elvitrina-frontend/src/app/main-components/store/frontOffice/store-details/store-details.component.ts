@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Store } from '../../../../core/models/store/store.model';
 import { Product } from '../../../../core/models/product/product.model';
 import { StoreService } from '../../../../core/services/store/store.service';
@@ -18,6 +18,13 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatMenuModule } from '@angular/material/menu';
 import { ProductCategoryType } from '../../../../core/models/product/product-category-type.enum';
 import { environment } from '../../../../../environments/environment';
+import { StoreFeedbackListComponent } from '../../../../main-components/storeFeedback/frontOffice/store-feedback-list/store-feedback-list.component';
+import { StoreStatsDTO } from '../../../../core/models/store/Store-stats.dto';
+import { StoreFeedbackCreateComponent } from '../../../../main-components/storeFeedback/frontOffice/store-feedback-create/store-feedback-create.component';
+import { StoreFeedbackService } from '../../../../core/services/storeFeedback/store-feedback.service';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { StoreFeedbackType } from '../../../../core/models/storeFeedback/store-feedback-type.enum';
 
 interface SortOption {
   value: string;
@@ -40,13 +47,15 @@ interface SortOption {
     MatListModule,
     MatTabsModule,
     MatMenuModule,
-    RouterModule
+    RouterModule,
+    StoreFeedbackListComponent,
+    StoreFeedbackCreateComponent
   ],
   templateUrl: './store-details.component.html',
   styleUrls: ['./store-details.component.scss']
 })
 export class StoreDetailsComponent implements OnInit {
-  store: Store | null = null;
+  store: Store;
   products: Product[] = [];
   loading = true;
   error: string | null = null;
@@ -70,12 +79,25 @@ export class StoreDetailsComponent implements OnInit {
   defaultAvatarImage = '';
   defaultProductImage = '';
 
+  feedbackForm: FormGroup;
+
   constructor(
     private storeService: StoreService,
     private productService: ProductService,
+    private storeFeedbackService: StoreFeedbackService,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
-  ) {}
+    private snackBar: MatSnackBar,
+    private authService: AuthService,
+    private fb: FormBuilder,
+    private router: Router
+  ) {
+    this.feedbackForm = this.fb.group({
+      storeFeedbackType: [StoreFeedbackType.PRODUCT_QUALITY, Validators.required],
+      rating: [3, [Validators.required, Validators.min(1), Validators.max(5)]],
+      comment: ['', [Validators.required, Validators.minLength(10)]],
+      wouldRecommend: [true]
+    });
+  }
 
   ngOnInit(): void {
     this.loadStore();
@@ -100,6 +122,7 @@ export class StoreDetailsComponent implements OnInit {
       next: (store) => {
         this.store = store;
         this.loadProducts(storeId);
+        this.loadStoreStats(storeId);
       },
       error: (error: Error) => {
         console.error('Error loading store:', error);
@@ -135,6 +158,18 @@ export class StoreDetailsComponent implements OnInit {
         console.error('Error loading products:', error);
         this.error = 'Error loading products';
         this.loading = false;
+      }
+    });
+  }
+
+  loadStoreStats(storeId: number): void {
+    this.storeService.getStoreStats(storeId).subscribe({
+      next: (stats: StoreStatsDTO) => {
+        this.store.feedbackCount = stats.feedbackCount;
+        this.store.averageRating = stats.averageRating;
+      },
+      error: (error: Error) => {
+        console.error('Error loading store stats:', error);
       }
     });
   }
@@ -261,5 +296,40 @@ export class StoreDetailsComponent implements OnInit {
     }
     const discount = product.price * (product.discountPercentage / 100);
     return product.price - discount;
+  }
+
+  submitFeedback(): void {
+    if (!this.store) {
+      this.error = 'Store not found';
+      return;
+    }
+
+    const userId = this.authService.getUserId();
+    console.log('User ID:', userId);
+
+    const feedback = {
+      storeId: this.store.storeId,
+      userId: userId,
+      storeFeedbackType: this.feedbackForm.value.storeFeedbackType,
+      rating: this.feedbackForm.value.rating,
+      comment: this.feedbackForm.value.comment,
+      wouldRecommend: this.feedbackForm.value.wouldRecommend
+    };
+
+    this.storeFeedbackService.create(feedback).subscribe({
+      next: (response) => {
+        this.snackBar.open('Feedback submitted successfully!', 'Close', {
+          duration: 3000
+        });
+      },
+      error: (error: Error) => {
+        console.error('Error submitting feedback:', error);
+        this.error = 'Error submitting feedback';
+      }
+    });
+  }
+
+  goToCreateFeedback(): void {
+    this.router.navigate(['/store-feedback/create']);
   }
 }

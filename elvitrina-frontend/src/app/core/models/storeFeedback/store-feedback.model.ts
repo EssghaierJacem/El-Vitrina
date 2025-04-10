@@ -5,7 +5,7 @@ import { StoreFeedbackType } from "./store-feedback-type.enum";
 export interface StoreFeedback {
     storeFeedbackId?: number;
     storeId: number;
-    userId: number;
+    userId?: number | null;
     storeName?: string;
     store?: Store;
     userName?: string;

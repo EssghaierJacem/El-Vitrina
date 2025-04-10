@@ -1,6 +1,7 @@
 import { StoreCategoryType } from './store-category-type.enum';
 import { Product } from '../product/product.model';
 import { User } from '../user/user.model';
+import { StoreFeedback } from '../storeFeedback/store-feedback.model';
 
 export interface Store {
   storeId: number;
@@ -19,16 +20,16 @@ export interface Store {
   storyImage?: string;
   featured: boolean;
   userId: number;
-  //feedbackIds?: number[];
+  feedbackIds?: number[];
   //donationIds?: number[];
   //donationCampaignIds?: number[];
   //virtualEventIds?: number[];
   //advertisementIds?: number[];
-  //feedbackCount?: number;
+  feedbackCount?: number;
   
   // Relationships (optional - include only what you need)
   user?: User;
-  //feedbacks?: StoreFeedback[];
+  feedbacks?: StoreFeedback[];
   products?: Product[];
   //donations?: Donation[];
   //donationCampaigns?: DonationCampaign[];

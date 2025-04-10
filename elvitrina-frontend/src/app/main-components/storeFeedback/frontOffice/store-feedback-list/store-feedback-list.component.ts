@@ -1,113 +1,154 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { StoreFeedbackService } from 'src/app/core/services/storeFeedback/store-feedback.service';
+import { MatDividerModule } from '@angular/material/divider';
+import { StarRatingComponent } from '../star-rating/star-rating.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { StoreFeedback } from 'src/app/core/models/storeFeedback/store-feedback.model';
+import { StoreFeedbackService } from 'src/app/core/services/storeFeedback/store-feedback.service';
+import { StoreFeedbackType } from 'src/app/core/models/storeFeedback/store-feedback-type.enum';
+import { getStoreFeedbackTypeDisplayName } from 'src/app/core/models/storeFeedback/store-feedback-type.enum';
+import { StoreFeedbackCreateComponent } from '../../backOffice/store-feedback-create/store-feedback-create.component';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-store-feedback-list',
+  templateUrl: './store-feedback-list.component.html',
+  styleUrls: ['./store-feedback-list.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
     MatCardModule,
     MatIconModule,
-    MatButtonModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
-  ],
-  templateUrl: './store-feedback-list.component.html',
-  styleUrls: ['./store-feedback-list.component.scss']
+    MatDividerModule,
+    StarRatingComponent,
+    MatButtonModule,
+    MatMenuModule
+  ]
 })
 export class StoreFeedbackListComponent implements OnInit {
-  @Input() storeId: number | null = null;
-  
+  @Input() storeId!: number;
+  storeName: string = '';
   feedbacks: StoreFeedback[] = [];
   loading = false;
   error: string | null = null;
-  averageRating = 0;
-  ratingCounts = {
-    '5': 0,
-    '4': 0,
-    '3': 0,
-    '2': 0,
-    '1': 0
-  };
+  averageRating: number = 0;
+  feedbackCount: number = 0;
 
-  constructor(private storeFeedbackService: StoreFeedbackService) {}
+  constructor(
+    private storeFeedbackService: StoreFeedbackService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
-    this.loadFeedbacks();
-  }
-
-  ngOnChanges(): void {
     if (this.storeId) {
+      this.loadStoreName();
       this.loadFeedbacks();
+      this.loadStats();
     }
   }
 
+  loadStoreName(): void {
+    this.storeFeedbackService.getStoreName(this.storeId).subscribe({
+      next: (name) => {
+        this.storeName = name;
+      },
+      error: (error) => {
+        console.error('Error loading store name:', error);
+      }
+    });
+  }
+
   loadFeedbacks(): void {
-    if (!this.storeId) return;
-    
     this.loading = true;
     this.error = null;
     
     this.storeFeedbackService.getByStoreId(this.storeId).subscribe({
       next: (feedbacks) => {
         this.feedbacks = feedbacks;
-        this.calculateStats();
         this.loading = false;
       },
-      error: (err) => {
-        console.error('Error loading feedbacks:', err);
-        this.error = 'Failed to load feedbacks. Please try again later.';
+      error: (error) => {
+        console.error('Error loading feedbacks:', error);
+        this.error = 'Failed to load feedbacks';
         this.loading = false;
+        this.snackBar.open(this.error, 'Close', { duration: 3000 });
       }
     });
   }
 
-  private calculateStats(): void {
-    if (this.feedbacks.length === 0) {
-      this.averageRating = 0;
-      return;
+  loadStats(): void {
+    this.storeFeedbackService.getAverageRating(this.storeId).subscribe({
+      next: (rating) => {
+        this.averageRating = rating;
+      },
+      error: (error) => {
+        console.error('Error loading average rating:', error);
+      }
+    });
+
+    this.storeFeedbackService.getFeedbackCount(this.storeId).subscribe({
+      next: (count) => {
+        this.feedbackCount = count;
+      },
+      error: (error) => {
+        console.error('Error loading feedback count:', error);
+      }
+    });
+  }
+
+  getFeedbackTypeDisplayName(type: StoreFeedbackType): string {
+    return getStoreFeedbackTypeDisplayName(type);
+  }
+
+  openFeedbackDialog(): void {
+    const dialogRef = this.dialog.open(StoreFeedbackCreateComponent, {
+      width: '500px',
+      data: { storeId: this.storeId }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'success') {
+        this.snackBar.open('Feedback submitted successfully!', 'Close', { duration: 3000 });
+        this.loadFeedbacks();
+        this.loadStats();
+      }
+    });
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    });
+  }
+
+  // Add this to your component class
+  sortBy(criteria: string): void {
+    switch(criteria) {
+      case 'dateDesc':
+        this.feedbacks.sort((a, b) => 
+          new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime());
+        break;
+      case 'ratingDesc':
+        this.feedbacks.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'ratingAsc':
+        this.feedbacks.sort((a, b) => a.rating - b.rating);
+        break;
+      default:
+        // Default sorting (suggested)
+        this.feedbacks.sort((a, b) => 
+          new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime());
     }
-
-    // Reset counts
-    Object.keys(this.ratingCounts).forEach(key => {
-      this.ratingCounts[key as keyof typeof this.ratingCounts] = 0;
-    });
-
-    // Calculate total and counts
-    let totalRating = 0;
-    this.feedbacks.forEach(feedback => {
-      totalRating += feedback.rating;
-      const ratingKey = feedback.rating.toString() as keyof typeof this.ratingCounts;
-      if (this.ratingCounts[ratingKey] !== undefined) {
-        this.ratingCounts[ratingKey]++;
-      }
-    });
-
-    // Calculate average
-    this.averageRating = totalRating / this.feedbacks.length;
-  }
-
-  getStarArray(rating: number): number[] {
-    return Array(5).fill(0).map((_, i) => i < Math.round(rating) ? 1 : 0);
-  }
-
-  getRatingPercentage(rating: string): number {
-    if (this.feedbacks.length === 0) return 0;
-    return (this.ratingCounts[rating as keyof typeof this.ratingCounts] / this.feedbacks.length) * 100;
-  }
-
-  formatDate(date: string | Date): string {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
   }
 }

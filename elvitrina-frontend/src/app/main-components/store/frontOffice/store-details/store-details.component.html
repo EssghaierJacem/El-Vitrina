@@ -42,7 +42,7 @@
       </button>
       <button mat-button [class.active]="activeTab === 'reviews'" (click)="setActiveTab(1)">
         Reviews
-        <span class="count">{{store?.reviewCount || 0}}</span>
+        <span class="count">{{store?.feedbackCount || 0}}</span>
       </button>
     </div>
 
@@ -149,7 +149,13 @@
         </div>
         <!-- Reviews Tab -->
         <div *ngSwitchCase="'reviews'" class="reviews-placeholder">
-          <p>Reviews coming soon</p>
+          <!-- Feedback List -->
+          <div *ngIf="activeTab === 'reviews'">
+            <app-store-feedback-list [storeId]="store?.storeId ?? 0"></app-store-feedback-list>
+          </div>
+          <div *ngIf="activeTab === 'reviews'">
+            <app-store-feedback-create [storeId]="store?.storeId ?? 0"></app-store-feedback-create>
+          </div>
         </div>
       </div>
     </div>
