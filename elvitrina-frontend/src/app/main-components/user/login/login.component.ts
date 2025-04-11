@@ -52,4 +52,11 @@ export class LoginComponent {
       }
     });
   }
+
+  signInWithGoogle() {
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+  }
+  signInWithFacebook() {
+    window.location.href = 'http://localhost:8080/oauth2/authorization/facebook';
+  }
 }

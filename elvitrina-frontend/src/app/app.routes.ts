@@ -6,6 +6,7 @@ import { AdminGuard } from './main-components/user/adminGuard.component';
 import { NotFoundComponent } from './layouts/not-found/not-found.component';
 import { customOrderRoutes } from './main-components/custom-order/custom-order.routes';
 import { Question } from './core/models/Quiz/question';
+import { OauthSuccessComponent } from './main-components/user/oauth-success/oauth-success.component';
 
 export const routes: Routes = [
   {
@@ -130,6 +131,10 @@ export const routes: Routes = [
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
       },
     ],
+  },
+  {
+    path: 'oauth-success',
+    component: OauthSuccessComponent
   },
   {
     path: '**', component: NotFoundComponent

@@ -11,7 +11,7 @@
   
             <div class="row m-t-24 custom-row">
               <div class="col-12 col-sm-6">
-                <button mat-stroked-button class="w-100">
+                <button mat-stroked-button class="w-100" (click)="signInWithGoogle()">
                   <div class="d-flex align-items-center">
                     <img src="/assets/images/svgs/google-icon.svg" alt="google" width="16" class="m-r-8" />
                     <span>Sign in with Google</span>
@@ -19,7 +19,7 @@
                 </button>
               </div>
               <div class="col-12 col-sm-6">
-                <button mat-stroked-button class="w-100 d-flex align-items-center">
+                <button mat-stroked-button class="w-100 d-flex align-items-center" (click)="signInWithFacebook()">
                   <div class="d-flex align-items-center">
                     <img src="/assets/images/svgs/facebook-icon.svg" alt="facebook" width="40" class="m-r-4" />
                     Sign in with FB

@@ -69,6 +69,8 @@ export class UserListComponent implements OnInit {
   activeUsers: Set<number> = new Set<number>();
   
   mutualFriendsMap: Map<number, number> = new Map<number, number>();
+  acceptedFriends: Set<number> = new Set<number>();
+
   
   private searchSubject = new Subject<string>();
 
@@ -96,6 +98,7 @@ export class UserListComponent implements OnInit {
     this.loadSentRequests();
     this.simulateActiveUsers();
     this.generateMockMutualFriends();
+    this.loadAcceptedFriends();
   }
 
   loadUsers(): void {
@@ -178,7 +181,9 @@ export class UserListComponent implements OnInit {
 
   filterUsers(): void {
     let filtered = [...this.users];
-    
+  
+    filtered = filtered.filter(user => !this.acceptedFriends.has(user.id!));
+  
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(user => 
@@ -187,7 +192,7 @@ export class UserListComponent implements OnInit {
         user.email.toLowerCase().includes(query)
       );
     }
-
+  
     if (this.activeFilter !== 'all') {
       if (this.activeFilter === 'new') {
         const lastMonth = new Date();
@@ -196,10 +201,11 @@ export class UserListComponent implements OnInit {
         filtered = filtered.filter(() => Math.random() > 0.5);
       }
     }
-
+  
     this.hasMoreUsers = filtered.length > this.usersPerPage * this.currentPage;
     this.filteredUsers = filtered.slice(0, this.usersPerPage * this.currentPage);
   }
+  
 
   setFilter(filter: string): void {
     this.activeFilter = filter;
@@ -269,9 +275,29 @@ export class UserListComponent implements OnInit {
   }
 
   getConnectionStatus(userId: number): 'none' | 'sent' | 'connected' {
+    if (this.acceptedFriends.has(userId)) {
+      return 'connected';
+    }
     if (this.sentRequests.has(userId)) {
       return 'sent';
     }
     return 'none';
   }
+  
+  
+  loadAcceptedFriends(): void {
+    if (!this.userId) return;
+  
+    this.friendRequestService.getFriends(this.userId).subscribe(
+      (friends) => {
+        const friendIds = friends.map(friend => friend.id);
+        this.acceptedFriends = new Set(friendIds);
+        this.filterUsers();
+      },
+      (error) => {
+        console.error('Failed to load friends:', error);
+      }
+    );
+  }
+  
 }
