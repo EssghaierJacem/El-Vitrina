@@ -1,4 +1,4 @@
-package com.sudoers.elvitrinabackend.service.Quizz;
+package com.sudoers.elvitrinabackend.service.Quiz;
 
 import com.sudoers.elvitrinabackend.model.dto.QuizDTO;
 
@@ -12,5 +12,4 @@ public interface IQuizService {
     QuizDTO updateQuiz(Long id, QuizDTO quizDTO);
     void deleteQuiz(Long id);
 
-    String analyzePersonality(int score);
 }

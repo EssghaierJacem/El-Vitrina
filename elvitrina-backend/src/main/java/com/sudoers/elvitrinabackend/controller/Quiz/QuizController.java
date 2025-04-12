@@ -1,7 +1,7 @@
 package com.sudoers.elvitrinabackend.controller.Quiz;
 
 import com.sudoers.elvitrinabackend.model.dto.QuizDTO;
-import com.sudoers.elvitrinabackend.service.Quizz.IQuizService;
+import com.sudoers.elvitrinabackend.service.Quiz.IQuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,9 +54,4 @@ public class QuizController {
         return ResponseEntity.noContent().build();
     }
 
-    // Optionnel : point d'analyse de score
-    @GetMapping("/analyze")
-    public ResponseEntity<String> analyzePersonality(@RequestParam int score) {
-        return ResponseEntity.ok(quizService.analyzePersonality(score));
-    }
 }

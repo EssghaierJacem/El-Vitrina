@@ -4,7 +4,7 @@ import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
 import { AdminGuard } from './main-components/user/adminGuard.component';
 import { NotFoundComponent } from './layouts/not-found/not-found.component';
-import { Question } from './core/models/Quiz/question';
+
 
 export const routes: Routes = [
   {
@@ -41,11 +41,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/Payment/frontoffice/payment.routes').then((m) => m.PaymentsRoutes),
       },
-      {
-        path: 'quiz',
-        loadChildren: () =>
-          import('./main-components/Quiz/frontoffice/quizfront.routes').then((m) => m.QuizfrontRoutes),
-      },
+    //  {
+      //  path: 'quiz',
+      //  loadChildren: () =>
+        //  import('./main-components/Quiz/frontoffice/quizfront.routes').then((m) => m.QuizfrontRoutes),
+     // },
     ],
   },
 
@@ -87,20 +87,8 @@ export const routes: Routes = [
       {
         path: 'quiz',
         loadChildren: () =>
-          import('./main-components/Quiz/quiz/quiz.routes').then(m => m.QuizRoutes),
+          import('./main-components/Quiz/backoffice/quiz.routes').then(m => m.QuizRoutes),
       },
-      {
-        path: 'question',
-        loadChildren: () =>
-          import('./main-components/Quiz/question/question.routes').then(m => m.QuestionRoutes),
-      },
-      {
-        path: 'reponse',
-        loadChildren: () =>
-          import('./main-components/Quiz/reponse/reponse.routes').then(m => m.ReponseRoutes),
-      },
-
-
       {
         path: 'users',
         loadChildren: () =>

@@ -17,14 +17,19 @@ public class Quiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
+    private String question;
 
-    private String description;
+    private String option1;
 
-    private int score;
+    private String option2;
 
-    @OneToMany(mappedBy = "quiz")
-    private List<Question> questions;
+    private String option3;
+
+    private String bonneReponse;
+
+    private int score ;
+
+    private String reponseUser;
 
     @OneToOne
     @JoinColumn(name = "user_id")

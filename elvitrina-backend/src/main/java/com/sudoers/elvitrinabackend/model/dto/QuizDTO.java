@@ -11,15 +11,18 @@ import java.util.List;
 @AllArgsConstructor
 public class QuizDTO {
 
-    private Long id;
+    private String question;
 
-    private String title;
+    private String option1;
 
-    private String description;
+    private String option2;
 
-    private int score;
+    private String option3;
 
-    private List<Long> questionIds;
+    private String bonneReponse;
+
+    private String reponseUser;
+    private  int score ;
 
     private Long userId;
 }
