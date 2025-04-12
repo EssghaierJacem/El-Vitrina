@@ -7,7 +7,7 @@ import { PaymentViewComponent } from './payment-view/payment-view.component';
 
 export const PaymentRoutes: Routes = [
   { path: 'list', component: PaymentListComponent },
-  { path: 'create', component: CreatePaymentComponent }, 
+  { path: 'create', component: CreatePaymentComponent },
   { path: 'edit/:id', component: PaymentEditComponent},
   { path: 'view/:id', component: PaymentViewComponent}
 ];

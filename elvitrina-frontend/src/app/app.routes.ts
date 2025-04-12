@@ -4,7 +4,6 @@ import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
 import { AdminGuard } from './main-components/user/adminGuard.component';
 import { NotFoundComponent } from './layouts/not-found/not-found.component';
-import { customOrderRoutes } from './main-components/custom-order/custom-order.routes';
 import { Question } from './core/models/Quiz/question';
 
 export const routes: Routes = [
@@ -78,12 +77,12 @@ export const routes: Routes = [
       {
         path: 'custom-order',
         loadChildren: () =>
-          import('./main-components/custom-order/custom-order.routes').then(m => m.customOrderRoutes),
+          import('./main-components/custom-order/backOffice/custom-order.routes').then(m => m.customOrderRoutes),
       },
       {
         path: 'payment',
         loadChildren: () =>
-          import('./main-components/Payment/payment.routes').then(m => m.PaymentRoutes),
+          import('./main-components/Payment/backoffice/payment.routes').then(m => m.PaymentRoutes),
       },
       {
         path: 'quiz',

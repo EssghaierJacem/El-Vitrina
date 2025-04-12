@@ -1,4 +1,4 @@
-import { CreatePaymentComponent } from './../payment-create/payment-create.component';
+import { CreatePaymentComponent } from '../backoffice/payment-create/payment-create.component';
 
 import { Routes } from '@angular/router';
 import { PaymentCreatefroComponent } from './payment-createfro/payment-createfro.component';
