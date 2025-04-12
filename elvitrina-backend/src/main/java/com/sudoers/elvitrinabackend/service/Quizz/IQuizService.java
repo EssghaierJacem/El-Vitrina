@@ -1,21 +1,16 @@
 package com.sudoers.elvitrinabackend.service.Quizz;
 
-import com.sudoers.elvitrinabackend.model.entity.Quiz;
+import com.sudoers.elvitrinabackend.model.dto.QuizDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IQuizService {
-    Quiz createQuiz(Quiz quiz);
-    Optional<Quiz> getQuizById(Long id);
-    List<Quiz> getAllQuizzes();
-    Quiz updateQuiz(Long id, Quiz quiz);
+    QuizDTO createQuiz(QuizDTO quizDTO);
+    Optional<QuizDTO> getQuizById(Long id);
+    List<QuizDTO> getAllQuizzes();
+    QuizDTO updateQuiz(Long id, QuizDTO quizDTO);
     void deleteQuiz(Long id);
 
-
-    //int calculateScore(Long quizId, List<Long> responses);
-
     String analyzePersonality(int score);
-
-    //----------------------Methodes avancées------------//
 }

@@ -9,6 +9,7 @@ import { MatCardModule } from '@angular/material/card';  // Pour mat-card
 import { MatSelectModule } from '@angular/material/select';  // Pour mat-select (si nécessaire)
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-reponse-create',
   imports: [
@@ -19,7 +20,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatSelectModule,
     MatInputModule,
     MatButtonModule,
-    MatOptionModule
+    MatOptionModule,
+    CommonModule,
   ],
   templateUrl: './reponse-create.component.html',
   styleUrl: './reponse-create.component.scss'

@@ -1,6 +1,5 @@
 export interface Response {
-  id: number;
+  id?: number;           
   response: string;
   questionId: number;
- 
 }

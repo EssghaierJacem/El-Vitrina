@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-question-create',
   imports: [
@@ -19,6 +20,7 @@ import { RouterModule } from '@angular/router';
       MatCardModule,
       MatFormFieldModule,
       MatInputModule,
+      CommonModule,
       MatSelectModule,
       MatButtonModule],
   templateUrl: './question-create.component.html',
@@ -41,7 +43,7 @@ export class QuestionCreateComponent {
       this.questionService.createQuestion(this.question).subscribe({
         next: (response) => {
           console.log('Question créée avec succès:', response);
-          this.router.navigate(['/questions']); // Redirection vers la liste des questions
+          this.router.navigate(['/dashboard/questions/list']); // Redirection vers la liste des questions
         },
         error: (error) => {
           console.error('Erreur lors de la création de la question:', error);

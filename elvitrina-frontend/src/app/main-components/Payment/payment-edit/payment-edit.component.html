@@ -56,8 +56,8 @@
         <div class="col-12" *ngIf="availableOrders.length > 0">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Commandes associées</mat-label>
-            <mat-select [(ngModel)]="payment.orders" name="orders" multiple>
-              <mat-option *ngFor="let order of availableOrders" [value]="order">
+            <mat-select [(ngModel)]="payment.orderIds" name="orderIds" multiple>
+              <mat-option *ngFor="let order of availableOrders" [value]="order.id">
                 Commande #{{order.id}} - {{order.totalAmount}}€
               </mat-option>
             </mat-select>

@@ -74,7 +74,7 @@ export class CustomOrderListComponent implements OnInit {
     const filterValue = this.searchText?.trim().toLowerCase() || '';
 
     this.dataSource.filterPredicate = (data: CustomOrder, filter: string): boolean => {
-      const client = data.user?.name?.toLowerCase() || '';
+      const client = data.userId?.toString() || '';
       const status = data.status?.toLowerCase() || '';
       return client.includes(filter) || status.includes(filter);
     };
@@ -103,12 +103,16 @@ export class CustomOrderListComponent implements OnInit {
     });
   }
 
-  getStatusClass(status: string): string {
-    switch (status.toLowerCase()) {
+  getStatusClass(status: string | null | undefined): string {
+    const safeStatus = status?.toLowerCase() ?? 'default';
+    switch (safeStatus) {
       case 'pending': return 'status-pending';
       case 'completed': return 'status-completed';
       case 'cancelled': return 'status-cancelled';
+      case 'confirmed': return 'status-confirmed';
+      case 'shipped': return 'status-shipped';
+      case 'delivered': return 'status-delivered';
       default: return 'status-default';
     }
-  }
+  }  
 }

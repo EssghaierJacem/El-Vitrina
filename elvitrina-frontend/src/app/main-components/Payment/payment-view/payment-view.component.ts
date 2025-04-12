@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Payment, PaymentStatusType } from 'src/app/core/models/Panier/Payment';
+import { Payment } from 'src/app/core/models/Panier/payment';
+
 import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { PaymentStatusType } from 'src/app/core/models/Panier/PaymentStatusType.type';
 
 // Angular Material
 import { MatCardModule } from '@angular/material/card';
@@ -59,15 +61,9 @@ export class PaymentViewComponent implements OnInit {
       case PaymentStatusType.FAILED:
         this.statusClass = 'status-failed';
         break;
-        this.statusClass = 'status-refunded';
-        break;
       default:
         this.statusClass = 'status-default';
     }
-  }
-
-  navigateToPayments() {
-    this.router.navigate(['/payments']);
   }
 
   getStatusText(status: PaymentStatusType): string {
@@ -76,5 +72,9 @@ export class PaymentViewComponent implements OnInit {
       [PaymentStatusType.PENDING]: 'Pending',
       [PaymentStatusType.FAILED]: 'Failed',
     }[status] || 'Unknown';
+  }
+
+  navigateToPayments() {
+    this.router.navigate(['dashboard/list/payment']);
   }
 }

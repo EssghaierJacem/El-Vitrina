@@ -1,52 +1,92 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomOrder } from 'src/app/core/models/Panier/CustomOrder';
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';  // <-- Importer FormsModule
-import { Payment } from 'src/app/core/models/Panier/Payment';
-import { PaymentMethodType } from 'src/app/core/models/Panier/PaymentMethodType.type';
-import { PaymentStatusType } from 'src/app/core/models/Panier/PaymentStatusType.type';
 import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
 import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
+import { Router } from '@angular/router';
+import { PaymentMethodType } from 'src/app/core/models/Panier/PaymentMethodType.type';
+import { PaymentStatusType } from 'src/app/core/models/Panier/PaymentStatusType.type';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CommonModule } from '@angular/common';
+
+// Angular Material Modules
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatOptionModule } from '@angular/material/core';
+import { Payment } from 'src/app/core/models/Panier/payment';
+import { MatIcon } from '@angular/material/icon';
+import { MatDivider } from '@angular/material/divider';
 
 @Component({
   selector: 'app-payment-createfro',
-  imports: [ CommonModule,
-    FormsModule,],
+
   templateUrl: './payment-createfro.component.html',
-  styleUrl: './payment-createfro.component.scss'
+  styleUrl: './payment-createfro.component.scss',
+
+  imports: [
+      MatCardModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatButtonModule,
+      MatDatepickerModule,
+      MatNativeDateModule,
+      RouterModule,
+      MatSelectModule,
+      MatOptionModule,
+      CommonModule,
+
+      FormsModule
+  ],
 })
-export class PaymentCreatefroComponent implements OnInit {
+export class PaymentCreatefroComponent  implements OnInit {
+
   payment: Payment = {
     id: 0,
     amount: 0,
-    method: PaymentMethodType.PAYPAL,
-    paystatus: PaymentStatusType.PENDING ,
-    orders: []
+    transactionDate: new Date(),
+    method: PaymentMethodType.CREDIT_CARD,
+    paystatus: PaymentStatusType.PENDING,
+    orderIds: []
   };
 
-  orders: CustomOrder[] = [];
-  methodTypes: PaymentMethodType[] = [
-    PaymentMethodType.CASHONDELIVER,
-    PaymentMethodType.PAYPAL,
-    PaymentMethodType.CREDIT_CARD
+  paymentMethods = [
+    { value: 'CREDITCARD', viewValue: 'Credit Card' },
+    { value: 'PAYPAL', viewValue: 'PayPal' },
+    { value: 'BANKTRANSFER', viewValue: 'Bank Transfer' },
+    { value: 'CASH', viewValue: 'Cash' }
   ];
-    statusTypes: PaymentStatusType[] = [ PaymentStatusType.PENDING, PaymentStatusType.SUCCESS, PaymentStatusType.FAILED];
+
+  availableOrders: any[] = [];
 
   constructor(
+    private customOrderService: CustomOrderService,
     private paymentService: PaymentService,
-    private orderService: CustomOrderService
+    public router: Router
   ) {}
 
-  ngOnInit(): void {
-    this.orderService.getAllOrders().subscribe(data => this.orders = data);
-  }
-
-  submit(): void {
-    this.payment.transactionDate = new Date();
-    this.paymentService.createPayment(this.payment).subscribe(() => {
-      alert("Paiement enregistré !");
+  ngOnInit() {
+    // Récupérer la liste des commandes liées à l'utilisateur
+    this.customOrderService.getAllOrders().subscribe((orders) => {
+      this.availableOrders = orders;
     });
   }
 
+  // Fonction pour créer un paiement
+  createPayment() {
+    console.log('Sending payment:', this.payment);
+    this.paymentService.createPayment(this.payment).subscribe({
+      next: () => this.router.navigate(['/dashboard/payment/list']),
+      error: (err) => console.error('Error creating payment:', err)
+    });
+  }
+
+  // Fonction pour naviguer vers la liste des paiements
+  navigateToPayments() {
+    this.router.navigate(['/dashboard/payment/list']);
+  }
 }

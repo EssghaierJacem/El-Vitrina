@@ -1,9 +1,6 @@
-
-import { QuestionType } from "./question-type";
-
 export interface Question {
-  id: number;
+  id?: number;
   question: string;
-  questionType: QuestionType;
+  questionType: string; 
   quizId: number;
 }

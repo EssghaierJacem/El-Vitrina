@@ -11,6 +11,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-question-edit',
   imports:  [
@@ -20,7 +22,9 @@ import { RouterModule } from '@angular/router';
         MatFormFieldModule,
         MatInputModule,
         MatSelectModule,
-        MatButtonModule],
+        MatButtonModule,
+        CommonModule
+      ],
   templateUrl: './question-edit.component.html',
   styleUrl: './question-edit.component.scss'
 })
@@ -56,10 +60,10 @@ export class QuestionEditComponent   implements OnInit {
 
   editQuestion(form: NgForm): void {
     if (form.valid) {
-      this.questionService.editQuestion(this.question.id, this.question).subscribe({
+      this.questionService.updateQuestion(this.question.id!, this.question).subscribe({
         next: () => {
           console.log('Question mise à jour avec succès.');
-          this.router.navigate(['/questions']);
+          this.router.navigate(['/dashboard/question/list']);
         },
         error: (error) => {
           console.error("Erreur lors de la mise à jour :", error);

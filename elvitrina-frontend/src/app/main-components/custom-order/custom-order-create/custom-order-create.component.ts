@@ -36,14 +36,14 @@ import { OrderStatusType } from 'src/app/core/models/Panier/OrderStatusType.type
 })
 export class CustomOrderCreateComponent {
   order: CustomOrder = {
-    products: [],
+    productIds: [],
     quantity: 0,
     price: 0,
     orderDate: new Date(),
     calculateTotal: 0,
     status: OrderStatusType.PENDING,
-    user: {} as User,
-    payment: null
+    userId: 0,
+    paymentId: null
   };
 
   statusOptions = [
@@ -65,7 +65,7 @@ export class CustomOrderCreateComponent {
       this.orderService.createOrder(this.order).subscribe(
         (response) => {
           // Gérer la réponse de succès, par exemple en redirigeant l'utilisateur
-          this.router.navigate(['/list']); // Redirection vers la page des commandes après succès
+          this.router.navigate(['/dashboard/custom/list']); // Redirection vers la page des commandes après succès
         },
         (error) => {
           // Gérer l'erreur si quelque chose se passe mal

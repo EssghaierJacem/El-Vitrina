@@ -5,7 +5,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
-import { Response } from 'src/app/core/models/Quiz/reponse';import { ResponseService } from 'src/app/core/services/Quiz/ReponseService';
+import { Response } from 'src/app/core/models/Quiz/reponse';
+import { ResponseService } from 'src/app/core/services/Quiz/ReponseService';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-reponse-view',
@@ -14,7 +17,10 @@ import { Response } from 'src/app/core/models/Quiz/reponse';import { ResponseSer
       MatButtonModule,
       MatFormFieldModule,
       MatInputModule,
-      MatIconModule],
+      MatIconModule,
+      CommonModule,
+      FormsModule,
+    ],
   templateUrl: './reponse-view.component.html',
   styleUrl: './reponse-view.component.scss'
 })

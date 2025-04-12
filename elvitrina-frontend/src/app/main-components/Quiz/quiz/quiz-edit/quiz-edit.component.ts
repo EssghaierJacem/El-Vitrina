@@ -3,7 +3,8 @@ import { QuizService } from 'src/app/core/services/Quiz/QuizService';
 import { Quiz } from 'src/app/core/models/Quiz/quiz';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
-import { FormsModule } from '@angular/forms';  // Pour ngModel
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 import { MatInputModule } from '@angular/material/input';  // Pour matInput
 import { MatButtonModule } from '@angular/material/button';  // Pour les boutons
@@ -14,7 +15,8 @@ import { MatOptionModule } from '@angular/material/core';
   selector: 'app-quiz-edit',
   imports: [
  
-     FormsModule,  // Pour ngModel
+     FormsModule,
+     CommonModule,
      MatInputModule,  // Pour matInput
       MatButtonModule,  // Pour les boutons
       MatCardModule,  // Pour mat-card
@@ -51,10 +53,10 @@ ngOnInit(): void {
 
 editQuiz(form: NgForm) {
   if (form.valid) {
-    this.quizService.updateQuiz(this.quiz).subscribe({
+    this.quizService.updateQuiz(this.quiz.id!, this.quiz).subscribe({
       next: (response) => {
         console.log('Quiz mis à jour avec succès:', response);
-        this.router.navigate(['/quizzes']); // Redirection après la mise à jour
+        this.router.navigate(['/dashboard/quiz/list']);
       },
       error: (error) => {
         console.error('Erreur lors de la mise à jour du quiz:', error);

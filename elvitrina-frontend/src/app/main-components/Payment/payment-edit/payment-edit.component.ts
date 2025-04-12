@@ -10,7 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Payment } from 'src/app/core/models/Panier/Payment';
+import { Payment } from 'src/app/core/models/Panier/payment';
 import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
 import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
 import { PaymentMethodType } from 'src/app/core/models/Panier/PaymentMethodType.type';
@@ -20,6 +20,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatIconModule } from '@angular/material/icon';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 @Component({
   selector: 'app-payment-edit',
@@ -38,35 +39,36 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatCheckboxModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-
-
+    MatNativeDateModule
   ],
   templateUrl: './payment-edit.component.html',
   styleUrl: './payment-edit.component.scss'
 })
 export class PaymentEditComponent implements OnInit {
 
-    payment: Payment = {
-      id: 0,
-      amount: 0,
-      transactionDate: new Date(),
-      method: PaymentMethodType.CREDIT_CARD ,
-      paystatus: PaymentStatusType.PENDING ,
-      orders: []
-    };
-    paymentMethods = [
-      { value: 'CREDIT_CARD', viewValue: 'Credit Card' },
-      { value: 'PAYPAL', viewValue: 'PayPal' },
-      { value: 'BANK_TRANSFER', viewValue: 'Bank Transfer' },
-      { value: 'CASH', viewValue: 'Cash' }
-    ];
+  payment: Payment = {
+    id: 0,
+    amount: 0,
+    transactionDate: new Date(),
+    method: PaymentMethodType.CREDIT_CARD,
+    paystatus: PaymentStatusType.PENDING,
+    orderIds: []
+  };
 
-    paymentStatuses = [
-      { value: 'PENDING', viewValue: 'Pending' },
-      { value: 'COMPLETED', viewValue: 'Completed' },
-      { value: 'FAILED', viewValue: 'Failed' },
-      { value: 'REFUNDED', viewValue: 'Refunded' }
-    ];
+  paymentMethods = [
+    { value: 'CREDITCARD', viewValue: 'Credit Card' },
+    { value: 'PAYPAL', viewValue: 'PayPal' },
+    { value: 'BANKTRANSFER', viewValue: 'Bank Transfer' },
+    { value: 'CASH', viewValue: 'Cash' }
+  ];
+
+  paymentStatuses = [
+    { value: 'PENDING', viewValue: 'Pending' },
+    { value: 'COMPLETED', viewValue: 'Completed' },
+    { value: 'FAILED', viewValue: 'Failed' },
+    { value: 'REFUNDED', viewValue: 'Refunded' }
+  ];
+
   availableOrders: any[] = [];
 
   constructor(
@@ -92,10 +94,10 @@ export class PaymentEditComponent implements OnInit {
   updatePayment() {
     this.paymentService.updatePayment(this.payment.id, this.payment).subscribe(() => {
       console.log('Paiement mis à jour avec succès');
-      this.router.navigate(['/payments']);
+      this.router.navigate(['/dashboard/payment/list']);
     });
   }
   navigateToPayments() {
-    this.router.navigate(['/payments']);
+    this.router.navigate(['/dashboard/payment/list']);
   }
 }

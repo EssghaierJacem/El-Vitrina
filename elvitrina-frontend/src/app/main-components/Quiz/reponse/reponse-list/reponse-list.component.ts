@@ -47,7 +47,7 @@ export class ReponseListComponent  implements OnInit {
   }
 
   editResponse(responseId: number): void {
-    this.router.navigate(['/responses/edit', responseId]);
+    this.router.navigate(['/dashboard/response/edit', responseId]);
   }
 
   deleteResponse(responseId: number): void {

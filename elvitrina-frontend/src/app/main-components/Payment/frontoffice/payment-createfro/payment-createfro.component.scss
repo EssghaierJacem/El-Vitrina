@@ -1,0 +1,45 @@
+.payment-container {
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.payment-card {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.payment-details {
+  font-size: 16px;
+}
+
+.payment-details div {
+  margin-bottom: 12px;
+}
+
+mat-chip {
+  font-weight: bold;
+  padding: 10px;
+}
+
+mat-chip[ng-reflect-color="green"] {
+  background-color: #28a745;
+  color: white;
+}
+
+mat-chip[ng-reflect-color="red"] {
+  background-color: #dc3545;
+  color: white;
+}
+
+mat-chip[ng-reflect-color="blue"] {
+  background-color: #007bff;
+  color: white;
+}
+.action-btns {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #ddd;
+}

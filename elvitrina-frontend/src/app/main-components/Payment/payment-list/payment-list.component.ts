@@ -1,7 +1,7 @@
 import { Component,  OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Payment } from 'src/app/core/models/Panier/Payment';
 import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
+import { Payment } from 'src/app/core/models/Panier/payment';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -45,7 +45,11 @@ export class PaymentListComponent implements OnInit {
   }
 
   editPayment(id: number) {
-    this.router.navigate(['/payments/edit', id]);
+    this.router.navigate(['/dashboard/payment/edit', id]);
+  }
+
+  viewPayment(id: number) {
+    this.router.navigate(['/dashboard/payment/view', id]);
   }
 
   deletePayment(id: number) {

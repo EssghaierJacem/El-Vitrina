@@ -1,5 +1,6 @@
 package com.sudoers.elvitrinabackend.controller.Quiz;
-import com.sudoers.elvitrinabackend.model.entity.Response;
+
+import com.sudoers.elvitrinabackend.model.dto.ResponseDTO;
 import com.sudoers.elvitrinabackend.service.Quizz.IResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,6 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-
 @RequestMapping("/api/responses")
 public class ResponseController {
 
@@ -23,27 +23,27 @@ public class ResponseController {
     }
 
     @PostMapping
-    public ResponseEntity<Response> createResponse(@RequestBody Response response) {
-        Response createdResponse = responseService.createResponse(response);
+    public ResponseEntity<ResponseDTO> createResponse(@RequestBody ResponseDTO responseDTO) {
+        ResponseDTO createdResponse = responseService.createResponse(responseDTO);
         return new ResponseEntity<>(createdResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Response> getResponseById(@PathVariable Long id) {
-        Optional<Response> response = responseService.getResponseById(id);
+    public ResponseEntity<ResponseDTO> getResponseById(@PathVariable Long id) {
+        Optional<ResponseDTO> response = responseService.getResponseById(id);
         return response.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @GetMapping
-    public ResponseEntity<List<Response>> getAllResponses() {
-        List<Response> responses = responseService.getAllResponses();
+    public ResponseEntity<List<ResponseDTO>> getAllResponses() {
+        List<ResponseDTO> responses = responseService.getAllResponses();
         return ResponseEntity.ok(responses);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Response> updateResponse(@PathVariable Long id, @RequestBody Response response) {
-        Response updatedResponse = responseService.updateResponse(id, response);
+    public ResponseEntity<ResponseDTO> updateResponse(@PathVariable Long id, @RequestBody ResponseDTO responseDTO) {
+        ResponseDTO updatedResponse = responseService.updateResponse(id, responseDTO);
         return updatedResponse != null ? ResponseEntity.ok(updatedResponse)
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
@@ -52,5 +52,17 @@ public class ResponseController {
     public ResponseEntity<Void> deleteResponse(@PathVariable Long id) {
         responseService.deleteResponse(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/submit")
+    public ResponseEntity<ResponseDTO> submitResponse(@RequestBody ResponseDTO responseDTO) {
+        ResponseDTO submitted = responseService.submitResponse(responseDTO);
+        return new ResponseEntity<>(submitted, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ResponseDTO>> getResponsesByUserId(@PathVariable Long userId) {
+        List<ResponseDTO> responses = responseService.getResponsesByUserId(userId);
+        return ResponseEntity.ok(responses);
     }
 }

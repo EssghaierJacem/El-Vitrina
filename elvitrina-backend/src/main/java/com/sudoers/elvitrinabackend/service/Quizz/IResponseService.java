@@ -1,19 +1,19 @@
 package com.sudoers.elvitrinabackend.service.Quizz;
 
-import com.sudoers.elvitrinabackend.model.entity.Response;
+import com.sudoers.elvitrinabackend.model.dto.ResponseDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IResponseService {
 
-    Response createResponse(Response response);
-    Optional<Response> getResponseById(Long id);
-    List<Response> getAllResponses();
-    Response updateResponse(Long id, Response response);
+    ResponseDTO createResponse(ResponseDTO responseDTO);
+    Optional<ResponseDTO> getResponseById(Long id);
+    List<ResponseDTO> getAllResponses();
+    ResponseDTO updateResponse(Long id, ResponseDTO responseDTO);
     void deleteResponse(Long id);
 
-    Response submitResponse(Response response);
+    ResponseDTO submitResponse(ResponseDTO responseDTO);
 
-    List<Response> getResponsesByUserId(Long userId);
+    List<ResponseDTO> getResponsesByUserId(Long userId);
 }

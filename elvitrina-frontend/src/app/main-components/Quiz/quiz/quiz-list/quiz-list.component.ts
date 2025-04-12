@@ -55,6 +55,6 @@ export class QuizListComponent implements OnInit {
 
   // Rediriger vers le formulaire d'édition du quiz
   editQuiz(id: number): void {
-    this.router.navigate([`/quiz-edit/${id}`]);
+    this.router.navigate([`/dashboard/quiz/edit/${id}`]);
   }
 }

@@ -8,8 +8,8 @@ import { ThemePalette } from '@angular/material/core';
 import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { formatDistance } from 'date-fns';
+import { RouterModule } from '@angular/router';
 
-// Angular Material Imports
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -43,7 +43,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatMenuModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    RouterModule
   ],
 })
 export class FriendRequestComponent implements OnInit {
@@ -135,7 +136,6 @@ export class FriendRequestComponent implements OnInit {
           return of([]);
         })
       ).subscribe((friends) => {
-        // Remove duplicates based on userId and receiverId
         this.acceptedFriends = this.removeDuplicates(friends);
         resolve();
       });

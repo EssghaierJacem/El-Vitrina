@@ -1,18 +1,18 @@
 <mat-card class="payment-card">
   <mat-card-header>
     <mat-card-title>Payment Details</mat-card-title>
-    <mat-card-subtitle>ID: {{payment.id}}</mat-card-subtitle>
+    <mat-card-subtitle>ID: {{payment?.id}}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content *ngIf="payment">
     <div class="detail-row">
       <span class="detail-label">Amount:</span>
-      <span class="detail-value">{{payment.amount | currency}}</span>
+      <span class="detail-value">{{payment.amount | currency:'TND'}}</span>
     </div>
 
     <div class="detail-row">
       <span class="detail-label">Date:</span>
-      <span class="detail-value">{{payment.transactionDate | date}}</span>
+      <span class="detail-value">{{payment.transactionDate | date:'medium'}}</span>
     </div>
 
     <div class="detail-row">
@@ -22,14 +22,15 @@
 
     <div class="detail-row">
       <span class="detail-label">Status:</span>
-      <mat-chip [class]="statusClass">
+      <mat-chip [ngClass]="statusClass">
         {{getStatusText(payment.paystatus)}}
       </mat-chip>
     </div>
 
-    <div class="actions">
+    <div class="actions m-t-16">
       <button mat-raised-button color="primary" (click)="navigateToPayments()">
-        <mat-icon>arrow_back</mat-icon> Back to Payments
+        <mat-icon>arrow_back</mat-icon>
+        Back to Payments
       </button>
     </div>
   </mat-card-content>

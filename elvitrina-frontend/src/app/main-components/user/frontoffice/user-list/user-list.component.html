@@ -119,10 +119,10 @@
           </button>
           
           <mat-menu #quickActions="matMenu" class="quick-actions-menu">
-            <button mat-menu-item>
+            <button mat-menu-item [routerLink]="['/user', user.id]">
               <mat-icon>visibility</mat-icon>
               <span>View Full Profile</span>
-            </button>
+            </button>            
             <button mat-menu-item>
               <mat-icon>block</mat-icon>
               <span>Block User</span>

@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
+import { AdminGuard } from './main-components/user/adminGuard.component';
+import { NotFoundComponent } from './layouts/not-found/not-found.component';
 import { customOrderRoutes } from './main-components/custom-order/custom-order.routes';
 import { Question } from './core/models/Quiz/question';
 
@@ -16,7 +18,7 @@ export const routes: Routes = [
           import('./main-components/offer/frontoffice/frontoffice_offer.routes').then((m) => m.FrontOfferRoutes),
       },
       {
-        path: 'user',
+        path: 'users',
         loadChildren: () =>
           import('./main-components/user/frontoffice/frontuser.routes').then((m) => m.FrontUserRoutes),
       },
@@ -36,17 +38,18 @@ export const routes: Routes = [
           import('./main-components/friends/friend.routes').then((m) => m.FriendRoutes),
       },
       {
-        path: 'donations',
+        path: 'payment',
         loadChildren: () =>
-          import('./main-components/donation/frontoffice/donationfront.routes').then((m) => m.DONATION_FRONT_ROUTES),
+          import('./main-components/Payment/frontoffice/payment.routes').then((m) => m.PaymentsRoutes),
       },
       {
-        path: 'events',
+        path: 'quiz',
         loadChildren: () =>
-          import('./main-components/event/frontoffice/eventfront.routes').then((m) => m.EVENT_FRONT_ROUTES),
+          import('./main-components/Quiz/frontoffice/quizfront.routes').then((m) => m.QuizfrontRoutes),
       },
     ],
   },
+
   {
     path: 'authentication',
     component: BlankComponent,
@@ -58,6 +61,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: FullComponent,
+    //canActivate: [AdminGuard],
     children: [
       {
         path: '',
@@ -136,20 +140,9 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
       },
-      {
-        path: 'donations',
-        loadChildren: () =>
-          import('./main-components/donation/backoffice/donationback.routes').then((m) => m.DONATION_BACK_ROUTES),
-      },
-      {
-        path: 'events',
-        loadChildren: () =>
-          import('./main-components/event/backoffice/eventback.routes').then((m) => m.EVENT_BACK_ROUTES),
-      },
     ],
   },
   {
-    path: '**',
-    redirectTo: 'authentication/error',
+    path: '**', component: NotFoundComponent
   },
 ];

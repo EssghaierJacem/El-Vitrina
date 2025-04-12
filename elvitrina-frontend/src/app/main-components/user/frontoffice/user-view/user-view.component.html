@@ -1,0 +1,136 @@
+<div class="profile-container">
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading user profile...</p>
+    </div>
+  
+    <div *ngIf="!isLoading && user" class="user-profile">
+      <mat-card class="profile-header">
+        <div class="profile-banner">
+          <!-- Background image will be applied via CSS -->
+        </div>
+        <div class="profile-main">
+          <div class="profile-avatar" [ngClass]="{'active-user': user.status}">
+            <img *ngIf="user.image" [src]="user.image" alt="User image">
+            <div *ngIf="!user.image" class="avatar-placeholder">
+              {{ user.firstname?.charAt(0) }}{{ user.lastname?.charAt(0) }}
+            </div>
+            <mat-icon *ngIf="user.status" class="status-badge" color="accent">check_circle</mat-icon>
+          </div>
+          <div class="profile-info">
+            <h1>{{ user.firstname }} {{ user.lastname }}</h1>
+            <div class="user-meta">
+              <mat-chip-set>
+                <mat-chip color="primary">{{ user.role }}</mat-chip>
+                <mat-chip [ngClass]="user.status ? 'active-chip' : 'inactive-chip'">
+                  {{ user.status ? 'Active' : 'Inactive' }}
+                </mat-chip>
+              </mat-chip-set>
+              <div class="points-badge" matBadge="{{ user.points }}" matBadgeOverlap="false" matBadgeColor="accent">
+                <mat-icon>stars</mat-icon> Points
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+  
+      <mat-card class="contact-details">
+        <mat-card-header>
+          <mat-card-title>Contact Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="contact-item">
+            <mat-icon>email</mat-icon>
+            <span>{{ user.email }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="contact-item">
+            <mat-icon>phone</mat-icon>
+            <span>{{ user.phone }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="contact-item">
+            <mat-icon>home</mat-icon>
+            <span>{{ user.address }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+  
+      <div class="action-buttons">
+        <button mat-stroked-button color="accent">
+          <mat-icon>message</mat-icon> Message
+        </button>
+      </div>
+  
+      <!-- New Expandable Sections -->
+      <mat-accordion multi="true" class="expandable-sections">
+        <!-- Feedbacks Section -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>rate_review</mat-icon>
+              <span>Feedbacks</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              User feedback and reviews
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div class="empty-section">
+            <mat-icon>sentiment_neutral</mat-icon>
+            <p>Nothing to display as of now</p>
+          </div>
+        </mat-expansion-panel>
+  
+        <!-- Blog Posts Section -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>article</mat-icon>
+              <span>Blog Posts</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              Published articles and posts
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div class="empty-section">
+            <mat-icon>note_add</mat-icon>
+            <p>Nothing to display as of now</p>
+          </div>
+        </mat-expansion-panel>
+  
+        <!-- Comments Section -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>comment</mat-icon>
+              <span>Comments</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              User comments and interactions
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div class="empty-section">
+            <mat-icon>chat_bubble_outline</mat-icon>
+            <p>Nothing to display as of now</p>
+          </div>
+        </mat-expansion-panel>
+  
+        <!-- Stores Section -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>store</mat-icon>
+              <span>Stores</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              User's stores and shops
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div class="empty-section">
+            <mat-icon>store_mall_directory</mat-icon>
+            <p>Nothing to display as of now</p>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>

@@ -6,7 +6,7 @@
   <mat-card-content>
     <div *ngIf="order">
       <p><strong>ID :</strong> {{ order.id }}</p>
-      <p><strong>Produits :</strong> {{ order.products }}</p>
+      <p><strong>Produits :</strong> {{ order.productIds.join(', ') }}</p>
       <p><strong>Quantité :</strong> {{ order.quantity }}</p>
       <p><strong>Prix (TND) :</strong> {{ order.price | currency:'TND' }}</p>
       <p><strong>Date de commande :</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>

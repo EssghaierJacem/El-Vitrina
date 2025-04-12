@@ -1,23 +1,48 @@
-<mat-sidenav-container>
-  <mat-sidenav mode="side" opened>
+<mat-sidenav-container class="order-container">
+  <mat-sidenav mode="side" opened class="order-sidenav">
     <mat-nav-list>
-      <h3>Commande #{{ order.id }}</h3>
+
+      <h2 class="order-title">🧾 Commande #{{ order.id }}</h2>
       <mat-divider></mat-divider>
 
-      <p><strong>Date :</strong> {{ order.orderDate | date }}</p>
-      <p><strong>Client :</strong> {{ order.user?.name }}</p>
-      <p><strong>Statut :</strong> {{ order.status }}</p>
-      <p><strong>Montant total :</strong> {{ order.calculateTotal | currency:'EUR' }}</p>
-
+      <div class="order-info">
+        <p><strong>📅 Date :</strong> {{ order.orderDate | date:'mediumDate' }}</p>
+        <p>
+          <strong>📌 Statut :</strong>
+          <span class="status" [ngClass]="{
+            'confirmed': order.status === 'CONFIRMED',
+            'pending': order.status === 'PENDING',
+            'canceled': order.status === 'CANCELED'
+          }">{{ order.status }}</span>
+        </p>
+        <p><strong>💰 Total :</strong> <span class="total">{{ order.calculateTotal | currency:'EUR' }}</span></p>
+      </div>
+      <button mat-raised-button color="primary" [routerLink]="['/payer', order.id]">
+        🔁 Payer Maintenant
+      </button>
       <mat-divider></mat-divider>
-      <h4>Produits :</h4>
-      <ul>
-        <li *ngFor="let product of order.products">
+
+      <h4 class="section-title">🛍️ Produits</h4>
+      <ul class="product-list">
+        <li *ngFor="let productId of order.productIds">
+          <mat-icon color="primary">check_circle</mat-icon> Produit #{{ productId }}
         </li>
       </ul>
 
       <mat-divider></mat-divider>
-      <p><strong>Paiement :</strong> {{ order.payment ? 'Effectué' : 'Non effectué' }}</p>
+
+      <p class="payment">
+        <strong>💳 Paiement :</strong>
+        <span [ngClass]="order.paymentId ? 'paid' : 'unpaid'">
+          {{ order.paymentId ? '✔ Effectué' : '❌ Non effectué' }}
+        </span>
+      </p>
+
+
+      <!-- Bouton Payer s'il n'y a pas de paiement encore -->
+
+
+
     </mat-nav-list>
   </mat-sidenav>
 </mat-sidenav-container>

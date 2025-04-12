@@ -44,7 +44,7 @@ createQuiz(form: NgForm) {
     this.quizService.createQuiz(this.quiz).subscribe({
       next: (response) => {
         console.log('Quiz créé avec succès:', response);
-        this.router.navigate(['/quizzes']); // Redirection après la création
+        this.router.navigate(['dashboard/quiz/list']); // Redirection après la création
       },
       error: (error) => {
         console.error('Erreur lors de la création du quiz:', error);

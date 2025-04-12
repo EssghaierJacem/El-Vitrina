@@ -27,19 +27,19 @@
             <!-- Client -->
             <ng-container matColumnDef="client">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Client</th>
-              <td mat-cell *matCellDef="let order">{{ order.user?.username }}</td>
+              <td mat-cell *matCellDef="let order">#{{ order.userId }}</td>
             </ng-container>
 
             <!-- Date de commande -->
             <ng-container matColumnDef="date">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
-              <td mat-cell *matCellDef="let order">{{ order.dateCustomOrder | date }}</td>
+              <td mat-cell *matCellDef="let order">{{ order.orderDate | date }}</td>
             </ng-container>
 
             <!-- Montant -->
             <ng-container matColumnDef="montant">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Montant</th>
-              <td mat-cell *matCellDef="let order">{{ order.totalAmount | currency:'TND' }}</td>
+              <td mat-cell *matCellDef="let order">{{ (order.price * order.quantity) | currency:'TND' }}</td>
             </ng-container>
 
             <!-- Statut -->
@@ -60,11 +60,11 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                  <button mat-menu-item [routerLink]="['/custom-orders', order.id]">
+                  <button mat-menu-item [routerLink]="['/dashboard/custom-order/view', order.id]">
                     <mat-icon>visibility</mat-icon>
                     <span>Voir</span>
                   </button>
-                  <button mat-menu-item>
+                  <button mat-menu-item [routerLink]="['/dashboard/custom-order/edit', order.id]">
                     <mat-icon>edit</mat-icon>
                     <span>Modifier</span>
                   </button>

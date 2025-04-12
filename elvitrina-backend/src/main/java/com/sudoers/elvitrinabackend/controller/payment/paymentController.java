@@ -1,6 +1,6 @@
 package com.sudoers.elvitrinabackend.controller.payment;
 
-import com.sudoers.elvitrinabackend.model.entity.Payment;
+import com.sudoers.elvitrinabackend.model.dto.PaymentDTO;
 import com.sudoers.elvitrinabackend.service.payment.PaymentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +12,8 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:51937")
 @RestController
 @RequestMapping("/api/payments")
-
 public class paymentController {
+
     private final PaymentService paymentService;
 
     public paymentController(PaymentService paymentService) {
@@ -21,25 +21,25 @@ public class paymentController {
     }
 
     @PostMapping
-    public ResponseEntity<Payment> createPayment(@RequestBody Payment payment) {
-        return ResponseEntity.ok(paymentService.createPayment(payment));
+    public ResponseEntity<PaymentDTO> createPayment(@RequestBody PaymentDTO paymentDTO) {
+        return ResponseEntity.ok(paymentService.createPayment(paymentDTO));
     }
 
     @GetMapping("/getById/{id}")
-    public ResponseEntity<Payment> getPaymentById(@PathVariable Long id) {
-        Optional<Payment> payment = paymentService.getPaymentById(id);
-        return payment.map(ResponseEntity::ok)
+    public ResponseEntity<PaymentDTO> getPaymentById(@PathVariable Long id) {
+        Optional<PaymentDTO> paymentDTO = paymentService.getPaymentById(id);
+        return paymentDTO.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<Payment>> getAllPayments() {
+    public ResponseEntity<List<PaymentDTO>> getAllPayments() {
         return ResponseEntity.ok(paymentService.getAllPayments());
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Payment> updatePayment(@PathVariable Long id, @RequestBody Payment payment) {
-        return ResponseEntity.ok(paymentService.updatePayment(id, payment));
+    public ResponseEntity<PaymentDTO> updatePayment(@PathVariable Long id, @RequestBody PaymentDTO paymentDTO) {
+        return ResponseEntity.ok(paymentService.updatePayment(id, paymentDTO));
     }
 
     @DeleteMapping("/{id}")
@@ -49,18 +49,19 @@ public class paymentController {
     }
 
     @PostMapping("/process")
-    public ResponseEntity<Payment> processPayment(
+    public ResponseEntity<PaymentDTO> processPayment(
             @RequestParam Long orderId,
             @RequestParam double amount,
             @RequestParam String paymentMethod) {
 
-        Payment payment = paymentService.processPayment(orderId, amount, paymentMethod);
-        return ResponseEntity.ok(payment);
+        PaymentDTO paymentDTO = paymentService.processPayment(orderId, amount, paymentMethod);
+        return ResponseEntity.ok(paymentDTO);
     }
+
     @PostMapping("/validate/{paymentId}")
-    public ResponseEntity<Payment> validatePayment(@PathVariable Long paymentId) {
+    public ResponseEntity<PaymentDTO> validatePayment(@PathVariable Long paymentId) {
         try {
-            Payment validatedPayment = paymentService.validatePayment(paymentId);
+            PaymentDTO validatedPayment = paymentService.validatePayment(paymentId);
             return ResponseEntity.ok(validatedPayment);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
