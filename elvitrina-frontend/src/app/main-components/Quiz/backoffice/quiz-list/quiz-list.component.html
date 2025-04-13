@@ -1,11 +1,7 @@
 <table mat-table [dataSource]="dataSource" matSort>
   <!-- Keep existing question column -->
-   <!-- Colonne ID -->
-   <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
-    <td mat-cell *matCellDef="let quiz">{{ quiz.id }}</td>
-  </ng-container>
-  
+   
+
   <ng-container matColumnDef="question">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Question</th>
     <td mat-cell *matCellDef="let quiz">{{ quiz.question }}</td>

@@ -31,7 +31,7 @@ import { MatCardModule } from '@angular/material/card';  // Pour mat-card
 })
 export class QuizListComponent implements OnInit {
   quizzes: Quiz[] = [];
-  displayedColumns: string[] = ['id','question', 'option1', 'option2', 'option3', 'bonneReponse', 'score', 'actions'];
+  displayedColumns: string[] = ['question', 'option1', 'option2', 'option3', 'bonneReponse', 'score', 'actions'];
   dataSource: MatTableDataSource<Quiz> = new MatTableDataSource<Quiz>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

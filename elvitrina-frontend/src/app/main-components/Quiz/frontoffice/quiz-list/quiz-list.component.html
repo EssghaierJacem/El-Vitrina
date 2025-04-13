@@ -1,42 +1,61 @@
+<div class="quiz-home" *ngIf="!showQuestion && !isLoading">
+  <div class="quiz-card">
+    <h1>🎯 Weekly Quiz</h1>
+    <img class="quiz-icon" src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="Quiz Icon" />
 
-<div class="quiz-list-container">
-  <h2>Liste des Quizzes</h2>
 
 
-  <div *ngIf="isLoading" class="loading">
-    Chargement en cours...
+    <div class="quiz-stats">
+      <div>
+        <p>Questions</p>
+        <h3>{{ quizzes.length }}</h3>
+      </div>
+      <div>
+        <p>Points</p>
+        <h3>3</h3>
+      </div>
+    </div>
+
+    <div class="quiz-buttons">
+      <button class="btn" (click)="startQuiz()">▶ Play solo</button>
+
+    </div>
   </div>
+</div>
 
-  <div *ngIf="errorMessage" class="error-message">
-    {{ errorMessage }}
+<div *ngIf="showQuestion && !isLoading" class="quiz-list-container">
+
+  <div class="quiz-card">
+    <div class="timer">Temps restant : {{ timeLeft }}s</div>
+
+    <h2 class="text-white">Question {{ currentQuestionIndex + 1 }} / {{ quizzes.length }}</h2>
+    <p class="text-white">{{ quizzes[currentQuestionIndex].question }}</p>
+
+    <div class="quiz-buttons">
+      <button
+        class="btn"
+        *ngFor="let option of [quizzes[currentQuestionIndex].option1, quizzes[currentQuestionIndex].option2, quizzes[currentQuestionIndex].option3]"
+        [ngClass]="{ 'selected': selectedAnswers[currentQuestionIndex] === option }"
+        (click)="selectAnswer(option)">
+        {{ option }}
+      </button>
+    </div>
+
+
+    <div class="quiz-nav-buttons" >
+      <button class="btn btn-secondary" (click)="previousQuestion()" [disabled]="currentQuestionIndex === 0">⬅ Previous</button>
+      <button class="btn btn-secondary" (click)="nextQuestion()" [disabled]="currentQuestionIndex === quizzes.length - 1">Next ➡</button>
+    </div>
   </div>
-
-  <div *ngIf="!isLoading && quizzes.length === 0" class="no-data">
-    Aucun quiz disponible
+  <div class="progress-container">
+    <div class="progress-bar" [style.width.%]="(currentQuestionIndex + 1) / quizzes.length * 100"></div>
+    <button class="btn btn-secondary" [disabled]="currentQuestionIndex !== quizzes.length - 1">Results ➡</button>
   </div>
+  <button class="btn btn-secondary"  > Results ➡</button>
 
-  <table *ngIf="!isLoading && quizzes.length > 0" class="quiz-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Question</th>
-        <th>Option 1</th>
-        <th>Option 2</th>
-        <th>Option 3</th>
-        <th>Score</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let quiz of quizzes">
-        <td>{{ quiz.id }}</td>
-        <td>{{ quiz.question }}</td>
-        <td>{{ quiz.option1 }}</td>
-        <td>{{ quiz.option2 }}</td>
-        <td>{{ quiz.option3 }}</td>
-        <td>{{ quiz.score }}</td>
+</div>
 
-      </tr>
-    </tbody>
-  </table>
+
+<div *ngIf="isLoading" class="quiz-home">
+  <h2>Chargement des quiz...</h2>
 </div>

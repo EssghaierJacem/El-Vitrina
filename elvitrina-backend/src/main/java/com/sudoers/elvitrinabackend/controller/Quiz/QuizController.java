@@ -1,5 +1,6 @@
 package com.sudoers.elvitrinabackend.controller.Quiz;
 
+import com.sudoers.elvitrinabackend.model.dto.AnswerRequestDTO;
 import com.sudoers.elvitrinabackend.model.dto.QuizDTO;
 
 import com.sudoers.elvitrinabackend.service.Quiz.IQuizService;
@@ -53,6 +54,11 @@ public class QuizController {
     public ResponseEntity<Void> deleteQuiz(@PathVariable Long id) {
         quizService.deleteQuiz(id);
         return ResponseEntity.noContent().build();
+    }
+    @PostMapping("/{id}/answer")
+    public ResponseEntity<String> saveUserAnswer(@PathVariable Long id, @RequestBody AnswerRequestDTO userAnswer) {
+        quizService.saveUserAnswer(id, userAnswer);
+        return ResponseEntity.ok("User answer saved successfully");
     }
 
 }

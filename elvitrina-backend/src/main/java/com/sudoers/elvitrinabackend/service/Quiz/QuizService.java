@@ -1,5 +1,6 @@
 package com.sudoers.elvitrinabackend.service.Quiz;
 
+import com.sudoers.elvitrinabackend.model.dto.AnswerRequestDTO;
 import com.sudoers.elvitrinabackend.model.dto.QuizDTO;
 import com.sudoers.elvitrinabackend.model.entity.Quiz;
 import com.sudoers.elvitrinabackend.repository.QuizRepository;
@@ -106,5 +107,15 @@ public class QuizService implements IQuizService {
     public void deleteQuiz(Long id) {
         quizRepository.deleteById(id);
     }
+    @Override
+    public void saveUserAnswer(Long questionId, AnswerRequestDTO userAnswer) {
+        Quiz quiz = quizRepository.findById(questionId)
+                .orElseThrow(() -> new IllegalArgumentException("Quiz not found with ID: " + questionId));
+
+        quiz.setReponseUser(userAnswer.responseUser);
+        quizRepository.save(quiz);
+    }
+
+
 
 }

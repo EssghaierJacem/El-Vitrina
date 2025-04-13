@@ -1,4 +1,5 @@
 package com.sudoers.elvitrinabackend.service.Quiz;
+import com.sudoers.elvitrinabackend.model.dto.AnswerRequestDTO;
 import com.sudoers.elvitrinabackend.model.dto.QuizDTO;
 
 import java.util.List;
@@ -10,5 +11,6 @@ public interface IQuizService {
     List<QuizDTO> getAllQuizzes();
     QuizDTO updateQuiz(Long id, QuizDTO quizDTO);
     void deleteQuiz(Long id);
+    void saveUserAnswer(Long questionId, AnswerRequestDTO userAnswer);
 
 }
