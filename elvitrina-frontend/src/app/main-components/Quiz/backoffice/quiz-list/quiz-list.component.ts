@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { QuizService } from 'src/app/core/services/Quiz/QuizService';
 import { Quiz } from 'src/app/core/models/Quiz/quiz';
 import { Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';  // Pour gérer la
 import { MatPaginator } from '@angular/material/paginator';  // Pour la pagination
 import { MatSort } from '@angular/material/sort';  // Pour trier les colonnes
 import { MatFormFieldModule } from '@angular/material/form-field';  // Pour mat-form-field
+import { RouterModule } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';  // Pour matInput
 import { MatTableModule } from '@angular/material/table';  // Pour afficher les tableaux
 import { MatPaginatorModule } from '@angular/material/paginator';  // Pour la pagination
@@ -18,6 +19,7 @@ import { MatCardModule } from '@angular/material/card';  // Pour mat-card
   imports: [
     MatTableModule,
     MatPaginatorModule,
+    RouterModule,
     MatSortModule,
     MatCardModule   ,
     MatFormFieldModule,
@@ -29,17 +31,27 @@ import { MatCardModule } from '@angular/material/card';  // Pour mat-card
 })
 export class QuizListComponent implements OnInit {
   quizzes: Quiz[] = [];
-  displayedColumns: string[] = ['title', 'description', 'score', 'actions'];  // Colonnes à afficher dans la table
-  dataSource: MatTableDataSource<Quiz> = new MatTableDataSource<Quiz>(this.quizzes);
+  displayedColumns: string[] = ['id','question', 'option1', 'option2', 'option3', 'bonneReponse', 'score', 'actions'];
+  dataSource: MatTableDataSource<Quiz> = new MatTableDataSource<Quiz>();
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private quizService: QuizService, private router: Router) {}
 
   ngOnInit(): void {
-    // Charger tous les quizzes lors de l'initialisation du composant
+    this.loadQuizzes();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+  loadQuizzes(): void {
     this.quizService.getAllQuizzes().subscribe({
       next: (response) => {
         this.quizzes = response;
-        this.dataSource = new MatTableDataSource(this.quizzes);
+        this.dataSource.data = this.quizzes;
       },
       error: (error) => {
         console.error('Erreur lors du chargement des quizzes:', error);
@@ -47,14 +59,25 @@ export class QuizListComponent implements OnInit {
     });
   }
 
-  // Pour gérer la pagination
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  // Rediriger vers le formulaire d'édition du quiz
-  editQuiz(id: number): void {
-    this.router.navigate([`/dashboard/quiz/edit/${id}`]);
+
+
+
+
+  deleteQuiz(userId: number): void {
+    this.quizService.deleteQuiz(userId).subscribe(
+      () => {
+        this.quizzes = this.quizzes.filter(quiz => quiz.userId !== userId);
+        this.dataSource.data = this.quizzes;
+      },
+      (error) => {
+        console.error('Erreur lors de la suppression du quiz', error);
+      }
+    );
   }
+
 }

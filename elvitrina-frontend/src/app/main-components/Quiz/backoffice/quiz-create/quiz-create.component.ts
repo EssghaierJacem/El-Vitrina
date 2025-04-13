@@ -27,30 +27,32 @@ import { CommonModule } from '@angular/common';
   styleUrl: './quiz-create.component.scss'
 })
 export class QuizCreateComponent {
-   quiz: Quiz = {
-  id: 0,
-  title: '',
-  description: '',
-  score: 0,
-  userId: 0,
-};
+  quiz: Quiz = {
+    question: '',
+    option1: '',
+    option2: '',
+    option3: '',
+    bonneReponse: '',
+    score: 0,
+    userId: 0
+  };
 
-constructor(private quizService: QuizService, private router: Router) {}
+  constructor(private quizService: QuizService, private router: Router) {}
 
-ngOnInit(): void {}
+  ngOnInit(): void {}
 
-createQuiz(form: NgForm) {
-  if (form.valid) {
-    this.quizService.createQuiz(this.quiz).subscribe({
-      next: (response) => {
-        console.log('Quiz créé avec succès:', response);
-        this.router.navigate(['dashboard/quiz/list']); // Redirection après la création
-      },
-      error: (error) => {
-        console.error('Erreur lors de la création du quiz:', error);
-      }
-    });
+  createQuiz(form: NgForm) {
+    if (form.valid) {
+      this.quizService.createQuiz(this.quiz).subscribe({
+        next: (response) => {
+          console.log('Quiz créé avec succès:', response);
+          this.router.navigate(['/quizzes']); // Redirige vers la liste
+        },
+        error: (error) => {
+          console.error('Erreur lors de la création du quiz:', error);
+        }
+      });
+    }
   }
-}
 
 }

@@ -1,0 +1,42 @@
+
+<div class="quiz-list-container">
+  <h2>Liste des Quizzes</h2>
+
+
+  <div *ngIf="isLoading" class="loading">
+    Chargement en cours...
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && quizzes.length === 0" class="no-data">
+    Aucun quiz disponible
+  </div>
+
+  <table *ngIf="!isLoading && quizzes.length > 0" class="quiz-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Question</th>
+        <th>Option 1</th>
+        <th>Option 2</th>
+        <th>Option 3</th>
+        <th>Score</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let quiz of quizzes">
+        <td>{{ quiz.id }}</td>
+        <td>{{ quiz.question }}</td>
+        <td>{{ quiz.option1 }}</td>
+        <td>{{ quiz.option2 }}</td>
+        <td>{{ quiz.option3 }}</td>
+        <td>{{ quiz.score }}</td>
+
+      </tr>
+    </tbody>
+  </table>
+</div>

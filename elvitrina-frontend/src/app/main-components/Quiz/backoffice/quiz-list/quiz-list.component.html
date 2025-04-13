@@ -1,44 +1,53 @@
-<mat-card class="cardWithShadow theme-card card">
-  <mat-card-header>
-    <mat-card-title>Liste des Quizzes</mat-card-title>
-  </mat-card-header>
+<table mat-table [dataSource]="dataSource" matSort>
+  <!-- Keep existing question column -->
+   <!-- Colonne ID -->
+   <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+    <td mat-cell *matCellDef="let quiz">{{ quiz.id }}</td>
+  </ng-container>
+  
+  <ng-container matColumnDef="question">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Question</th>
+    <td mat-cell *matCellDef="let quiz">{{ quiz.question }}</td>
+  </ng-container>
 
-  <mat-card-content>
-    <div class="search-container">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Rechercher</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Rechercher un quiz">
-      </mat-form-field>
-    </div>
+  <!-- Add separate columns for each option -->
+  <ng-container matColumnDef="option1">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Option 1</th>
+    <td mat-cell *matCellDef="let quiz">{{ quiz.option1 }}</td>
+  </ng-container>
 
-    <table mat-table [dataSource]="dataSource" matSort>
-      <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Titre</th>
-        <td mat-cell *matCellDef="let quiz">{{ quiz.title }}</td>
-      </ng-container>
+  <ng-container matColumnDef="option2">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Option 2</th>
+    <td mat-cell *matCellDef="let quiz">{{ quiz.option2 }}</td>
+  </ng-container>
 
-      <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Description</th>
-        <td mat-cell *matCellDef="let quiz">{{ quiz.description }}</td>
-      </ng-container>
+  <ng-container matColumnDef="option3">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Option 3</th>
+    <td mat-cell *matCellDef="let quiz">{{ quiz.option3 }}</td>
+  </ng-container>
 
-      <ng-container matColumnDef="score">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Score</th>
-        <td mat-cell *matCellDef="let quiz">{{ quiz.score }}</td>
-      </ng-container>
+  <!-- Keep other columns -->
+  <ng-container matColumnDef="bonneReponse">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Bonne Réponse</th>
+    <td mat-cell *matCellDef="let quiz">{{ quiz.bonneReponse }}</td>
+  </ng-container>
 
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let quiz">
-          <button mat-button (click)="editQuiz(quiz.id)">Éditer</button>
-        </td>
-      </ng-container>
+  <ng-container matColumnDef="score">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Score</th>
+    <td mat-cell *matCellDef="let quiz">{{ quiz.score }}</td>
+  </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <td mat-cell *matCellDef="let quiz">
+      <button mat-button  *ngIf="quiz.id" routerLink="['/dashboard/quiz/edit', quiz.id]">
+        Éditer
+      </button>
+        <button mat-button color="warn" (click)="deleteQuiz(quiz.id)">Supprimer</button>
+    </td>
+  </ng-container>
 
-    <!-- Pagination -->
-    <mat-paginator [length]="quizzes.length" [pageSize]="5" showFirstLastButtons></mat-paginator>
-  </mat-card-content>
-</mat-card>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

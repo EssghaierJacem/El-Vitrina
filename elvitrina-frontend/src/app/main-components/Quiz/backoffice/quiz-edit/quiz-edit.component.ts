@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { NgModel } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';  // Pour matInput
 import { MatButtonModule } from '@angular/material/button';  // Pour les boutons
 import { MatCardModule } from '@angular/material/card';  // Pour mat-card
@@ -14,7 +14,7 @@ import { MatOptionModule } from '@angular/material/core';
 @Component({
   selector: 'app-quiz-edit',
   imports: [
- 
+
      FormsModule,
      CommonModule,
      MatInputModule,  // Pour matInput
@@ -28,9 +28,11 @@ import { MatOptionModule } from '@angular/material/core';
 export class QuizEditComponent implements OnInit {
 
  quiz: Quiz = {
-  id: 0,
-  title: '',
-  description: '',
+  question: '',
+  option1: '',
+  option2: '',
+  option3: '',
+  bonneReponse: '',
   score: 0,
   userId: 0,
 };

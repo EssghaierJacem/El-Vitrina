@@ -1,9 +1,17 @@
 <mat-card *ngIf="quiz">
   <mat-card-header>
-    <mat-card-title>{{ quiz?.title }}</mat-card-title>
+    <mat-card-title>{{ quiz?.question }}</mat-card-title>
   </mat-card-header>
+
   <mat-card-content>
-    <p><strong>Description :</strong> {{ quiz?.description }}</p>
+    <p><strong>Options :</strong></p>
+    <ul>
+      <li>{{ quiz?.option1 }}</li>
+      <li>{{ quiz?.option2 }}</li>
+      <li>{{ quiz?.option3 }}</li>
+    </ul>
+    <p><strong>Bonne réponse :</strong> {{ quiz?.bonneReponse }}</p>
+
     <p><strong>Score :</strong> {{ quiz?.score }}</p>
   </mat-card-content>
 
