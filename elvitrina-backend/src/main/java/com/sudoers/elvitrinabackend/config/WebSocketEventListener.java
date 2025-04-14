@@ -44,8 +44,15 @@ public class WebSocketEventListener {
                 userSessions.computeIfAbsent(userId, k -> ConcurrentHashMap.newKeySet()).add(sessionId);
                 sessionToUser.put(sessionId, userId);
 
-                System.out.println("WebSocket CONNECTED: user=" + userId + ", session=" + sessionId);
-                broadcastOnlineUsers();
+                System.out.println(" WebSocket CONNECTED: user=" + userId + ", session=" + sessionId);
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(500);
+                        broadcastOnlineUsers();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             } catch (Exception e) {
                 System.err.println("Failed to parse token: " + e.getMessage());
             }

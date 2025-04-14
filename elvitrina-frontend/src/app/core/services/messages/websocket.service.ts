@@ -69,11 +69,6 @@ export class WebSocketService {
         this.messageSubject.next(msg);
       });
 
-    this.stompClient.subscribe(`/user/${userId}/queue/typing`, (message: IMessage) => {
-      const typingData = JSON.parse(message.body);
-      console.log(' Typing received on client:', typingData);
-      this.typingSubject.next(typingData);
-    });
   }
 
   subscribeToTypingIndicators(userId: number): void {
