@@ -4,6 +4,7 @@ package com.sudoers.elvitrinabackend.service.payment;
 import com.sudoers.elvitrinabackend.model.dto.PaymentDTO;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface IPaymentService {
@@ -14,4 +15,5 @@ public interface IPaymentService {
     void deletePayment(Long id);
     PaymentDTO processPayment(Long orderId, double amount, String paymentMethod);
     PaymentDTO validatePayment(Long paymentId);
+
 }

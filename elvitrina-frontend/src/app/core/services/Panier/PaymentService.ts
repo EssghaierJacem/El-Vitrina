@@ -44,4 +44,7 @@ export class PaymentService {
   validatePayment(paymentId: number): Observable<Payment> {
     return this.http.post<Payment>(`${this.apiUrl}/validate/${paymentId}`, {});
   }
+  createPaymentIntent(amount: number): Observable<{ clientSecret: string }> {
+    return this.http.post<{ clientSecret: string }>(`${this.apiUrl}/create-payment-intent`, { amount });
+  }
 }
