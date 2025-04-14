@@ -41,16 +41,10 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
       console.error('⚠️ User ID not found in token.');
       return;
     }
-
+  
     this.userId = decoded.id;
-
-    this.wsService.connected$.subscribe((isConnected) => {
-      if (isConnected) {
-        this.wsService.subscribeToPrivateMessages(this.userId); 
-        this.wsService.subscribeToTypingIndicators(this.userId); 
-      }
-    });
-
+    this.wsService.connect();
+  
     this.wsService.messageReceived$.subscribe((message) => {
       if (message.senderId !== this.userId) {
         if (!this.selectedFriend || message.senderId !== this.selectedFriend.id) {
@@ -60,15 +54,18 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
           this.shouldScrollToBottom = true;
         }
       }
-      
-      if (this.selectedFriend && (message.senderId === this.selectedFriend.id || message.receiverId === this.selectedFriend.id)) {
+  
+      if (
+        this.selectedFriend &&
+        (message.senderId === this.selectedFriend.id || message.receiverId === this.selectedFriend.id)
+      ) {
         this.conversation.push(message);
         this.shouldScrollToBottom = true;
       }
-      
+  
       this.updateFriendLastMessage(message);
     });
-
+  
     this.wsService.typingIndicator$.subscribe(data => {
       if (this.selectedFriend && data.senderId === this.selectedFriend.id) {
         this.isTyping = data.isTyping;
@@ -77,9 +74,11 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
         }
       }
     });
-
+  
     this.loadFriends();
   }
+  
+  
 
   ngAfterViewChecked() {
     if (this.shouldScrollToBottom) {
@@ -99,13 +98,13 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
   loadFriends(): void {
     this.friendRequestService.getFriends(this.userId).subscribe(friendRequests => {
       const uniqueFriendsMap = new Map<number, any>();
-    
+  
       friendRequests
         .filter(req => req.status === 'ACCEPTED')
         .forEach(req => {
           let friendId: number;
           let friend: any;
-    
+  
           if (req.senderId === this.userId) {
             friendId = req.receiverId;
             friend = {
@@ -113,7 +112,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
               firstname: req.receiverFirstName,
               lastname: req.receiverLastName,
               image: req.receiver?.image || 'assets/images/default-avatar.png',
-              isOnline: false,
+              isOnline: false, 
               lastMessage: '',
               lastMessageTime: null,
               unreadCount: 0
@@ -131,21 +130,22 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
               unreadCount: 0
             };
           }
-    
+  
           if (!uniqueFriendsMap.has(friendId)) {
             uniqueFriendsMap.set(friendId, friend);
           }
         });
-    
+  
       this.friends = Array.from(uniqueFriendsMap.values());
       this.filteredFriends = [...this.friends];
-      
+  
+      this.wsService.onlineUsers$.subscribe((onlineIds: number[]) => {
+        this.friends.forEach(friend => {
+          friend.isOnline = onlineIds.includes(friend.id);
+        });
+      });
+  
       this.friends.forEach(friend => {
-        this.wsService.getUserStatus(friend.id).subscribe(
-          status => friend.isOnline = status,
-          error => console.error(`Error getting status for user ${friend.id}:`, error)
-        );
-        
         this.wsService.getLastMessage(this.userId, friend.id).subscribe(
           message => {
             if (message) {
@@ -156,10 +156,11 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
           error => console.error(`Error getting last message for friend ${friend.id}:`, error)
         );
       });
-      
-      console.log('🧠 Final unique friends list:', this.friends);
+  
+      console.log('Final unique friends list:', this.friends);
     });
   }
+   
 
   updateFriendLastMessage(message: Message): void {
     const friendId = message.senderId === this.userId ? message.receiverId : message.senderId;
@@ -242,7 +243,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
         this.shouldScrollToBottom = true;
       },
       error: (err) => {
-        console.error('❌ Failed to store/send message:', err);
+        console.error('Failed to store/send message:', err);
       }
     });
   }
@@ -257,7 +258,6 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
     if (unreadMessages.length > 0) {
       this.wsService.markMessagesAsRead(unreadMessages.map(msg => msg.id)).subscribe(
         () => {
-          // Update local messages as read
           unreadMessages.forEach(msg => msg.read = true);
         },
         error => console.error('Error marking messages as read:', error)

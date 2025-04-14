@@ -27,12 +27,10 @@ public class ChatController {
     public void sendMessage(@Payload MessageDTO messageDTO) {
         MessageResponseDTO saved = messageService.sendMessage(messageDTO);
 
-        // Send to receiver
         messagingTemplate.convertAndSend("/queue/messages/" + messageDTO.getReceiverId(), saved);
 
     }
 
-    // 🔹 WebSocket typing indicator handler
     @MessageMapping("/typing")
     public void sendTyping(@Payload TypingDTO typing) {
         messagingTemplate.convertAndSendToUser(
@@ -42,31 +40,26 @@ public class ChatController {
         );
     }
 
-    // 🔹 Get conversation between users
     @GetMapping("/{senderId}/{receiverId}")
     public List<Message> getConversation(@PathVariable Long senderId, @PathVariable Long receiverId) {
         return messageService.getConversation(senderId, receiverId);
     }
 
-    // 🔹 Store message via REST (optional fallback or debugging)
     @PostMapping("/store")
     public MessageResponseDTO storeMessage(@RequestBody MessageDTO messageDTO) {
         return messageService.sendMessage(messageDTO);
     }
 
-    // 🔹 Mark a list of messages as read
     @PostMapping("/mark-as-read")
     public void markAsRead(@RequestBody List<Long> messageIds) {
         messageService.markMessagesAsRead(messageIds);
     }
 
-    // 🔹 Check if a user is online (via WebSocket presence tracking)
     @GetMapping("/status/{userId}")
     public boolean isUserOnline(@PathVariable Long userId) {
         return WebSocketEventListener.isUserOnline(userId);
     }
 
-    // 🔹 Get the last exchanged message between two users
     @GetMapping("/last/{userId1}/{userId2}")
     public Message getLastMessage(@PathVariable Long userId1, @PathVariable Long userId2) {
         return messageService.getLastMessageBetween(userId1, userId2);
