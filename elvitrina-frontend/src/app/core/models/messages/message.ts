@@ -4,5 +4,7 @@ export class Message {
     receiverId: number;
     content: string;
     sentAt: string;
+    read: boolean;
+    delivered?: boolean;
   }
   

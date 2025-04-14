@@ -6,10 +6,12 @@ import com.sudoers.elvitrinabackend.model.request.RegisterRequest;
 import com.sudoers.elvitrinabackend.model.response.AuthenticationResponse;
 import com.sudoers.elvitrinabackend.service.authentication.AuthenticationService;
 import com.sudoers.elvitrinabackend.service.user.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +58,11 @@ public class AuthenticationController {
         response.put("message", "Password updated successfully.");
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/google-login")
+    public void redirectToGoogleLogin(HttpServletResponse response) throws IOException {
+        response.sendRedirect("/oauth2/authorization/google");
     }
 
 }

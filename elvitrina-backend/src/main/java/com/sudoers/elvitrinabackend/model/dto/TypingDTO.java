@@ -5,12 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class MessageDTO {
+@NoArgsConstructor
+public class TypingDTO {
     private Long senderId;
     private Long receiverId;
-    private String content;
-    private Boolean delivered;
-    private Boolean read;
+    private boolean isTyping;
+
 }

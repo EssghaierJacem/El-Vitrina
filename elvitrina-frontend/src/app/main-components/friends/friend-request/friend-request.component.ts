@@ -9,6 +9,9 @@ import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { formatDistance } from 'date-fns';
 import { RouterModule } from '@angular/router';
+import { WebSocketService } from 'src/app/core/services/messages/websocket.service';
+import { Message } from 'src/app/core/models/messages/message';
+import { FormsModule } from '@angular/forms';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -44,7 +47,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatSnackBarModule,
-    RouterModule
+    RouterModule,
+    FormsModule,
   ],
 })
 export class FriendRequestComponent implements OnInit {
@@ -54,13 +58,15 @@ export class FriendRequestComponent implements OnInit {
   mutualFriends: any[] = [];  
   userId: number | null = null;
   isLoading = false;
-
+  newMessages: { [receiverId: number]: string } = {};
   mutualFriendsMap: Map<number, number> = new Map();
 
   constructor(
     private friendRequestService: FriendRequestService,
     private tokenService: TokenService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private webSocketService: WebSocketService
+
   ) {}
 
   ngOnInit(): void {
@@ -69,10 +75,17 @@ export class FriendRequestComponent implements OnInit {
       this.loadAllData();
       this.generateMockMutualFriends();
       this.getMutualFriends();  
+  
+      this.webSocketService.connected$.subscribe((isConnected) => {
+        if (isConnected && this.userId) {
+          this.webSocketService.subscribeToPrivateMessages(this.userId);
+        }
+      });
     } else {
       this.showNotification('Please login to view friend requests', 'error');
     }
   }
+  
 
 
   private generateMockMutualFriends(): void {
@@ -261,4 +274,17 @@ export class FriendRequestComponent implements OnInit {
     }
     return uniqueFriends;
   }
+  sendMessage(receiverId: number): void {
+    const senderId = this.tokenService.getDecodedToken()?.id;
+    const content = this.newMessages[receiverId];
+  
+    if (content && senderId) {
+      this.webSocketService.sendMessage(senderId, receiverId, content);
+      this.newMessages[receiverId] = ''; // Clear input
+      this.showNotification('Message sent!', 'success');
+    } else {
+      this.showNotification('Message is empty or user not logged in', 'error');
+    }
+  }
+  
 }
