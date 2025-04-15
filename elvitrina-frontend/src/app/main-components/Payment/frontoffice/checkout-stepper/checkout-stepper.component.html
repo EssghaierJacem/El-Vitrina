@@ -15,7 +15,16 @@
       </div>
     </form>
   </mat-step>
+ <!-- STEP 2: Formulaire de création de paiement -->
+ <mat-step [stepControl]="paymentFormGroup">
+  <ng-template matStepLabel>Création du paiement</ng-template>
+  <app-payement-creation [selectedPaymentMethod]="selectedPaymentMethod"></app-payement-creation>
 
+  <div class="step-actions">
+    <button mat-button matStepperPrevious>Retour</button>
+    <button mat-raised-button color="primary" matStepperNext>Suivant</button>
+  </div>
+</mat-step>
   <!-- STEP 2: Informations personnelles ou Livraison selon la méthode choisie -->
   <mat-step [stepControl]="selectedPaymentMethod === PaymentMethodType.CASHONDELIVER ? personalInfoFormGroup : deliveryFormGroup">
     <form [formGroup]="selectedPaymentMethod === PaymentMethodType.CASHONDELIVER ? personalInfoFormGroup : deliveryFormGroup">

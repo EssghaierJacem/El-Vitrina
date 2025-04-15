@@ -1,0 +1,35 @@
+<mat-card class="cardWithShadow">
+  <mat-card-title>Commandes en attente</mat-card-title>
+
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+
+  </mat-form-field>
+
+  <div class="orders-container">
+    <mat-card class="order-card" *ngFor="let order of pendingOrders">
+      <div class="order-details">
+        <div class="order-info">
+          <strong>Commande #{{ order.id }}</strong>
+          <p>Date : {{ order.orderDate | date }}</p>
+          <p>Montant : {{ order.price * order.quantity | currency: 'TND' }}</p>
+          <span class="status" [ngClass]="getStatusClass(order.status)">
+            {{ order.status }}
+          </span>
+        </div>
+
+        <div class="order-actions">
+          <button mat-icon-button color="primary" [routerLink]="['/order/view', order.id]">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" *ngIf="order.id !== undefined" (click)="deleteOrder(order.id!)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-card>
+
+    <div class="total-amount">
+      <strong>Total :</strong> {{ getTotalAmount() | currency:'TND' }}
+    </div>
+  </div>
+</mat-card>

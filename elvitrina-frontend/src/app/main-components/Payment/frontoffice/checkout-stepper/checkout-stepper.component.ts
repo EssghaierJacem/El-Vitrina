@@ -14,12 +14,14 @@ import { loadStripe, Stripe } from '@stripe/stripe-js';
 import { PaymentMethodType } from 'src/app/core/models/Panier/PaymentMethodType.type';
 import { LeafletMapComponent } from '../leaflet-map/leaflet-map.component';
 import { PaymentComponent } from '../payment/payment.component';
+import { PayementCreationComponent } from '../payement-creation/payement-creation.component';
 
 @Component({
   selector: 'app-checkout-stepper',
   standalone: true,
   imports: [
     CommonModule,
+    PayementCreationComponent,
     PaymentComponent,
     LeafletMapComponent,
     ReactiveFormsModule,
@@ -47,8 +49,8 @@ export class CheckoutStepperComponent implements OnInit {
   creditCardFormGroup: FormGroup;
 
   // Méthode de paiement sélectionnée
-  selectedPaymentMethod: PaymentMethodType = PaymentMethodType.CASHONDELIVER;
-  PaymentMethodType = PaymentMethodType;
+  selectedPaymentMethod: PaymentMethodType;
+    PaymentMethodType = PaymentMethodType;
 
   constructor(private fb: FormBuilder, private http: HttpClient) {
     this.paymentFormGroup = this.fb.group({
@@ -83,7 +85,7 @@ export class CheckoutStepperComponent implements OnInit {
     formGroup.get('address')?.setValue(address);
   }
 
-  onPaymentMethodChange(method: PaymentMethodType) {
-    this.selectedPaymentMethod = method;
+  onPaymentMethodChange(value: PaymentMethodType): void {
+    this.selectedPaymentMethod = value;
   }
 }
