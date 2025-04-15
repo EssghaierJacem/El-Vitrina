@@ -8,7 +8,7 @@ import { StoreCategoryType } from '../../models/store/store-category-type.enum';
 
 @Injectable({ providedIn: 'root' })
 export class StoreService {
-  private apiUrl = `${environment.apiUrl}/stores`;
+  private apiUrl = 'http://localhost:8081/stores';
 
   constructor(private http: HttpClient) {}
 
@@ -62,9 +62,9 @@ export class StoreService {
                 error: error.error,
                 headers: error.headers
             });
-            
+
             let errorMessage = 'An error occurred while creating the store';
-            
+
             if (error.error instanceof ErrorEvent) {
                 // Client-side error
                 errorMessage = error.error.message;
@@ -80,7 +80,7 @@ export class StoreService {
                     errorMessage = 'Server error: ' + (error.error?.message || 'Unknown server error');
                 }
             }
-            
+
             return throwError(() => ({ message: errorMessage, error }));
         })
     );
@@ -108,7 +108,7 @@ export class StoreService {
   private handleError(error: HttpErrorResponse) {
     console.error('API Error:', error);
     let errorMessage = 'An error occurred';
-    
+
     if (error.error instanceof ErrorEvent) {
       // Client-side error
       errorMessage = error.error.message;
@@ -120,7 +120,7 @@ export class StoreService {
         errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
       }
     }
-    
+
     return throwError(() => ({ message: errorMessage, error }));
   }
 }

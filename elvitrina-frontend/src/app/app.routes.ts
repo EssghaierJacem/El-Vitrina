@@ -41,11 +41,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/Payment/frontoffice/payment.routes').then((m) => m.PaymentsRoutes),
       },
-      {
-       path: 'quiz',
-       loadChildren: () =>
-        import('./main-components/Quiz/frontoffice/quizfront.routes').then((m) => m.QuizFrontRoutes),
-     },
+      //{
+      // path: 'quiz',
+//loadChildren: () =>
+     //   import('./main-components/Quiz/frontoffice/quizfront.routes').then((m) => m.QuizFrontRoutes),
+//},
     ],
   },
 
@@ -60,7 +60,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: FullComponent,
-    //canActivate: [AdminGuard],
+    canActivate: [AdminGuard],
     children: [
       {
         path: '',

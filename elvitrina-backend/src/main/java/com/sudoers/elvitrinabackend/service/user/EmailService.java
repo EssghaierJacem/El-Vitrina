@@ -22,7 +22,7 @@ public class EmailService {
 
     public void sendVerificationEmail(String to, String firstName, String token) {
         String subject = "Welcome to El Vitrina - ! Please Verify Your Email";
-        String verificationLink = "http://localhost:8080/users/verify?token=" + token;
+        String verificationLink = "http://localhost:8081/users/verify?token=" + token;
         String text = "Dear " + firstName + ",\n\n" +
                 "Please click the link below to verify your email and enable your account:\n\n" +
                 verificationLink;

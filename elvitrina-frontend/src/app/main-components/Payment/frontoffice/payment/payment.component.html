@@ -1,3 +1,5 @@
-<p>payment works!</p>
-<div id="card-element"></div>
-<button (click)="handlePayment()">Pay Now</button>
+<div class="container">
+  <h2>Paiement simple</h2>
+  <p>Montant : {{ amountToPay / 100 }} €</p>
+  <button (click)="pay()">Payer</button>
+</div>

@@ -13,6 +13,8 @@ import { RouterModule } from '@angular/router';
 import { ProductService } from '../../../../core/services/product/product.service';
 import { Product } from '../../../../core/models/product/product.model';
 import { ProductCategoryType } from '../../../../core/models/product/product-category-type.enum';
+import { MatDialog } from '@angular/material/dialog';
+import { AddToCartDialogComponent } from 'src/app/main-components/custom-order/Frontoffice/add-to-cart-dialog/add-to-cart-dialog.component';
 
 @Component({
   selector: 'app-product-list',
@@ -49,7 +51,8 @@ export class ProductListComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -80,7 +83,7 @@ export class ProductListComponent implements OnInit {
     // Search filter
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase();
-      filtered = filtered.filter(product => 
+      filtered = filtered.filter(product =>
         product.productName.toLowerCase().includes(query) ||
         product.description?.toLowerCase().includes(query)
       );
@@ -124,8 +127,4 @@ export class ProductListComponent implements OnInit {
     this.snackBar.open('Coming soon', 'Close', { duration: 3000 });
   }
 
-  addToCart(product: Product): void {
-    // TODO: Implement add to cart functionality
-    this.snackBar.open('Product added to cart', 'Close', { duration: 3000 });
-  }
 }

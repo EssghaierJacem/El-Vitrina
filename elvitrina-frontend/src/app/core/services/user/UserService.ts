@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UserService {
-  private baseUrl = 'http://localhost:8080/users';
+  private baseUrl = 'http://localhost:8081/users';
 
   constructor(private http: HttpClient, private tokenService: TokenService) {}
 
@@ -52,5 +52,5 @@ export class UserService {
       params: { currentPassword, newPassword }
     });
   }
-  
+
 }

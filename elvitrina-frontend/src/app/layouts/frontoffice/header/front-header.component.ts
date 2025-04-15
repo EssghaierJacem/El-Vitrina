@@ -10,11 +10,13 @@ import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderServ
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { ShoppingCartComponent } from 'src/app/main-components/custom-order/Frontoffice/shopping-cart/shopping-cart.component';
 @Component({
   selector: 'front-header',
   standalone: true,
   imports: [
     CommonModule,
+    ShoppingCartComponent,
     RouterModule,
     MatSortModule
   ],

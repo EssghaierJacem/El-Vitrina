@@ -47,4 +47,10 @@ export class PaymentService {
   createPaymentIntent(amount: number): Observable<{ clientSecret: string }> {
     return this.http.post<{ clientSecret: string }>(`${this.apiUrl}/create-payment-intent`, { amount });
   }
+  createCheckoutSession(amount: number) {
+    return this.http.post<{ url: string }>(
+      'http://localhost:8081/api/payments/create-checkout-session',
+      { amount }
+    );
+  }
 }
