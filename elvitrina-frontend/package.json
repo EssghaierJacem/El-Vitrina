@@ -28,6 +28,7 @@
     "bootstrap": "^5.3.3",
     "jwt-decode": "^4.0.0",
     "ng-apexcharts": "1.7.6",
+    "ng-recaptcha": "^13.2.1",
     "ngx-scrollbar": "^11.0.0",
     "rxjs": "~7.5.0",
     "sass": "1.81.0",
