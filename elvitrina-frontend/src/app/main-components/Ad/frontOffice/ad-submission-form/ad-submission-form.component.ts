@@ -14,6 +14,7 @@ import { AdService } from 'src/app/core/services/Ad/ad.service';
 })
 export class AdSubmissionFormComponent {
   ad: any = {
+    displayType: 'BANNER', // Default to banner
     position: 'top',
     width: 728,
     height: 90
@@ -21,10 +22,33 @@ export class AdSubmissionFormComponent {
 
   constructor(private adService: AdService) {}
 
+  onDisplayTypeChange() {
+    if (this.ad.displayType === 'POPUP') {
+      // Reset position and set popup defaults
+      this.ad.position = null;
+      this.ad.width = 400;  // Default popup size
+      this.ad.height = 400;
+      this.ad.displayDuration = 15; // Default duration
+    } else {
+      // Reset to banner defaults
+      this.ad.position = 'top';
+      this.ad.width = 728;
+      this.ad.height = 90;
+      this.ad.displayDuration = null;
+    }
+  }
+  
   onSubmit(): void {
-    this.adService.submitAd(this.ad).subscribe(
-      () => alert('Ad submitted for approval!'),
-      (error) => alert('Submission failed: ' + error.message)
-    );
+    // Prepare the payload
+    const payload = {
+      ...this.ad,
+      // Ensure position is null for popups
+      position: this.ad.displayType === 'POPUP' ? null : this.ad.position
+    };
+  
+    this.adService.submitAd(payload).subscribe({
+      next: () => alert('Ad submitted for approval!'),
+      error: (error) => alert('Submission failed: ' + error.message)
+    });
   }
 }

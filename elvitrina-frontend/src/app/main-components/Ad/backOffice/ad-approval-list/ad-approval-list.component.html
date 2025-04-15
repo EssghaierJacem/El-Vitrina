@@ -1,10 +1,97 @@
-<table>
-    <tr *ngFor="let ad of pendingAds">
-      <td>{{ ad.title }}</td>
-      <td>{{ ad.advertiserEmail }}</td>
-      <td>
-        <button (click)="approveAd(ad.id)">Approve</button>
-        <button (click)="rejectAd(ad.id, 'Inappropriate content')">Reject</button>
-      </td>
-    </tr>
-  </table>
+<!-- ad-approval-list.component.html -->
+<div class="approval-container">
+  <h2>Pending Ad Approvals</h2>
+  
+  <div class="table-responsive">
+    <table class="approval-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Advertiser</th>
+          <th>Position</th>
+          <th>Type</th>
+          <th>Dates</th>
+          <th>Content Preview</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ad of pendingAds">
+          <td class="title-cell">{{ ad.title }}</td>
+          <td>{{ ad.advertiserEmail }}</td>
+          <td>{{ ad.position || 'N/A' }}</td>
+          <td>{{ ad.displayType || 'BANNER' }}</td>
+          <td class="date-cell">
+            <div *ngIf="ad.startDate">Start: {{ ad.startDate | date:'shortDate' }}</div>
+            <div *ngIf="ad.endDate">End: {{ ad.endDate | date:'shortDate' }}</div>
+          </td>
+          <td class="preview-cell">
+            <div *ngIf="ad.imageUrl" class="image-preview">
+              <img [src]="ad.imageUrl" [alt]="ad.title">
+            </div>
+            <div *ngIf="!ad.imageUrl" class="text-preview">
+              {{ ad.content || 'No content' }}
+            </div>
+          </td>
+          <td class="action-cell">
+            <button class="view-btn" (click)="viewAd(ad)">
+              <i class="material-icons">visibility</i> View
+            </button>
+            <button class="approve-btn" (click)="approveAd(ad.id)">
+              <i class="material-icons">check_circle</i> Approve
+            </button>
+            <button class="reject-btn" (click)="openRejectDialog(ad.id)">
+              <i class="material-icons">cancel</i> Reject
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Ad Preview Modal -->
+  <div *ngIf="selectedAd" class="preview-overlay" (click)="closePreview()">
+    <div class="preview-container" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="closePreview()">
+        <i class="material-icons">close</i>
+      </button>
+      
+      <div class="ad-preview" [ngSwitch]="selectedAd.displayType || 'BANNER'">
+        <!-- Banner Ad Preview -->
+        <div *ngSwitchCase="'BANNER'" class="banner-preview" [class]="'position-' + (selectedAd.position || 'top')">
+          <a [href]="selectedAd.targetUrl" target="_blank" class="ad-link">
+            <img *ngIf="selectedAd.imageUrl" [src]="selectedAd.imageUrl" [alt]="selectedAd.title">
+            <div *ngIf="!selectedAd.imageUrl" class="text-content">
+              <h3>{{ selectedAd.title }}</h3>
+              <p>{{ selectedAd.content }}</p>
+            </div>
+          </a>
+        </div>
+        
+        <!-- Popup Ad Preview -->
+        <div *ngSwitchCase="'POPUP'" class="popup-preview">
+          <div class="popup-content">
+            <a [href]="selectedAd.targetUrl" target="_blank" class="ad-link">
+              <img *ngIf="selectedAd.imageUrl" [src]="selectedAd.imageUrl" [alt]="selectedAd.title">
+              <div *ngIf="!selectedAd.imageUrl" class="text-content">
+                <h2>{{ selectedAd.title }}</h2>
+                <p>{{ selectedAd.content }}</p>
+              </div>
+            </a>
+            <div *ngIf="selectedAd.displayDuration" class="countdown">
+              This popup would auto-close after {{ selectedAd.displayDuration }} seconds
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="ad-meta">
+        <h3>Ad Details</h3>
+        <p><strong>Position:</strong> {{ selectedAd.position || 'Not specified' }}</p>
+        <p><strong>Dimensions:</strong> {{ selectedAd.width }}px × {{ selectedAd.height }}px</p>
+        <p><strong>Target URL:</strong> <a [href]="selectedAd.targetUrl" target="_blank">{{ selectedAd.targetUrl }}</a></p>
+        <p><strong>Status:</strong> {{ selectedAd.status || 'PENDING' }}</p>
+      </div>
+    </div>
+  </div>
+</div>

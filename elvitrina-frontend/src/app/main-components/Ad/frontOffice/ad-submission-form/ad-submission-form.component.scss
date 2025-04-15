@@ -51,3 +51,15 @@
     background-color: #cccccc;
     cursor: not-allowed;
   }
+
+  .hint {
+    color: #666;
+    font-size: 0.85em;
+    display: block;
+    margin-top: 5px;
+  }
+  
+  /* Adjust form-group spacing if needed */
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
