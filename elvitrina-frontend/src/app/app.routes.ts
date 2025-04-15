@@ -2,7 +2,8 @@ import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
-import { AdminGuard } from './main-components/user/adminGuard.component';
+import { customOrderRoutes } from './main-components/custom-order/custom-order.routes';
+import { Question } from './core/models/Quiz/question';
 
 export const routes: Routes = [
   {
@@ -34,6 +35,16 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/friends/friend.routes').then((m) => m.FriendRoutes),
       },
+      {
+        path: 'donations',
+        loadChildren: () =>
+          import('./main-components/donation/frontoffice/donationfront.routes').then((m) => m.DONATION_FRONT_ROUTES),
+      },
+      {
+        path: 'events',
+        loadChildren: () =>
+          import('./main-components/event/frontoffice/eventfront.routes').then((m) => m.EVENT_FRONT_ROUTES),
+      },
     ],
   },
   {
@@ -45,9 +56,8 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'dashboard', 
+    path: 'dashboard',
     component: FullComponent,
-    canActivate: [AdminGuard], 
     children: [
       {
         path: '',
@@ -61,6 +71,33 @@ export const routes: Routes = [
             (m) => m.UiComponentsRoutes
           ),
       },
+      {
+        path: 'custom-order',
+        loadChildren: () =>
+          import('./main-components/custom-order/custom-order.routes').then(m => m.customOrderRoutes),
+      },
+      {
+        path: 'payment',
+        loadChildren: () =>
+          import('./main-components/Payment/payment.routes').then(m => m.PaymentRoutes),
+      },
+      {
+        path: 'quiz',
+        loadChildren: () =>
+          import('./main-components/Quiz/quiz/quiz.routes').then(m => m.QuizRoutes),
+      },
+      {
+        path: 'question',
+        loadChildren: () =>
+          import('./main-components/Quiz/question/question.routes').then(m => m.QuestionRoutes),
+      },
+      {
+        path: 'reponse',
+        loadChildren: () =>
+          import('./main-components/Quiz/reponse/reponse.routes').then(m => m.ReponseRoutes),
+      },
+
+
       {
         path: 'users',
         loadChildren: () =>
@@ -98,6 +135,16 @@ export const routes: Routes = [
         path: 'extra',
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
+      },
+      {
+        path: 'donations',
+        loadChildren: () =>
+          import('./main-components/donation/backoffice/donationback.routes').then((m) => m.DONATION_BACK_ROUTES),
+      },
+      {
+        path: 'events',
+        loadChildren: () =>
+          import('./main-components/event/backoffice/eventback.routes').then((m) => m.EVENT_BACK_ROUTES),
       },
     ],
   },

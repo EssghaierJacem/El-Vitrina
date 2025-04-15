@@ -1,0 +1,42 @@
+<mat-card class="cardWithShadow theme-card card">
+  <mat-card-header>
+    <mat-card-title>Créer une Question</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form #questionForm="ngForm" (ngSubmit)="createQuestion(questionForm)">
+      <div class="row">
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Question</mat-label>
+            <input matInput type="text" [(ngModel)]="question.question" name="question" required #questionInput="ngModel" />
+            <mat-error *ngIf="questionInput.invalid && questionInput.touched">La question est requise.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Type de Question</mat-label>
+            <mat-select [(ngModel)]="question.questionType" name="questionType" required>
+              <mat-option *ngFor="let type of questionTypes" [value]="type">{{ type }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="questionInput.invalid && questionInput.touched">Le type est requis.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>ID du Quiz</mat-label>
+            <input matInput type="number" [(ngModel)]="question.quizId" name="quizId" required />
+            <mat-error *ngIf="questionInput.invalid && questionInput.touched">L'ID du quiz est requis.</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="m-t-12">
+        <button mat-flat-button color="primary" type="submit" [disabled]="questionForm.invalid">Créer</button>
+        <button mat-stroked-button color="warn" routerLink="/questions">Annuler</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

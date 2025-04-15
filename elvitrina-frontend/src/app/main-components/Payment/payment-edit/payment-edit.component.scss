@@ -1,0 +1,35 @@
+.payment-card {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .col-md-6, .col-12 {
+    flex: 1 1 45%;
+    min-width: 300px;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}

@@ -1,0 +1,13 @@
+<div class="p-6">
+  <h2 class="text-2xl font-bold mb-4">Quiz disponibles</h2>
+  <div *ngIf="quizzes.length > 0; else noQuiz">
+    <div *ngFor="let quiz of quizzes" class="bg-white rounded-lg shadow-md p-4 mb-4">
+      <h3 class="text-xl font-semibold">{{ quiz.title }}</h3>
+      <p class="text-gray-600">{{ quiz.description }}</p>
+      <p class="text-sm text-gray-500 mt-2">Score: {{ quiz.score }} / 100</p>
+    </div>
+  </div>
+  <ng-template #noQuiz>
+    <p>Aucun quiz disponible pour le moment.</p>
+  </ng-template>
+</div>

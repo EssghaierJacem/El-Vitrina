@@ -1,0 +1,29 @@
+<mat-card class="cardWithShadow theme-card card">
+  <mat-card-header>
+    <mat-card-title class="message-text">Détails de la Commande</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div *ngIf="order">
+      <p><strong>ID :</strong> {{ order.id }}</p>
+      <p><strong>Produits :</strong> {{ order.products }}</p>
+      <p><strong>Quantité :</strong> {{ order.quantity }}</p>
+      <p><strong>Prix (TND) :</strong> {{ order.price | currency:'TND' }}</p>
+      <p><strong>Date de commande :</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>
+      <p><strong>Statut :</strong>
+        <span [ngClass]="getStatusClass(order.status)" class="status-badge">{{ order.status }}</span>
+      </p>
+    </div>
+    <div *ngIf="!order">Chargement...</div>
+  </mat-card-content>
+
+  <mat-card-actions class="actions">
+    <button mat-flat-button color="primary" (click)="editOrder()">
+      <mat-icon>edit</mat-icon> Modifier
+    </button>
+    
+    <button mat-flat-button color="accent" (click)="nextOrder()">
+      <mat-icon>arrow_forward</mat-icon> Suivant
+    </button>
+  </mat-card-actions>
+</mat-card>
