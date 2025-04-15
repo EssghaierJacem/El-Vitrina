@@ -37,6 +37,8 @@ export class UserViewComponent implements OnInit {
   user?: User;
   isLoading = true;
 
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
+
   constructor(private route: ActivatedRoute, private userService: UserService) {}
 
   ngOnInit(): void {
@@ -44,6 +46,18 @@ export class UserViewComponent implements OnInit {
     if (this.userId) {
       this.loadUserData();
     }
+  }
+
+  getUserImage(): string {
+    if (!this.user || !this.user.image) {
+      return '/assets/images/default-avatar.png';
+    }
+  
+    if (this.user.image.startsWith('http')) {
+      return this.user.image;
+    }
+  
+    return this.IMAGE_BASE_URL + this.user.image;
   }
 
   loadUserData(): void {

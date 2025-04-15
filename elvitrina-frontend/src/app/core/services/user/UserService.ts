@@ -53,5 +53,13 @@ export class UserService {
       responseType: 'text' 
     });
   }
+
+  uploadProfileImage(userId: number, imageFile: File): Observable<User> {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+  
+    return this.http.post<User>(`${this.baseUrl}/${userId}/upload-image`, formData);
+  }
+  
   
 }

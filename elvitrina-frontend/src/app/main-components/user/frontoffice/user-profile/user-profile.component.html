@@ -18,17 +18,34 @@
         <div *ngIf="!isLoading" class="profile-content">
           <!-- Profile Image Section -->
           <div class="profile-image-container">
-            <div class="profile-image-circle" [style.background-image]="user.image ? 'url(' + user.image + ')' : ''">
-              <div *ngIf="!user.image" class="profile-image-placeholder">
+
+            <div
+              class="profile-image-circle"
+              [style.background-image]="previewImageUrl() ? 'url(' + previewImageUrl() + ')' : ''"
+            >
+              <div *ngIf="!previewImageUrl()" class="profile-image-placeholder">
                 {{ user.firstname?.charAt(0) || '' }}{{ user.lastname?.charAt(0) || '' }}
               </div>
             </div>
-            
+          
             <mat-form-field appearance="outline" class="image-url-field">
-              <mat-label>Profile Image URL</mat-label>
-              <input matInput [(ngModel)]="user.image" name="imageUrl" placeholder="Enter image URL">
+              <mat-label>Profile Image</mat-label>
+              <input
+                matInput
+                [(ngModel)]="user.image"
+                name="imageUrl"
+                placeholder="Enter image URL or upload"
+                (input)="isImageValid = true"
+              />
+          
+              <button mat-icon-button matSuffix type="button" (click)="fileInput.click()" [disabled]="isUploading">
+                <mat-icon>upload</mat-icon>
+              </button>
+          
+              <input #fileInput type="file" (change)="onFileSelected($event)" hidden />
             </mat-form-field>
-          </div>
+          
+          </div>         
   
           <mat-divider class="section-divider"></mat-divider>
           

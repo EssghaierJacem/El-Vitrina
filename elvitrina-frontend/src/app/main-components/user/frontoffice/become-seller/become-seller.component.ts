@@ -52,6 +52,11 @@ export class BecomeSellerComponent implements OnInit {
   formSubmitted = false;
   isImageValid = true;
 
+  selectedFile?: File;
+  localImagePreview?: string;
+  isUploading = false;
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
+
   constructor(
     private tokenService: TokenService,
     private userService: UserService,
@@ -173,6 +178,52 @@ export class BecomeSellerComponent implements OnInit {
       verticalPosition: 'top',
       panelClass: type === 'success' ? ['success-snackbar'] : ['error-snackbar']
     });
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+  
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.localImagePreview = reader.result as string;
+        this.uploadImage(); 
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  uploadImage(): void {
+    if (this.selectedFile && this.user.id) {
+      this.isUploading = true;
+      this.userService.uploadProfileImage(this.user.id, this.selectedFile).subscribe({
+        next: (updatedUser) => {
+          this.user.image = updatedUser.image;
+          this.localImagePreview = undefined;
+          this.selectedFile = undefined;
+          this.isUploading = false;
+          this.isImageValid = true;
+          this.showNotification('Image uploaded successfully!', 'success');
+        },
+        error: () => {
+          this.isUploading = false;
+          this.showNotification('Image upload failed!', 'error');
+        }
+      });
+    }
+  }  
+
+  previewImageUrl(): string {
+    if (this.localImagePreview) return this.localImagePreview;
+  
+    if (this.user.image) {
+      return this.user.image.startsWith('http') 
+        ? this.user.image 
+        : this.IMAGE_BASE_URL + this.user.image;
+    }
+  
+    return '/assets/images/default-avatar.png';
   }
 
   cancel(): void {

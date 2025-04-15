@@ -67,6 +67,7 @@ export class UserListComponent implements OnInit {
   usersPerPage = 12;
   
   activeUsers: Set<number> = new Set<number>();
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
   
   mutualFriendsMap: Map<number, number> = new Map<number, number>();
   acceptedFriends: Set<number> = new Set<number>();
@@ -299,5 +300,18 @@ export class UserListComponent implements OnInit {
       }
     );
   }
+
+  getUserImage(user: User): string {
+    if (!user || !user.image) {
+      return '/assets/images/default-avatar.png';
+    }
+  
+    if (user.image.startsWith('http')) {
+      return user.image;
+    }
+  
+    return this.IMAGE_BASE_URL + user.image;
+  }  
+  
   
 }

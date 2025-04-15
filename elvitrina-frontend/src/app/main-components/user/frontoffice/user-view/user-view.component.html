@@ -11,7 +11,7 @@
         </div>
         <div class="profile-main">
           <div class="profile-avatar" [ngClass]="{'active-user': user.status}">
-            <img *ngIf="user.image" [src]="user.image" alt="User image">
+            <img *ngIf="user.image" [src]="getUserImage()" alt="User image">
             <div *ngIf="!user.image" class="avatar-placeholder">
               {{ user.firstname?.charAt(0) }}{{ user.lastname?.charAt(0) }}
             </div>
