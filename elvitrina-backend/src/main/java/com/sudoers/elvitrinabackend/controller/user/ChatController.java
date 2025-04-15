@@ -33,12 +33,11 @@ public class ChatController {
 
     @MessageMapping("/typing")
     public void sendTyping(@Payload TypingDTO typing) {
-        messagingTemplate.convertAndSendToUser(
-                String.valueOf(typing.getReceiverId()),
-                "/queue/typing",
-                typing
-        );
+        // System.out.println(" Sending to /queue/typing." + typing.getReceiverId());
+        messagingTemplate.convertAndSend("/queue/typing." + typing.getReceiverId(), typing);
     }
+
+
 
     @GetMapping("/{senderId}/{receiverId}")
     public List<Message> getConversation(@PathVariable Long senderId, @PathVariable Long receiverId) {

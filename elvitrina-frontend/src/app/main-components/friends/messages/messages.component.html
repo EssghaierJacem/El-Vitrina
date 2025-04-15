@@ -86,7 +86,7 @@
                placeholder="Type a message..." 
                (keyup.enter)="sendMessage()"
                (focus)="markAsRead()"
-               (input)="onTyping(true)">
+               (input)="onInputChange()">
         <button class="emoji-btn"><i class="fa fa-smile"></i></button>
         <button class="send-btn" (click)="sendMessage()" [disabled]="!messageContent.trim()">
           <i class="fa fa-paper-plane"></i>

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class TypingDTO {
     private Long senderId;
     private Long receiverId;
-    private boolean isTyping;
+    private boolean typing;
 
 }

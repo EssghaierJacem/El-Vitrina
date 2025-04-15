@@ -5,6 +5,7 @@ import * as SockJS from 'sockjs-client';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { Message } from '../../models/messages/message';
 import { TokenService } from '../user/TokenService';
+import { Typing } from '../../models/messages/typing';
 
 @Injectable({
   providedIn: 'root'
@@ -13,15 +14,17 @@ export class WebSocketService {
   private stompClient: Client;
   private messageSubject = new Subject<Message>();
   private connectedSubject = new BehaviorSubject<boolean>(false);
-  private typingSubject = new Subject<{ senderId: number; receiverId: number; isTyping: boolean }>();
+  private typingSubject = new Subject<Typing>();
   private onlineUsersSubject = new BehaviorSubject<number[]>([]);
   private subscriptionsInitialized = false;
+  private isConnected = false;
 
  
   onlineUsers$ = this.onlineUsersSubject.asObservable();
   messageReceived$ = this.messageSubject.asObservable();
   typingIndicator$ = this.typingSubject.asObservable();
   connected$ = this.connectedSubject.asObservable();
+  
 
   private readonly wsUrl = 'http://localhost:8080/ws';
   private readonly apiUrl = 'http://localhost:8080/api/messages';
@@ -47,7 +50,7 @@ export class WebSocketService {
       const userId = this.tokenService.getDecodedToken()?.id;
       if (userId) {
         this.subscribeToPrivateMessages(userId);
-        // this.subscribeToTypingIndicators(userId);
+        this.subscribeToTypingIndicators(userId);
         this.subscribeToOnlineUsers();
         this.subscriptionsInitialized = true; 
       }
@@ -73,15 +76,17 @@ export class WebSocketService {
 
   subscribeToTypingIndicators(userId: number): void {
     if (!this.stompClient.connected) {
-      console.error(' Cannot subscribe: STOMP not connected yet!');
+      console.error('Cannot subscribe: STOMP not connected yet!');
       return;
     }
-
-    this.stompClient.subscribe(`/user/${userId}/queue/typing`, (typing: IMessage) => {
+  
+    this.stompClient.subscribe(`/queue/typing.${userId}`, (typing: IMessage) => {
       const typingData = JSON.parse(typing.body);
+      console.log('Typing received:', typingData);
       this.typingSubject.next(typingData);
     });
   }
+  
 
   sendMessage(senderId: number, receiverId: number, content: string): void {
     const msg = {
@@ -97,17 +102,20 @@ export class WebSocketService {
       body: JSON.stringify(msg)
     });
   
-    console.log("📤 Sending WebSocket message:", msg);
+    console.log("Sending WebSocket message:", msg);
   }
   
 
   sendTypingIndicator(senderId: number, receiverId: number, isTyping: boolean): void {
-    const typing = { senderId, receiverId, isTyping }; 
+    const typing: Typing = { senderId, receiverId, typing: isTyping };
+    console.log("Sending typing:", typing);
+  
     this.stompClient.publish({
       destination: '/app/typing',
       body: JSON.stringify(typing)
     });
   }
+  
 
   getConversation(senderId: number, receiverId: number): Observable<Message[]> {
     return this.http.get<Message[]>(`${this.apiUrl}/${senderId}/${receiverId}`);
@@ -139,10 +147,10 @@ export class WebSocketService {
     }
   }
 
-  connect(): void {
+  connect(onConnectedCallback?: () => void): void {
     const token = this.tokenService.getToken();
     if (!token) {
-      console.warn(' Token not found. WebSocket not connected.');
+      console.warn('Token not found. WebSocket not connected.');
       return;
     }
   
@@ -150,8 +158,23 @@ export class WebSocketService {
       Authorization: `Bearer ${token}`
     };
   
-    this.stompClient.activate(); 
+    this.stompClient.onConnect = () => {
+      console.log('WebSocket connected!');
+      
+      this.subscribeToOnlineUsers();
+  
+      if (onConnectedCallback) {
+        onConnectedCallback();
+      }
+    };
+  
+    this.stompClient.onStompError = (frame) => {
+      console.error('STOMP error:', frame.headers['message'], frame.body);
+    };
+  
+    this.stompClient.activate();
   }
+  
   
 
   subscribeToOnlineUsers(): void {

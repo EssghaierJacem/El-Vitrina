@@ -5,7 +5,7 @@ import { TokenService } from 'src/app/core/services/user/TokenService';
 import { Message } from 'src/app/core/models/messages/message';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Observable, of } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-messages',
@@ -32,18 +32,21 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
   constructor(
     private wsService: WebSocketService,
     private friendRequestService: FriendRequestService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     const decoded = this.tokenService.getDecodedToken();
     if (!decoded?.id) {
-      console.error('⚠️ User ID not found in token.');
+      console.error(' User ID not found in token.');
       return;
     }
   
     this.userId = decoded.id;
-    this.wsService.connect();
+    this.wsService.connect(() => {
+      this.wsService.subscribeToTypingIndicators(this.userId);
+    });
   
     this.wsService.messageReceived$.subscribe((message) => {
       if (message.senderId !== this.userId) {
@@ -68,10 +71,14 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
   
     this.wsService.typingIndicator$.subscribe(data => {
       if (this.selectedFriend && data.senderId === this.selectedFriend.id) {
-        this.isTyping = data.isTyping;
-        if (this.isTyping) {
-          this.shouldScrollToBottom = true;
-        }
+        console.log('✏️ Typing received from:', data.senderId);
+        this.isTyping = data.typing;
+    
+        this.cd.detectChanges();
+        // if (this.isTyping) {
+        //   if (this.typingTimeout) clearTimeout(this.typingTimeout);
+        //   this.typingTimeout = setTimeout(() => this.isTyping = false, 3000);
+        // }
       }
     });
   
@@ -286,6 +293,19 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
 
   onImageError(event: any): void {
     event.target.src = 'assets/images/profile/user-1.jpg';
+  }
+
+  
+  onInputChange(): void {
+    this.onTyping(true); 
+  
+    if (this.typingTimeout) {
+      clearTimeout(this.typingTimeout);
+    }
+  
+    this.typingTimeout = setTimeout(() => {
+      this.onTyping(false);
+    }, 2000);
   }
 
   isLoggedIn(): boolean {
