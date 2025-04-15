@@ -1,0 +1,10 @@
+<table>
+    <tr *ngFor="let ad of pendingAds">
+      <td>{{ ad.title }}</td>
+      <td>{{ ad.advertiserEmail }}</td>
+      <td>
+        <button (click)="approveAd(ad.id)">Approve</button>
+        <button (click)="rejectAd(ad.id, 'Inappropriate content')">Reject</button>
+      </td>
+    </tr>
+  </table>

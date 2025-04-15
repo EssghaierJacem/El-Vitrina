@@ -1,2 +1,9 @@
-package com.sudoers.elvitrinabackend.service.Ad;public interface IAdService {
+package com.sudoers.elvitrinabackend.service.Ad;
+
+import com.sudoers.elvitrinabackend.model.entity.Ad;
+
+import java.util.List;
+
+public interface IAdService {
+
 }

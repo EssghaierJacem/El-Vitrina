@@ -114,4 +114,7 @@ public class ProposalPersoService implements IProposalPersoService{
                 .map(this::convertToDto)
                 .toList();
     }
+
+
+
 }

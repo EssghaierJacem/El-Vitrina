@@ -34,7 +34,7 @@ import { ConfirmDialogComponent } from './confirm-dialog.component';
     CommonModule,
     MatGridListModule,
     MatDialogModule, // Add this
-    ConfirmDialogComponent
+    ConfirmDialogComponent ,
   ],
   templateUrl: './request-perso-list.component.html',
   styleUrls: ['./request-perso-list.component.scss']

@@ -1,0 +1,63 @@
+<!-- ad-display.component.html -->
+<div class="ad-container">
+    <!-- TOP Banners -->
+    <div *ngFor="let ad of getBannersByPosition('top')" 
+         class="ad-banner position-top"
+         [style.width.px]="ad.width || 728"
+         [style.height.px]="ad.height || 90">
+      <a [href]="ad.targetUrl" target="_blank" (click)="trackClick(ad.id)">
+        <img *ngIf="ad.imageUrl" [src]="ad.imageUrl" [alt]="ad.title" class="ad-image">
+        <div *ngIf="!ad.imageUrl" class="text-content">
+          <h3>{{ ad.title }}</h3>
+          <p>{{ ad.content }}</p>
+        </div>
+      </a>
+      <button class="close-btn" (click)="removeBanner(ad)">×</button>
+    </div>
+  
+    <!-- BOTTOM Banners -->
+    <div *ngFor="let ad of getBannersByPosition('bottom')" 
+         class="ad-banner position-bottom"
+         [style.width.px]="ad.width || 728"
+         [style.height.px]="ad.height || 90">
+      <a [href]="ad.targetUrl" target="_blank" (click)="trackClick(ad.id)">
+        <img *ngIf="ad.imageUrl" [src]="ad.imageUrl" [alt]="ad.title" class="ad-image">
+        <div *ngIf="!ad.imageUrl" class="text-content">
+          <h3>{{ ad.title }}</h3>
+          <p>{{ ad.content }}</p>
+        </div>
+      </a>
+      <button class="close-btn" (click)="removeBanner(ad)">×</button>
+    </div>
+  
+    <!-- LEFT Sidebar Banners -->
+    <div *ngFor="let ad of getBannersByPosition('left')" 
+         class="ad-banner position-left"
+         [style.width.px]="ad.width || 160"
+         [style.height.px]="ad.height || 600">
+      <a [href]="ad.targetUrl" target="_blank" (click)="trackClick(ad.id)">
+        <img *ngIf="ad.imageUrl" [src]="ad.imageUrl" [alt]="ad.title" class="ad-image">
+        <div *ngIf="!ad.imageUrl" class="text-content vertical-text">
+          <h3>{{ ad.title }}</h3>
+          <p>{{ ad.content }}</p>
+        </div>
+      </a>
+      <button class="close-btn" (click)="removeBanner(ad)">×</button>
+    </div>
+    
+  
+    <!-- RIGHT Sidebar Banners -->
+    <div *ngFor="let ad of getBannersByPosition('right')" 
+         class="ad-banner position-right"
+         [style.width.px]="ad.width || 160"
+         [style.height.px]="ad.height || 600">
+      <a [href]="ad.targetUrl" target="_blank" (click)="trackClick(ad.id)">
+        <img *ngIf="ad.imageUrl" [src]="ad.imageUrl" [alt]="ad.title" class="ad-image">
+        <div *ngIf="!ad.imageUrl" class="text-content vertical-text">
+          <h3>{{ ad.title }}</h3>
+          <p>{{ ad.content }}</p>
+        </div>
+      </a>
+      <button class="close-btn" (click)="removeBanner(ad)">×</button>
+    </div>
+  </div>

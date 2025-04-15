@@ -62,6 +62,29 @@ export const navItems: NavItem[] = [
     route: '/dashboard/offers',
   }, 
 
+
+  {
+    navCap: 'RequestPerso',
+  },
+  {
+    displayName: 'request',
+    iconName: 'page',
+    route: '/dashboard/RequestPerso/listrequest',
+  },
+  {
+    displayName: 'propsalPerso',
+    iconName: 'point',
+    route: '/dashboard/RequestPerso/listproposal',
+  }, 
+
+  {
+    displayName: 'Ads',
+    iconName: 'point',
+    route: '/dashboard/AdAdmin/admin/ads',
+  }, 
+
+
+
   {
     navCap: 'Ui Components',
   },

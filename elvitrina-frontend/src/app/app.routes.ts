@@ -27,6 +27,13 @@ export const routes: Routes = [   // { path: 'createRequestperso', component:Req
         loadChildren: () =>
           import('./main-components/requestPerso/frontOffice/frontoffice_requestPerso.routes').then((m) => m.RequestPersoCreate),
       },
+      {
+        path: 'AdCreate',
+        loadChildren: () =>
+          import('./main-components/Ad/frontOffice/frontoffice_ad.routes').then((m) => m.AdCreate),
+      },
+
+
     ],
   },
   {
@@ -92,7 +99,16 @@ export const routes: Routes = [   // { path: 'createRequestperso', component:Req
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
       },
-      
+      {
+        path: 'RequestPerso',
+        loadChildren: () =>
+          import('./main-components/requestPerso/BackOffice/backoffice_requestPerso.routes').then((m) => m.AdminRequests),
+      },
+      {
+        path: 'AdAdmin',
+        loadChildren: () =>
+          import('./main-components/Ad/backOffice/backoffice_ad.routes').then((m) => m.AdAdmin),
+      },
     ],
   },
   {
