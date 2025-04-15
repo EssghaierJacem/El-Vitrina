@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { ProductSummaryComponent } from '../product-summary/product-summary.component';
 import { CheckoutStepperComponent } from '../checkout-stepper/checkout-stepper.component';
+import { ShoppingCartComponent } from 'src/app/main-components/custom-order/Frontoffice/shopping-cart/shopping-cart.component';
 
 @Component({
   selector: 'app-checkout',
-  imports: [ProductSummaryComponent,CheckoutStepperComponent],
+  imports: [ShoppingCartComponent,CheckoutStepperComponent],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss'
 })
