@@ -18,6 +18,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { finalize } from 'rxjs/operators';
+import { MatSliderModule } from '@angular/material/slider';
 
 @Component({
   selector: 'app-store-feedback-create',
@@ -36,7 +37,8 @@ import { finalize } from 'rxjs/operators';
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatDividerModule,
-    MatIconModule
+    MatIconModule,
+    MatSliderModule
   ]
 })
 export class StoreFeedbackCreateComponent implements OnInit {

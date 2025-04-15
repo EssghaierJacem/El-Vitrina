@@ -16,8 +16,6 @@ export interface Store {
   image?: string;
   coverImage?: string;
   announcement?: string;
-  story?: string;
-  storyImage?: string;
   featured: boolean;
   userId: number;
   feedbackIds?: number[];

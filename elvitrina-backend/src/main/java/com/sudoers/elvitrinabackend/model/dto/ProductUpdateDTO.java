@@ -17,20 +17,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductUpdateDTO {
-    @NotBlank
-    @Size(max = 100)
     private String productName;
-
-    @Size(max = 500)
     private String description;
-
-    @PositiveOrZero
     private double price;
-
-    @PositiveOrZero
     private int stockQuantity;
-
     private ProductCategoryType category;
     private boolean hasDiscount;
-    private List<@URL String> images;
+    private List<String> images;
 }

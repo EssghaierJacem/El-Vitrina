@@ -97,8 +97,8 @@ export class StoreCreateComponent implements OnInit {
       description: ['', [Validators.maxLength(500)]],
       category: ['', Validators.required],
       address: ['', Validators.required],
-      image: [''],
-      coverImage: [''],
+      image: [null, Validators.required],
+      coverImage: [null, Validators.required],
       status: [true],
       featured: [false]
     });
@@ -125,6 +125,23 @@ export class StoreCreateComponent implements OnInit {
     }
   }
 
+  onImageSelected(event: Event, field: string): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.storeForm.patchValue({ [field]: file });
+    }
+  }
+
+  onFileSelected(event: Event, fieldName: string): void {
+    const input = event.target as HTMLInputElement;
+    if (input?.files?.length) {
+      const file = input.files[0];
+      this.storeForm.patchValue({ [fieldName]: file });
+      this.storeForm.get(fieldName)?.updateValueAndValidity();
+    }
+  }
+
   onSubmit(): void {
     if (this.storeForm.invalid) {
         this.snackBar.open('Please fill in all required fields correctly', 'Close', {
@@ -146,21 +163,20 @@ export class StoreCreateComponent implements OnInit {
     this.isLoading = true;
     const formValue = this.storeForm.value;
 
-    const storeData: Partial<Store> = {
-        storeName: formValue.storeName?.trim(),
-        description: formValue.description?.trim(),
-        category: formValue.category,
-        address: formValue.address?.trim(),
-        image: formValue.image?.trim(),
-        coverImage: formValue.coverImage?.trim(),
-        status: formValue.status ?? true,
-        featured: formValue.featured ?? false,
-        userId: this.userId
-    };
+    const formData = new FormData();
+    formData.append('storeName', formValue.storeName?.trim());
+    formData.append('description', formValue.description?.trim());
+    formData.append('category', formValue.category);
+    formData.append('address', formValue.address?.trim());
+    formData.append('image', formValue.image);
+    formData.append('coverImage', formValue.coverImage);
+    formData.append('status', formValue.status);
+    formData.append('featured', formValue.featured);
+    formData.append('userId', this.userId.toString());
 
-    console.log('Submitting store data:', storeData);
+    console.log('Submitting store data:', formData);
 
-    this.storeService.create(storeData).subscribe({
+    this.storeService.create(formData).subscribe({
         next: (response) => {
             console.log('Store created successfully:', response);
             this.snackBar.open('Store created successfully', 'Close', {

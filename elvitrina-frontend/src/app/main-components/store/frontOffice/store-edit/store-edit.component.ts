@@ -115,34 +115,39 @@ export class StoreEditComponent implements OnInit {
 
   onSubmit(): void {
     if (this.storeForm.invalid) {
-      this.snackBar.open('Please fill in all required fields correctly', 'Close', {
-        duration: 3000,
-        panelClass: ['error-snackbar']
-      });
+      this.storeForm.markAllAsTouched();
       return;
     }
 
     this.isLoading = true;
     const formValue = this.storeForm.value;
 
-    const storeData: Store = {
-      ...formValue,
-      id: this.storeId! // Use the non-null assertion operator
-    };
+    const formData = new FormData();
+    formData.append('storeName', formValue.storeName?.trim());
+    formData.append('description', formValue.description?.trim());
+    formData.append('category', formValue.category);
+    formData.append('address', formValue.address?.trim());
+    formData.append('status', formValue.status);
+    formData.append('featured', formValue.featured);
 
-    this.storeService.update(this.storeId, storeData).subscribe({
+    if (formValue.image instanceof File) {
+      formData.append('image', formValue.image);
+    }
+    if (formValue.coverImage instanceof File) {
+      formData.append('coverImage', formValue.coverImage);
+    }
+
+    this.storeService.update(this.storeId, formData).subscribe({
       next: (response) => {
         this.snackBar.open('Store updated successfully', 'Close', {
-          duration: 3000,
-          panelClass: ['success-snackbar']
+          duration: 3000
         });
         this.router.navigate(['/dashboard/stores']);
       },
       error: (error) => {
         console.error('Error updating store:', error);
-        this.snackBar.open('Error updating store. Please try again.', 'Close', {
-          duration: 3000,
-          panelClass: ['error-snackbar']
+        this.snackBar.open(error.message || 'Error updating store', 'Close', {
+          duration: 5000
         });
         this.isLoading = false;
       }

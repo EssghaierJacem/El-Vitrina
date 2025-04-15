@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -188,11 +189,9 @@ public class ProductController {
 
     // ---- Image Handling Endpoints ----
     @PostMapping("/{id}/images")
-    public ResponseEntity<ProductDTO> addImageToProduct(
-            @PathVariable Long id,
-            @RequestParam String imageUrl) {
-        ProductDTO product = productService.addImageToProduct(id, imageUrl);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<ProductDTO> uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        ProductDTO updatedProduct = productService.addImageToProduct(id, file);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     @DeleteMapping("/{id}/images")

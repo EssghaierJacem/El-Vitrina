@@ -11,13 +11,16 @@ import com.sudoers.elvitrinabackend.model.enums.ProductCategoryType;
 import com.sudoers.elvitrinabackend.model.enums.ProductStatus;
 import com.sudoers.elvitrinabackend.repository.ProductRepository;
 import com.sudoers.elvitrinabackend.repository.StoreRepository;
+import com.sudoers.elvitrinabackend.service.Image.ImageUploadService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +34,8 @@ public class ProductService implements IProductService {
     private ProductRepository productRepository;
     @Autowired
     private StoreRepository storeRepository;
+    @Autowired
+    private ImageUploadService imageUploadService;
     // ---- CRUD Operations ----
     @Override
     @Transactional
@@ -289,21 +294,19 @@ public class ProductService implements IProductService {
     // ---- Image Handling ----
     @Override
     @Transactional
-    public ProductDTO addImageToProduct(Long productId, String imageUrl) {
+    public ProductDTO addImageToProduct(Long productId, MultipartFile imageFile) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
+        String imageUrl = imageUploadService.uploadImage(imageFile);
         List<String> images = product.getImages();
         if (images == null) {
             images = new ArrayList<>();
         }
-        if (!images.contains(imageUrl)) {
-            images.add(imageUrl);
-            product.setImages(images);
-            Product updatedProduct = productRepository.save(product);
-            return copyEntityToDto(updatedProduct);
-        }
-        return copyEntityToDto(product);
+        images.add(imageUrl);
+        product.setImages(images);
+        Product updatedProduct = productRepository.save(product);
+        return copyEntityToDto(updatedProduct);
     }
 
     @Override

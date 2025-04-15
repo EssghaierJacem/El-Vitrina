@@ -57,7 +57,7 @@ public class Product implements Serializable {
     private ProductStatus status;
 
     @ElementCollection
-    private List<@URL(message = "Image must be a valid URL") String> images;
+    private List<String> images;
 
     @ManyToOne
     @JoinColumn(name = "store_id")

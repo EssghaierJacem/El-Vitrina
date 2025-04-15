@@ -10,6 +10,7 @@ import com.sudoers.elvitrinabackend.model.enums.StoreCategoryType;
 import com.sudoers.elvitrinabackend.repository.StoreFeedBackRepository;
 import com.sudoers.elvitrinabackend.repository.StoreRepository;
 import com.sudoers.elvitrinabackend.repository.UserRepository;
+import com.sudoers.elvitrinabackend.service.Image.ImageUploadService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +36,8 @@ public class StoreService implements IStoreService{
     private UserRepository userRepository;
     @Autowired
     private StoreFeedBackRepository storeFeedBackRepository;
+    @Autowired
+    private ImageUploadService imageUploadService;
 
     @Transactional
     public StoreDTO createStore(StoreDTO storeDTO) {
@@ -317,5 +322,24 @@ public class StoreService implements IStoreService{
     @Transactional(readOnly = true)
     public String getStoreNameById(Long id) {
         return storeRepository.findStoreNameById(id);
+    }
+
+    @Transactional
+    public void addImageToStore(Long storeId, MultipartFile imageFile) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new EntityNotFoundException("Store not found"));
+
+        String imageUrl = imageUploadService.uploadImage(imageFile);
+        store.setImage(imageUrl); // Store the image URL
+        storeRepository.save(store);
+    }
+
+    @Transactional
+    public void removeImageFromStore(Long storeId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new EntityNotFoundException("Store not found"));
+
+        store.setImage(null); // Remove the image
+        storeRepository.save(store);
     }
 }

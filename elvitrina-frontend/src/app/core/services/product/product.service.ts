@@ -6,6 +6,7 @@ import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Product } from '../../models/product/product.model';
 import { ProductCategoryType } from '../../models/product/product-category-type.enum';
+import { Page } from '../../models/page.model';
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +46,20 @@ export class ProductService {
       .pipe(catchError(this.handleError));
   }
 
+  // Image handling
+  uploadImage(productId: number, imageFile: File): Observable<void> {
+    const formData = new FormData();
+    formData.append('file', imageFile);
+
+    return this.http.post<void>(`${this.apiUrl}/${productId}/images`, formData)
+      .pipe(catchError(this.handleError));
+  }
+
+  removeImage(productId: number, imageUrl: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${productId}/images?imageUrl=${imageUrl}`)
+      .pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.error('API Error:', error);
     let errorMessage = 'An error occurred';
@@ -72,5 +87,11 @@ export class ProductService {
   // Search products by name
   searchProducts(query: string): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.apiUrl}/search?name=${query}`);
+  }
+
+  // Get paginated products
+  getPaginatedProducts(page: number, size: number): Observable<Page<Product>> {
+    const params = { page: page.toString(), size: size.toString() };
+    return this.http.get<Page<Product>>(`${this.apiUrl}/paginated`, { params });
   }
 }

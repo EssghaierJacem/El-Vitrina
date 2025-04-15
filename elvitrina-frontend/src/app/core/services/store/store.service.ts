@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { Store } from '../../models/store/store.model';
 import { StoreCategoryType } from '../../models/store/store-category-type.enum';
 import { StoreStatsDTO } from '../../models/store/Store-stats.dto';
+import { Page } from '../../models/page.model';
 
 @Injectable({ providedIn: 'root' })
 export class StoreService {
@@ -24,71 +25,13 @@ export class StoreService {
       .pipe(catchError(this.handleError));
   }
 
-  create(store: Partial<Store>): Observable<Store> {
-    // Validate required fields
-    if (!store.storeName?.trim()) {
-        return throwError(() => new Error('Store name is required'));
-    }
-    if (!store.category) {
-        return throwError(() => new Error('Category is required'));
-    }
-    if (!store.userId) {
-        return throwError(() => new Error('User ID is required'));
-    }
-    if (!store.address?.trim()) {
-        return throwError(() => new Error('Address is required'));
-    }
-
-    // Clean and prepare the data
-    const cleanStore = {
-        ...store,
-        storeName: store.storeName?.trim(),
-        description: store.description?.trim(),
-        address: store.address?.trim(),
-        image: store.image?.trim(),
-        category: store.category,
-        userId: store.userId,
-        status: store.status ?? true,
-        featured: store.featured ?? false
-    };
-
-    console.log('Sending store data to backend:', JSON.stringify(cleanStore, null, 2));
-
-    return this.http.post<Store>(this.apiUrl, cleanStore).pipe(
-        catchError((error: HttpErrorResponse) => {
-            console.error('Error creating store:', error);
-            console.error('Error details:', {
-                status: error.status,
-                statusText: error.statusText,
-                error: error.error,
-                headers: error.headers
-            });
-            
-            let errorMessage = 'An error occurred while creating the store';
-            
-            if (error.error instanceof ErrorEvent) {
-                // Client-side error
-                errorMessage = error.error.message;
-            } else {
-                // Server-side error
-                if (error.error?.message) {
-                    errorMessage = error.error.message;
-                } else if (error.status === 400) {
-                    errorMessage = 'Invalid data provided';
-                } else if (error.status === 404) {
-                    errorMessage = 'User not found';
-                } else if (error.status === 500) {
-                    errorMessage = 'Server error: ' + (error.error?.message || 'Unknown server error');
-                }
-            }
-            
-            return throwError(() => ({ message: errorMessage, error }));
-        })
-    );
+  create(storeData: FormData): Observable<Store> {
+    return this.http.post<Store>(this.apiUrl, storeData)
+      .pipe(catchError(this.handleError));
   }
 
-  update(id: number, store: Store): Observable<Store> {
-    return this.http.put<Store>(`${this.apiUrl}/${id}`, store)
+  update(id: number, storeData: FormData): Observable<Store> {
+    return this.http.put<Store>(`${this.apiUrl}/${id}`, storeData)
       .pipe(catchError(this.handleError));
   }
 
@@ -97,17 +40,18 @@ export class StoreService {
       .pipe(catchError(this.handleError));
   }
 
-  // Additional methods from your Spring Boot service
-  getStoreCategories(): StoreCategoryType[] {
-    return Object.values(StoreCategoryType);
+  // Image handling
+  uploadImage(storeId: number, imageFile: File): Observable<void> {
+    const formData = new FormData();
+    formData.append('file', imageFile);
+
+    return this.http.post<void>(`${this.apiUrl}/${storeId}/images`, formData)
+      .pipe(catchError(this.handleError));
   }
 
-  toggleStoreStatus(id: number): Observable<void> {
-    return this.http.patch<void>(`${this.apiUrl}/${id}/status`, {});
-  }
-
-  getStoreStats(storeId: number): Observable<StoreStatsDTO> {
-    return this.http.get<StoreStatsDTO>(`${this.apiUrl}/stores/${storeId}/stats`);
+  removeImage(storeId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${storeId}/images`)
+      .pipe(catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {
@@ -127,5 +71,28 @@ export class StoreService {
     }
     
     return throwError(() => ({ message: errorMessage, error }));
+  }
+
+  // Additional methods from your Spring Boot service
+  getStoreCategories(): StoreCategoryType[] {
+    return Object.values(StoreCategoryType);
+  }
+
+  toggleStoreStatus(id: number): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${id}/status`, {});
+  }
+
+  getStoreStats(storeId: number): Observable<StoreStatsDTO> {
+    return this.http.get<StoreStatsDTO>(`${this.apiUrl}/stores/${storeId}/stats`);
+  }
+
+  getPaginatedStores(page: number, size: number): Observable<Page<Store>> {
+    const params = { page: page.toString(), size: size.toString() };
+    return this.http.get<Page<Store>>(`${this.apiUrl}/paginated`, { params })
+      .pipe(catchError(this.handleError));
+  }
+
+  getAllStores(): Observable<Store[]> {
+    return this.http.get<Store[]>(`${this.apiUrl}`);
   }
 }

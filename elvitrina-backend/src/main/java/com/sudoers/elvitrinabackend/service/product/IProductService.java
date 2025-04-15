@@ -8,6 +8,7 @@ import com.sudoers.elvitrinabackend.model.enums.ProductCategoryType;
 import com.sudoers.elvitrinabackend.model.enums.ProductStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public interface IProductService {
     List<ProductDTO> bulkUpdateStatus(List<Long> productIds, ProductStatus status);
 
     // Image Handling
-    ProductDTO addImageToProduct(Long productId, String imageUrl);
+    ProductDTO addImageToProduct(Long productId, MultipartFile imageFile);
     ProductDTO removeImageFromProduct(Long productId, String imageUrl);
 
     // Advanced Status Management

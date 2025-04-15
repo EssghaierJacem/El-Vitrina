@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { StoreFeedback } from '../../models/storeFeedback/store-feedback.model';
 import { StoreFeedbackType } from '../../models/storeFeedback/store-feedback-type.enum';
 import { StoreStatsDTO } from '../../models/store/Store-stats.dto';
+import { Page } from '../../models/page.model';
 
 @Injectable({ providedIn: 'root' })
 export class StoreFeedbackService {
@@ -67,6 +68,11 @@ export class StoreFeedbackService {
 
   getStoreStats(storeId: number): Observable<StoreStatsDTO> {
     return this.http.get<StoreStatsDTO>(`${this.apiUrl}/stores/${storeId}/stats`);
+  }
+
+  getPaginatedFeedbacks(page: number, size: number, searchTerm: string): Observable<Page<StoreFeedback>> {
+    const params = { page: page.toString(), size: size.toString(), searchTerm };
+    return this.http.get<Page<StoreFeedback>>(`${this.apiUrl}`, { params });
   }
 
   private handleError(error: HttpErrorResponse) {

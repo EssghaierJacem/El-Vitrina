@@ -14,6 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,8 +43,42 @@ public class StoreController {
         return ResponseEntity.ok(storeService.getAllStores());
     }
 
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<StoreDTO>> getAllStoresPaginated(
+            @PageableDefault(size = 10, sort = "storeName", direction = Sort.Direction.ASC) Pageable pageable) {
+        Page<StoreDTO> storesPage = storeService.getAllStoresPaginated(pageable);
+        return ResponseEntity.ok(storesPage);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<StoreDTO> updateStore(@PathVariable Long id, @RequestBody StoreDTO storeDTO) {
+    public ResponseEntity<StoreDTO> updateStore(
+            @PathVariable Long id,
+            @RequestParam Map<String, MultipartFile> files,
+            @RequestParam String storeName,
+            @RequestParam String description,
+            @RequestParam String category,
+            @RequestParam String address,
+            @RequestParam boolean status,
+            @RequestParam boolean featured) {
+        StoreDTO storeDTO = new StoreDTO();
+        storeDTO.setStoreName(storeName);
+        storeDTO.setDescription(description);
+        storeDTO.setCategory(category);
+        storeDTO.setAddress(address);
+        storeDTO.setStatus(status);
+        storeDTO.setFeatured(featured);
+
+        // Handle file uploads if necessary
+        if (files.containsKey("image")) {
+            MultipartFile imageFile = files.get("image");
+            // Process the image file (e.g., save it to the server)
+        }
+        if (files.containsKey("coverImage")) {
+            MultipartFile coverImageFile = files.get("coverImage");
+            // Process the cover image file (e.g., save it to the server)
+        }
+
+        // Call the service to update the store
         return ResponseEntity.ok(storeService.updateStore(id, storeDTO));
     }
 
@@ -147,5 +182,17 @@ public class StoreController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(storeName);
+    }
+
+    @PostMapping("/{id}/images")
+    public ResponseEntity<Void> uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        storeService.addImageToStore(id, file);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}/images")
+    public ResponseEntity<Void> removeImage(@PathVariable Long id) {
+        storeService.removeImageFromStore(id);
+        return ResponseEntity.ok().build();
     }
 }

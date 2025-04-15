@@ -64,8 +64,8 @@ export class StoreEditComponent implements OnInit {
       description: ['', [Validators.maxLength(500)]],
       category: ['', Validators.required],
       address: ['', Validators.required],
-      image: [''],
-      coverImage: [''],
+      image: [null, Validators.required],
+      coverImage: [null, Validators.required],
       status: [true],
       featured: [false]
     });
@@ -74,7 +74,16 @@ export class StoreEditComponent implements OnInit {
   loadStore(id: number): void {
     this.storeService.getById(id).subscribe({
       next: (store) => {
-        this.storeForm.patchValue(store);
+        this.storeForm.patchValue({
+          storeName: store.storeName,
+          description: store.description,
+          category: store.category,
+          address: store.address,
+          status: store.status,
+          featured: store.featured,
+          image: null,
+          coverImage: null
+        });
       },
       error: (error) => {
         console.error('Error loading store:', error);
@@ -86,15 +95,48 @@ export class StoreEditComponent implements OnInit {
     });
   }
 
+  onImageSelected(event: Event, field: string): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.storeForm.get(field)?.setValue(file);
+    }
+  }
+
+  onFileSelected(event: Event, fieldName: string): void {
+    const input = event.target as HTMLInputElement;
+    if (input?.files?.length) {
+      const file = input.files[0];
+      this.storeForm.patchValue({ [fieldName]: file });
+      this.storeForm.get(fieldName)?.updateValueAndValidity();
+    }
+  }
+
   onSubmit(): void {
     if (this.storeForm.valid && !this.isSubmitting && this.storeId) {
       this.isSubmitting = true;
       
-      const storeData = this.storeForm.value;
-
-      this.storeService.update(this.storeId, storeData).subscribe({
+      const formData = new FormData();
+      const formValue = this.storeForm.value;
+  
+      // Append all form values to FormData
+      formData.append('storeName', formValue.storeName?.trim());
+      formData.append('description', formValue.description?.trim());
+      formData.append('category', formValue.category);
+      formData.append('address', formValue.address?.trim());
+      formData.append('status', formValue.status);
+      formData.append('featured', formValue.featured);
+  
+      // Append image files if they exist
+      if (formValue.image instanceof File) {
+        formData.append('image', formValue.image);
+      }
+      if (formValue.coverImage instanceof File) {
+        formData.append('coverImage', formValue.coverImage);
+      }
+  
+      this.storeService.update(this.storeId, formData).subscribe({
         next: (response) => {
-          console.log('Store updated successfully:', response);
           this.snackBar.open('Store updated successfully', 'Close', {
             duration: 3000
           });
@@ -111,9 +153,6 @@ export class StoreEditComponent implements OnInit {
     } else {
       Object.keys(this.storeForm.controls).forEach(key => {
         const control = this.storeForm.get(key);
-        if (control?.errors) {
-          console.log(`Validation errors for ${key}:`, control.errors);
-        }
         control?.markAsTouched();
       });
     }

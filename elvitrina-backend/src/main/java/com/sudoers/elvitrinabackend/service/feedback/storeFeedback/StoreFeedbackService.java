@@ -10,6 +10,9 @@ import com.sudoers.elvitrinabackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,11 +57,17 @@ public class StoreFeedbackService implements IStoreFeedbackService {
 
 
     @Override
-    @Transactional(readOnly = true)
-    public List<StoreFeedbackDTO> getAllStoreFeedbacks() {
-        return storeFeedbackRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public Page<StoreFeedbackDTO> getAllStoreFeedbacks(int page, int size, String searchTerm) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<StoreFeedback> feedbackPage;
+
+        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+            feedbackPage = storeFeedbackRepository.findBySearchTerm(searchTerm.trim(), pageable);
+        } else {
+            feedbackPage = storeFeedbackRepository.findAll(pageable);
+        }
+
+        return feedbackPage.map(this::convertToDTO);
     }
 
     @Override
@@ -117,7 +126,6 @@ public class StoreFeedbackService implements IStoreFeedbackService {
                 .userImage(user != null ? user.getImage() : null)
                 .build();
     }
-
 
     @Transactional(readOnly = true)
     public List<StoreFeedbackDTO> getFeedbacksByStoreId(Long storeId) {

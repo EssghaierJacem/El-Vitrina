@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
+import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
@@ -51,24 +51,34 @@ export class ProductListComponent implements OnInit {
   displayedColumns = ['productId', 'productName', 'price', 'stockQuantity', 'category', 'status', 'actions'];
   searchText = '';
   categories: ProductCategoryType[] = Object.values(ProductCategoryType);
+  pageIndex = 0;
+  pageSize = 10;
+  totalProducts = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private productService: ProductService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) {
     this.dataSource = new MatTableDataSource<Product>([]);
   }
 
   ngOnInit(): void {
-    this.loadProducts();
+    this.loadPaginatedProducts();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.paginator && !this.dataSource.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
   }
 
   loadProducts() {
@@ -89,9 +99,31 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  applyFilter() {
-    const filterValue = this.searchText.toLowerCase();
-    this.dataSource.filter = filterValue.trim();
+  loadPaginatedProducts(): void {
+    this.isLoading = true;
+    this.productService.getPaginatedProducts(this.pageIndex, this.pageSize).subscribe({
+      next: (response) => {
+        this.dataSource.data = response.content;
+        this.totalProducts = response.totalElements;
+        this.isLoading = false;
+        this.cdr.detectChanges(); // Manually trigger change detection to avoid ExpressionChangedAfterItHasBeenCheckedError
+      },
+      error: (error) => {
+        console.error('Error loading products:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadPaginatedProducts();
+  }
+
+  applyFilter(): void {
+    const filterValue = this.searchText.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();

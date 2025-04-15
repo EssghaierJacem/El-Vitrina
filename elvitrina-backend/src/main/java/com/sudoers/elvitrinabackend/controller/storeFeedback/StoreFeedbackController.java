@@ -3,6 +3,7 @@ package com.sudoers.elvitrinabackend.controller.storeFeedback;
 import com.sudoers.elvitrinabackend.model.dto.StoreFeedbackDTO;
 import com.sudoers.elvitrinabackend.service.feedback.storeFeedback.IStoreFeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +24,11 @@ public class StoreFeedbackController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StoreFeedbackDTO>> getAllStoreFeedbacks() {
-        List<StoreFeedbackDTO> feedbacks = storeFeedbackService.getAllStoreFeedbacks();
+    public ResponseEntity<Page<StoreFeedbackDTO>> getAllStoreFeedbacks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String searchTerm) {
+        Page<StoreFeedbackDTO> feedbacks = storeFeedbackService.getAllStoreFeedbacks(page, size, searchTerm);
         return ResponseEntity.ok(feedbacks);
     }
 
