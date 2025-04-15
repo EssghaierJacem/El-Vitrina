@@ -1,18 +1,23 @@
 <div class="messages-container">
-    <div class="friends-list">
+  <div class="friends-list">
+    <div class="friends-header">
       <h3>Chats</h3>
       <div class="search-box">
-        <input type="text" [(ngModel)]="searchTerm" placeholder="Search friends...">
+        <i class="fa fa-search search-icon"></i>
+        <input type="text" [(ngModel)]="searchTerm" placeholder="Search conversations...">
       </div>
+    </div>
+
+    <div class="friends-scroll-container">
       <div *ngFor="let friend of filteredFriends" 
            class="friend-item" 
-           [ngClass]="{'selected': selectedFriend?.id === friend.id}"
+           [ngClass]="{'selected': selectedFriend?.id === friend.id, 'unread': friend.unreadCount > 0}"
            (click)="openChat(friend)">
         <div class="avatar-container">
           <img [src]="friend.image || 'assets/images/default-avatar.png'" 
                (error)="onImageError($event)" 
                alt="Profile picture">
-            <div class="status-indicator" [ngClass]="friend.isOnline ? 'online' : 'offline'"></div>
+          <div class="status-indicator" [ngClass]="friend.isOnline ? 'online' : 'offline'"></div>
         </div>
         <div class="friend-info">
           <div class="friend-name">
@@ -22,86 +27,107 @@
             {{ (friend.lastMessage.length > 20) ? (friend.lastMessage | slice:0:20) + '...' : friend.lastMessage }}
           </div>
         </div>
-        <div class="message-time" *ngIf="friend.lastMessageTime">
-          {{ friend.lastMessageTime | date:'shortTime' }}
-        </div>
-        <div class="unread-badge" *ngIf="friend.unreadCount > 0">
-          {{ friend.unreadCount }}
+        <div class="message-meta">
+          <div class="message-time" *ngIf="friend.lastMessageTime">
+            {{ friend.lastMessageTime | date:'shortTime' }}
+          </div>
+          <div class="unread-badge" *ngIf="friend.unreadCount > 0">
+            {{ friend.unreadCount }}
+          </div>
         </div>
       </div>
       <div *ngIf="friends.length === 0" class="no-friends">
-        No friends found. Add friends to start chatting!
+        <i class="fa fa-user-plus"></i>
+        <p>No friends found. Add friends to start chatting!</p>
       </div>
     </div>
-  
-    <div class="chat-window" *ngIf="selectedFriend">
-      <div class="chat-header">
-        <div class="friend-profile">
-          <img [src]="selectedFriend.image || 'assets/images/default-avatar.png'" 
-               (error)="onImageError($event)" 
-               alt="Profile picture">
-          <div class="header-info">
-            <div class="header-name">{{ selectedFriend.firstname }} {{ selectedFriend.lastname }}</div>
-            <div class="header-status">{{ selectedFriend.isOnline ? 'Online' : 'Offline' }}</div>
+  </div>
+
+  <!-- Chat Window -->
+  <div class="chat-window" *ngIf="selectedFriend">
+    <div class="chat-header">
+      <div class="friend-profile">
+        <img [src]="selectedFriend.image || 'assets/images/default-avatar.png'" 
+             (error)="onImageError($event)" 
+             alt="Profile picture">
+        <div class="header-info">
+          <div class="header-name">{{ selectedFriend.firstname }} {{ selectedFriend.lastname }}</div>
+          <div class="header-status" [ngClass]="selectedFriend.isOnline ? 'status-online' : 'status-offline'">
+            <span class="status-dot"></span>
+            {{ selectedFriend.isOnline ? 'Online' : 'Offline' }}
           </div>
         </div>
-        <div class="header-actions">
-          <button class="action-btn"><i class="fa fa-phone"></i></button>
-          <button class="action-btn"><i class="fa fa-video"></i></button>
-          <button class="action-btn"><i class="fa fa-info-circle"></i></button>
-        </div>
       </div>
-  
-      <div class="chat-messages" #messageContainer>
+      <div class="header-actions">
+        <button class="action-btn" title="Call"><i class="fa fa-phone"></i></button>
+        <button class="action-btn" title="Video call"><i class="fa fa-video"></i></button>
+        <button class="action-btn" title="Info"><i class="fa fa-info-circle"></i></button>
+      </div>
+    </div>
+
+    <div class="chat-messages" #messageContainer>
+      <div class="messages-scroll-area">
         <div class="date-separator" *ngIf="conversation.length > 0">
           {{ getMessageDate(conversation[0]) | date:'mediumDate' }}
         </div>
-  
+
         <div *ngFor="let msg of conversation; let i = index">
           <!-- Date separator when day changes -->
           <div class="date-separator" *ngIf="i > 0 && showDateSeparator(conversation[i-1], msg)">
             {{ getMessageDate(msg) | date:'mediumDate' }}
           </div>
-  
+
           <div class="message-wrapper" [ngClass]="{'from-me': msg.senderId === userId, 'from-them': msg.senderId !== userId}">
-            <div class="message-content">
-              {{ msg.content }}
-              <div class="timestamp">
-                {{ msg.sentAt | date:'shortTime' }}
+            <div class="message-bubble">
+              <div class="message-content">
+                {{ msg.content }}
+              </div>
+              <div class="message-footer">
+                <span class="timestamp">{{ msg.sentAt | date:'shortTime' }}</span>
                 <span class="status-icon" *ngIf="msg.senderId === userId">
-                  <i class="fa" [ngClass]="{'fa-check': msg.delivered, 'fa-check-double': msg.read}"></i>
+                  <i class="fa" [ngClass]="{'fa-check': msg.delivered && !msg.read, 'fa-check-double': msg.read}"></i>
                 </span>
               </div>
             </div>
           </div>
         </div>
-  
+
         <div *ngIf="isTyping" class="typing-indicator">
           <div class="typing-dot"></div>
           <div class="typing-dot"></div>
           <div class="typing-dot"></div>
         </div>
       </div>
-  
-      <div class="chat-input">
-        <button class="input-action"><i class="fa fa-paperclip"></i></button>
+    </div>
+
+    <div class="chat-input">
+      <div class="input-actions">
+        <button class="input-action" title="Attach file"><i class="fa fa-paperclip"></i></button>
+        <button class="input-action" title="Send photo"><i class="fa fa-camera"></i></button>
+      </div>
+      <div class="message-input-container">
         <input [(ngModel)]="messageContent" 
                placeholder="Type a message..." 
                (keyup.enter)="sendMessage()"
                (focus)="markAsRead()"
                (input)="onInputChange()">
-        <button class="emoji-btn"><i class="fa fa-smile"></i></button>
-        <button class="send-btn" (click)="sendMessage()" [disabled]="!messageContent.trim()">
-          <i class="fa fa-paper-plane"></i>
-        </button>
+        <button class="emoji-btn" title="Add emoji"><i class="fa fa-smile"></i></button>
       </div>
-    </div>
-  
-    <div class="empty-state" *ngIf="!selectedFriend">
-      <div class="empty-icon">
-        <i class="fa fa-comments"></i>
-      </div>
-      <h3>Select a conversation</h3>
-      <p>Choose a friend from the list to start chatting</p>
+      <button class="send-btn" (click)="sendMessage()" [disabled]="!messageContent.trim()" title="Send message">
+        <i class="fa fa-paper-plane"></i>
+      </button>
     </div>
   </div>
+
+  <!-- Empty State when no conversation is selected -->
+  <div class="empty-state" *ngIf="!selectedFriend">
+    <div class="empty-illustration">
+      <i class="fa fa-comments"></i>
+    </div>
+    <h3>Select a conversation</h3>
+    <p>Choose a friend from the list to start chatting</p>
+    <button class="new-chat-btn">
+      <i class="fa fa-plus"></i> Start new chat
+    </button>
+  </div>
+</div>
