@@ -40,7 +40,7 @@ export class WebSocketService {
     });
   
     this.stompClient.onConnect = () => {
-      console.log('✅ WebSocket connected!');
+      //console.log('✅ WebSocket connected!');
       this.connectedSubject.next(true);
     
       if (this.subscriptionsInitialized) {
@@ -63,7 +63,7 @@ export class WebSocketService {
 
   subscribeToPrivateMessages(userId: number): void {
     if (!this.stompClient.connected) {
-      console.error(' Cannot subscribe: STOMP not connected yet!');
+      //console.error(' Cannot subscribe: STOMP not connected yet!');
       return;
     }
 
@@ -76,13 +76,13 @@ export class WebSocketService {
 
   subscribeToTypingIndicators(userId: number): void {
     if (!this.stompClient.connected) {
-      console.error('Cannot subscribe: STOMP not connected yet!');
+      //console.error('Cannot subscribe: STOMP not connected yet!');
       return;
     }
   
     this.stompClient.subscribe(`/queue/typing.${userId}`, (typing: IMessage) => {
       const typingData = JSON.parse(typing.body);
-      console.log('Typing received:', typingData);
+      //console.log('Typing received:', typingData);
       this.typingSubject.next(typingData);
     });
   }
@@ -101,14 +101,12 @@ export class WebSocketService {
       destination: '/app/chat',
       body: JSON.stringify(msg)
     });
-  
-    console.log("Sending WebSocket message:", msg);
-  }
+  }  
   
 
   sendTypingIndicator(senderId: number, receiverId: number, isTyping: boolean): void {
     const typing: Typing = { senderId, receiverId, typing: isTyping };
-    console.log("Sending typing:", typing);
+    //console.log("Sending typing:", typing);
   
     this.stompClient.publish({
       destination: '/app/typing',
@@ -133,13 +131,13 @@ export class WebSocketService {
     return this.http.post<void>(`${this.apiUrl}/mark-as-read`, messageIds);
   }
 
-  sendAndStoreMessage(senderId: number, receiverId: number, content: string): Observable<Message> {
-    return this.http.post<Message>(`${this.apiUrl}/store`, {
-      senderId,
-      receiverId,
-      content
-    });
-  }
+  // sendAndStoreMessage(senderId: number, receiverId: number, content: string): Observable<Message> {
+  //   return this.http.post<Message>(`${this.apiUrl}/store`, {
+  //     senderId,
+  //     receiverId,
+  //     content
+  //   });
+  // }
 
   disconnect(): void {
     if (this.stompClient.active) {
@@ -169,7 +167,7 @@ export class WebSocketService {
     };
   
     this.stompClient.onStompError = (frame) => {
-      console.error('STOMP error:', frame.headers['message'], frame.body);
+     // console.error('STOMP error:', frame.headers['message'], frame.body);
     };
   
     this.stompClient.activate();
@@ -180,7 +178,7 @@ export class WebSocketService {
   subscribeToOnlineUsers(): void {
     this.stompClient.subscribe('/topic/online-users', (message: IMessage) => {
       const ids: number[] = JSON.parse(message.body);
-      console.log(' Online users received from backend:', ids);
+      //console.log(' Online users received from backend:', ids);
       this.onlineUsersSubject.next(ids);
     });    
   }

@@ -28,6 +28,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
   searchTerm = '';
   unreadCounts: { [key: number]: number } = {};
   shouldScrollToBottom = false;
+  loadedMessageIds: Set<number> = new Set();
 
   constructor(
     private wsService: WebSocketService,
@@ -44,48 +45,54 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
     }
   
     this.userId = decoded.id;
+  
     this.wsService.connect(() => {
       this.wsService.subscribeToTypingIndicators(this.userId);
+      this.wsService.subscribeToPrivateMessages(this.userId);
+      this.wsService.subscribeToOnlineUsers();
     });
+    
   
     this.wsService.messageReceived$.subscribe((message) => {
+      if (!message) return;
+    
       if (message.senderId !== this.userId) {
-        if (!this.selectedFriend || message.senderId !== this.selectedFriend.id) {
-          this.unreadCounts[message.senderId] = (this.unreadCounts[message.senderId] || 0) + 1;
+        const senderId = message.senderId;
+    
+        if (!this.selectedFriend || senderId !== this.selectedFriend.id) {
+          this.unreadCounts[senderId] = (this.unreadCounts[senderId] || 0) + 1;
+    
+          const friend = this.friends.find(f => f.id === senderId);
+          if (friend) {
+            friend.unreadCount = this.unreadCounts[senderId];
+          }
         } else {
           this.markAsRead();
           this.shouldScrollToBottom = true;
         }
       }
-  
-      if (
-        this.selectedFriend &&
-        (message.senderId === this.selectedFriend.id || message.receiverId === this.selectedFriend.id)
-      ) {
+    
+      const isParticipant = this.selectedFriend &&
+        (message.senderId === this.selectedFriend.id || message.receiverId === this.selectedFriend.id);
+    
+      if (isParticipant) {
         this.conversation.push(message);
         this.shouldScrollToBottom = true;
       }
-  
+    
       this.updateFriendLastMessage(message);
     });
+    
+    
   
     this.wsService.typingIndicator$.subscribe(data => {
       if (this.selectedFriend && data.senderId === this.selectedFriend.id) {
-        console.log('✏️ Typing received from:', data.senderId);
         this.isTyping = data.typing;
-    
-        this.cd.detectChanges();
-        // if (this.isTyping) {
-        //   if (this.typingTimeout) clearTimeout(this.typingTimeout);
-        //   this.typingTimeout = setTimeout(() => this.isTyping = false, 3000);
-        // }
       }
     });
   
     this.loadFriends();
   }
-  
-  
 
   ngAfterViewChecked() {
     if (this.shouldScrollToBottom) {
@@ -216,43 +223,34 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
 
   loadConversation(friendId: number): void {
     this.wsService.getConversation(this.userId, friendId).subscribe(
-      (conversation) => {
-        this.conversation = conversation;
-        this.conversation.sort((a, b) => 
-          new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime()
-        );
+      (conversation: any[]) => {
+        const mapped = conversation.map(m => ({
+          id: m.id,
+          senderId: m.sender?.id,         
+          receiverId: m.receiver?.id,    
+          content: m.content,
+          sentAt: m.sentAt,
+          read: m.read,
+          delivered: m.delivered ?? false
+        }));
+    
+        this.conversation = mapped;
+        this.conversation.sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime());
         this.shouldScrollToBottom = true;
       },
       (error) => {
         console.error('Error loading conversation:', error);
         this.conversation = [];
       }
-    );
+    );  
   }
 
   sendMessage(): void {
     const content = this.messageContent.trim();
     if (!content || !this.selectedFriend) return;
   
-    this.wsService.sendAndStoreMessage(this.userId, this.selectedFriend.id, content).subscribe({
-      next: (savedMessage) => {
-        this.conversation.push(savedMessage);
-        
-        this.wsService.sendMessage(
-          this.userId,
-          this.selectedFriend.id,
-          savedMessage.content
-        );
-        
-        this.updateFriendLastMessage(savedMessage);
-        
-        this.messageContent = '';
-        this.shouldScrollToBottom = true;
-      },
-      error: (err) => {
-        console.error('Failed to store/send message:', err);
-      }
-    });
+    this.wsService.sendMessage(this.userId, this.selectedFriend.id, content);
+    this.messageContent = '';
   }
 
   markAsRead(): void {

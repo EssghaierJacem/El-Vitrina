@@ -53,12 +53,12 @@ public class MessageService {
         return messageRepository.findConversationBetweenUsers(senderId, receiverId);
     }
 
-    public void markMessagesAsRead(List<Long> messageIds) {
+    public List<Message> markMessagesAsRead(List<Long> messageIds) {
         List<Message> messages = messageRepository.findAllById(messageIds);
         for (Message message : messages) {
             message.setRead(true);
         }
-        messageRepository.saveAll(messages);
+        return messageRepository.saveAll(messages);
     }
 
     public Message getLastMessageBetween(Long user1, Long user2) {

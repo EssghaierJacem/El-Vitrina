@@ -25,6 +25,9 @@
         <div class="message-time" *ngIf="friend.lastMessageTime">
           {{ friend.lastMessageTime | date:'shortTime' }}
         </div>
+        <div class="unread-badge" *ngIf="friend.unreadCount > 0">
+          {{ friend.unreadCount }}
+        </div>
       </div>
       <div *ngIf="friends.length === 0" class="no-friends">
         No friends found. Add friends to start chatting!
