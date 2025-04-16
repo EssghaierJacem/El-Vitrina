@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
+
 @RequestMapping("/api/stores")
 @RequiredArgsConstructor
 public class StoreController {

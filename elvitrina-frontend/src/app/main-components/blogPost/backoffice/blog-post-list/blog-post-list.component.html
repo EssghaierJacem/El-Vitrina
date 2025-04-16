@@ -1,0 +1,91 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+
+    <!-- Titre + bouton ajouter -->
+    <div class="d-flex justify-content-between align-items-center m-b-16">
+      <mat-card-title>Blog Posts</mat-card-title>
+      <button mat-raised-button color="primary" [routerLink]="['create']">
+        <mat-icon>add</mat-icon>
+        Add Post
+      </button>
+    </div>
+
+    <!-- Champ de recherche + export -->
+    <div class="d-flex justify-content-between align-items-center m-b-16">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Search</mat-label>
+        <input matInput [(ngModel)]="searchText" (keyup)="applyFilter()" placeholder="Search posts...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <button mat-icon-button color="primary" (click)="exportToPDF()" matTooltip="Export to PDF">
+        <mat-icon>file_download</mat-icon>
+      </button>
+    </div>
+
+    <!-- Loading Spinner -->
+    @if (isLoading) {
+      <div class="d-flex justify-content-center m-t-16">
+        <mat-spinner></mat-spinner>
+      </div>
+    } 
+      
+      @else {
+
+      <!-- Table responsive -->
+      <div class="table-responsive">
+        <table mat-table [dataSource]="blogPosts" matSort class="w-100">
+
+          <!-- Auteur -->
+          <ng-container matColumnDef="user">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Author</th>
+            <td mat-cell *matCellDef="let post">{{ post.user?.firstname }} {{ post.user?.lastname }}</td>
+          </ng-container>
+
+          <!-- Titre -->
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
+            <td mat-cell *matCellDef="let post">{{ post.title }}</td>
+          </ng-container>
+
+          <!-- Date -->
+<ng-container matColumnDef="createdAt">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+  <td mat-cell *matCellDef="let post">
+    {{ (post.updatedAt || post.createdAt) | date:'short' }}
+  </td>
+</ng-container>
+
+
+          <!-- Nombre de commentaires -->
+          <ng-container matColumnDef="comments">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Comments</th>
+            <td mat-cell *matCellDef="let post">{{ post.comments?.length || 0 }}</td>
+          </ng-container>
+
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let post">
+              <button mat-icon-button [routerLink]="[post.id, 'edit']" matTooltip="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button [routerLink]="[post.id]" matTooltip="View Details">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button (click)="deleteBlogPost(post.id!)" matTooltip="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- Ligne d'en-tête + lignes -->
+          <tr mat-header-row *matHeaderRowDef="['user', 'title', 'createdAt', 'comments', 'actions']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['user', 'title', 'createdAt', 'comments', 'actions'];"></tr>
+
+        </table>
+      </div>
+    }
+
+  </mat-card-content>
+</mat-card>

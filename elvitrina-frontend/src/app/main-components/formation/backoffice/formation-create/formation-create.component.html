@@ -1,0 +1,78 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+      <div class="d-flex justify-content-between align-items-center m-b-16">
+        <div class="d-flex align-items-center">
+          <button mat-icon-button color="primary" [routerLink]="['../']">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <mat-card-title>Create Formation</mat-card-title>
+        </div>
+      </div>
+  
+      <form [formGroup]="formationForm" (ngSubmit)="onSubmit()" class="m-t-16">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Course Title</mat-label>
+          <input matInput formControlName="courseTitle" required>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="3"></textarea>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="formationCategory" required>
+            <mat-option *ngFor="let category of categories" [value]="category">
+              {{ category }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Duration (hours)</mat-label>
+          <input matInput type="number" formControlName="duration" required>
+        </mat-form-field>
+  
+        <mat-checkbox formControlName="certificateAvailable" color="primary">
+          Certificate Available
+        </mat-checkbox>
+  
+        <mat-form-field appearance="outline" class="w-100" >
+          <mat-label>Langue</mat-label>
+          <mat-select formControlName="language" required>
+            <mat-option *ngFor="let language of languages" [value]="language">
+              {{ language }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Price (USD)</mat-label>
+          <input matInput type="number" formControlName="price" required>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Level</mat-label>
+          <mat-select formControlName="level" required>
+            <mat-option *ngFor="let level of levels" [value]="level">
+              {{ level }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <div class="d-flex justify-content-end gap-2 m-t-16">
+          <button mat-button type="button" (click)="resetForm()" [disabled]="isSubmitting">
+            Cancel
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="formationForm.invalid || isSubmitting">
+            <ng-container *ngIf="isSubmitting; else createLabel">
+              <mat-spinner diameter="20"></mat-spinner>
+            </ng-container>
+            <ng-template #createLabel>Create Formation</ng-template>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+  
