@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -41,6 +41,9 @@ export class PayementCreationComponent  implements OnInit {
     orderIds: []
   };
   today: Date = new Date();
+  @Output() paymentCreated = new EventEmitter<boolean>();
+  @Output() methodSelected = new EventEmitter<PaymentMethodType>();
+
 
 
   paymentMethods = [
@@ -71,10 +74,11 @@ export class PayementCreationComponent  implements OnInit {
 
     createPayment() {
       console.log('Sending payment:', this.payment);
-      
+
       this.paymentService.createPayment(this.payment).subscribe({
-        next: () => this.router.navigate(['/dashboard/payment/list']),
         error: (err) => console.error('Error creating payment:', err)
       });
+      this.paymentCreated.emit(true);
+  this.methodSelected.emit(this.payment.method);
     }
 }

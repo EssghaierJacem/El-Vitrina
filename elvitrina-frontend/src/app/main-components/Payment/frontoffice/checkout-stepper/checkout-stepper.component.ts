@@ -48,7 +48,7 @@ export class CheckoutStepperComponent implements OnInit {
   creditCardFormGroup: FormGroup;
 
   // Méthode de paiement sélectionnée dynamiquement
-  selectedPaymentMethod!: PaymentMethodType;
+  selectedPaymentMethod: PaymentMethodType = PaymentMethodType.CASHONDELIVER;
   PaymentMethodType = PaymentMethodType;
 
   // Flag pour savoir si le paiement est créé
@@ -75,6 +75,7 @@ export class CheckoutStepperComponent implements OnInit {
     console.log('CheckoutStepperComponent INIT');
   }
 
+  // Met à jour l'adresse en fonction de la carte
   handleMapAddress(address: string) {
     const formGroup = this.selectedPaymentMethod === PaymentMethodType.CASHONDELIVER
       ? this.personalInfoFormGroup
@@ -83,11 +84,15 @@ export class CheckoutStepperComponent implements OnInit {
     formGroup.get('address')?.setValue(address);
   }
 
-  // Événement déclenché après la création du paiement dans <app-payement-creation>
-  onPaymentCreated(payment: any): void {
-    this.paymentCreated = true;
-    this.selectedPaymentMethod = payment.method;
+  // Réceptionne le signal que le paiement est bien créé
+  onPaymentCreated(value: boolean): void {
+    this.paymentCreated = value;
+    console.log('Paiement marqué comme créé.');
+  }
 
-    console.log('Paiement créé avec méthode :', this.selectedPaymentMethod);
+  // Récupère la méthode de paiement sélectionnée
+  onPaymentMethodSelected(method: PaymentMethodType): void {
+    this.selectedPaymentMethod = method;
+    console.log('Méthode de paiement sélectionnée :', method);
   }
 }

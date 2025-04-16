@@ -3,7 +3,10 @@
   <mat-step [completed]="paymentCreated">
     <ng-template matStepLabel>Création du paiement</ng-template>
 
-    <app-payement-creation (paymentCreated)="onPaymentCreated($event)"></app-payement-creation>
+    <app-payement-creation
+    (paymentCreated)="onPaymentCreated($event)"
+    (methodSelected)="onPaymentMethodSelected($event)">
+  </app-payement-creation>
 
     <div class="step-actions">
       <button mat-raised-button color="primary" (click)="stepper.next()" [disabled]="!paymentCreated">
