@@ -3,9 +3,12 @@ import { BlankComponent } from './layouts/blank/blank.component';
 import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
 import { AdminGuard } from './main-components/user/adminGuard.component';
+import { NotFoundComponent } from './layouts/not-found/not-found.component';
+import { OauthSuccessComponent } from './main-components/user/oauth-success/oauth-success.component';
+import { RequestPersoCreateComponent } from './main-components/requestPerso/frontOffice/request-perso-create/request-perso-create.component';
 
-export const routes: Routes = [
-  {
+export const routes: Routes = [   
+  {  
     path: '',
     component: FrontComponent,
     children: [
@@ -15,7 +18,7 @@ export const routes: Routes = [
           import('./main-components/offer/frontoffice/frontoffice_offer.routes').then((m) => m.FrontOfferRoutes),
       },
       {
-        path: 'user',
+        path: 'users',
         loadChildren: () =>
           import('./main-components/user/frontoffice/frontuser.routes').then((m) => m.FrontUserRoutes),
       },
@@ -36,14 +39,25 @@ export const routes: Routes = [
           import('./main-components/friends/friend.routes').then((m) => m.FriendRoutes),
       },
       {
-        path: 'donations',
+        path: 'payment',
         loadChildren: () =>
-          import('./main-components/donation/frontoffice/donationfront.routes').then((m) => m.DONATION_FRONT_ROUTES),
+          import('./main-components/Payment/frontoffice/payment.routes').then((m) => m.PaymentsRoutes),
       },
       {
-        path: 'events',
+       path: 'quiz',
+         loadChildren: () =>
+          import('./main-components/Quiz/frontoffice/quizFront.routes').then((m) => m.QuizFrontRoutes),
+},
+
+      {
+        path: 'requestperso',
         loadChildren: () =>
-          import('./main-components/event/frontoffice/eventfront.routes').then((m) => m.EVENT_FRONT_ROUTES),
+          import('./main-components/requestPerso/frontOffice/frontoffice_requestPerso.routes').then((m) => m.RequestPersoCreate),
+      },
+      {
+        path: 'AdCreate',
+        loadChildren: () =>
+          import('./main-components/Ad/frontOffice/frontoffice_ad.routes').then((m) => m.AdCreate),
       },
 
       {
@@ -62,6 +76,7 @@ export const routes: Routes = [
 
     ],
   },
+
   {
     path: 'authentication',
     component: BlankComponent,
@@ -91,30 +106,18 @@ export const routes: Routes = [
       {
         path: 'custom-order',
         loadChildren: () =>
-          import('./main-components/custom-order/custom-order.routes').then(m => m.customOrderRoutes),
+          import('./main-components/custom-order/backOffice/custom-order.routes').then(m => m.customOrderRoutes),
       },
       {
         path: 'payment',
         loadChildren: () =>
-          import('./main-components/Payment/payment.routes').then(m => m.PaymentRoutes),
+          import('./main-components/Payment/backoffice/payment.routes').then(m => m.PaymentRoutes),
       },
       {
         path: 'quiz',
         loadChildren: () =>
-          import('./main-components/Quiz/quiz/quiz.routes').then(m => m.QuizRoutes),
+          import('./main-components/Quiz/backoffice/quiz.routes').then(m => m.QuizRoutes),
       },
-      {
-        path: 'question',
-        loadChildren: () =>
-          import('./main-components/Quiz/question/question.routes').then(m => m.QuestionRoutes),
-      },
-      {
-        path: 'reponse',
-        loadChildren: () =>
-          import('./main-components/Quiz/reponse/reponse.routes').then(m => m.ReponseRoutes),
-      },
-
-
       {
         path: 'users',
         loadChildren: () =>
@@ -165,14 +168,14 @@ export const routes: Routes = [
       },
 
       {
-        path: 'donations',
+        path: 'RequestPerso',
         loadChildren: () =>
-          import('./main-components/donation/backoffice/donationback.routes').then((m) => m.DONATION_BACK_ROUTES),
+          import('./main-components/requestPerso/BackOffice/backoffice_requestPerso.routes').then((m) => m.AdminRequests),
       },
       {
-        path: 'events',
+        path: 'AdAdmin',
         loadChildren: () =>
-          import('./main-components/event/backoffice/eventback.routes').then((m) => m.EVENT_BACK_ROUTES),
+          import('./main-components/Ad/backOffice/backoffice_ad.routes').then((m) => m.AdAdmin),
       },
 
       {
@@ -183,7 +186,10 @@ export const routes: Routes = [
     ],
   },
   {
-    path: '**',
-    redirectTo: 'authentication/error',
+    path: 'oauth-success',
+    component: OauthSuccessComponent
+  },
+  {
+    path: '**', component: NotFoundComponent
   },
 ];

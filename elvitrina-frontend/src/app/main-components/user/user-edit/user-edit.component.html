@@ -83,17 +83,30 @@
           <div class="d-flex justify-content-center align-items-center h-100 flex-column">
             <!-- Image Preview -->
             <img
-              [src]="user.image || '/assets/images/default-avatar.png'"
-              alt="User image"
-              class="rounded-circle shadow-sm mb-3"
-              width="150"
-              height="150"
-            />
-            
+            [src]="previewImageUrl()"
+            alt="User image"
+            class="rounded-circle shadow-sm mb-3"
+            width="150"
+            height="150"
+            style="cursor: pointer;"
+          />
+               
             <!-- Image URL Update Form Below the Image -->
             <mat-form-field appearance="outline" class="w-100 mb-0">
               <mat-label>Profile Image URL</mat-label>
-              <input matInput placeholder="Enter image URL" [(ngModel)]="user.image" />
+              <input
+              matInput
+              [(ngModel)]="user.image"
+              name="imageUrl"
+              placeholder="Enter image URL or upload"
+              (input)="isImageValid = true"
+            />
+
+            <button mat-icon-button matSuffix type="button" (click)="fileInput.click()" [disabled]="isUploading">
+              <mat-icon>upload</mat-icon>
+            </button>
+        
+            <input #fileInput type="file" (change)="onFileSelected($event)" hidden />
             </mat-form-field>
           </div>
         </div>

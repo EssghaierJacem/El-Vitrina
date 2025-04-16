@@ -1,7 +1,9 @@
 package com.sudoers.elvitrinabackend.controller.Quiz;
 
-import com.sudoers.elvitrinabackend.model.entity.Quiz;
-import com.sudoers.elvitrinabackend.service.Quizz.QuizService;
+import com.sudoers.elvitrinabackend.model.dto.AnswerRequestDTO;
+import com.sudoers.elvitrinabackend.model.dto.QuizDTO;
+
+import com.sudoers.elvitrinabackend.service.Quiz.IQuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,39 +14,38 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-
 @RequestMapping("/api/quizzes")
 public class QuizController {
-    private final QuizService quizService;
+
+    private final IQuizService quizService;
 
     @Autowired
-    public QuizController(QuizService quizService) {
+    public QuizController(IQuizService quizService) {
         this.quizService = quizService;
     }
 
     @PostMapping
-    public ResponseEntity<Quiz> createQuiz(@RequestBody Quiz quiz) {
-        Quiz createdQuiz = quizService.createQuiz(quiz);
+    public ResponseEntity<QuizDTO> createQuiz(@RequestBody QuizDTO quizDTO) {
+        QuizDTO createdQuiz = quizService.createQuiz(quizDTO);
         return new ResponseEntity<>(createdQuiz, HttpStatus.CREATED);
     }
 
-
     @GetMapping("/getById/{id}")
-    public ResponseEntity<Quiz> getQuizById(@PathVariable Long id) {
-        Optional<Quiz> quiz = quizService.getQuizById(id);
+    public ResponseEntity<QuizDTO> getQuizById(@PathVariable Long id) {
+        Optional<QuizDTO> quiz = quizService.getQuizById(id);
         return quiz.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @GetMapping
-    public ResponseEntity<List<Quiz>> getAllQuizzes() {
-        List<Quiz> quizzes = quizService.getAllQuizzes();
+    public ResponseEntity<List<QuizDTO>> getAllQuizzes() {
+        List<QuizDTO> quizzes = quizService.getAllQuizzes();
         return ResponseEntity.ok(quizzes);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Quiz> updateQuiz(@PathVariable Long id, @RequestBody Quiz quiz) {
-        Quiz updatedQuiz = quizService.updateQuiz(id, quiz);
+    public ResponseEntity<QuizDTO> updateQuiz(@PathVariable Long id, @RequestBody QuizDTO quizDTO) {
+        QuizDTO updatedQuiz = quizService.updateQuiz(id, quizDTO);
         return updatedQuiz != null ? ResponseEntity.ok(updatedQuiz)
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
@@ -54,4 +55,10 @@ public class QuizController {
         quizService.deleteQuiz(id);
         return ResponseEntity.noContent().build();
     }
+    @PostMapping("/{id}/answer")
+    public ResponseEntity<String> saveUserAnswer(@PathVariable Long id, @RequestBody AnswerRequestDTO userAnswer) {
+        quizService.saveUserAnswer(id, userAnswer);
+        return ResponseEntity.ok("User answer saved successfully");
+    }
+
 }

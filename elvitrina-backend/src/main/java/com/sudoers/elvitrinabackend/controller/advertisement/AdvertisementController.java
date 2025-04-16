@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/ads")
+@RequestMapping("/api/adsss")
 public class AdvertisementController {
 
     @Autowired

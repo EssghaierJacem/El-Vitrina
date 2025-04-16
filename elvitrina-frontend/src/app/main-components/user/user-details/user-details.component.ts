@@ -38,6 +38,7 @@ export class UserDetailsComponent implements OnInit {
   user: User = {} as User;
   isLoading = true;
   isEditing = false;
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
 
   constructor(
     private route: ActivatedRoute,
@@ -78,5 +79,17 @@ export class UserDetailsComponent implements OnInit {
   confirmDelete(id?: number): void {
     if (!id) return;
     this.deleteUser();
+  }
+
+  getUserImage(): string {
+    if (!this.user || !this.user.image) {
+      return '/assets/images/default-avatar.png';
+    }
+  
+    if (this.user.image.startsWith('http')) {
+      return this.user.image;
+    }
+  
+    return this.IMAGE_BASE_URL + this.user.image;
   }
 }

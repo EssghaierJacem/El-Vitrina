@@ -1,75 +1,123 @@
 <div class="blank-layout-container justify-content-center align-items-center bg-light">
-    <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
-      <div class="col-lg-4 d-flex align-items-center">
-        <mat-card class="cardWithShadow boxed-auth">
-          <mat-card-content class="p-32">
-            <div class="text-center">
-              <a [routerLink]="['/dashboard']">
-                <img src="./assets/images/logos/dark-logo.png" class="align-middle m-2" alt="logo" />
-              </a>
-            </div>
-  
-            <div class="row m-t-24 custom-row">
-              <div class="col-12 col-sm-6">
-                <button mat-stroked-button class="w-100">
-                  <div class="d-flex align-items-center">
-                    <img src="/assets/images/svgs/google-icon.svg" alt="google" width="16" class="m-r-8" />
-                    <span>Sign in with Google</span>
-                  </div>
-                </button>
-              </div>
-              <div class="col-12 col-sm-6">
-                <button mat-stroked-button class="w-100 d-flex align-items-center">
-                  <div class="d-flex align-items-center">
-                    <img src="/assets/images/svgs/facebook-icon.svg" alt="facebook" width="40" class="m-r-4" />
-                    Sign in with FB
-                  </div>
-                </button>
-              </div>
-            </div>
-  
-            <div class="or-border m-t-30">or sign in with</div>
-  
-            <form class="m-t-30" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-              <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Email</mat-label>
-              <mat-form-field appearance="outline" class="w-100" color="primary">
-                <input matInput formControlName="email" type="email" placeholder="Enter your email" />
-              </mat-form-field>
-  
-              <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Password</mat-label>
-              <mat-form-field appearance="outline" class="w-100" color="primary">
-                <input matInput type="password" formControlName="password" placeholder="Enter your password" />
-              </mat-form-field>
-  
-              <div class="d-flex align-items-center m-b-12">
-                <mat-checkbox color="primary">Remember this Device</mat-checkbox>
-              </div>
-              <div class="d-flex align-items-center m-b-12">
-                <a [routerLink]="['/authentication/forgot-password']" class="text-primary f-w-600 text-decoration-none m-l-auto f-s-14">Forgot Password?</a>
-              </div>
-  
-              <button
-                mat-flat-button
-                color="primary"
-                class="w-100"
-                type="submit"
-                [disabled]="loginForm.invalid || isLoading"
-              >
-                Sign In
+  <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
+    <div class="col-lg-4 d-flex align-items-center">
+      <mat-card class="cardWithShadow boxed-auth">
+        <mat-card-content class="p-32">
+          <div class="text-center">
+            <a [routerLink]="['/dashboard']">
+              <img src="./assets/images/logos/dark-logo.png" class="align-middle m-2" alt="logo" />
+            </a>
+          </div>
+
+          <div class="row m-t-24 custom-row">
+            <div class="col-12 col-sm-6">
+              <button mat-stroked-button class="w-100" (click)="signInWithGoogle()">
+                <div class="d-flex align-items-center">
+                  <img src="/assets/images/svgs/google-icon.svg" alt="google" width="16" class="m-r-8" />
+                  <span>Sign in with Google</span>
+                </div>
               </button>
-  
-              <div *ngIf="errorMessage" class="text-danger text-center mt-2">
-                {{ errorMessage }}
-              </div>
-            </form>
-  
-            <span class="d-block f-w-500 text-center m-t-24">New to El Vitrina?
+            </div>
+            <div class="col-12 col-sm-6">
+              <button mat-stroked-button class="w-100 d-flex align-items-center" (click)="signInWithFacebook()">
+                <div class="d-flex align-items-center">
+                  <img src="/assets/images/svgs/facebook-icon.svg" alt="facebook" width="40" class="m-r-4" />
+                  Sign in with FB
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="or-border m-t-30">or sign in with email</div>
+
+          <!-- Login Form -->
+          <form class="m-t-30" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Email Field -->
+            <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Email</mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-icon matPrefix class="text-muted mr-2">email</mat-icon>
+              <input matInput formControlName="email" type="email" placeholder="Enter your email" />
+              <mat-error *ngIf="f['email'].hasError('required')">Email is required</mat-error>
+              <mat-error *ngIf="f['email'].hasError('email')">Please enter a valid email</mat-error>
+            </mat-form-field>
+
+            <!-- Password Field -->
+            <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Password</mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-icon matPrefix class="text-muted mr-2">lock</mat-icon>
+              <input 
+                matInput 
+                [type]="hidePassword ? 'password' : 'text'" 
+                formControlName="password" 
+                placeholder="Enter your password" 
+              />
+              <button 
+                mat-icon-button 
+                matSuffix 
+                type="button"
+                (click)="togglePasswordVisibility()" 
+                [attr.aria-label]="'Hide password'" 
+                [attr.aria-pressed]="hidePassword"
+              >
+                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              <mat-error *ngIf="f['password'].hasError('required')">Password is required</mat-error>
+              <mat-error *ngIf="f['password'].hasError('minlength')">Password must be at least 6 characters</mat-error>
+            </mat-form-field>
+            
+            <!-- reCAPTCHA -->
+            <div 
+            style="display: flex; justify-content: center; margin: 15px 0;" 
+            class="mb-3">
+            <re-captcha
+              [siteKey]="'6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'"
+              (resolved)="onCaptchaResolved($event)"
+              (expired)="onCaptchaExpired()">
+            </re-captcha>
+          </div>          
+
+            <!-- Remember Device -->
+            <div class="d-flex align-items-center m-b-12">
+              <mat-checkbox color="primary">Remember this Device</mat-checkbox>
+            </div>
+            <div class="d-flex align-items-center m-b-12">
+              <a [routerLink]="['/authentication/forgot-password']" class="text-primary f-w-600 text-decoration-none m-l-auto f-s-14">Forgot Password?</a>
+            </div>
+
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="error-message mb-3 p-2" [@shakeAnimation]>
+              <mat-icon class="error-icon">error</mat-icon>
+              <span>{{ errorMessage }}</span>
+            </div>
+
+            <!-- Login Button -->
+            <button
+              mat-flat-button
+              color="primary"
+              class="w-100 login-btn"
+              type="submit"
+              [disabled]="isLoading"
+            >
+              <mat-spinner *ngIf="isLoading" diameter="20" class="spinner-inline"></mat-spinner>
+              <span *ngIf="!isLoading">Sign In</span>
+            </button>
+          </form>
+
+          <!-- Sign Up Link -->
+          <div class="text-center mt-4">
+            <span class="d-block f-w-500 m-t-24">New to El Vitrina?
               <a [routerLink]="['/authentication/register']" class="text-decoration-none text-primary f-w-500 f-s-14">
                 Create an account</a>
             </span>
-          </mat-card-content>
-        </mat-card>
-      </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="text-center mt-4">
+            <p class="text-muted f-s-12">© {{year}} El Vitrina. All rights reserved.</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
   </div>
-  
+</div>

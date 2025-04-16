@@ -1,0 +1,31 @@
+<!-- admin-request-perso-list.component.html -->
+<div class="container">
+    <h2>Requests</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Min Price</th>
+          <th>Max Price</th>
+          <th>Delivery Time</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let request of requests">
+          <td>{{ request.id }}</td>
+          <td>{{ request.title }}</td>
+          <td>{{ request.description }}</td>
+          <td>{{ request.minPrice }}</td>
+          <td>{{ request.maxPrice }}</td>
+          <td>{{ request.deliveryTime }}</td>   
+          <td>
+            <button mat-button color="primary" [routerLink]="['/dashboard/RequestPerso/editrequest', request.id]">Edit</button>
+            <button mat-button color="warn" (click)="deleteRequest(request.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

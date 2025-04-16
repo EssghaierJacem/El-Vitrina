@@ -2,6 +2,7 @@ package com.sudoers.elvitrinabackend.controller.user;
 
 import com.sudoers.elvitrinabackend.model.dto.FriendRequestDTO;
 import com.sudoers.elvitrinabackend.model.dto.MessageDTO;
+import com.sudoers.elvitrinabackend.model.dto.MessageResponseDTO;
 import com.sudoers.elvitrinabackend.model.entity.FriendRequest;
 import com.sudoers.elvitrinabackend.model.entity.Message;
 import com.sudoers.elvitrinabackend.service.messages.MessageService;
@@ -58,7 +59,7 @@ public class FriendController {
     }
 
     @PostMapping("/sendMessage")
-    public Message sendMessage(@RequestBody MessageDTO messageDTO) {
+    public MessageResponseDTO sendMessage(@RequestBody MessageDTO messageDTO) {
         return messageService.sendMessage(messageDTO);
     }
 

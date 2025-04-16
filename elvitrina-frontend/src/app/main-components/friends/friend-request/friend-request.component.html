@@ -91,11 +91,16 @@
                 </div>
 
                 <div class="friend-actions">
+                    <mat-form-field appearance="outline" class="message-input">
+                      <mat-label>Quick Message</mat-label>
+                      <input matInput [(ngModel)]="newMessages[friend.id]" placeholder="Type your message...">
+                    </mat-form-field>
                   <button mat-stroked-button class="action-button">
                     <mat-icon>chat</mat-icon>
                     Message
                   </button>
-                  <button mat-stroked-button class="action-button">
+                  <button mat-stroked-button class="action-button"
+                    [routerLink]="['/users', friend.id]">
                     <mat-icon>person_pin</mat-icon>
                     Profile
                   </button>

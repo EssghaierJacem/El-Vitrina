@@ -32,4 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 
+# Ignore uploaded user images
+/uploads/user-images/*
+!/uploads/user-images/.gitkeep
 

@@ -1,0 +1,111 @@
+/* Style général de la carte */
+.cardWithShadow {
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Style du champ de recherche */
+.mat-form-field {
+  margin-bottom: 24px;
+}
+
+/* Conteneur des commandes */
+.orders-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Carte de commande individuelle */
+.order-card {
+  padding: 16px;
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease;
+}
+
+.order-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.order-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-info {
+  flex: 1;
+}
+
+.order-info p {
+  margin: 4px 0;
+  color: #666;
+}
+
+.order-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Style des statuts */
+.status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status.PENDING {
+  background-color: #FFF3E0;
+  color: #E65100;
+}
+
+/* Style du montant total - très visible */
+.total-amount {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  text-align: right;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #3f51b5;
+  border-left: 4px solid #3f51b5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Animation pour le total */
+.total-amount {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(63, 81, 181, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(63, 81, 181, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(63, 81, 181, 0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .order-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .order-actions {
+    align-self: flex-end;
+  }
+
+  .total-amount {
+    font-size: 1.2em;
+  }
+}
