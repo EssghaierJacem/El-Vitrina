@@ -1,0 +1,391 @@
+/* Main container */
+.card-container {
+    max-width: 800px;
+    margin: 1.5rem auto;
+    padding: 0 1rem;
+  }
+  
+  /* Card styling */
+  mat-card {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  mat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Header section */
+  mat-card-header {
+    display: flex;
+    align-items: center;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .example-header-image {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 1rem;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .user-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  mat-card-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #2c3e50;
+  }
+  
+  mat-card-subtitle {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
+  /* Grid layout for image and description */
+  mat-grid-list {
+    width: 100%;
+    margin: 1rem 0;
+  }
+  
+  mat-grid-tile {
+    padding: 0.5rem;
+  }
+  
+  /* Image styling */
+  .request-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+  }
+  
+  .request-image:hover {
+    transform: scale(1.02);
+  }
+  
+  /* Description text */
+  mat-grid-tile p {
+    padding: 1rem;
+    color: #444;
+    line-height: 1.6;
+    margin: 0;
+  }
+  
+  /* Divider */
+  hr {
+    border: none;
+    height: 1px;
+    background-color: #eee;
+    margin: 1rem 0;
+  }
+  
+  /* Actions */
+  mat-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 !important;
+    margin-top: 1rem;
+  }
+  
+  mat-card-actions button {
+    margin-left: 0.5rem;
+    transition: all 0.2s ease;
+  }
+  
+  mat-card-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* View count button */
+  mat-card-actions button mat-icon {
+    margin-left: 0.25rem;
+    font-size: 1rem;
+    height: 1rem;
+    width: 1rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .card-container {
+      max-width: 90%;
+      padding: 0 0.5rem;
+    }
+    
+    mat-grid-list {
+      cols: 1 !important;
+    }
+    
+    mat-grid-tile {
+      grid-column: span 5 !important;
+      grid-row: span 1 !important;
+    }
+    
+    .request-image {
+      height: 200px;
+    }
+    
+    mat-card {
+      padding: 1rem;
+    }
+    
+    .example-header-image {
+      width: 48px;
+      height: 48px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    mat-card-title {
+      font-size: 1.2rem;
+    }
+    
+    mat-card-subtitle {
+      font-size: 0.8rem;
+    }
+    
+    mat-card-actions {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    mat-card-actions button {
+      width: 100%;
+      margin-left: 0;
+    }
+  }
+  .delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 1;
+  }
+  
+  .card-container {
+    position: relative;
+  }
+  /* Add these to your existing CSS */
+
+/* Delete button styles (enhance your existing ones) */
+.delete-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 1;
+  color: #f44336;
+  background-color: rgba(255, 255, 255, 0.8);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: rgba(244, 67, 54, 0.1);
+    transform: scale(1.1);
+  }
+  
+  mat-icon {
+    font-size: 20px;
+  }
+}
+
+/* Reset button styles */
+button[mat-raised-button][color="accent"] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 20px auto;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+}
+
+/* Animation for removed items */
+.card-container {
+  position: relative;
+  transition: all 0.3s ease;
+  
+  /* Add this if you want a fade-out animation when removing */
+  &.removing {
+    opacity: 0;
+    transform: scale(0.95);
+    height: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+  }
+}
+
+/* Responsive adjustments for delete button */
+@media (max-width: 768px) {
+  .delete-button {
+    top: 3px;
+    right: 3px;
+    
+    mat-icon {
+      font-size: 18px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .delete-button {
+    mat-icon {
+      font-size: 16px;
+    }
+  }
+  
+  button[mat-raised-button][color="accent"] {
+    width: 100%;
+    justify-content: center;
+  }
+}
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+
+  button {
+    min-width: 150px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .filter-buttons {
+    flex-direction: column;
+    align-items: center;
+    
+    button {
+      width: 100%;
+      max-width: 250px;
+    }
+  }
+}
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+
+  button {
+    min-width: 180px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    position: relative;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    mat-icon {
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+      margin-right: 8px;
+    }
+
+    .button-text {
+      flex-grow: 1;
+      text-align: left;
+      margin: 0 8px;
+    }
+
+    .count-badge {
+      background: rgba(0, 0, 0, 0.1);
+      color: rgba(0, 0, 0, 0.7);
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+
+  .active-filter {
+    background-color: #3f51b5 !important;
+    color: white !important;
+    box-shadow: 0 2px 10px rgba(63, 81, 181, 0.3) !important;
+    
+    mat-icon {
+      color: white;
+    }
+    
+    .count-badge {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .filter-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    
+    button {
+      width: 100%;
+      max-width: none;
+    }
+  }
+}
+/* styles.scss or your global CSS */
+.cdk-overlay-container {
+  position: fixed;
+  z-index: 1000;
+}
+
+.cdk-global-overlay-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-dialog {
+  .mat-dialog-container {
+    padding: 24px;
+    border-radius: 8px;
+    overflow: auto;
+    
+    // Prevent dialog from stretching to viewport edges
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+}

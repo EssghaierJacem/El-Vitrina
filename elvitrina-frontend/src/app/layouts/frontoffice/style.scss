@@ -1,0 +1,49 @@
+/* Banner Ads */
+.ad-banner {
+    position: fixed;
+    padding: 10px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+  }
+  
+  .ad-banner.top {
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+  
+  .ad-banner.bottom {
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  
+  .ad-banner.left {
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+  }
+  
+  .ad-banner.right {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+  }
+  
+  .ad-banner .close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: transparent;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+  }
+  /* In styles.css */
+body {
+    overflow-x: hidden; /* Allows side banners to show */
+    margin: 0;
+    padding: 0;
+  }

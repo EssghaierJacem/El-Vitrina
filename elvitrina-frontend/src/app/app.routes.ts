@@ -5,9 +5,10 @@ import { FullComponent } from './layouts/full/full.component';
 import { AdminGuard } from './main-components/user/adminGuard.component';
 import { NotFoundComponent } from './layouts/not-found/not-found.component';
 import { OauthSuccessComponent } from './main-components/user/oauth-success/oauth-success.component';
+import { RequestPersoCreateComponent } from './main-components/requestPerso/frontOffice/request-perso-create/request-perso-create.component';
 
-export const routes: Routes = [
-  {
+export const routes: Routes = [   
+  {  
     path: '',
     component: FrontComponent,
     children: [
@@ -46,6 +47,17 @@ export const routes: Routes = [
          loadChildren: () =>
           import('./main-components/Quiz/frontoffice/quizFront.routes').then((m) => m.QuizFrontRoutes),
 },
+
+      {
+        path: 'requestperso',
+        loadChildren: () =>
+          import('./main-components/requestPerso/frontOffice/frontoffice_requestPerso.routes').then((m) => m.RequestPersoCreate),
+      },
+      {
+        path: 'AdCreate',
+        loadChildren: () =>
+          import('./main-components/Ad/frontOffice/frontoffice_ad.routes').then((m) => m.AdCreate),
+      },
     ],
   },
 
@@ -126,6 +138,16 @@ export const routes: Routes = [
         path: 'extra',
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
+      },
+      {
+        path: 'RequestPerso',
+        loadChildren: () =>
+          import('./main-components/requestPerso/BackOffice/backoffice_requestPerso.routes').then((m) => m.AdminRequests),
+      },
+      {
+        path: 'AdAdmin',
+        loadChildren: () =>
+          import('./main-components/Ad/backOffice/backoffice_ad.routes').then((m) => m.AdAdmin),
       },
     ],
   },

@@ -1,0 +1,27 @@
+
+<div class="container">
+    <h2>Proposals</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let proposal of proposals">
+          <td>{{ proposal.id }}</td>
+          <td>{{ proposal.description }}</td>
+          <td>{{ proposal.price }}</td>
+          <td>{{ proposal.date }}</td>
+          <td>
+            <button mat-button color="primary" [routerLink]="['/dashboard/RequestPerso/editproposal', proposal.id]">Edit</button>
+            <button mat-button color="warn" (click)="deleteProposal(proposal.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
