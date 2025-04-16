@@ -1404,20 +1404,18 @@
           <!-- Nav -->
           <ul class="nav navbar-nav me-8">
             <li class="nav-item">
+              <a class="nav-link" href="#">Shipping</a>
+            </li>
+            <li class="nav-item">
               <button class="nav-link" [routerLink]="'/quiz/passquiz'">
                 Quiz
               </button>
            </li>
-           <li class="nav-item">
-            <button class="nav-link" [routerLink]="'/payment/mespayments'">
-              Mon historique payment
-            </button>
-         </li>
             <li class="nav-item">
               <a class="nav-link" href="/offers">Offers</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" [routerLink]="'/payment/jecommande'">JE COMMANDE</a>
+              <a class="nav-link" href="#">Contact</a>
             </li>
           </ul>
 
@@ -1942,7 +1940,7 @@
                         <a class="list-styled-link" *ngIf="isLoggedIn()" href="/friends/friend-requests">My Friends</a>
                       </li>
                       <li class="list-styled-item">
-                        <a class="list-styled-link" *ngIf="isLoggedIn()" href="#">Messages</a>
+                        <a class="list-styled-link" *ngIf="isLoggedIn()" href="/friends/messages">Messages</a>
                       </li>
                     </ul>
                   </div>

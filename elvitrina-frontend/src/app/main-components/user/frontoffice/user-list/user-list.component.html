@@ -103,7 +103,7 @@
         <div class="header-content">
           <div class="profile-image-container">
             <img 
-              [src]="user.image || 'assets/images/default-avatar.svg'" 
+              [src]="getUserImage(user)" 
               [alt]="user.firstname + ' ' + user.lastname"
               (error)="onImageError($event)">
             <div 

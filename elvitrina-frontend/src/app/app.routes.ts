@@ -4,7 +4,7 @@ import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
 import { AdminGuard } from './main-components/user/adminGuard.component';
 import { NotFoundComponent } from './layouts/not-found/not-found.component';
-
+import { OauthSuccessComponent } from './main-components/user/oauth-success/oauth-success.component';
 
 export const routes: Routes = [
   {
@@ -128,6 +128,10 @@ export const routes: Routes = [
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
       },
     ],
+  },
+  {
+    path: 'oauth-success',
+    component: OauthSuccessComponent
   },
   {
     path: '**', component: NotFoundComponent
