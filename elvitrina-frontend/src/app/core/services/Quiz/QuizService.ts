@@ -32,5 +32,11 @@ export class QuizService {
     return this.http.delete<void>(`${this.apiUrl}/delete/${id}`);
   }
 
+  saveUserAnswer(quizId: number, userAnswer: string): Observable<string> {
+    return this.http.post<string>(`${this.apiUrl}/${quizId}/answer`, {
+      responseUser: userAnswer
+    });
+  }
+
 }
 
