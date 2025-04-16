@@ -5,7 +5,7 @@ export interface Comment {
   id?: number;
   blogPost: BlogPost;
   content: string;
-  createdAt?: string;         
+  createdAt?: Date;         
   modifiedAt?: string;        
   parentComment?: Comment;
   childComments?: Comment[];

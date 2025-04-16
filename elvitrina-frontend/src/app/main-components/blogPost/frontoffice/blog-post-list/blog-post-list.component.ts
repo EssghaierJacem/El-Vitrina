@@ -14,10 +14,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
+import { TokenService } from 'src/app/core/services/user/TokenService';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+
 @Component({
   selector: 'app-blog-post-list',
   standalone: true,
-  imports: [MatProgressSpinnerModule,
+  imports: [MatSnackBarModule,
+    MatProgressSpinnerModule,
     MatChipsModule,
     CommonModule,
     RouterModule,
@@ -37,17 +41,38 @@ export class BlogPostListComponent implements OnInit {
   comments: { [postId: number]: Comment[] } = {};
   commentInputs: { [postId: number]: string } = {};
   isLoading: boolean = true;
-  loggedInUserId: number = 1;
-  loggedInUserName: string = 'Eya JEDDA';
+  //loggedInUserId: number = 1;
+  //loggedInUserName: string = 'Eya JEDDA';
   showCommentInput: { [postId: number]: boolean } = {};
+  userId: number | null = null;
+
+  editingCommentId: number | null = null;
+  editedContent: string = '';
+
 
   constructor(
     private blogPostService: BlogPostService,
     private commentService: CommentService,
-    private router: Router
+    private router: Router,
+        private snackBar: MatSnackBar,
+    private tokenService: TokenService
+    
   ) {}
 
   ngOnInit(): void {
+    const token = this.tokenService.getToken();
+        if (!token) {
+          this.snackBar.open('Please log in to create a formation', 'Close', {
+            duration: 3000,
+            panelClass: ['error-snackbar']
+          });
+          this.router.navigate(['/authentication/login']);
+        } else {
+          const decoded = this.tokenService.getDecodedToken();
+          this.userId = decoded?.id ?? null;
+        }
+
+
     this.loadBlogPosts();
   }
 
@@ -82,9 +107,10 @@ export class BlogPostListComponent implements OnInit {
 
     const newComment: Comment = {
       content,
-      user: { id: this.loggedInUserId, name: this.loggedInUserName } as any,
       blogPost: { id: postId } as any,
-      createdAt: new Date().toISOString()
+      user: { id: this.userId } as any,
+      createdAt: new Date() // Ajout de la date actuelle
+          
     };
 
     this.commentService.createComment(newComment).subscribe({
@@ -117,4 +143,127 @@ export class BlogPostListComponent implements OnInit {
   navigateToEdit(postId: number): void {
     this.router.navigate(['/blog/edit', postId]);
   }
+
+  deleteBlogPost(id: number) {
+    if (confirm('Are you sure you want to delete this blog post?')) {
+      this.blogPostService.deleteBlogPost(id).subscribe(() => {
+        this.loadBlogPosts();
+        this.snackBar.open('Blog post successfully deleted', 'Close', {
+          duration: 3000,
+          panelClass: ['snackbar-success']
+        });
+      });
+    }
+  }
+
+
+  shareOnFacebook(postId: number): void {
+    const post = this.blogPosts.find(p => p.id === postId);
+    if (!post) return;
+  
+    const title = post.title;
+    const description = post.content;
+  
+    const shareText = `${title}\n\n${description}`;
+  
+    // Copie dans le presse-papier
+    navigator.clipboard.writeText(shareText).then(() => {
+      // Ouvre la page Facebook
+      const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php`;
+
+      window.open(facebookShareUrl, '_blank', 'width=400,height=400');
+  
+      // Message à l’utilisateur
+      alert('Le contenu a été copié. Vous pouvez le coller dans votre publication Facebook.');
+    });
+  }
+
+
+  deleteComment(commentId: number, postId: number): void {
+    if (confirm('Are you sure you want to delete this comment?')) {
+      this.commentService.deleteComment(commentId).subscribe({
+        next: () => {
+          this.snackBar.open('Comment deleted successfully', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+          this.loadComments(postId);
+        },
+        error: (err) => {
+          this.snackBar.open('Error deleting comment: ' + (err.error?.message || err.message), 'Close', {
+            duration: 5000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      });
+    }
+  }
+
+
+  // Dans votre composant TypeScript
+currentEditComment: any = null;
+editMode: boolean = false;
+
+editComment(comment: any) {
+  // Si on clique sur le même commentaire en mode édition, on annule
+  if (this.currentEditComment === comment && this.editMode) {
+    this.cancelEdit();
+    return;
+  }
+
+  // Activer le mode édition
+  this.editMode = true;
+  this.currentEditComment = comment;
+  
+  // Vous pouvez aussi initialiser un formControl si vous utilisez ReactiveForms
+  // this.commentForm.patchValue({ content: comment.content });
 }
+
+// Fonction pour sauvegarder les modifications
+saveComment() {
+  if (!this.currentEditComment) return;
+
+  // Appel au service pour mettre à jour le commentaire
+  this.commentService.updateComment(
+    this.currentEditComment.id, 
+    this.currentEditComment.content
+  ).subscribe({
+    next: (updatedComment) => {
+      // Mettre à jour le commentaire dans le tableau
+      const index = this.comments[this.currentEditComment.postId].findIndex(
+        c => c.id === this.currentEditComment.id
+      );
+      if (index !== -1) {
+        this.comments[this.currentEditComment.postId][index] = updatedComment;
+      }
+      
+      this.cancelEdit();
+      // Optionnel: Afficher un message de succès
+      this.snackBar.open('Commentaire modifié', 'Fermer', { duration: 3000 });
+    },
+    error: (err) => {
+      console.error('Erreur lors de la modification', err);
+      // Gérer l'erreur
+    }
+  });
+}
+
+// Fonction pour annuler l'édition
+cancelEdit() {
+  this.editMode = false;
+  this.currentEditComment = null;
+  // this.commentForm.reset(); // Si vous utilisez ReactiveForms
+}
+
+
+
+
+
+  
+  }
+  
+  
+  
+
+
+  

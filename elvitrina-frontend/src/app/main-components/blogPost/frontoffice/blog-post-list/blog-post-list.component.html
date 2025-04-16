@@ -30,7 +30,7 @@
             <mat-icon class="avatar-icon">account_circle</mat-icon>
           </div>
           <div class="author-info">
-            <span class="author-name">{{loggedInUserName}}</span>
+            <span class="author-name">{{post.user?.firstname}} {{post.user?.lastname}}</span>
             <span class="post-time">{{formatDate(post.createdAt!)}}</span>
           </div>
           <button mat-icon-button class="post-menu" [matMenuTriggerFor]="menu">
@@ -41,12 +41,18 @@
               <mat-icon>edit</mat-icon>
               <span>Edit Post</span>
             </button>
+            <button mat-menu-item (click)="deleteBlogPost(post.id!)">
+              <mat-icon>delete</mat-icon>
+              <span>Delete Post</span>
+            </button>
           </mat-menu>
         </div>
 
         <!-- Post content -->
         <div class="post-content">
+          <p>{{post.title}}</p>
           <p>{{post.content}}</p>
+
           <img *ngIf="post.image" [src]="post.image" alt="Post image" class="post-image">
         </div>
 
@@ -63,28 +69,62 @@
           <button mat-button class="action-button" (click)="toggleCommentInput(post.id!)">
             <mat-icon>comment</mat-icon> Comment
           </button>
-          <button mat-button class="action-button">
+          <button mat-button class="action-button" (click)="shareOnFacebook(post.id!)">
             <mat-icon>share</mat-icon> Share
           </button>
         </div>
 
         <!-- Comments section -->
-        <div class="comments-section" *ngIf="comments[post.id!]?.length">
-          <div class="comment-count">{{comments[post.id!]?.length}} comments</div>
-          
-          <div *ngFor="let comment of comments[post.id!]" class="comment">
-            <div class="comment-avatar">
-              <mat-icon class="avatar-icon">account_circle</mat-icon>
-            </div>
-            <div class="comment-content">
-              <span class="comment-author">{{comment.user?.lastname || loggedInUserName}}</span>
-              <span class="comment-text">{{comment.content}}</span>
-              <div class="comment-actions">
-                <span class="comment-time">{{formatDate(comment.createdAt!)}}</span>
-              </div>
-            </div>
-          </div>
+<div class="comments-section" *ngIf="comments[post.id!]?.length">
+  <div class="comment-count">{{comments[post.id!]?.length}} commentaires</div>
+
+  <div *ngFor="let comment of comments[post.id!]" class="comment-container">
+    <div class="comment-avatar">
+      <mat-icon  class="avatar-icon">account_circle</mat-icon>
+    </div>
+
+    <div class="comment-main-wrapper">
+
+      <div *ngIf="!editMode || currentEditComment?.id !== comment.id" class="comment-box">
+        <div class="comment-header">
+          <span class="comment-author">{{comment.user?.firstname}} {{comment.user?.lastname}}</span>
+          <span class="comment-time">{{ comment.createdAt | date: 'MMM d, yyyy à h:mm a' }}</span>
         </div>
+        <div class="comment-text">{{comment.content}}</div>
+      </div>
+    
+      <div *ngIf="editMode && currentEditComment?.id === comment.id" class="edit-box">
+        <textarea 
+          [(ngModel)]="editedContent"
+          class="edit-textarea"
+          placeholder="Modifier votre commentaire..."
+        ></textarea>
+        <div class="edit-actions">
+          <button mat-button (click)="saveComment()" color="primary">Enregistrer</button>
+          <button mat-button (click)="cancelEdit()">Annuler</button>
+        </div>
+      </div>
+        
+        <!-- Menu des 3 points aligné à droite -->
+        <div class="comment-menu" *ngIf="comment.user?.id === userId">
+          <button mat-icon-button [matMenuTriggerFor]="commentMenu" class="menu-btn">
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #commentMenu="matMenu">
+            <button mat-menu-item (click)="editComment(comment)">
+              <mat-icon>edit</mat-icon>
+              <span>Edit</span>
+            </button>
+            <button mat-menu-item  (click)="deleteComment(comment.id! , post.id!)">
+              <mat-icon>delete</mat-icon>
+              <span>Delete</span>
+            </button>
+          </mat-menu>
+        </div>
+    </div>
+  </div>
+</div>
+ 
 
         <!-- Add comment section -->
         <div class="add-comment" *ngIf="showCommentInput[post.id!]">

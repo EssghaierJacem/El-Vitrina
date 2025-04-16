@@ -87,7 +87,7 @@ export class CommentListComponent implements OnInit {
 
 
   deleteComment(commentId: number): void {
-    console.log("Attempting to delete comment with ID:", commentId); // <- ici
+    console.log("Attempting to delete comment with ID:", commentId); 
     if (confirm('Are you sure you want to delete this comment?')) {
       this.commentService.deleteComment(commentId).subscribe({
       next: () => {

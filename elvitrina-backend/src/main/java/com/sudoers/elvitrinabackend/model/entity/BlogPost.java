@@ -46,7 +46,7 @@ public class BlogPost {
     @Enumerated(EnumType.STRING)
     private ReactionType reaction;
 
-    @OneToMany(mappedBy = "blogPost")
+    @OneToMany(mappedBy = "blogPost", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("blogPost" )
     private List<Comment> comments;
 }
