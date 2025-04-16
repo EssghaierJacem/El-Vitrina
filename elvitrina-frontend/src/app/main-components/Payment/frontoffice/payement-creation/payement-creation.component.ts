@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Router, RouterModule } from '@angular/router';
 import { PaymentMethodType } from 'src/app/core/models/Panier/PaymentMethodType.type';
+import { PaymentStatusType } from 'src/app/core/models/Panier/PaymentStatusType.type';
 import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
 import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
 
@@ -32,25 +33,28 @@ import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
 })
 export class PayementCreationComponent  implements OnInit {
 
-  @Input() selectedPaymentMethod: PaymentMethodType;
-  form!: FormGroup; // Réception de la méthode de paiement depuis le parent
   payment: any = {
     amount: null,
-    method: '',
-    paystatus: '',
+    method: PaymentMethodType.CREDIT_CARD,
+  paystatus: PaymentStatusType.PENDING,
     transactionDate: null,
     orderIds: []
   };
+  today: Date = new Date();
+
 
   paymentMethods = [
-    { value: 'CASHONDELIVER', viewValue: 'Paiement à la livraison' },
-    { value: 'CREDIT_CARD', viewValue: 'Carte bancaire' }
+    { value: 'CREDITCARD', viewValue: 'Credit Card' },
+    { value: 'PAYPAL', viewValue: 'PayPal' },
+    { value: 'BANKTRANSFER', viewValue: 'Bank Transfer' },
+    { value: 'CASH', viewValue: 'Cash' }
   ];
 
   paymentStatuses = [
-    { value: 'PENDING', viewValue: 'En attente' },
-    { value: 'COMPLETED', viewValue: 'Terminé' },
-    { value: 'CANCELLED', viewValue: 'Annulé' }
+    { value: 'PENDING', viewValue: 'Pending' },
+    { value: 'COMPLETED', viewValue: 'Completed' },
+    { value: 'FAILED', viewValue: 'Failed' },
+    { value: 'REFUNDED', viewValue: 'Refunded' }
   ];
 
   availableOrders: any[] = [];  // Liste des commandes disponibles à relier au paiement (à ajuster)
@@ -58,22 +62,16 @@ export class PayementCreationComponent  implements OnInit {
     private customOrderService: CustomOrderService,
     private paymentService: PaymentService,
     public router: Router,
-    private fb: FormBuilder // 👈 Ajoute ceci
   ) {}
   ngOnInit(): void {
+
     this.customOrderService.getAllOrders().subscribe((orders) => {
       this.availableOrders = orders;
-      this.form = this.fb.group({
-        amount: [null, Validators.required],
-        method: [this.selectedPaymentMethod, Validators.required], // 👈 Ici !
-        paystatus: [null, Validators.required],
-        transactionDate: [null, Validators.required],
-        orderIds: [[], Validators.required]
-      });
-    });  }
+    }); }
 
     createPayment() {
       console.log('Sending payment:', this.payment);
+      
       this.paymentService.createPayment(this.payment).subscribe({
         next: () => this.router.navigate(['/dashboard/payment/list']),
         error: (err) => console.error('Error creating payment:', err)

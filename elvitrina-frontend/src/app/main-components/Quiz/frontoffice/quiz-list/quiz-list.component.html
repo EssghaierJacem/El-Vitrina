@@ -51,7 +51,9 @@
     <div class="progress-bar" [style.width.%]="(currentQuestionIndex + 1) / quizzes.length * 100"></div>
     <button class="btn btn-secondary" [disabled]="currentQuestionIndex !== quizzes.length - 1">Results ➡</button>
   </div>
-  <button class="btn btn-secondary"  > Results ➡</button>
+  <div *ngIf="allQuestionsAnswered()" class="quiz-buttons">
+    <button class="btn" (click)="showQuizResults()">Voir les résultats ➡</button>
+  </div>  <p class="confirmation" *ngIf="confirmationMessage">{{ confirmationMessage }}</p>
 
 </div>
 

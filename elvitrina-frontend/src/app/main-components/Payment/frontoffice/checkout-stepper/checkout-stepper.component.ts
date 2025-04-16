@@ -43,20 +43,18 @@ export class CheckoutStepperComponent implements OnInit {
   cardElement: any;
 
   // Formulaires
-  paymentFormGroup: FormGroup;
   personalInfoFormGroup: FormGroup;
   deliveryFormGroup: FormGroup;
   creditCardFormGroup: FormGroup;
 
-  // Méthode de paiement sélectionnée
-  selectedPaymentMethod: PaymentMethodType;
-    PaymentMethodType = PaymentMethodType;
+  // Méthode de paiement sélectionnée dynamiquement
+  selectedPaymentMethod!: PaymentMethodType;
+  PaymentMethodType = PaymentMethodType;
+
+  // Flag pour savoir si le paiement est créé
+  paymentCreated: boolean = false;
 
   constructor(private fb: FormBuilder, private http: HttpClient) {
-    this.paymentFormGroup = this.fb.group({
-      paymentMethod: [this.selectedPaymentMethod, Validators.required]
-    });
-
     this.personalInfoFormGroup = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -73,10 +71,10 @@ export class CheckoutStepperComponent implements OnInit {
     this.creditCardFormGroup = this.fb.group({});
   }
 
-
   ngOnInit(): void {
-    console.log('LeafletMapComponent INIT');
+    console.log('CheckoutStepperComponent INIT');
   }
+
   handleMapAddress(address: string) {
     const formGroup = this.selectedPaymentMethod === PaymentMethodType.CASHONDELIVER
       ? this.personalInfoFormGroup
@@ -85,7 +83,11 @@ export class CheckoutStepperComponent implements OnInit {
     formGroup.get('address')?.setValue(address);
   }
 
-  onPaymentMethodChange(value: PaymentMethodType): void {
-    this.selectedPaymentMethod = value;
+  // Événement déclenché après la création du paiement dans <app-payement-creation>
+  onPaymentCreated(payment: any): void {
+    this.paymentCreated = true;
+    this.selectedPaymentMethod = payment.method;
+
+    console.log('Paiement créé avec méthode :', this.selectedPaymentMethod);
   }
 }
