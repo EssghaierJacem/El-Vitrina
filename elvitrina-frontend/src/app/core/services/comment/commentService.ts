@@ -24,12 +24,13 @@ export class CommentService {
   }
 
   updateComment(id: number, comment: Comment): Observable<Comment> {
-    return this.http.put<Comment>(`${this.apiUrl}/${id}`, comment);
+    return this.http.put<Comment>(`${this.apiUrl}/${id}/updatecomment`, comment);
   }
 
   deleteComment(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`  + "/removecomment");
+    return this.http.delete<void>(`${this.apiUrl}/${id}` + "/removecomment");
   }
+
 
   getCommentsByBlogPost(blogPostId: number): Observable<Comment[]> {
     return this.http.get<Comment[]>(`${this.apiUrl}/blog-post/${blogPostId}`);

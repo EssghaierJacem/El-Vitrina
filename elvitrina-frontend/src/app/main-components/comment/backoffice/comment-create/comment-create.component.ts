@@ -82,7 +82,7 @@ export class CommentCreateComponent implements OnInit {
             duration: 3000,
             panelClass: ['success-snackbar']
           });
-          this.router.navigate([`/dashboard/blogPosts/${this.blogPostId}`]);
+          this.router.navigate([`/dashboard/blogPosts/${this.blogPostId}/comments`]);
         },
         error: (err) => {
           this.snackBar.open('Error creating comment: ' + (err.error?.message || err.message), 'Close', {

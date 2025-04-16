@@ -6,6 +6,7 @@ import { BlogPostDetailsComponent } from "./blog-post-details/blog-post-details.
 import { BlogPostListComponent } from "./blog-post-list/blog-post-list.component";
 import { CommentCreateComponent } from "../../comment/backoffice/comment-create/comment-create.component";
 import { CommentListComponent } from "../../comment/backoffice/comment-list/comment-list.component";
+import { CommentEditComponent } from "../../comment/backoffice/comment-edit/comment-edit.component";
 
 export const BlogPostRoutes: Routes = [
   { path: '', component: BlogPostListComponent},
@@ -14,5 +15,7 @@ export const BlogPostRoutes: Routes = [
   { path: ':id/edit', component: BlogPostEditComponent },
   { path: ':id/add-comment', component: CommentCreateComponent }, 
   {path: ':id/comments', component: CommentListComponent} ,
+  { path: ':id/comments/:commentId/edit', component: CommentEditComponent },
+
 
 ];

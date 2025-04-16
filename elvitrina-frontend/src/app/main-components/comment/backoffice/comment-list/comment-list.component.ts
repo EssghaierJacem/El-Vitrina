@@ -85,9 +85,11 @@ export class CommentListComponent implements OnInit {
     });
   }
 
-  // Handle delete comment
+
   deleteComment(commentId: number): void {
-    this.commentService.deleteComment(commentId).subscribe({
+    console.log("Attempting to delete comment with ID:", commentId); // <- ici
+    if (confirm('Are you sure you want to delete this comment?')) {
+      this.commentService.deleteComment(commentId).subscribe({
       next: () => {
         this.snackBar.open('Comment deleted successfully', 'Close', {
           duration: 3000,
@@ -103,6 +105,9 @@ export class CommentListComponent implements OnInit {
       }
     });
   }
+
+  
+}
 
   // Redirect to the page for adding a new comment
   addComment(): void {

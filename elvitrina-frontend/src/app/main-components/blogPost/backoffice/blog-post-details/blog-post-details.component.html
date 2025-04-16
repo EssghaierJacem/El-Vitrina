@@ -1,6 +1,6 @@
 <mat-card class="blog-post-card">
   <mat-card-content>
-    <!-- Header -->
+    <!-- Header with View Comments Button -->
     <div class="d-flex align-items-center justify-content-between m-b-16">
       <div class="d-flex align-items-center gap-2">
         <button mat-icon-button color="primary" [routerLink]="['../']">
@@ -8,6 +8,9 @@
         </button>
         <mat-card-title>Blog Post Details</mat-card-title>
       </div>
+      <button mat-stroked-button color="primary" [routerLink]="['comments']">
+        <mat-icon>comment</mat-icon> View Comments
+      </button>
     </div>
 
     <mat-divider class="m-b-16"></mat-divider>
@@ -20,22 +23,33 @@
 
     <mat-divider class="m-b-16"></mat-divider>
 
-    <!-- View Comments Button -->
-    <div class="d-flex justify-content-end m-b-24">
-      <button mat-stroked-button color="primary" [routerLink]="['comments']">
-        View Comments
-      </button>
-    </div>
-
     <!-- Additional Info -->
     <div class="additional-info">
       <h4 class="section-subtitle">Additional Information</h4>
-      <p><strong>Created at:</strong> {{ blogPost.createdAt | date: 'short' }}</p>
-      <p><strong>Updated at:</strong> {{ blogPost.updatedAt | date: 'short' }}</p>
-      <p><strong>Status:</strong> {{ blogPost.status ? 'Published' : 'Draft' }}</p>
-      <p><strong>Tags:</strong> {{ blogPost.tag || 'None' }}</p>
-      <p><strong>Reactions:</strong> {{ blogPost.reactionNumber }}</p>
-      <p><strong>Reaction Type:</strong> {{ blogPost.reaction?.toString() || 'None' }}</p>
+      <div class="info-item d-flex align-items-center gap-2">
+        <mat-icon>calendar_today</mat-icon>
+        <p><strong>Created at:</strong> {{ blogPost.createdAt | date: 'short' }}</p>
+      </div>
+      <div class="info-item d-flex align-items-center gap-2">
+        <mat-icon>update</mat-icon>
+        <p><strong>Updated at:</strong> {{ blogPost.updatedAt | date: 'short' }}</p>
+      </div>
+      <div class="info-item d-flex align-items-center gap-2">
+        <mat-icon>article</mat-icon>
+        <p><strong>Status:</strong> {{ blogPost.status ? 'Published' : 'Draft' }}</p>
+      </div>
+      <div class="info-item d-flex align-items-center gap-2">
+        <mat-icon>tag</mat-icon>
+        <p><strong>Tags:</strong> {{ blogPost.tag || 'None' }}</p>
+      </div>
+      <div class="info-item d-flex align-items-center gap-2">
+        <mat-icon>thumb_up</mat-icon>
+        <p><strong>Reactions:</strong> {{ blogPost.reactionNumber }}</p>
+      </div>
+      <div class="info-item d-flex align-items-center gap-2">
+        <mat-icon>emoji_emotions</mat-icon>
+        <p><strong>Reaction Type:</strong> {{ blogPost.reaction?.toString() || 'None' }}</p>
+      </div>
     </div>
   </mat-card-content>
 </mat-card>

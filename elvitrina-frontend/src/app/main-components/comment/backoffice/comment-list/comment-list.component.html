@@ -22,7 +22,7 @@
         </div>
         <p class="m-0">{{ comment.content || 'No content provided' }}</p>
         <div class="d-flex justify-content-end gap-2 m-t-8">
-          <button mat-stroked-button color="accent" [routerLink]="['edit-comment', comment.id]">Edit</button>
+          <button mat-stroked-button color="accent" [routerLink]="['/dashboard/blogPosts', blogPostId, 'comments', comment.id, 'edit']">Edit</button>
           <button mat-stroked-button color="warn" (click)="deleteComment(comment.id!)">Delete</button>
         </div>
       </div>

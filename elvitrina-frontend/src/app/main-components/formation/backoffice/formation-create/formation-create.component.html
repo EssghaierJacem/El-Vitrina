@@ -38,9 +38,13 @@
           Certificate Available
         </mat-checkbox>
   
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Language</mat-label>
-          <input matInput formControlName="language" required>
+        <mat-form-field appearance="outline" class="w-100" >
+          <mat-label>Langue</mat-label>
+          <mat-select formControlName="language" required>
+            <mat-option *ngFor="let language of languages" [value]="language">
+              {{ language }}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
   
         <mat-form-field appearance="outline" class="w-100">

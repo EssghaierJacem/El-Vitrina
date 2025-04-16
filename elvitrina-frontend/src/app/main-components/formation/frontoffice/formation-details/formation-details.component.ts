@@ -9,11 +9,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';  // Pour la gestion des routes
 import { MatIconModule } from '@angular/material/icon'; 
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @Component({
   selector: 'app-formation-details',
-  imports: [
+  imports: [MatProgressSpinnerModule,
     CommonModule,
     RouterModule,
     MatCardModule,
@@ -54,6 +55,18 @@ export class FormationDetailsComponent {
         this.isLoading = false;
       }
     });
+  }
+
+  getCategoryImage(category: string): string {
+    const categoryImages: { [key: string]: string } = {
+      'HANDMADE': 'assets/category/1.png',
+      'COOKING': 'assets/category/2.png',
+      'SEWING': 'assets/category/3.png',
+      'POTTERY': 'assets/category/4.png',
+      // Ajoutez d'autres catégories ici
+    };
+
+    return categoryImages[category] || 'assets/categories/default.jpg';
   }
 
   enroll(): void {

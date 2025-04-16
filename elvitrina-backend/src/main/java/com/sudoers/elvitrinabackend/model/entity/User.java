@@ -2,6 +2,7 @@ package com.sudoers.elvitrinabackend.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sudoers.elvitrinabackend.model.enums.RoleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -83,12 +84,14 @@ public class User implements UserDetails {
     private List<Store> stores;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Formation> formations;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Offer> offers;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<BlogPost> blogPosts;
     
     // One User can have many RequestPersos (One-to-Many)
@@ -112,6 +115,7 @@ public class User implements UserDetails {
     private List<CustomOrder> customOrders;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Comment> comments;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -28,7 +28,9 @@
       <div class="d-flex justify-content-center m-t-16">
         <mat-spinner></mat-spinner>
       </div>
-    } @else {
+    } 
+      
+      @else {
 
       <!-- Table responsive -->
       <div class="table-responsive">
@@ -37,7 +39,7 @@
           <!-- Auteur -->
           <ng-container matColumnDef="user">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Author</th>
-            <td mat-cell *matCellDef="let post">Eya JEDDA</td>
+            <td mat-cell *matCellDef="let post">{{ post.user?.firstname }} {{ post.user?.lastname }}</td>
           </ng-container>
 
           <!-- Titre -->

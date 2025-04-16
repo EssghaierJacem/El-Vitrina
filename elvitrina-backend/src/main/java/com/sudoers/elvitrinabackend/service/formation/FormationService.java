@@ -1,11 +1,13 @@
 package com.sudoers.elvitrinabackend.service.formation;
 
+import com.sudoers.elvitrinabackend.model.entity.BlogPost;
 import com.sudoers.elvitrinabackend.model.entity.Formation;
 import com.sudoers.elvitrinabackend.repository.FormationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,6 +27,11 @@ public class FormationService implements IFormationService {
 
     @Override
     public Formation updateFormation(Formation formation) {
+        Formation existingFormation = formationRepository.findById(formation.getId())
+                .orElseThrow(() -> new RuntimeException("Formation not found"));
+
+
+        formation.setUser( existingFormation.getUser() );
         return formationRepository.save(formation);
     }
     @Override

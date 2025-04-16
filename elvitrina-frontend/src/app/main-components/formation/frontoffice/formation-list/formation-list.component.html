@@ -1,40 +1,46 @@
-<div class="formation-list">
-    <!-- Page Header -->
-    <header class="page-header">
-      <h1 class="page-title">Explore Our Formations</h1>
-      <p class="page-subtitle">Enhance your skills with these comprehensive courses!</p>
-    </header>
-  
-    <!-- Loading Spinner -->
-    <div *ngIf="isLoading" class="loading-spinner">
-      <div class="spinner"></div>
-      <p>Loading formations...</p>
-    </div>
-  
-    <!-- No Formations Available -->
-    <div *ngIf="!isLoading && formations.length === 0" class="empty-state">
-      <p>No formations available.</p>
-    </div>
-  
-    <!-- Formation Cards -->
-    <div class="formation-cards-container">
-      <div class="formation-card" *ngFor="let formation of formations">
-        <mat-card class="formation-card-item">
-          <mat-card-header>
-            <mat-card-title>{{ formation.courseTitle }}</mat-card-title>
-            <mat-card-subtitle>{{ formation.formationCategory }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p><strong>Duration:</strong> {{ formation.duration }} hours</p>
-            <p><strong>Price:</strong> ${{ formation.price }}</p>
-            <p><strong>Language:</strong> {{ formation.language }}</p>
-            <p><strong>Level:</strong> {{ formation.level }}</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="primary" [routerLink]="['/formation', formation.id]">View Details</button>
-          </mat-card-actions>
-        </mat-card>
-      </div>
-    </div>
+<div class="hero-section text-center p-10">
+  <h1 class="text-4xl font-bold mb-2">Explore our Creative Courses</h1>
+  <p class="text-lg text-gray-600">Unlock your potential with hands-on trainings in crafts, cooking, sewing & more.</p>
+</div>
+
+<div class="formations-container p-6">
+  <div *ngIf="isLoading" class="d-flex justify-content-center m-5">
+    <mat-spinner></mat-spinner>
   </div>
-  
+
+  <div *ngIf="!isLoading && formations.length === 0" class="text-center text-gray-500 mt-10">
+    <p class="text-xl">No formations available yet. Come back later or explore other categories!</p>
+  </div>
+
+  <!-- Barre de recherche -->
+  <div class="mb-4">
+      <mat-form-field appearance="fill" class="search-bar">
+        <input matInput [(ngModel)]="searchQuery" (input)="onSearchChange()" placeholder="Search for a course or category" />
+      </mat-form-field>
+  </div>
+
+  <div class="formation-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <mat-card *ngFor="let formation of filteredFormations" class="hover:shadow-xl transition duration-300 rounded-xl overflow-hidden">
+      <img [src]="getCategoryImage(formation.formationCategory)" alt="Category Image" class="w-full h-40 object-cover">
+
+      <mat-card-content>
+        <h2 class="text-xl font-semibold mb-1">{{ formation.courseTitle }}</h2>
+        <p class="text-sm text-gray-600 mb-2">{{ formation.formationCategory }}</p>
+        <div class="text-sm text-gray-500 flex items-center gap-2 mb-2">
+          <mat-icon class="text-base">schedule</mat-icon> {{ formation.duration }}h
+          <mat-icon class="text-base ml-4">language</mat-icon> {{ formation.language }}
+        </div>
+
+        <div *ngIf="formation.certificateAvailable" class="text-green-600 text-sm font-medium flex items-center">
+          <mat-icon>verified</mat-icon> Certificate Available
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions class="flex justify-between px-4 pb-4">
+        <button mat-raised-button color="primary" [routerLink]="['/formation', formation.id]">
+          View Course
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

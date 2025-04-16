@@ -32,11 +32,9 @@ public class BlogPostService implements IBlogPostService{
         BlogPost existingPost = blogPostRepository.findById(blogPost.getId())
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // Assurez-vous que la date de création ne soit pas modifiée
         blogPost.setCreatedAt(existingPost.getCreatedAt());
         blogPost.setUpdatedAt(LocalDateTime.now());
-
-        // Enregistrer les modifications tout en préservant 'createdAt'
+        blogPost.setUser(existingPost.getUser());
         return blogPostRepository.save(blogPost);
     }
 

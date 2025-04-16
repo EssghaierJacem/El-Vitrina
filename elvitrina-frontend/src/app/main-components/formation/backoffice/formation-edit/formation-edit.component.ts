@@ -68,7 +68,7 @@ export class FormationEditComponent implements OnInit {
       certificateAvailable: [false],
       language: ['', [Validators.required, Validators.maxLength(50)]],
       price: [0, [Validators.required, Validators.min(0)]],
-      level: ['', Validators.required],
+      level: ['', Validators.required]
     });
   }
 

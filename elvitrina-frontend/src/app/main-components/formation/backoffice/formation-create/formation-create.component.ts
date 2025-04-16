@@ -47,6 +47,9 @@ export class FormationCreateComponent implements OnInit {
   categories = Object.values(FormationCategoryType);
   levels = Object.values(LevelType);
 
+  languages = ['Français', 'Anglais', 'Espagnol', 'Allemand', 'Italien'];
+
+  
   constructor(
     private fb: FormBuilder,
     private formationService: FormationService,
@@ -74,7 +77,7 @@ export class FormationCreateComponent implements OnInit {
   private initForm(): void {
     this.formationForm = this.fb.group({
       courseTitle: ['', [Validators.required, Validators.maxLength(100)]],
-      description: ['', [Validators.maxLength(500)]],
+      description: ['', []],
       formationCategory: ['', Validators.required],
       duration: [0, [Validators.required, Validators.min(1)]],
       certificateAvailable: [false],

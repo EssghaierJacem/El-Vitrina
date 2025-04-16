@@ -23,7 +23,18 @@
         <div class="d-flex justify-content-center m-t-16">
           <mat-spinner></mat-spinner>
         </div>
+
       } @else {
+        @if (dataSource.data.length === 0) {
+          <div class="d-flex flex-column align-items-center justify-content-center m-t-32">
+            <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" alt="No data" width="120" height="120">
+            <p class="text-muted m-t-16">No formations found.</p>
+            <p class="text-muted">Try adding one or modifying your search.</p>
+          </div>
+        }
+        @else
+        
+       {
         <div class="table-responsive">
           <table mat-table [dataSource]="dataSource" matSort class="w-100">
   
@@ -76,6 +87,9 @@
           </table>
         </div>
       }
+    }
+
+      
     </mat-card-content>
   </mat-card>
   

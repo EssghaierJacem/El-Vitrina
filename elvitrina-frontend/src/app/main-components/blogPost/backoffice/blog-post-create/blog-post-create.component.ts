@@ -58,6 +58,7 @@ export class BlogPostCreateComponent implements OnInit {
     } else {
       const decoded = this.tokenService.getDecodedToken();
       this.userId = decoded?.id ?? null;
+
     }
   }
 

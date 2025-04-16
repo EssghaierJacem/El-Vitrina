@@ -23,6 +23,12 @@ public class CommentService implements ICommentService{
 
     @Override
     public Comment updateComment(Comment comment) {
+        Comment existingFormation = commentRepository.findById(comment.getId())
+                .orElseThrow(() -> new RuntimeException("Formation not found"));
+
+
+        comment.setUser( existingFormation.getUser() );
+        comment.setBlogPost(existingFormation.getBlogPost());
         return commentRepository.save(comment);    }
 
     @Override

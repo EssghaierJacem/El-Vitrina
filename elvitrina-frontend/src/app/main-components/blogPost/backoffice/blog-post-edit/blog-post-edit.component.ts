@@ -57,7 +57,7 @@ export class BlogPostEditComponent implements OnInit {
           content: [post.content, Validators.required],
           tag: [post.tag],
           image: [post.image],
-          userName: [{ value: post.user?.name, disabled: true }]
+          userName: [{ value: post.user?.firstname , disabled: true }]
         });
         this.isLoading = false;
       },

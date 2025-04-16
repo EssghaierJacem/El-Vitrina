@@ -24,7 +24,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
 
-
+import { jsPDF } from 'jspdf';  // Import jsPDF
 import { Formation } from 'src/app/core/models/formation/formation.model';
 import { FormationService } from 'src/app/core/services/formation/formationService';
 @Component({
@@ -102,6 +102,56 @@ export class FormationListComponent implements OnInit {
   }
 }
 
-  exportToPDF() {
-  }
+exportToPDF() {
+  const doc = new jsPDF();
+
+  // Titre du document
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.text('List of Formations', 14, 20);
+
+  // Marges et positionnement de départ
+  const marginTop = 30;
+  let yPosition = marginTop;
+
+  this.dataSource.data.forEach((formation, index) => {
+    // Title of each formation
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Formation ${index + 1}: ${formation.courseTitle}`, 14, yPosition);
+    yPosition += 10;
+
+    // Drawing a line under the title
+    doc.setLineWidth(0.5);
+    doc.line(14, yPosition, 200, yPosition);
+    yPosition += 10;
+
+    // Adding the details
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Category: ${formation.formationCategory}`, 14, yPosition);
+    yPosition += 8;
+    doc.text(`Language: ${formation.language}`, 14, yPosition);
+    yPosition += 8;
+    doc.text(`Duration: ${formation.duration}`, 14, yPosition);
+    yPosition += 8;
+    doc.text(`Certificate Available: ${formation.certificateAvailable ? 'Yes' : 'No'}`, 14, yPosition);
+    yPosition += 12;
+
+    // Adding a space between formations
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.5);
+    doc.line(14, yPosition, 200, yPosition);
+    yPosition += 12;
+
+    // Saut de page si nécessaire
+    if (yPosition > 270) {
+      doc.addPage();
+      yPosition = 20; // Revenir à la position de départ
+    }
+  });
+
+  // Sauvegarde du PDF
+  doc.save('formations.pdf');
+}
 }

@@ -59,7 +59,10 @@ export class BlogPostCreateComponent implements OnInit {
     } else {
       const decoded = this.tokenService.getDecodedToken();
       this.userId = decoded?.id ?? null;
+      
     }
+
+    
   }
 
   private initForm(): void {
@@ -103,7 +106,7 @@ export class BlogPostCreateComponent implements OnInit {
           duration: 3000,
           panelClass: ['success-snackbar']
         });
-        this.router.navigate(['/dashboard/blogPosts']);
+        this.router.navigate(['/blog']);
       },
       error: (err) => {
         this.snackBar.open('Error creating blog post: ' + (err.error?.message || err.message), 'Close', {
@@ -120,7 +123,7 @@ export class BlogPostCreateComponent implements OnInit {
     this.snackBar.open('Form has been cleared', 'Close', {
       duration: 3000
     });
-    this.router.navigate(['/dashboard/blog-posts']);
+    this.router.navigate(['/blog']);
   }
 
 }
