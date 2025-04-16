@@ -1,1 +1,164 @@
-<p>store-details works!</p>
+<!-- Store Header -->
+<div class="store-header" *ngIf="store">
+  <div class="store-cover">
+    <img [src]="getImageUrl(store.coverImage, 'store')" 
+         [alt]="store.storeName"
+         (error)="handleImageError($event, 'store')">
+  </div>
+  <div class="store-info">
+    <div class="store-avatar">
+      <img [src]="getImageUrl(store.image, 'store')" 
+           [alt]="store.storeName"
+           (error)="handleImageError($event, 'store')">
+    </div>
+    <div class="store-details">
+      <h1>{{store.storeName}}</h1>
+      <p class="store-description">{{store.description}}</p>
+      <div class="store-actions">
+        <button mat-raised-button color="primary" (click)="followStore()">
+          <mat-icon>favorite</mat-icon>
+          Follow Store
+        </button>
+        <button mat-raised-button color="accent" (click)="contactSeller()">
+          <mat-icon>message</mat-icon>
+          Contact Seller
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Store Navigation -->
+<div class="store-navigation">
+  <div class="nav-container">
+    <!-- Left Navigation -->
+    <div class="nav-buttons">
+      <button mat-button [class.active]="activeTab === 'products'" (click)="setActiveTab(0)">
+        Products
+        <span class="count">{{store?.productCount || 0}}</span>
+      </button>
+      <button mat-button [class.active]="activeTab === 'reviews'" (click)="setActiveTab(1)">
+        Reviews
+        <span class="count">{{store?.reviewCount || 0}}</span>
+      </button>
+    </div>
+
+    <!-- Right Search -->
+    <div class="search-bar">
+      <mat-form-field appearance="outline">
+        <mat-label>Search among {{store?.productCount || 0}} products</mat-label>
+        <input matInput [value]="searchQuery" (input)="searchQuery = $any($event.target).value; searchProducts()" placeholder="Search products...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+  </div>
+</div>
+
+<!-- Filter Section -->
+<div class="filter-section" *ngIf="activeTab === 'products'">
+  <div class="filter-container">
+    <div class="filter-header">
+      <h2>Featured Products</h2>
+      <div class="sort-dropdown">
+        <span class="sort-label">Sort:</span>
+        <button mat-button [matMenuTriggerFor]="sortMenu">
+          {{getCurrentSortLabel()}}
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #sortMenu="matMenu">
+          <button mat-menu-item *ngFor="let option of sortOptions" (click)="setSort(option.value)">
+            {{option.label}}
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content Area -->
+<div class="main-content">
+  <div class="content-container">
+    <!-- Store Content -->
+    <div class="store-content" *ngIf="store">
+      <div [ngSwitch]="activeTab">
+        <!-- Products Tab -->
+        <div *ngSwitchCase="'products'" class="products-grid">
+          <mat-card *ngFor="let product of filteredProducts" class="product-card">
+            <div class="product-image-container">
+              <!-- Bestseller Badge -->
+              <div class="bestseller-badge" *ngIf="product.isBestseller">
+                <span>Bestseller</span>
+              </div>
+              <!-- Discount Badge -->
+              <div class="discount-badge" *ngIf="product.hasDiscount">
+                -{{product.discountPercentage}}%
+              </div>
+              <img mat-card-image 
+                   [src]="getImageUrl(product.images?.[0], 'product')" 
+                   [alt]="product?.productName"
+                   (error)="handleImageError($event, 'product')"
+                   class="product-image">
+            </div>
+            <mat-card-content>
+              <h3 class="product-name">{{product?.productName}}</h3>
+              <div class="price-container">
+                <ng-container *ngIf="product.hasDiscount; else regularPrice">
+                  <span class="discounted-price">{{calculateDiscountedPrice(product) | currency}}</span>
+                  <span class="original-price">{{product.price | currency}}</span>
+                </ng-container>
+                <ng-template #regularPrice>
+                  <span class="regular-price">{{product.price | currency}}</span>
+                </ng-template>
+              </div>
+              <p class="stock" [class.low-stock]="product.stockQuantity < 10">
+                <ng-container *ngIf="product.stockQuantity > 0; else outOfStock">
+                  In Stock: {{product.stockQuantity}}
+                </ng-container>
+                <ng-template #outOfStock>
+                  <span class="out-of-stock">Out of Stock</span>
+                </ng-template>
+              </p>
+              <!-- Features -->
+              <div class="product-features" *ngIf="product.freeShipping || product.isBestseller">
+                <span class="feature" *ngIf="product.freeShipping">
+                  <mat-icon>local_shipping</mat-icon> Free Shipping
+                </span>
+                <span class="feature" *ngIf="product.isBestseller">
+                  <mat-icon>star</mat-icon> Bestseller
+                </span>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <div class="action-buttons">
+                <button mat-stroked-button color="primary" [routerLink]="['/products', product.productId]">
+                  <mat-icon>info</mat-icon>
+                  Details
+                </button>
+                <button mat-icon-button color="warn" (click)="toggleFavorite(product)" [class.favorite]="product.isFavorite">
+                  <mat-icon>{{product.isFavorite ? 'favorite' : 'favorite_border'}}</mat-icon>
+                </button>
+                <button mat-icon-button color="primary" (click)="addToCart(product)" [disabled]="product.stockQuantity === 0">
+                  <mat-icon>shopping_cart</mat-icon>
+                </button>
+              </div>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+        <!-- Reviews Tab -->
+        <div *ngSwitchCase="'reviews'" class="reviews-placeholder">
+          <p>Reviews coming soon</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Spinner -->
+<div class="loading-spinner" *ngIf="loading">
+  <mat-spinner></mat-spinner>
+</div>
+
+<!-- Error Message -->
+<div class="error-message" *ngIf="error">
+  <p>{{error}}</p>
+</div>

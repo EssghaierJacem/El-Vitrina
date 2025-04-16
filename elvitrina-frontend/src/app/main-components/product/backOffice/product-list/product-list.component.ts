@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatChipsModule } from '@angular/material/chips';
 import { Product } from 'src/app/core/models/product/product.model';
+import { ProductCategoryType } from 'src/app/core/models/product/product-category-type.enum';
 import { ProductService } from 'src/app/core/services/product/product.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import * as XLSX from 'xlsx';
@@ -49,6 +50,7 @@ export class ProductListComponent implements OnInit {
   isLoading = true;
   displayedColumns = ['productId', 'productName', 'price', 'stockQuantity', 'category', 'status', 'actions'];
   searchText = '';
+  categories: ProductCategoryType[] = Object.values(ProductCategoryType);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -166,5 +168,11 @@ export class ProductListComponent implements OnInit {
         }
       });
     }
+  }
+
+  getCategoryDisplayName(category: ProductCategoryType): string {
+    return category.split('_').map((word: string) => 
+      word.charAt(0) + word.slice(1).toLowerCase()
+    ).join(' ');
   }
 }

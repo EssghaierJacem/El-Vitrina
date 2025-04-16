@@ -1,0 +1,63 @@
+<div class="quiz-home" *ngIf="!showQuestion && !isLoading">
+  <div class="quiz-card">
+    <h1>🎯 Weekly Quiz</h1>
+    <img class="quiz-icon" src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="Quiz Icon" />
+
+
+
+    <div class="quiz-stats">
+      <div>
+        <p>Questions</p>
+        <h3>{{ quizzes.length }}</h3>
+      </div>
+      <div>
+        <p>Points</p>
+        <h3>3</h3>
+      </div>
+    </div>
+
+    <div class="quiz-buttons">
+      <button class="btn" (click)="startQuiz()">▶ Play solo</button>
+
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showQuestion && !isLoading" class="quiz-list-container">
+
+  <div class="quiz-card">
+    <div class="timer">Temps restant : {{ timeLeft }}s</div>
+
+    <h2 class="text-white">Question {{ currentQuestionIndex + 1 }} / {{ quizzes.length }}</h2>
+    <p class="text-white">{{ quizzes[currentQuestionIndex].question }}</p>
+
+    <div class="quiz-buttons">
+      <button
+        class="btn"
+        *ngFor="let option of [quizzes[currentQuestionIndex].option1, quizzes[currentQuestionIndex].option2, quizzes[currentQuestionIndex].option3]"
+        [ngClass]="{ 'selected': selectedAnswers[currentQuestionIndex] === option }"
+        (click)="selectAnswer(option)">
+        {{ option }}
+      </button>
+    </div>
+
+
+    <div class="quiz-nav-buttons" >
+      <button class="btn btn-secondary" (click)="previousQuestion()" [disabled]="currentQuestionIndex === 0">⬅ Previous</button>
+      <button class="btn btn-secondary" (click)="nextQuestion()" [disabled]="currentQuestionIndex === quizzes.length - 1">Next ➡</button>
+    </div>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" [style.width.%]="(currentQuestionIndex + 1) / quizzes.length * 100"></div>
+    <button class="btn btn-secondary" [disabled]="currentQuestionIndex !== quizzes.length - 1">Results ➡</button>
+  </div>
+  <div *ngIf="allQuestionsAnswered()" class="quiz-buttons">
+    <button class="btn" (click)="showQuizResults()">Voir les résultats ➡</button>
+  </div>  <p class="confirmation" *ngIf="confirmationMessage">{{ confirmationMessage }}</p>
+
+</div>
+
+
+<div *ngIf="isLoading" class="quiz-home">
+  <h2>Chargement des quiz...</h2>
+</div>

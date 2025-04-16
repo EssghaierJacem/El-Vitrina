@@ -1,5 +1,6 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,16 +18,23 @@ public class Quiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
+    private String question;
 
-    private String description;
+    private String option1;
 
-    private int score;
+    private String option2;
 
-    @OneToMany(mappedBy = "quiz")
-    private List<Question> questions;
+    private String option3;
 
-    @OneToOne
+    private String bonneReponse;
+
+    private int score ;
+
+    private String reponseUser;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
+
 }

@@ -1,1 +1,109 @@
-<p>product-list works!</p>
+<div class="product-list-container">
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <mat-card>
+      <mat-card-content>
+        <!-- Search -->
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search products</mat-label>
+          <input matInput [(ngModel)]="searchQuery" (keyup)="applyFilters()" placeholder="Search by name or description">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <!-- Category Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>Category</mat-label>
+          <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyFilters()">
+            <mat-option [value]="null">All Categories</mat-option>
+            <mat-option *ngFor="let category of categories" [value]="category">
+              {{category}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Sort By -->
+        <mat-form-field appearance="outline">
+          <mat-label>Sort by</mat-label>
+          <mat-select [(ngModel)]="sortBy" (selectionChange)="applyFilters()">
+            <mat-option value="newest">Newest</mat-option>
+            <mat-option value="price">Price: Low to High</mat-option>
+            <mat-option value="name">Name: A to Z</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Additional Filters -->
+        <div class="filter-toggles">
+          <button mat-stroked-button [class.active]="showDiscounted" (click)="showDiscounted = !showDiscounted; applyFilters()">
+            <mat-icon>local_offer</mat-icon>
+            On Sale
+          </button>
+          <button mat-stroked-button [class.active]="showInStock" (click)="showInStock = !showInStock; applyFilters()">
+            <mat-icon>inventory_2</mat-icon>
+            In Stock
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Products Grid -->
+  <div class="products-grid" *ngIf="!loading && !error">
+    <mat-card class="product-card" *ngFor="let product of filteredProducts">
+      <div class="product-image">
+        <img [src]="product.images[0] || 'assets/images/default-product.png'" [alt]="product.productName">
+        <button mat-icon-button class="favorite-button" (click)="toggleFavorite(product)">
+          <mat-icon>{{product.isFavorite ? 'favorite' : 'favorite_border'}}</mat-icon>
+        </button>
+      </div>
+
+      <mat-card-content>
+        <h3 class="product-name">{{product.productName}}</h3>
+
+        <div class="product-price" [class.has-discount]="product.hasDiscount">
+          <span class="current-price">{{product.price | currency:'EUR'}}</span>
+          <span class="original-price" *ngIf="product.hasDiscount && product.originalPrice">
+            {{product.originalPrice | currency:'EUR'}}
+          </span>
+          <span class="discount-badge" *ngIf="product.hasDiscount && product.discountPercentage">
+            {{product.discountPercentage}}% OFF
+          </span>
+        </div>
+
+        <div class="product-meta">
+          <span class="shipping" *ngIf="product.freeShipping">FREE shipping</span>
+          <span class="bestseller" *ngIf="product.isBestseller">Bestseller</span>
+          <span class="stock" *ngIf="product.stockQuantity === 0">Out of Stock</span>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-stroked-button color="primary" [routerLink]="['/products', product.productId]">
+        View Details
+        </button>
+        <button mat-raised-button color="primary" [routerLink]="['/products/', product.productId]">
+          Add to Cart
+        </button>
+
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!loading && !error && filteredProducts.length === 0">
+    <mat-icon>search_off</mat-icon>
+    <h3>No products found</h3>
+    <p>Try adjusting your search or filters</p>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-state" *ngIf="error">
+    <mat-icon color="warn">error</mat-icon>
+    <h3>{{error}}</h3>
+    <button mat-raised-button color="primary" (click)="loadProducts()">Retry</button>
+  </div>
+</div>

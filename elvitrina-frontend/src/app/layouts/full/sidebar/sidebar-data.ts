@@ -47,7 +47,7 @@ export const navItems: NavItem[] = [
   //   chipClass: 'bg-secondary text-white',
   //   chipContent: 'PRO',
   // },
-  
+
   {
     navCap: 'Users and Offers',
   },
@@ -61,6 +61,103 @@ export const navItems: NavItem[] = [
     iconName: 'point',
     route: '/dashboard/offers',
   }, 
+  {
+    displayName: 'Order & Payment',
+    iconName: 'shopping-cart',
+    children: [
+      {
+        displayName: 'Custom Order',
+        iconName: 'shopping-cart',
+        route: 'dashboard/custom-order',
+        children: [
+          {
+            displayName: 'List',
+            iconName: 'list',
+            route: 'dashboard/custom-order/list',
+          },
+          {
+            displayName: 'Create',
+            iconName: 'plus-circle',
+            route: 'dashboard/custom-order/create',
+          }
+        ],
+      },
+      {
+        displayName: 'Payment',
+        iconName: 'credit-card',
+        route: 'dashboard/payment',
+        children: [
+          {
+            displayName: 'List',
+            iconName: 'list',
+            route: 'dashboard/payment/list',
+          },
+          {
+            displayName: 'Create',
+            iconName: 'plus-circle',
+            route: 'dashboard/payment/create',
+          }
+        ],
+      },
+
+    ],
+  },
+  {
+    displayName: 'Quiz',
+    iconName: 'clipboard-list',
+    children: [
+      {
+        displayName: 'Quiz',
+        iconName: 'clipboard-list',
+        route: 'dashboard/quiz',
+        children: [
+          {
+            displayName: 'Quiz List',
+            iconName: 'list',
+            route: 'dashboard/quiz/list',
+          },
+          {
+            displayName: 'Create Quiz',
+            iconName: 'plus-circle',
+            route: 'dashboard/quiz/create',
+          }
+        ],
+      },
+      {
+        displayName: 'Question',
+        iconName: 'point',
+        route: 'dashboard/quiz/question',
+        children: [
+          {
+            displayName: 'Quesion List',
+            iconName: 'help-circle',
+            route: 'dashboard/question/list'
+          },
+          {
+            displayName: 'Question Create',
+            iconName: 'plus-circle',
+            route: 'dashboard/question/create'
+          }
+        ]
+      },
+      {
+        displayName: 'Reponse ',
+        iconName: 'point',
+        route: 'dashboard/quiz/reponse',
+            children: [
+             { displayName: 'Reponse List',
+            iconName: 'list',
+            route: 'dashboard/reponse/list'
+          },
+          {
+            displayName: 'Reponse Create',
+            iconName: 'plus-circle',
+            route: 'dashboard/reponse/create'
+          }
+        ]
+      },
+    ],
+  },
 
 
   {
@@ -180,7 +277,7 @@ export const navItems: NavItem[] = [
         iconName: 'point',
         external: true,
         chip: true,
-        chipClass: 'bg-secondary text-white', 
+        chipClass: 'bg-secondary text-white',
         chipContent: 'PRO',
         route: 'https://modernize-angular-main.netlify.app/authentication/login',
       },

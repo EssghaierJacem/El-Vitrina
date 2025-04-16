@@ -26,7 +26,7 @@
               <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-14 p-l-0">User</th>
               <td mat-cell *matCellDef="let user" class="p-l-0">
                 <div class="d-flex align-items-center">
-                  <img [src]="user.image" alt="user" width="50" class="rounded" />
+                  <img [src]="getUserImage(user)" alt="user" width="50" class="rounded" />
                   <div class="m-l-16">
                     <h6 class="f-s-14 f-w-600">{{ user.firstname }} {{ user.lastname }}</h6>
                   </div>

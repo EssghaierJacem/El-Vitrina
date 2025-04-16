@@ -9,6 +9,8 @@ export interface Product {
   productName: string;
   description?: string;
   price: number;
+  originalPrice?: number;
+  discountPercentage?: number;
   stockQuantity: number;
   category: ProductCategoryType;
   createdAt?: string;
@@ -19,4 +21,9 @@ export interface Product {
   storeId: number;
   store?: Store;
   //customOrders?: CustomOrder[];
+  
+  // Additional UI properties
+  isFavorite?: boolean;
+  freeShipping?: boolean;
+  isBestseller?: boolean;
 }

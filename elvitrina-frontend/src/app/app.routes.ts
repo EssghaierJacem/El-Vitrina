@@ -3,9 +3,11 @@ import { BlankComponent } from './layouts/blank/blank.component';
 import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
 import { AdminGuard } from './main-components/user/adminGuard.component';
+import { NotFoundComponent } from './layouts/not-found/not-found.component';
+import { OauthSuccessComponent } from './main-components/user/oauth-success/oauth-success.component';
 import { RequestPersoCreateComponent } from './main-components/requestPerso/frontOffice/request-perso-create/request-perso-create.component';
 
-export const routes: Routes = [   // { path: 'createRequestperso', component:RequestPersoCreateComponent },
+export const routes: Routes = [   
   {  
     path: '',
     component: FrontComponent,
@@ -16,12 +18,36 @@ export const routes: Routes = [   // { path: 'createRequestperso', component:Req
           import('./main-components/offer/frontoffice/frontoffice_offer.routes').then((m) => m.FrontOfferRoutes),
       },
       {
-        path: 'user',
+        path: 'users',
         loadChildren: () =>
           import('./main-components/user/frontoffice/frontuser.routes').then((m) => m.FrontUserRoutes),
       },
+      {
+        path: 'stores',
+        loadChildren: () =>
+          import('./main-components/store/frontOffice/store.routes').then((m) => m.routes),
+      },
+      {
+        path: 'products',
+        loadChildren: () =>
+          import('./main-components/product/frontOffice/product.routes').then((m) => m.ProductRoutes),
+      },
+      {
+        path: 'friends',
+        loadChildren: () =>
+          import('./main-components/friends/friend.routes').then((m) => m.FriendRoutes),
+      },
+      {
+        path: 'payment',
+        loadChildren: () =>
+          import('./main-components/Payment/frontoffice/payment.routes').then((m) => m.PaymentsRoutes),
+      },
+      {
+       path: 'quiz',
+         loadChildren: () =>
+          import('./main-components/Quiz/frontoffice/quizFront.routes').then((m) => m.QuizFrontRoutes),
+},
 
-      //hazem try  
       {
         path: 'requestperso',
         loadChildren: () =>
@@ -32,10 +58,9 @@ export const routes: Routes = [   // { path: 'createRequestperso', component:Req
         loadChildren: () =>
           import('./main-components/Ad/frontOffice/frontoffice_ad.routes').then((m) => m.AdCreate),
       },
-
-
     ],
   },
+
   {
     path: 'authentication',
     component: BlankComponent,
@@ -45,9 +70,9 @@ export const routes: Routes = [   // { path: 'createRequestperso', component:Req
       ),
   },
   {
-    path: 'dashboard', 
+    path: 'dashboard',
     component: FullComponent,
-    canActivate: [AdminGuard], 
+    canActivate: [AdminGuard],
     children: [
       {
         path: '',
@@ -60,6 +85,21 @@ export const routes: Routes = [   // { path: 'createRequestperso', component:Req
           import('./pages/ui-components/ui-components.routes').then(
             (m) => m.UiComponentsRoutes
           ),
+      },
+      {
+        path: 'custom-order',
+        loadChildren: () =>
+          import('./main-components/custom-order/backOffice/custom-order.routes').then(m => m.customOrderRoutes),
+      },
+      {
+        path: 'payment',
+        loadChildren: () =>
+          import('./main-components/Payment/backoffice/payment.routes').then(m => m.PaymentRoutes),
+      },
+      {
+        path: 'quiz',
+        loadChildren: () =>
+          import('./main-components/Quiz/backoffice/quiz.routes').then(m => m.QuizRoutes),
       },
       {
         path: 'users',
@@ -112,7 +152,10 @@ export const routes: Routes = [   // { path: 'createRequestperso', component:Req
     ],
   },
   {
-    path: '**',
-    redirectTo: 'authentication/error',
+    path: 'oauth-success',
+    component: OauthSuccessComponent
+  },
+  {
+    path: '**', component: NotFoundComponent
   },
 ];
