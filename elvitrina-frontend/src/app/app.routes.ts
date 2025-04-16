@@ -2,8 +2,11 @@ import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FrontComponent } from './layouts/frontoffice/front.component';
 import { FullComponent } from './layouts/full/full.component';
+import { AdminGuard } from './main-components/user/adminGuard.component';
+import { NotFoundComponent } from './layouts/not-found/not-found.component';
 import { customOrderRoutes } from './main-components/custom-order/custom-order.routes';
 import { Question } from './core/models/Quiz/question';
+import { OauthSuccessComponent } from './main-components/user/oauth-success/oauth-success.component';
 
 export const routes: Routes = [
   {
@@ -16,7 +19,7 @@ export const routes: Routes = [
           import('./main-components/offer/frontoffice/frontoffice_offer.routes').then((m) => m.FrontOfferRoutes),
       },
       {
-        path: 'user',
+        path: 'users',
         loadChildren: () =>
           import('./main-components/user/frontoffice/frontuser.routes').then((m) => m.FrontUserRoutes),
       },
@@ -58,6 +61,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: FullComponent,
+    canActivate: [AdminGuard],
     children: [
       {
         path: '',
@@ -149,7 +153,10 @@ export const routes: Routes = [
     ],
   },
   {
-    path: '**',
-    redirectTo: 'authentication/error',
+    path: 'oauth-success',
+    component: OauthSuccessComponent
+  },
+  {
+    path: '**', component: NotFoundComponent
   },
 ];

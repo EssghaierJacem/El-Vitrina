@@ -6,6 +6,7 @@ import com.sudoers.elvitrinabackend.model.request.AuthenticationRequest;
 import com.sudoers.elvitrinabackend.model.request.RegisterRequest;
 import com.sudoers.elvitrinabackend.model.response.AuthenticationResponse;
 import com.sudoers.elvitrinabackend.repository.UserRepository;
+import com.sudoers.elvitrinabackend.service.user.CaptchaService;
 import com.sudoers.elvitrinabackend.service.user.EmailService;
 import com.sudoers.elvitrinabackend.service.user.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,8 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private final CaptchaService captchaService;
+
 
     LocalDateTime currentDateTime = LocalDateTime.now();
 
@@ -57,6 +60,12 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        boolean isCaptchaValid = captchaService.verifyCaptcha(request.getRecaptchaToken());
+
+        if (!isCaptchaValid) {
+            throw new BadCredentialsException("Invalid reCAPTCHA. Please try again.");
+        }
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -76,6 +85,7 @@ public class AuthenticationService {
                 .token(jwtToken)
                 .build();
     }
+
 
     public boolean verifyUser(String token) {
         var optionalUser = userRepository.findByVerificationToken(token);

@@ -35,6 +35,12 @@ export class UserEditComponent implements OnInit {
   userId!: number;
   user: User = {} as User;
 
+  selectedFile?: File;
+  isImageValid = true;
+  localImagePreview?: string;
+  isUploading = false;
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
+  
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
@@ -62,6 +68,49 @@ export class UserEditComponent implements OnInit {
         alert('Failed to update user!');
       }
     });
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+  
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.localImagePreview = reader.result as string;
+        this.uploadImage(); 
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  uploadImage(): void {
+    if (this.selectedFile && this.user.id) {
+      this.userService.uploadProfileImage(this.user.id, this.selectedFile).subscribe({
+        next: (updatedUser) => {
+          this.user.image = updatedUser.image;
+          this.localImagePreview = undefined; 
+          alert('Image uploaded successfully!');
+        },
+        error: () => alert('Image upload failed!')
+      });
+    }
+  }
+
+  onImageUrlChange(): void {
+    this.localImagePreview = undefined; 
+  }
+
+  previewImageUrl(): string {
+    if (this.localImagePreview) return this.localImagePreview;
+  
+    if (this.user.image) {
+      return this.user.image.startsWith('http') 
+        ? this.user.image 
+        : this.IMAGE_BASE_URL + this.user.image;
+    }
+  
+    return '/assets/images/default-avatar.png';
   }
 
   onCancel(): void {
