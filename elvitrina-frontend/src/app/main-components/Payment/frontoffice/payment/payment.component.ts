@@ -1,4 +1,3 @@
-// payment.component.ts
 import { Component } from '@angular/core';
 import { loadStripe } from '@stripe/stripe-js';
 import { CustomOrder } from 'src/app/core/models/Panier/CustomOrder';
