@@ -13,17 +13,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DonationResponseDTO {
-    private Long id;
+    private Long donationId;
     private BigDecimal amount;
     private String message;
     private Long campaignId;
     private String campaignTitle;
     private Long userId;
     private String donorName;
-    private Boolean isAnonymous;
+    private Long storeId;
     private LocalDateTime donationDate;
     private String status;
-
     private Long giftId;
 
 }

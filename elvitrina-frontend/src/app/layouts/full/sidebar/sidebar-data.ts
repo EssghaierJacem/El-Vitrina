@@ -183,6 +183,25 @@ export const navItems: NavItem[] = [
 
 
   {
+    displayName: "Donations",
+    iconName: "heart",
+    route: "/dashboard/donations",
+    children: [
+      {
+        displayName: "Campaigns",
+        iconName: "bullhorn",
+        route: "/dashboard/donations/campaigns",
+      },
+    ]
+  },
+  {
+    displayName: 'Events',
+    iconName: 'calendar-event',
+    route: 'dashboard/events',
+    children: []
+  }, 
+  
+  {
     navCap: 'Ui Components',
   },
   {
