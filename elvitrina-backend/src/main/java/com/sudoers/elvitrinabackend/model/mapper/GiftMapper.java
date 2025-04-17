@@ -16,10 +16,12 @@ public class GiftMapper {
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .imageUrl(dto.getImageUrl())
-                .isRedeemed(dto.getIsRedeemed() != null ? dto.getIsRedeemed() : false)
                 .donation(donation)
                 .donorReward(reward)
                 .user(user)
+                .discount(dto.getDiscount() != null ? dto.getDiscount() : 0L) // Default to 0 if null
+                .giftCode(dto.getGiftCode())
+                .expirationDate(dto.getExpirationDate()) // Map expiration date
                 .build();
     }
 
@@ -33,7 +35,10 @@ public class GiftMapper {
         dto.setRewardId(gift.getDonorReward() != null ? gift.getDonorReward().getRewardId() : null);
         dto.setUserId(gift.getUser() != null ? gift.getUser().getId() : null);
         dto.setIsRedeemed(gift.getIsRedeemed());
+        dto.setDiscount(gift.getDiscount() != null ? gift.getDiscount() : 0L); // Map discount
         dto.setGiftCode(gift.getGiftCode());
+        dto.setIsshared(gift.getIsshared() != null ? gift.getIsshared() : false); // Map isShared with default
+        dto.setExpirationDate(gift.getExpirationDate()); // Map expiration date
         return dto;
     }
 }
