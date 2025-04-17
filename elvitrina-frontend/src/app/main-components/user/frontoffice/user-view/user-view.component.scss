@@ -1,0 +1,238 @@
+.profile-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    
+    p {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #666;
+    }
+  }
+  
+  .user-profile {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .profile-header {
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    margin-bottom: 20px;
+    border-radius: 8px;
+  }
+  
+  .profile-banner {
+    height: 180px;
+    background-image: url('https://img.freepik.com/free-vector/white-abstract-wallpaper_23-2148830026.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.2);
+    }
+  }
+  
+  .profile-main {
+    position: relative;
+    padding: 16px 24px 24px;
+    margin-top: -60px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 20px;
+    
+    @media (max-width: 600px) {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  }
+  
+  .profile-avatar {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #f0f0f0;
+    z-index: 2;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .avatar-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      color: #666;
+      background-color: #e0e0e0;
+    }
+    
+    .status-badge {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background-color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+    }
+  }
+  
+  .profile-info {
+    flex-grow: 1;
+    padding-bottom: 8px;
+    
+    h1 {
+      margin: 0 0 12px 0;
+      font-size: 28px;
+      font-weight: 500;
+    }
+  }
+  
+  .user-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    
+    @media (max-width: 600px) {
+      justify-content: center;
+    }
+  }
+  
+  .active-chip {
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;
+  }
+  
+  .inactive-chip {
+    background-color: #ffebee !important;
+    color: #c62828 !important;
+  }
+  
+  .points-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 8px;
+  }
+  
+  .contact-details {
+    border-radius: 8px;
+    
+    mat-card-header {
+      margin-bottom: 16px;
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 8px;
+      gap: 12px;
+      
+      mat-icon {
+        color: #666;
+      }
+    }
+    
+    mat-divider {
+      margin: 0;
+    }
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    
+    @media (max-width: 600px) {
+      flex-direction: column;
+    }
+    
+    button {
+      flex: 1;
+    }
+  }
+  
+  .expandable-sections {
+    margin-top: 8px;
+    
+    mat-expansion-panel {
+      margin-bottom: 16px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    
+    mat-panel-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      
+      mat-icon {
+        color: #555;
+      }
+    }
+    
+    mat-panel-description {
+      color: #777;
+      font-size: 14px;
+    }
+  }
+  
+  .empty-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    
+    mat-icon {
+      font-size: 48px;
+      height: 48px;
+      width: 48px;
+      color: #bdbdbd;
+      margin-bottom: 16px;
+    }
+    
+    p {
+      color: #757575;
+      font-size: 16px;
+      text-align: center;
+      margin: 0;
+    }
+  }

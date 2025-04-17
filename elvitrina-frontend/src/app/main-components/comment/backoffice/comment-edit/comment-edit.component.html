@@ -1,0 +1,33 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+      <div class="d-flex justify-content-between align-items-center m-b-16">
+        <div class="d-flex align-items-center">
+          <button mat-icon-button color="primary" [routerLink]="'/dashboard/blogPosts/' + blogPostId + '/comments'">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <mat-card-title>Edit your comment</mat-card-title>
+        </div>
+      </div>
+
+      <form [formGroup]="commentForm" (ngSubmit)="updateComment()" class="m-t-16">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Comment</mat-label>
+          <textarea matInput formControlName="content" rows="5" placeholder="Update your comment..." required></textarea>
+          <mat-error *ngIf="commentForm.controls['content'].hasError('required')">
+            Comment cannot be empty
+          </mat-error>
+        </mat-form-field>
+  
+        <div class="d-flex justify-content-end gap-2 m-t-16">
+          <button mat-button type="button" (click)="router.navigate(['/dashboard/blogPosts', blogPostId, 'comments'])" [disabled]="isSubmitting">
+            Cancel
+          </button>
+  
+          <button mat-raised-button color="primary" type="submit" [disabled]="commentForm.invalid ">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+  
