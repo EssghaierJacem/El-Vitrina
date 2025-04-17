@@ -1,10 +1,12 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Data
@@ -19,17 +21,24 @@ public class ProposalPerso {
     private Long id;
     // Many ProposalPersons belong to one RequestPerson (Many-to-One)
     //@JsonBackReference  // The "back" side of the relationship
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "request_perso_id")
     private RequestPerso requestPerso;
-    private String title;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
+
+ //   private String title;
     private String description;
 
     private float price;
 
-    private String image;
+    // private String image;
 
-    private LocalDateTime deliveryTime;
+    private Date date;
 
+   // private Long ProposalPersoID;
 }

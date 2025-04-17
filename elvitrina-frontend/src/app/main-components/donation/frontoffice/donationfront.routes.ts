@@ -9,10 +9,6 @@ import { CampaignDonateComponent } from './campaign/campaign-donate/campaign-don
 
 
 // Gift components
-import { GiftListComponent } from './gift/gift-list/gift-list.component';
-import { GiftDetailsComponent } from './gift/gift-details/gift-details.component';
-import { GiftEditComponent } from './gift/gift-edit/gift-edit.component';
-import { GiftRedeemComponent } from './gift/gift-redeem/gift-redeem.component';
 import { CampaignCreateComponent } from './campaign/campaign-create/campaign-create.component';
 import { GiftCreateComponent } from './gift/gift-create/gift-create.component';
 
@@ -75,29 +71,7 @@ export const DONATION_FRONT_ROUTES: Routes = [
     
 
       // Gifts
-      {
-        path: 'gifts',
-        component: GiftListComponent,
-        data: {
-          title: 'My Gifts',
-          breadcrumb: [
-            { label: 'Home', url: '/' },
-            { label: 'My Gifts', url: '' }
-          ]
-        }
-      },
-      {
-        path: 'gifts/:id',
-        component: GiftDetailsComponent,
-        data: {
-          title: 'Gift Details',
-          breadcrumb: [
-            { label: 'Home', url: '/' },
-            { label: 'My Gifts', url: '/gifts' },
-            { label: 'Details', url: '' }
-          ]
-        }
-      },
+    
       {
         path: 'gifts/create',
         component: GiftCreateComponent,
@@ -110,30 +84,8 @@ export const DONATION_FRONT_ROUTES: Routes = [
           ]
         }
       },
-      {
-        path: 'gifts/:id/edit',
-        component: GiftEditComponent,
-        data: {
-          title: 'Edit Gift',
-          breadcrumb: [
-            { label: 'Home', url: '/' },
-            { label: 'My Gifts', url: '/gifts' },
-            { label: 'Edit', url: '' }
-          ]
-        }
-      },
-      {
-        path: 'gifts/:id/redeem',
-        component: GiftRedeemComponent,
-        data: {
-          title: 'Redeem Gift',
-          breadcrumb: [
-            { label: 'Home', url: '/' },
-            { label: 'My Gifts', url: '/gifts' },
-            { label: 'Redeem', url: '' }
-          ]
-        }
-      }
+      
+  
     ]
   }
 ];

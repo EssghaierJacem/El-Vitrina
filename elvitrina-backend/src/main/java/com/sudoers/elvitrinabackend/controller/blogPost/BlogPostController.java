@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/blogpost")
+@RequestMapping("/api/blogposts")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class BlogPostController {
     @Autowired
     IBlogPostService blogPostService;
@@ -26,17 +27,18 @@ public class BlogPostController {
         return blogPostService.addBlogPost(blogPost);
     }
 
-    @PutMapping("/updateblogpost")
-    public BlogPost updateBlogPost (@RequestBody BlogPost blogPost){
+    @PutMapping("/{id}/updateblogpost")
+    public BlogPost updateBlogPost (@PathVariable("id") Long id, @RequestBody BlogPost blogPost){
+        blogPost.setId(id);
         return blogPostService.updateBlogPost(blogPost);
     }
 
-    @GetMapping("/getblogpost/{id}")
+    @GetMapping("/{id}")
     public BlogPost getBlogPost (@PathVariable("id") long id){
         return blogPostService.retrieveBlogPost(id);
     }
 
-    @DeleteMapping("/removeblogpost/{id}")
+    @DeleteMapping("/{id}/removeblogpost")
     public void removeBlogPost (@PathVariable("id") long id){
         blogPostService.removeBlogPost(id);
     }

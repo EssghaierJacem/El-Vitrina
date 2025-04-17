@@ -6,7 +6,13 @@ import com.sudoers.elvitrinabackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -238,6 +244,54 @@ public class UserService implements IUser {
 
         return false;
     }
+
+    public UserDTO uploadUserImage(Long userId, MultipartFile imageFile) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        try {
+            // Generate a unique filename
+            String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+
+            // Define the upload directory (you can change this path)
+            Path uploadPath = Paths.get("uploads/user-images");
+
+            // Create directory if it doesn't exist
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // Save the file to the server
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // Update user image field in the database
+            user.setImage(fileName);
+            User savedUser = userRepository.save(user);
+
+            // Return DTO
+            return new UserDTO(
+                    savedUser.getId(),
+                    savedUser.getName(),
+                    savedUser.getLastname(),
+                    savedUser.getFirstname(),
+                    savedUser.getEmail(),
+                    savedUser.getPhone(),
+                    savedUser.getAddress(),
+                    savedUser.getRegistrationDate(),
+                    savedUser.isStatus(),
+                    savedUser.getPoints(),
+                    savedUser.isActive(),
+                    savedUser.getRole(),
+                    savedUser.getPassword(),
+                    savedUser.getImage()
+            );
+
+        } catch (IOException e) {
+            throw new RuntimeException("Image upload failed", e);
+        }
+    }
+
 
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
