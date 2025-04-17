@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Gift } from '../../models/donation/gift.model';
+import { Gift, GiftRequestDTO } from '../../models/donation/gift.model';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
@@ -12,8 +12,8 @@ export class GiftService {
 
   constructor(private http: HttpClient) {}
 
-  createGift(gift: Gift): Observable<Gift> {
-    return this.http.post<Gift>(this.apiUrl, gift);
+  createGift(gift: GiftRequestDTO): Observable<GiftRequestDTO> {
+    return this.http.post<GiftRequestDTO>(this.apiUrl, gift);
   }
 
   getAllGifts(): Observable<Gift[]> {

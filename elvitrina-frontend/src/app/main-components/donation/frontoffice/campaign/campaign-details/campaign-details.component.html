@@ -1,1 +1,34 @@
-<p>Campaign Details works!</p>
+<div class="campaign-container">
+  <div>
+    <h1>Help us to <br><span class="green-text">{{ campaigns.title }}</span></h1>
+    <p class="description">
+      {{ campaigns.description }}
+    </p>
+    <div class="progress-section">
+      <div class="amount" [style.margin-left.%]="(campaigns.currentAmount / campaigns.goalAmount) * 90">${{ campaigns.currentAmount }}</div>
+      <div class="progress-bar">
+        <div class="progress" [style.width.%]="(campaigns.currentAmount / campaigns.goalAmount) * 100"></div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="stats-container">
+      <div class="stat-box">
+        <div class="stat-number">${{ campaigns.goalAmount }}</div>
+        <div class="stat-label">Goal</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">{{ calculateDaysToGo(campaigns.endDate) }}</div>
+        <div class="stat-label">Days to Go</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">{{ campaigns.donorCount || 0 }}</div>
+        <div class="stat-label">Supporter</div>
+      </div>
+    </div>
+    <div class="action-buttons">
+      <button class="contribute-btn" (click)="openDonationPopup()">Donate</button>
+    </div>
+  </div>
+</div>
+

@@ -25,8 +25,9 @@ export const EVENT_FRONT_ROUTES: Routes = [
           ]
         }
       },
+      { path: 'auth-callback', component: EventDetailsComponent },
       {
-        path: '/:id',
+        path: ':id',
         component: EventDetailsComponent,
         data: {
           title: 'Event Details',
@@ -38,7 +39,7 @@ export const EVENT_FRONT_ROUTES: Routes = [
         }
       },
       {
-        path: '/:id/register',
+        path: ':id/register',
         component: EventRegisterComponent,
         data: {
           title: 'Register for Event',
@@ -52,7 +53,7 @@ export const EVENT_FRONT_ROUTES: Routes = [
 
       // Sessions
       {
-        path: '/:eventId/sessions',
+        path: ':eventId/sessions',
         component: SessionListComponent,
         data: {
           title: 'Event Sessions',
@@ -64,7 +65,7 @@ export const EVENT_FRONT_ROUTES: Routes = [
         }
       },
       {
-        path: '/:eventId/sessions/:id',
+        path: ':eventId/sessions/:id',
         component: SessionDetailsComponent,
         data: {
           title: 'Session Details',

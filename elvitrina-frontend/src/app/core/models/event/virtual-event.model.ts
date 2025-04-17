@@ -1,14 +1,13 @@
-import { EventMode, EventType } from '../enums';
-import { EventParticipant } from '../event-participant.model';
-import { EventSession } from '../event-session.model';
-import { EventTicket } from "../event-ticket.model";
+import { EventParticipant } from '../event/event-participant.model';
+import { EventSession, EventSessionRequestDTO } from '../event/event-session.model';
+import { EventTicket } from "../event/event-ticket.model";
 import { Store } from '../store/store.model';
 import { User } from "../user/user.model";
 export interface VirtualEvent {
   eventId: number;
   title: string;
   description: string;
-  eventDate: Date;
+  startDateTime: Date;
   ticketPrice: number;
   status: string;
   eventType: EventType;
@@ -23,4 +22,28 @@ export interface VirtualEvent {
   participants: EventParticipant[];
   tickets: EventTicket[];
   user: User;
+}
+
+
+
+export interface VirtualEventRequest {
+  title: string;
+  description: string;
+  startDateTime: Date; 
+  ticketPrice: number;
+  eventType: EventType;
+  eventMode: EventMode;
+  maxParticipants: number;
+  sessions: EventSessionRequestDTO[];
+  storeId: number; 
+  userId: number; 
+}
+export enum EventType {
+  FREE_LIVE = 'FREE_LIVE',
+  PAID_WORKSHOP = 'PAID_WORKSHOP',
+}
+
+export enum EventMode {
+  SINGLE_SESSION = 'SINGLE_SESSION',
+  MULTI_SESSION = 'MULTI_SESSION',
 }

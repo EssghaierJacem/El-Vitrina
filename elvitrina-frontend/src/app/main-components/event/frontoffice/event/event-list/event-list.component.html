@@ -1,1 +1,67 @@
-<p>Event List works!</p>
+<div class="container mt-4">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center my-5">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading events...</p>
+    </div>
+  
+    <!-- Error State -->
+    <div *ngIf="error" class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+  
+    <!-- No Events State -->
+    <div *ngIf="!loading && !error && events.length === 0" class="text-center my-5">
+      <p>No events found.</p>
+    </div>
+  
+    <!-- Events Grid -->
+    <div *ngIf="!loading && !error && events.length > 0" class="row g-4">
+      <div *ngFor="let event of events" class="col-md-6 col-lg-4">
+        <!-- Event Card Component -->
+        <div class="event-card">
+          <div class="event-image">
+            <div class="badges-container">
+              <div class="badge cooking-badge">
+                <i class="fas fa-utensils cooking-icon"></i>
+              </div>
+              <div class="badge date-badge">
+                <i class="fas fa-calendar-alt date-icon"></i>
+                {{ formatDate(event.startDateTime) }}
+              </div>
+            </div>
+            
+            <!-- Participants Badge -->
+            <div class="participants-badge">
+              <div class="count">{{ event.participants?.length || 0 }}</div>
+              <div class="total">/{{ event.maxParticipants }}</div>
+            </div>
+            
+            <div class="price-badge">
+              <div class="amount">{{ event.ticketPrice }}</div>
+              <div class="currency">USD</div>
+            </div>
+          </div>
+          <div class="event-content">
+            <h2 class="event-title">{{ event.title }}</h2>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="event-location">
+                <div class="location-icon">
+                  <i class="bi" [ngClass]="{'bi-camera-videot': event.eventMode === 'SINGLE_SESSION', 'bi-camera-video': event.eventMode === 'SINGLE_SESSION'}"></i>
+                </div>
+                <div class="location-text">
+                  Virtual Event
+                  <span class="city">Online</span>
+                </div>
+              </div>
+              <button class="join-button" (click)="goToEvent(event.eventId)">
+                Join Event
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

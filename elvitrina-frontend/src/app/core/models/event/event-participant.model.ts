@@ -1,6 +1,6 @@
-import { EventTicket } from "../event-ticket.model";
+import { EventTicket } from "../event/event-ticket.model";
 import { User } from "../user/user.model";
-import { VirtualEvent } from "../virtual-event.model";
+import { VirtualEvent } from "../event/virtual-event.model";
 
 export interface EventParticipant {
   id: number;

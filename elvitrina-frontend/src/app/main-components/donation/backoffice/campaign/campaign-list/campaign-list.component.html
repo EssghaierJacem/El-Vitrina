@@ -1,1 +1,55 @@
-<p>Campaign List works!</p>
+<div *ngIf="loading" class="loading-container">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Loading campaigns...</p>
+</div>
+<div *ngIf="!loading" class="campaign-container">
+  <div
+    class="a-box"
+    *ngFor="let campaign of campaigns; let i = index"
+    [class.expanded]="activeCard === i"
+    [class.verified]="campaign.verified"
+    (mouseenter)="onMouseEnter(i)"
+    (mouseleave)="onMouseLeave(i)"
+  >
+    <div class="multi-button" [class.active]="activeCard === i">
+      <button mat-icon-button matTooltip="Edit" [disableRipple]="true" (click)="editCampaign(campaign, i)">
+        <img src="/assets/images/svgs/edit.svg" alt="Edit" class="button-icon">
+      </button>
+      <button mat-icon-button matTooltip="View Details" [disableRipple]="true" (click)="viewDetails(campaign, i)">
+        <img src="/assets/images/svgs/details.svg" alt="View Details" class="button-icon">
+      </button>
+      <button
+        mat-icon-button
+        matTooltip="Check"
+        [disableRipple]="true"
+        (click)="checkCampaign(campaign, i)"
+        [disabled]="campaign.verified"
+      >
+        <img src="/assets/images/svgs/check.svg" alt="Check" class="button-icon">
+      </button>
+    </div>
+    <div class="img-container">
+      <div class="img-inner">
+        <div class="inner-skew">
+          <img [src]="campaign.imageUrl || 'https://images.pexels.com/photos/1456268/pexels-photo-1456268.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940'" alt="campaign image">
+        </div>
+      </div>
+    </div>
+    <div class="text-container">
+      <h3>{{ campaign.title }}</h3>
+      <div class="description-wrapper">
+        <p class="description" style="text-align: left;">{{ campaign.description }}</p>
+        <div class="goal">
+          <h5 class="progress-title">Goal: {{ campaign.goalAmount }}</h5>
+          <div class="amount" style="text-align: left;" [style.margin-left.%]="(campaign.currentAmount / campaign.goalAmount) * 90">${{ campaign.currentAmount }}</div>
+          <div class="progress">
+            <div class="progress-bar" [style.width]="(campaign.currentAmount / campaign.goalAmount * 100) + '%'"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="campaigns.length === 0" class="no-data-message">
+    <p>No campaigns available at the moment.</p>
+  </div>
+</div>

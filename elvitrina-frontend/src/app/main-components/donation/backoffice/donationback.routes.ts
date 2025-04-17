@@ -77,10 +77,6 @@ export const DONATION_BACK_ROUTES: Routes = [
         component: CampaignListComponent,
         data: {
           title: 'Campaigns',
-          breadcrumb: [
-            { label: 'Dashboard', url: '/dashboard' },
-            { label: 'Campaigns', url: '' }
-          ]
         }
       },
       {

@@ -1,5 +1,5 @@
-import { DonationCampaign } from "../donation-campaign.model";
-import { Gift } from "../gift.model";
+import { DonationCampaign } from "../donation/donation-campaign.model";
+import { Gift } from "../donation/gift.model";
 export interface DonorReward {
   rewardId: number;
   title: string;
@@ -11,7 +11,7 @@ export interface DonorReward {
   issuanceDate: Date;
   expirationDate: Date;
   redemptionDate: Date;
-  redemptionCode: string;
+  redemptionCode: number;
   redemptionStatus: string;
   tierLevel: string;
   isActive: boolean;
@@ -19,4 +19,11 @@ export interface DonorReward {
   updatedAt: Date;
   gifts: Gift[];
   campaign: DonationCampaign;
+}
+
+export interface DonorRewardRequeest {
+  title: string;
+  description: string;
+  minimumDonationAmount: number;
+  availableQuantity: number;
 }

@@ -1,4 +1,4 @@
-import { VirtualEvent } from "../virtual-event.model";
+import { VirtualEvent } from "../event/virtual-event.model";
 export interface EventSession {
   sessionId: number;
   startTime: Date;
@@ -7,4 +7,11 @@ export interface EventSession {
   createdAt: Date;
   updatedAt: Date;
   virtualEvent: VirtualEvent;
+}
+
+
+export interface EventSessionRequestDTO {
+  startTime: string;
+  endTime: string;
+  sessionTitle: string;
 }
