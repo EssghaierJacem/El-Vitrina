@@ -3,15 +3,9 @@ package com.sudoers.elvitrinabackend.service.Donation;
 import com.sudoers.elvitrinabackend.exception.ResourceNotFoundException;
 import com.sudoers.elvitrinabackend.model.dto.request.DonationRequestDTO;
 import com.sudoers.elvitrinabackend.model.dto.response.DonationResponseDTO;
-import com.sudoers.elvitrinabackend.model.entity.Donation;
-import com.sudoers.elvitrinabackend.model.entity.DonationCampaign;
-import com.sudoers.elvitrinabackend.model.entity.DonorReward;
-import com.sudoers.elvitrinabackend.model.entity.User;
+import com.sudoers.elvitrinabackend.model.entity.*;
 import com.sudoers.elvitrinabackend.model.mapper.DonationMapper;
-import com.sudoers.elvitrinabackend.repository.DonationCampaignRepository;
-import com.sudoers.elvitrinabackend.repository.DonationRepository;
-import com.sudoers.elvitrinabackend.repository.DonorRewardRepository;
-import com.sudoers.elvitrinabackend.repository.UserRepository;
+import com.sudoers.elvitrinabackend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +27,8 @@ public class DonationServiceImpl implements DonationService {
     private final DonationMapper donationMapper;
     private final DonationCampaignRepository donationCampaignRepository;
     private final UserRepository userRepository;
+    private final StoreRepository storeRepository;
+
     private final DonorRewardRepository donorRewardRepository;
 
     @Autowired
@@ -40,12 +36,13 @@ public class DonationServiceImpl implements DonationService {
                                DonationMapper donationMapper,
                                DonationCampaignRepository donationCampaignRepository,
                                UserRepository userRepository,
-                               DonorRewardRepository donorRewardRepository) {
+                               DonorRewardRepository donorRewardRepository , StoreRepository storeRepository) {
         this.donationRepository = donationRepository;
         this.donationMapper = donationMapper;
         this.donationCampaignRepository = donationCampaignRepository;
         this.userRepository = userRepository;
         this.donorRewardRepository = donorRewardRepository;
+        this.storeRepository = storeRepository;
     }
 
     @Override
@@ -53,11 +50,12 @@ public class DonationServiceImpl implements DonationService {
     public DonationResponseDTO saveDonation(DonationRequestDTO requestDTO) {
         Donation donation = donationMapper.toEntity(requestDTO);
         donation.setCreatedAt(LocalDateTime.now());
-
-        if (requestDTO.getCampaignId() != null) {
-            DonationCampaign campaign = donationCampaignRepository.findById(requestDTO.getCampaignId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Campaign not found with id: " + requestDTO.getCampaignId()));
+        DonationCampaign campaigns = null; // Declare outside to reuse later
+        if (requestDTO.getDonationCampaignId() != null) {
+            DonationCampaign campaign = donationCampaignRepository.findById(requestDTO.getDonationCampaignId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Campaign not found with id: " + requestDTO.getDonationCampaignId()));
             donation.setDonationCampaign(campaign);
+
         }
 
         if (requestDTO.getUserId() != null) {
@@ -67,8 +65,15 @@ public class DonationServiceImpl implements DonationService {
         }
 
 
+        if (requestDTO.getStoreId() != null) {
+            Store store = storeRepository.findById(requestDTO.getStoreId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Store not found with id: " + requestDTO.getStoreId()));
+            donation.setStore(store);
+        }
+
 
         Donation savedDonation = donationRepository.save(donation);
+
         return donationMapper.toResponseDTO(savedDonation);
     }
 
@@ -104,10 +109,16 @@ public class DonationServiceImpl implements DonationService {
         donationMapper.updateEntityFromDTO(requestDTO, existingDonation);
         existingDonation.setUpdatedAt(LocalDateTime.now());
 
-        if (requestDTO.getCampaignId() != null) {
-            DonationCampaign campaign = donationCampaignRepository.findById(requestDTO.getCampaignId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Campaign not found with id: " + requestDTO.getCampaignId()));
+        if (requestDTO.getDonationCampaignId() != null) {
+            DonationCampaign campaign = donationCampaignRepository.findById(requestDTO.getDonationCampaignId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Campaign not found with id: " + requestDTO.getDonationCampaignId()));
             existingDonation.setDonationCampaign(campaign);
+        }
+
+        if (requestDTO.getUserId() != null) {
+            User user = userRepository.findById(requestDTO.getUserId())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + requestDTO.getUserId()));
+            existingDonation.setUser(user);
         }
 
         if (requestDTO.getUserId() != null) {
