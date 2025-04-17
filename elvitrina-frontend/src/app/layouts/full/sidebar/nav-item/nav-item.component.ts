@@ -67,7 +67,7 @@ export class AppNavItemComponent implements OnChanges {
     }
   }
 
-  onSubItemSelected(item: NavItem) {
+  onSubItemSelected(item: NavItem) {    
     if (!item.children || !item.children.length) {
       if (this.expanded && window.innerWidth < 1024) {
         this.notify.emit();

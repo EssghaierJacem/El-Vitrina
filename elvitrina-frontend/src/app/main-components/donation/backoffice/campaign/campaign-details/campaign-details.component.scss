@@ -1,0 +1,240 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700|Raleway:300,400');
+
+$accent: #1ABC9C;
+$accent-inactive: desaturate($accent, 85%);
+$secondary: $accent-inactive;
+$tab-count: 4;
+$indicator-width: 50px;
+$indicator-height: 4px;
+
+@mixin user-select($value) {
+  -webkit-user-select: $value;
+  -moz-user-select: $value;
+  -ms-user-select: $value;
+  user-select: $value;
+}
+
+@mixin tabs(
+  $label-selector: "~ ul > li",
+  $slider-selector: "~ .slider",
+  $content-selector: "~ .content > section"
+) {
+  @for $i from 1 through $tab-count {
+    &:nth-of-type(#{$i}):checked {
+      #{$label-selector}:nth-child(#{$i}) {
+        @content;
+      }
+      #{$slider-selector} {
+        transform: translateX(#{100% * ($i - 1)});
+      }
+      #{$content-selector}:nth-child(#{$i}) {
+        display: block;
+      }
+    }
+  }
+}
+
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+}
+
+.campaign-details-container {
+  width: 100%;
+  padding: 20px;
+
+  h1 {
+    text-align: center;
+    color: $accent;
+    font-weight: 300;
+    padding: 40px 0 20px 0;
+    margin: 0;
+    font-family: 'Raleway', sans-serif;
+  }
+
+  .loading-container, .no-data-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+    color: #333;
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.2rem;
+  }
+
+  .tabs {
+    left: 50%;
+    transform: translateX(-50%);
+    position: relative;
+    background: white;
+    padding: 50px;
+    padding-bottom: 80px;
+    width: 90%;
+    min-width: #{$tab-count * 60px};
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.10);
+    border-radius: 5px;
+
+    input[name='tab-control'] {
+      display: none;
+    }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+      display: flex;
+      flex-direction: row;
+      margin-bottom: 10px;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+
+      li {
+        box-sizing: border-box;
+        flex: 1;
+        width: #{100% / $tab-count};
+        padding: 0 10px;
+        text-align: center;
+
+        label {
+          transition: all 0.3s ease-in-out;
+          color: $secondary;
+          padding: 5px auto;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          cursor: pointer;
+          transition: all 0.2s ease-in-out;
+          white-space: nowrap;
+          @include user-select(none);
+
+          mat-icon {
+            color: $secondary;
+            font-size: 24px;
+            margin-bottom: 4px;
+            transition: color 0.2s;
+          }
+
+          &:hover,
+          &:focus,
+          &:active {
+            outline: 0;
+            color: lighten($secondary, 15%);
+            mat-icon {
+              color: lighten($secondary, 15%);
+            }
+          }
+        }
+      }
+    }
+
+    .slider {
+      position: relative;
+      width: #{100% / $tab-count};
+      transition: all 0.33s cubic-bezier(0.38, 0.8, 0.32, 1.07);
+
+      .indicator {
+        position: relative;
+        width: $indicator-width;
+        max-width: 100%;
+        margin: 0 auto;
+        height: $indicator-height;
+        background: $accent;
+        border-radius: 1px;
+      }
+    }
+
+    .content {
+      margin-top: 30px;
+
+      section {
+        display: none;
+        animation: content 0.3s ease-in-out 1;
+        line-height: 1.4;
+
+        h2 {
+          color: $accent;
+          font-size: 1.3rem;
+          margin-bottom: 1rem;
+        }
+      }
+      .overview-content {
+        h3 {
+          color: $accent;
+          margin-bottom: 0.5rem;
+        }
+        .overview-dates {
+          display: flex;
+          gap: 2rem;
+          margin-bottom: 0.5rem;
+          span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #555;
+            font-size: 0.95rem;
+          }
+        }
+        .overview-goal {
+          margin-bottom: 1rem;
+          color: $accent;
+          display: flex;
+          align-items: center;
+          gap: 0.3rem;
+        }
+        .overview-actions {
+          display: flex;
+          gap: 1rem;
+          margin-top: 1rem;
+          button[mat-icon-button] {
+            background: #f5f5f5;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            mat-icon {
+              font-size: 22px;
+            }
+          }
+        }
+      }
+      .status-content, .host-content {
+        font-size: 1.1rem;
+        div {
+          margin-bottom: 0.7rem;
+        }
+      }
+    }
+
+    // Tab checked logic
+    @for $i from 1 through $tab-count {
+      input#tab#{$i}:checked ~ ul > li:nth-child(#{$i}) label {
+        cursor: default;
+        color: $accent;
+        mat-icon {
+          color: $accent;
+        }
+      }
+      input#tab#{$i}:checked ~ .slider {
+        transform: translateX(#{100% * ($i - 1)});
+      }
+      input#tab#{$i}:checked ~ .content > section:nth-child(#{$i}) {
+        display: block;
+      }
+    }
+
+    @keyframes content {
+      from {
+        opacity: 0;
+        transform: translateY(5%);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0%);
+      }
+    }
+  }
+}

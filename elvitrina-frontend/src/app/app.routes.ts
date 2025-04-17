@@ -73,7 +73,18 @@ export const routes: Routes = [
           import('./main-components/formation/frontoffice/frontoffice_formation.routes').then((m) => m.FormationRoutes),
       },
 
+      {
+        path: 'events',
+        loadChildren: () =>
+          import('./main-components/event/frontoffice/eventfront.routes').then((m) => m.EVENT_FRONT_ROUTES),
+      },
 
+
+      {
+        path: 'donations',
+        loadChildren: () =>
+          import('./main-components/donation/frontoffice/donationfront.routes').then((m) => m.DONATION_FRONT_ROUTES),
+      },
     ],
   },
 
@@ -182,6 +193,12 @@ export const routes: Routes = [
         path: 'extra',
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
+      },
+      
+      {
+        path: 'donations',
+        loadChildren: () =>
+          import('./main-components/donation/backoffice/donationback.routes').then((m) => m.DONATION_BACK_ROUTES),
       },
     ],
   },
