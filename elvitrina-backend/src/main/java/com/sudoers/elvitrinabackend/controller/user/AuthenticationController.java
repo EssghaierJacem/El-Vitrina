@@ -5,11 +5,14 @@ import com.sudoers.elvitrinabackend.model.request.AuthenticationRequest;
 import com.sudoers.elvitrinabackend.model.request.RegisterRequest;
 import com.sudoers.elvitrinabackend.model.response.AuthenticationResponse;
 import com.sudoers.elvitrinabackend.service.authentication.AuthenticationService;
+import com.sudoers.elvitrinabackend.service.user.CaptchaService;
 import com.sudoers.elvitrinabackend.service.user.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +24,8 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
     private final UserService userService;
+    private final CaptchaService captchaService;// ✅ Inject
+
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
@@ -33,6 +38,19 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ) {
+        boolean isCaptchaValid = captchaService.verifyCaptcha(request.getRecaptchaToken());
+        System.out.println("reCAPTCHA token received: " + request.getRecaptchaToken());
+
+        if (!isCaptchaValid) {
+            Map<String, String> error = new HashMap<>();
+            error.put("message", "Invalid reCAPTCHA. Please try again.");
+            return ResponseEntity.status(403).body(
+                    AuthenticationResponse.builder()
+                            .token(null)
+                            .message("Invalid reCAPTCHA. Please try again.")
+                            .build()
+            );
+        }
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
@@ -57,6 +75,13 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/google-login")
+    public void redirectToGoogleLogin(HttpServletResponse response) throws IOException {
+        response.sendRedirect("/oauth2/authorization/google");
+    }
+
+
 
 }
 

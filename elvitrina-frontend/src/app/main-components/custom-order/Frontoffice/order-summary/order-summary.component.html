@@ -1,0 +1,29 @@
+<div class="cart" *ngFor="let product of selectedProducts">
+  <div class="cart-item">
+    <button (click)="removeProduct(product.productId)">❌</button>
+
+    <img [src]="product.images[0]" alt="{{ product.productName }}" width="60" />
+
+    <div class="info">
+      <h4>{{ product.productName }}</h4>
+      <small>{{ product.category }}</small>
+    </div>
+
+    <button (click)="toggleFavorite(product)">
+      <span [style.color]="product.isFavorite ? 'red' : 'gray'">❤️</span>
+    </button>
+
+    <div class="quantity">
+      <button (click)="decreaseQuantity(product)">-</button>
+      <span>{{ productQuantities[product.productId] }}</span>
+      <button (click)="increaseQuantity(product)">+</button>
+    </div>
+
+    <div class="price">
+      ${{ product.price * productQuantities[product.productId] }}
+    </div>
+  </div>
+</div>
+
+<hr />
+<h3>Total: ${{ getTotal() }}</h3>

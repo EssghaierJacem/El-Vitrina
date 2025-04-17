@@ -50,6 +50,8 @@ export class UserTableComponent implements OnInit {
   displayedColumns = ['user', 'email', 'points', 'status', 'actions'];
   searchText: string = '';
 
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private userService: UserService, private router: Router) {}
@@ -62,6 +64,18 @@ export class UserTableComponent implements OnInit {
     });
   }
 
+  getUserImage(user: User): string {
+    if (!user || !user.image) {
+      return '/assets/images/default-avatar.png';
+    }
+  
+    if (user.image.startsWith('http')) {
+      return user.image;
+    }
+  
+    return this.IMAGE_BASE_URL + user.image;
+  }  
+  
   getProgressColor(points: number): 'primary' | 'accent' | 'warn' {
     if (points >= 70) return 'primary';
     if (points >= 40) return 'accent';
@@ -141,4 +155,5 @@ export class UserTableComponent implements OnInit {
   
     XLSX.writeFile(wb, 'List of Users.xlsx');
   }
+  
 }

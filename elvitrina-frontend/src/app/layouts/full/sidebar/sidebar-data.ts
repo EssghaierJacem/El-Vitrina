@@ -49,37 +49,18 @@ export const navItems: NavItem[] = [
   // },
 
   {
-    navCap: 'Apps',
+    navCap: 'Users and Offers',
   },
   {
-    displayName: 'Users & Offers',
+    displayName: 'Users',
     iconName: 'user',
-    chip: true,
-    // chipClass: 'bg-secondary text-white',
-    // chipContent: 'PRO',
-    route: 'users',
-    children: [
-      {
-        displayName: 'Users',
-        iconName: 'point',
-        external: true,
-        chip: true,
-        chipClass: 'bg-secondary text-white',
-        chipContent: 'ADMIN',
-        route: 'dashboard/users',
-      },
-      {
-        displayName: 'Offers',
-        iconName: 'point',
-        external: true,
-        chip: true,
-        chipClass: 'bg-secondary text-white',
-        chipContent: 'ADMIN',
-        route:
-          'dashboard/offers',
-      },
-    ],
+    route: '/dashboard/users',
   },
+  {
+    displayName: 'Offers',
+    iconName: 'point',
+    route: '/dashboard/offers',
+  }, 
   {
     displayName: 'Order & Payment',
     iconName: 'shopping-cart',
@@ -177,6 +158,30 @@ export const navItems: NavItem[] = [
       },
     ],
   },
+
+
+  {
+    navCap: 'RequestPerso',
+  },
+  {
+    displayName: 'request',
+    iconName: 'page',
+    route: '/dashboard/RequestPerso/listrequest',
+  },
+  {
+    displayName: 'propsalPerso',
+    iconName: 'point',
+    route: '/dashboard/RequestPerso/listproposal',
+  }, 
+
+  {
+    displayName: 'Ads',
+    iconName: 'point',
+    route: '/dashboard/AdAdmin/admin/ads',
+  }, 
+
+
+
   {
     navCap: 'Ui Components',
   },

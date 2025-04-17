@@ -1,7 +1,11 @@
 export interface Quiz {
-  id: number;
-  title: string;
-  description: string;
+  id?: number;
+  question: string;
+  option1: string;
+  option2: string;
+  option3: string;
+  bonneReponse: string;
+  reponseUser?: string;
   score: number;
-  userId: number;
+  userId?: number;
 }

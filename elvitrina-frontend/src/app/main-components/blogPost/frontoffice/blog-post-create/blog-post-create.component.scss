@@ -1,0 +1,127 @@
+/* Container styles */
+.facebook-style-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+}
+
+/* Header styles */
+.facebook-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #dddfe2;
+}
+
+.facebook-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1d2129;
+  margin: 0;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.back-button-container {
+  margin-right: 10px;
+}
+
+.back-button {
+  color: #65676b;
+}
+
+.back-button:hover {
+  background-color: #f0f2f5;
+}
+
+.subtitle {
+  color: #65676b;
+  font-size: 14px;
+  margin-top: 5px;
+  padding: 0 16px;
+}
+
+/* Content area styles */
+.facebook-content {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+}
+
+/* Post card styles */
+.facebook-post {
+  margin-bottom: 20px;
+}
+
+.post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Form field styles */
+.form-field {
+  width: 100%;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: #dddfe2;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: #1877f2;
+}
+
+.mat-input-element {
+  color: #1d2129;
+}
+
+.mat-form-field-label {
+  color: #65676b !important;
+}
+
+/* Button styles */
+.post-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #dddfe2;
+  margin-top: 10px;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+}
+
+.action-button mat-icon {
+  font-size: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .facebook-style-container {
+    padding: 10px;
+  }
+  
+  .facebook-header h1 {
+    font-size: 20px;
+  }
+  
+  .post-actions {
+    flex-direction: column;
+  }
+  
+  .action-button {
+    justify-content: center;
+  }
+}

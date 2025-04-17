@@ -1,5 +1,7 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sudoers.elvitrinabackend.model.enums.FormationCategoryType;
 import com.sudoers.elvitrinabackend.model.enums.LevelType;
 import jakarta.persistence.*;
@@ -36,6 +38,7 @@ public class Formation {
     private LevelType level;
 
     @ManyToOne
+    @JsonIgnoreProperties ("formations")
     @JoinColumn(name = "user_id")
     private User user;
 

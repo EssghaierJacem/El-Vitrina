@@ -43,14 +43,14 @@
           <!-- Additional Filters -->
           <div class="filter-chips">
             <mat-chip-listbox multiple>
-              <mat-chip-option 
-                [selected]="showDiscounted" 
+              <mat-chip-option
+                [selected]="showDiscounted"
                 (selectionChange)="showDiscounted = $event.selected; applyFilters()">
                 <mat-icon>local_offer</mat-icon>
                 On Sale
               </mat-chip-option>
-              <mat-chip-option 
-                [selected]="showInStock" 
+              <mat-chip-option
+                [selected]="showInStock"
                 (selectionChange)="showInStock = $event.selected; applyFilters()">
                 <mat-icon>inventory_2</mat-icon>
                 In Stock
@@ -76,10 +76,10 @@
     <mat-card class="product-card" *ngFor="let product of filteredProducts">
       <!-- Product Image -->
       <div class="product-image">
-        <img [src]="product.images?.[0] || 'assets/images/products/no-image.jpg'" 
+        <img [src]="product.images?.[0] || 'assets/images/products/no-image.jpg'"
              [alt]="product.productName"
              (error)="handleImageError($event)">
-        
+
         <!-- Badges -->
         <div class="product-badges">
           <span class="bestseller-badge" *ngIf="product.isBestseller">
@@ -129,7 +129,7 @@
 
         <!-- Stock Status -->
         <div class="product-stock" [class.out-of-stock]="product.stockQuantity === 0">
-          {{ product.stockQuantity === 0 ? 'Out of Stock' : 
+          {{ product.stockQuantity === 0 ? 'Out of Stock' :
              product.stockQuantity < 10 ? 'Low Stock' : 'In Stock' }}
         </div>
 
@@ -145,12 +145,10 @@
           <mat-icon>visibility</mat-icon>
           Details
         </button>
-        <button mat-raised-button color="primary" 
-                (click)="addToCart(product)"
-                [disabled]="product.stockQuantity === 0">
-          <mat-icon>shopping_cart</mat-icon>
+        <button mat-raised-button color="primary" [routerLink]="['/products/addtocart', product.productId]">
           Add to Cart
         </button>
+
       </mat-card-actions>
     </mat-card>
   </div>
@@ -179,4 +177,4 @@
       Try Again
     </button>
   </div>
-</div> 
+</div>

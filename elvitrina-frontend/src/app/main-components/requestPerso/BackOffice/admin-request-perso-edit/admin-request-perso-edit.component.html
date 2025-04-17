@@ -1,0 +1,35 @@
+<div class="container" *ngIf="request">
+    <!-- rest of your template -->
+
+<div class="container">
+    <h2>Edit Request</h2>
+    <form (ngSubmit)="updateRequest()">
+      <mat-form-field appearance="fill">
+        <mat-label>Title</mat-label>
+        <input matInput [(ngModel)]="request.title" name="title" required>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Description</mat-label>
+        <textarea matInput [(ngModel)]="request.description" name="description" required></textarea>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Min Price</mat-label>
+        <input matInput type="number" [(ngModel)]="request.minPrice" name="minPrice" required>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Max Price</mat-label>
+        <input matInput type="number" [(ngModel)]="request.maxPrice" name="maxPrice" required>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Delivery Time</mat-label>
+        <input matInput type="date" [(ngModel)]="request.deliveryTime" name="deliveryTime" required>
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" type="submit">Update</button>
+      <button mat-raised-button color="warn" type="button" (click)="goBack()">Cancel</button>
+    </form>
+  </div></div>

@@ -1,0 +1,55 @@
+.orders-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 12px;
+}
+
+.order-card {
+  padding: 20px;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.order-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.order-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.order-info p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.order-info strong {
+  font-size: 18px;
+  color: #333;
+}
+
+.order-actions button {
+  margin-left: 8px;
+}
+
+.status {
+  display: inline-block;
+  margin-top: 8px;
+}
+.total-amount {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #ccc;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: right;
+}

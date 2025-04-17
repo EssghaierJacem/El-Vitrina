@@ -1,0 +1,49 @@
+<div class="formation-details-container" *ngIf="formation">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Explore Formation</h1>
+    <p class="subtitle">Deepen your skills with our curated course</p>
+  </div>
+
+  <!-- Back Button -->
+  <div class="back-button">
+    <button mat-stroked-button color="primary" [routerLink]="['/formation']">
+      <mat-icon>arrow_back</mat-icon> Back to Formations
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="d-flex justify-content-center my-4">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <!-- Formation Details Card -->
+  <mat-card class="formation-details-card" *ngIf="!isLoading">
+    <img
+      class="card-image"
+      [src]="getCategoryImage(formation.formationCategory)"
+      alt="Formation Category Image"
+    />
+
+    <mat-card-content class="content">
+      <h2 class="formation-title">{{ formation.courseTitle }}</h2>
+      <span class="category-chip">{{ formation.formationCategory }}</span>
+
+      <p class="description my-3">{{ formation.description }}</p>
+
+      <div class="info-grid">
+        <div><strong>Duration:</strong> {{ formation.duration }}h</div>
+        <div><strong>Price:</strong> ${{ formation.price }}</div>
+        <div><strong>Language:</strong> {{ formation.language }}</div>
+        <div><strong>Level:</strong> {{ formation.level }}</div>
+      </div>
+
+      <div class="enroll-btn">
+        <button mat-raised-button color="primary" (click)="enroll()">
+          Enroll Now
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

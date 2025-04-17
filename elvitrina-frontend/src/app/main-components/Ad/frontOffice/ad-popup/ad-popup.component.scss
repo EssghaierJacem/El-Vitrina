@@ -1,0 +1,26 @@
+.popup-container {
+    padding: 20px;
+    text-align: center;
+    position: relative;
+  }
+  
+  .popup-container img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 8px;
+  }
+  
+  .text-content {
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+  }
+  
+  .countdown {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #666;
+  }
