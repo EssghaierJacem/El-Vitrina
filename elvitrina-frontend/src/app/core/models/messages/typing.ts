@@ -1,6 +1,5 @@
 export interface Typing {
-    senderId: number;
-    receiverId: number;
-    typing: boolean;
-  }
-  
+  senderId: number;
+  receiverId: number;
+  typing: boolean;
+}

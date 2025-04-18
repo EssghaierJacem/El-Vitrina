@@ -41,12 +41,12 @@ public class ChatController {
     public List<Message> getConversation(@PathVariable Long senderId, @PathVariable Long receiverId) {
         return messageService.getConversation(senderId, receiverId);
     }
-/*
-    @PostMapping("/store")
-    public MessageResponseDTO storeMessage(@RequestBody MessageDTO messageDTO) {
-        return messageService.sendMessage(messageDTO);
-    }
-*/
+    /*
+        @PostMapping("/store")
+        public MessageResponseDTO storeMessage(@RequestBody MessageDTO messageDTO) {
+            return messageService.sendMessage(messageDTO);
+        }
+    */
     @PostMapping("/mark-as-read")
     public void markAsRead(@RequestBody List<Long> messageIds) {
         List<Message> updatedMessages = messageService.markMessagesAsRead(messageIds);

@@ -233,6 +233,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
           read: m.read,
           delivered: m.delivered ?? false
         }));
+        console.log('Loaded conversation:', conversation);
     
         this.conversation = mapped;
         this.conversation.sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime());
