@@ -47,12 +47,16 @@ export class ProductService {
   }
 
   // Image handling
-  uploadImage(productId: number, imageFile: File): Observable<void> {
-    const formData = new FormData();
-    formData.append('file', imageFile);
-
+  uploadImage(productId: number, formData: FormData): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/${productId}/images`, formData)
       .pipe(catchError(this.handleError));
+  }
+
+  uploadProductImage(productId: number, imageFile: File): Observable<Product> {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    return this.http.post<Product>(`${this.apiUrl}/${productId}/upload-image`, formData);
   }
 
   removeImage(productId: number, imageUrl: string): Observable<void> {

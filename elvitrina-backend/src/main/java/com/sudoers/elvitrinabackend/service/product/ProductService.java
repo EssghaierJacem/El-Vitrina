@@ -22,10 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -365,6 +362,7 @@ public class ProductService implements IProductService {
                 .inStock(product.getStockQuantity() > 0)
                 .isNew(product.getCreatedAt() != null &&
                         product.getCreatedAt().isAfter(LocalDateTime.now().minusDays(7)))
+                .tags(product.getTags())
                 .build();
     }
 
@@ -389,6 +387,7 @@ public class ProductService implements IProductService {
         entity.setCategory(dto.getCategory());
         entity.setHasDiscount(dto.isHasDiscount());
         entity.setImages(dto.getImages());
+        entity.setTags(dto.getTags());
     }
 
     private void copyUpdateDtoToEntity(ProductUpdateDTO dto, Product entity) {
@@ -399,5 +398,31 @@ public class ProductService implements IProductService {
         entity.setCategory(dto.getCategory());
         entity.setHasDiscount(dto.isHasDiscount());
         entity.setImages(dto.getImages());
+        if (dto.getTags() != null) {  // Only update if tags are provided
+            entity.setTags(dto.getTags());
+        }
+    }
+
+    // Add tags to a product
+    public ProductDTO addTags(Long productId, Set<String> tags) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        product.getTags().addAll(tags);
+        return copyEntityToDto(productRepository.save(product));
+    }
+
+    // Remove tags from a product
+    public ProductDTO removeTags(Long productId, Set<String> tags) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        product.getTags().removeAll(tags);
+        return copyEntityToDto(productRepository.save(product));
+    }
+
+    // Search by tag
+    public List<ProductDTO> findByTag(String tag) {
+        return productRepository.findByTagsContaining(tag).stream()
+                .map(this::copyEntityToDto)
+                .collect(Collectors.toList());
     }
 }

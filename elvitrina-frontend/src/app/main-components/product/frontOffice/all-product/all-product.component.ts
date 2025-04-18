@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +16,7 @@ import { RouterModule } from '@angular/router';
 import { ProductService } from '../../../../core/services/product/product.service';
 import { Product } from '../../../../core/models/product/product.model';
 import { ProductCategoryType } from '../../../../core/models/product/product-category-type.enum';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-all-product',
@@ -22,6 +24,7 @@ import { ProductCategoryType } from '../../../../core/models/product/product-cat
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -60,6 +63,7 @@ export class AllProductComponent implements OnInit {
   showDiscounted = false;
   showInStock = false;
   priceRange = { min: 0, max: 1000 };
+  tagSearchQuery = new FormControl('');
 
   constructor(
     private productService: ProductService,
@@ -68,6 +72,9 @@ export class AllProductComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
+    this.tagSearchQuery.valueChanges.subscribe(() => {
+      this.applyFilters();
+    });
   }
 
   loadProducts(): void {
@@ -121,12 +128,13 @@ export class AllProductComponent implements OnInit {
   applyFilters(): void {
     let filtered = [...this.products];
 
-    // Search filter
+    // Search filter (includes both product name/description and tags)
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(product => 
         product.productName.toLowerCase().includes(query) ||
-        product.description?.toLowerCase().includes(query)
+        product.description?.toLowerCase().includes(query) ||
+        product.tags?.some(tag => tag.toLowerCase().includes(query)) // Include tag search
       );
     }
 

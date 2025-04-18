@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface IProductService {
     ProductDTO createProduct(ProductCreationDTO productDTO);
@@ -56,4 +57,7 @@ public interface IProductService {
     // Advanced Status Management
     ProductDTO setProductStatus(Long productId, ProductStatus status);
     List<ProductDTO> findByStatus(ProductStatus status);
+    ProductDTO addTags(Long productId, Set<String> tags);
+    ProductDTO removeTags(Long productId, Set<String> tags);
+    List<ProductDTO> findByTag(String tag);
 }

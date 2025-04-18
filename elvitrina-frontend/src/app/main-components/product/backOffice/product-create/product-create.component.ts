@@ -16,7 +16,6 @@ import { ProductCategoryType } from 'src/app/core/models/product/product-categor
 import { ProductStatus } from 'src/app/core/models/product/product-status.enum';
 import { StoreService } from 'src/app/core/services/store/store.service';
 import { Store } from 'src/app/core/models/store/store.model';
-import { Product } from 'src/app/core/models/product/product.model';
 
 @Component({
   selector: 'app-product-create',
@@ -45,6 +44,7 @@ export class ProductCreateComponent implements OnInit {
   
   categories: ProductCategoryType[] = Object.values(ProductCategoryType);
   statusOptions = Object.values(ProductStatus);
+  tags: string[] = []; // Add a tags property to manage product tags
 
   constructor(
     private fb: FormBuilder,
@@ -191,5 +191,18 @@ export class ProductCreateComponent implements OnInit {
     return category.split('_').map(word => 
       word.charAt(0) + word.slice(1).toLowerCase()
     ).join(' ');
+  }
+
+  addTag(tag: string): void {
+    if (tag && !this.tags.includes(tag)) {
+      this.tags.push(tag);
+    }
+  }
+
+  removeTag(tag: string): void {
+    const index = this.tags.indexOf(tag);
+    if (index >= 0) {
+      this.tags.splice(index, 1);
+    }
   }
 }

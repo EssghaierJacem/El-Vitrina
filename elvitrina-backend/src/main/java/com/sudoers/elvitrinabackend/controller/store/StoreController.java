@@ -5,6 +5,7 @@ import com.sudoers.elvitrinabackend.model.dto.StoreDTO;
 import com.sudoers.elvitrinabackend.model.dto.StoreStatsDTO;
 import com.sudoers.elvitrinabackend.model.enums.StoreCategoryType;
 import com.sudoers.elvitrinabackend.service.store.StoreService;
+import com.sudoers.elvitrinabackend.service.Image.ImageUploadService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,13 +13,30 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.net.MalformedURLException;
 
 @RestController
 @RequestMapping("/api/stores")
@@ -26,7 +44,6 @@ import java.util.Map;
 public class StoreController {
 
     private final StoreService storeService;
-
     @PostMapping
     public ResponseEntity<StoreDTO> createStore(@RequestBody StoreDTO storeDTO) {
         StoreDTO createdStore = storeService.createStore(storeDTO);
@@ -56,7 +73,7 @@ public class StoreController {
             @RequestParam Map<String, MultipartFile> files,
             @RequestParam String storeName,
             @RequestParam String description,
-            @RequestParam String category,
+            @RequestParam StoreCategoryType category,
             @RequestParam String address,
             @RequestParam boolean status,
             @RequestParam boolean featured) {
@@ -194,5 +211,55 @@ public class StoreController {
     public ResponseEntity<Void> removeImage(@PathVariable Long id) {
         storeService.removeImageFromStore(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/store/images/{filename:.+}")
+    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+        try {
+            // Define the upload directory (this should match the directory used in saveImage)
+            String uploadDir = "/uploads/store-images"; // Update this path as needed
+            Path filePath = Paths.get(uploadDir).resolve(filename);
+            
+            // Load the image as a Resource
+            Resource resource = new UrlResource(filePath.toUri());
+            
+            if (!resource.exists() || !resource.isReadable()) {
+                return ResponseEntity.notFound().build();
+            }
+            
+            String contentType = Files.probeContentType(filePath);
+             if (contentType == null) {
+                 contentType = "application/octet-stream";
+             }
+            // Return the image as a response
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    private String saveImage(MultipartFile file) {
+        try {
+            // Define the upload directory (you can change this path)
+            String uploadDir = "/uploads/store-images"; // Update this path as needed
+            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path uploadPath = Paths.get(uploadDir);
+
+            // Create the directory if it doesn't exist
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // Save the file to the server
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(file.getInputStream(), filePath);
+
+            // Return the relative URL for the image
+            return "/uploads/store-images/" + fileName; // Adjust this based on your server configuration
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save image: " + e.getMessage());
+        }
     }
 }

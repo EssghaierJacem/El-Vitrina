@@ -7,16 +7,29 @@ import com.sudoers.elvitrinabackend.model.dto.ProductUpdateDTO;
 import com.sudoers.elvitrinabackend.model.enums.ProductCategoryType;
 import com.sudoers.elvitrinabackend.model.enums.ProductStatus;
 import com.sudoers.elvitrinabackend.service.product.ProductService;
+import com.sudoers.elvitrinabackend.service.Image.ImageUploadService;
+import jdk.jfr.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/products")
@@ -215,5 +228,81 @@ public class ProductController {
     public ResponseEntity<List<ProductDTO>> findByStatus(@PathVariable ProductStatus status) {
         List<ProductDTO> products = productService.findByStatus(status);
         return ResponseEntity.ok(products);
+    }
+
+    // Add these endpoints to your existing ProductController class
+
+    // ---- Tag Management Endpoints ----
+    @PostMapping("/{id}/tags")
+    public ResponseEntity<ProductDTO> addTagsToProduct(
+            @PathVariable Long id,
+            @RequestBody Set<String> tags) {
+        ProductDTO updatedProduct = productService.addTags(id, tags);
+        return ResponseEntity.ok(updatedProduct);
+    }
+
+    @DeleteMapping("/{id}/tags")
+    public ResponseEntity<ProductDTO> removeTagsFromProduct(
+            @PathVariable Long id,
+            @RequestBody Set<String> tags) {
+        ProductDTO updatedProduct = productService.removeTags(id, tags);
+        return ResponseEntity.ok(updatedProduct);
+    }
+
+    // ---- Tag Search Endpoints ----
+    @GetMapping("/search/by-tag")
+    public ResponseEntity<List<ProductDTO>> searchProductsByTag(
+            @RequestParam String tag) {
+        List<ProductDTO> products = productService.findByTag(tag);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/product/images/{filename:.+}")
+    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+        try {
+            // Define the upload directory (this should match the directory used in saveImage)
+            String uploadDir = "uploads/product-images"; // Update this path as needed
+            Path filePath = Paths.get(uploadDir).resolve(filename);
+            
+            // Load the image as a Resource
+            Resource resource = new UrlResource(filePath.toUri());
+            
+            if (!resource.exists() || !resource.isReadable()) {
+                return ResponseEntity.notFound().build();
+            }
+            String contentType = Files.probeContentType(filePath);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+            // Return the image as a response
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    private String saveImage(MultipartFile file) {
+        try {
+            // Define the upload directory (you can change this path)
+            String uploadDir = "/uploads/product-images"; // Update this path as needed
+            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path uploadPath = Paths.get(uploadDir);
+
+            // Create the directory if it doesn't exist
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // Save the file to the server
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(file.getInputStream(), filePath);
+
+            // Return the relative URL for the image
+            return "/uploads/product-images/" + fileName; // Adjust this based on your server configuration
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save image: " + e.getMessage());
+        }
     }
 }

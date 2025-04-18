@@ -183,6 +183,16 @@
             <h2>Category</h2>
             <p>{{ formatCategoryName(product.category) }}</p>
           </div>
+
+          <!-- Tags Section -->
+          <div class="tags-section" *ngIf="product?.tags?.length">
+            <h2>Tags</h2>
+            <div class="tags">
+              <mat-chip-listbox>
+                <mat-chip *ngFor="let tag of product.tags">{{ tag }}</mat-chip>
+              </mat-chip-listbox>
+            </div>
+          </div>
         </div>
       </div>
     }

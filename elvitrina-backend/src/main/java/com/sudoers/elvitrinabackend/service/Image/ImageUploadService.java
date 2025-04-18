@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,6 +31,14 @@ public class ImageUploadService {
         
         return imageUrl;
     }
+
+    public String uploadStoreImage(MultipartFile file) {
+        return uploadImage(file); // Reuse the existing upload logic
+    }
+
+    public String uploadProductImage(MultipartFile file) {
+        return uploadImage(file); // Reuse the existing upload logic
+    }
     
     private void validateImage(MultipartFile file) {
         // Check file size (e.g., max 5MB)
@@ -56,7 +63,7 @@ public class ImageUploadService {
     
     private String uploadToLocalStorage(MultipartFile file, String filename) {
         try {
-            Path uploadPath = Paths.get(uploadDir);
+            Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
@@ -64,6 +71,7 @@ public class ImageUploadService {
             Path filePath = uploadPath.resolve(filename);
             Files.copy(file.getInputStream(), filePath);
             
+            // Construct the URL based on the static resource mapping
             return imageBaseUrl + "/images/" + filename; // Return the URL
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload image", e);

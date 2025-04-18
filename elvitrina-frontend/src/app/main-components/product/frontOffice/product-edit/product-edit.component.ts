@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
 import { ProductService } from '../../../../core/services/product/product.service';
 import { ProductCategoryType } from '../../../../core/models/product/product-category-type.enum';
 import { ProductStatus } from '../../../../core/models/product/product-status.enum';
@@ -19,6 +20,8 @@ import { StoreService } from '../../../../core/services/store/store.service';
 import { Store } from '../../../../core/models/store/store.model';
 import { TokenService } from 'src/app/core/services/user/TokenService';
 import { Product } from '../../../../core/models/product/product.model';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-product-edit',
@@ -36,6 +39,7 @@ import { Product } from '../../../../core/models/product/product.model';
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatCheckboxModule,
+    MatChipsModule,
     RouterModule
   ],
   templateUrl: './product-edit.component.html',
@@ -50,6 +54,8 @@ export class ProductEditComponent implements OnInit {
   canEditProduct: boolean = false;
   productId: number | null = null;
   product: Product | null = null;
+  tagsControl = new FormControl<string[]>([]);
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor(
     private fb: FormBuilder,
@@ -166,7 +172,8 @@ export class ProductEditComponent implements OnInit {
       hasDiscount: hasDiscount,
       discountPercentage: discountPercentage,
       freeShipping: product.freeShipping || false,
-      images: imageUrls
+      images: imageUrls,
+      tags: product.tags || []
     });
     
     // Update discountPercentage control based on hasDiscount
@@ -204,7 +211,8 @@ export class ProductEditComponent implements OnInit {
       hasDiscount: [false],
       discountPercentage: [0, [Validators.min(0), Validators.max(100)]],
       freeShipping: [false],
-      images: ['', [Validators.pattern('^https?://.*$')]]
+      images: ['', [Validators.pattern('^https?://.*$')]],
+      tags: this.tagsControl
     });
 
     // Disable discount percentage by default
@@ -220,6 +228,24 @@ export class ProductEditComponent implements OnInit {
         discountControl?.setValue(0);
       }
     });
+  }
+
+  addTag(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    if (value) {
+      const tags = this.tagsControl.value || [];
+      this.tagsControl.setValue([...tags, value]);
+    }
+    event.chipInput!.clear();
+  }
+
+  removeTag(tag: string): void {
+    const tags = this.tagsControl.value || [];
+    const index = tags.indexOf(tag);
+    if (index >= 0) {
+      tags.splice(index, 1);
+      this.tagsControl.setValue([...tags]);
+    }
   }
 
   onSubmit(): void {

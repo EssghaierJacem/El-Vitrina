@@ -55,17 +55,19 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- Image URL -->
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Image URL</mat-label>
-        <input matInput formControlName="image">
-      </mat-form-field>
+      <!-- Store Image Upload -->
+      <div class="m-b-16">
+        <label for="imageUpload">Store Image</label>
+        <input type="file" id="imageUpload" (change)="onFileSelected($event, 'image')" accept="image/*">
+        <img *ngIf="imagePreview" [src]="imagePreview" alt="Image Preview" class="image-preview" />
+      </div>
 
-      <!-- Cover Image URL -->
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Cover Image URL</mat-label>
-        <input matInput formControlName="coverImage">
-      </mat-form-field>
+      <!-- Cover Image Upload -->
+      <div class="m-b-16">
+        <label for="coverImageUpload">Cover Image</label>
+        <input type="file" id="coverImageUpload" (change)="onFileSelected($event, 'coverImage')" accept="image/*">
+        <img *ngIf="coverImagePreview" [src]="coverImagePreview" alt="Cover Image Preview" class="image-preview" />
+      </div>
 
       <!-- Status -->
       <div class="m-b-16">
@@ -87,11 +89,8 @@
           Cancel
         </button>
         <button mat-raised-button color="primary" type="submit" [disabled]="storeForm.invalid || isSubmitting">
-          @if (isSubmitting) {
-            <mat-spinner diameter="20"></mat-spinner>
-          } @else {
-            Create Store
-          }
+          <mat-spinner *ngIf="isSubmitting" diameter="20"></mat-spinner>
+          <span *ngIf="!isSubmitting">Create Store</span>
         </button>
       </div>
     </form>

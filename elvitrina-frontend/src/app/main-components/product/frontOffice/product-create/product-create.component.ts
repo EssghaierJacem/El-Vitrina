@@ -18,6 +18,10 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
 import { StoreService } from '../../../../core/services/store/store.service';
 import { Store } from '../../../../core/models/store/store.model';
 import { TokenService } from 'src/app/core/services/user/TokenService';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { FormControl } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-product-create',
@@ -35,6 +39,7 @@ import { TokenService } from 'src/app/core/services/user/TokenService';
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatCheckboxModule,
+    MatChipsModule,
     RouterModule
   ],
   templateUrl: './product-create.component.html',
@@ -47,6 +52,8 @@ export class ProductCreateComponent implements OnInit {
   userStores: Store[] = [];
   role: string = '';
   canCreateProduct: boolean = false;
+  tagsControl = new FormControl<string[]>([]);
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor(
     private fb: FormBuilder,
@@ -123,7 +130,8 @@ export class ProductCreateComponent implements OnInit {
       hasDiscount: [false],
       discountPercentage: [0, [Validators.min(0), Validators.max(100)]],
       freeShipping: [false],
-      images: ['', [Validators.pattern('^https?://.*$')]]
+      images: ['', [Validators.pattern('^https?://.*$')]],
+      tags: this.tagsControl
     });
 
     // Disable discount percentage by default
@@ -165,7 +173,8 @@ export class ProductCreateComponent implements OnInit {
         // Convert comma-separated image URLs to array
         images: this.productForm.value.images ? 
           this.productForm.value.images.split(',').map((url: string) => url.trim()).filter((url: string) => url) : 
-          []
+          [],
+        tags: this.tagsControl.value
       };
 
       // Calculate original price if there's a discount
@@ -244,5 +253,23 @@ export class ProductCreateComponent implements OnInit {
 
   isLoggedIn(): boolean {
     return this.tokenService.getToken() !== null;
+  }
+
+  addTag(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    if (value) {
+      const tags = this.tagsControl.value || [];
+      this.tagsControl.setValue([...tags, value]);
+    }
+    event.chipInput!.clear();
+  }
+
+  removeTag(tag: string): void {
+    const tags = this.tagsControl.value || [];
+    const index = tags.indexOf(tag);
+    if (index >= 0) {
+      tags.splice(index, 1);
+      this.tagsControl.setValue([...tags]);
+    }
   }
 }

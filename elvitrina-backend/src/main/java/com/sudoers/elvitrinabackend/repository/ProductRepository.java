@@ -36,4 +36,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     default Long countActiveProducts() {
         return countByStatus(ProductStatus.ACTIVE);
     }
+
+    // For tag search
+    List<Product> findByTagsContaining(String tag);
 }

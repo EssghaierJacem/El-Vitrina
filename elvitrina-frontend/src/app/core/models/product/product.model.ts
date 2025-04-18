@@ -21,6 +21,7 @@ export interface Product {
   storeId: number;
   store?: Store;
   //customOrders?: CustomOrder[];
+  tags?: string[]; // Add tags field to the Product model
   
   // Additional UI properties
   isFavorite?: boolean;

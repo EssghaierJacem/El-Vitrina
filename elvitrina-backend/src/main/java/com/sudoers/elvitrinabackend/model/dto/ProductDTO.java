@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -27,6 +28,7 @@ public class ProductDTO {
     private boolean hasDiscount;
     private ProductStatus status;
     private List<String> images;
+    private Set<String> tags;
     private Long storeId;
     private String storeName;
     private List<Long> customOrderIds;

@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Store } from '../../models/store/store.model';
+import { Store, StoreReqDto } from '../../models/store/store.model';
 import { StoreCategoryType } from '../../models/store/store-category-type.enum';
 import { StoreStatsDTO } from '../../models/store/Store-stats.dto';
 import { Page } from '../../models/page.model';
@@ -25,9 +25,8 @@ export class StoreService {
       .pipe(catchError(this.handleError));
   }
 
-  create(storeData: FormData): Observable<Store> {
-    return this.http.post<Store>(this.apiUrl, storeData)
-      .pipe(catchError(this.handleError));
+  create(storeData: StoreReqDto): Observable<Store> {
+    return this.http.post<Store>(this.apiUrl, storeData);
   }
 
   update(id: number, storeData: FormData): Observable<Store> {
@@ -41,12 +40,15 @@ export class StoreService {
   }
 
   // Image handling
-  uploadImage(storeId: number, imageFile: File): Observable<void> {
-    const formData = new FormData();
-    formData.append('file', imageFile);
+  uploadImage(entityId: number, formData: FormData): Observable<string> {
+    return this.http.post<string>(`${this.apiUrl}/${entityId}/upload`, formData);
+  }
 
-    return this.http.post<void>(`${this.apiUrl}/${storeId}/images`, formData)
-      .pipe(catchError(this.handleError));
+  uploadStoreImage(storeId: number, imageFile: File): Observable<Store> {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    return this.http.post<Store>(`${this.apiUrl}/${storeId}/upload-image`, formData);
   }
 
   removeImage(storeId: number): Observable<void> {

@@ -7,13 +7,19 @@ import { RouterModule } from '@angular/router';
 import { Store } from 'src/app/core/models/store/store.model';
 import { MatDialog } from '@angular/material/dialog';
 import { AppFeedbackDialogComponent } from 'src/app/main-components/appFeedback/frontOffice/app-feedback-dialog/app-feedback-dialog.component';
+import { ProductService } from 'src/app/core/services/product/product.service';
+import { Product } from 'src/app/core/models/product/product.model';
+import { ProductCategoryType } from 'src/app/core/models/product/product-category-type.enum';
+import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'front-header',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    FormsModule
   ],
   templateUrl: './front-header.component.html',
   styleUrls: ['./front-header.component.scss']
@@ -23,13 +29,19 @@ export class FrontHeaderComponent implements OnInit {
   userId: number | null = null;
   role = '';
   hasStore: boolean = false; 
-  storeId: number | null = null;  
+  storeId: number | null = null;
+  searchTerm: string = '';
+  searchResults: Product[] = [];
+  selectedCategory: string | null = null;
+  categories = Object.values(ProductCategoryType);
+  products: Product[] = []; // For search results display
 
   constructor(
     private tokenService: TokenService,
     private router: Router,
     private storeService: StoreService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private productService: ProductService
   ) {}
 
   ngOnInit(): void {
@@ -88,4 +100,31 @@ export class FrontHeaderComponent implements OnInit {
       }
     });
   }
+
+  onSearch() {
+    if (this.searchTerm.trim()) {
+      this.productService.searchProducts(this.searchTerm).subscribe(results => {
+        this.searchResults = results;
+      });
+    } else {
+      this.searchResults = [];
+    }
+  }
+
+  searchProducts(query: string): void {
+    // Use your ProductService to search and update products array
+    if (query && query.trim()) {
+      this.productService.searchProducts(query).subscribe((results: Product[]) => {
+        console.log('Search results:', results);
+        this.products = results;
+      });
+    } else {
+      this.products = [];
+    }
+  }
+
+  getProductImage(product: Product): string {
+    return product.images && product.images.length > 0 ? product.images[0] : 'assets/images/default-product.jpg';
+  }
+
 }

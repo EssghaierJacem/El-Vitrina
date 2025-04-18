@@ -12,6 +12,7 @@ import { StoreService } from '../../../../core/services/store/store.service';
 import { StoreCategoryType } from '../../../../core/models/store/store-category-type.enum';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { TokenService } from 'src/app/core/services/user/TokenService';
+import { StoreReqDto } from 'src/app/core/models/store/store.model';
 
 @Component({
   selector: 'app-store-create',
@@ -70,26 +71,48 @@ export class StoreCreateComponent implements OnInit {
     }
   }
 
+  onFileSelected(event: Event, field: string): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.storeForm.patchValue({ [field]: file });
+      this.storeForm.get(field)?.updateValueAndValidity();
+    }
+  }
+
   onSubmit(): void {
     if (this.storeForm.valid && !this.loading && this.canCreateStore) {
       this.loading = true;
-  
-      const formData = this.storeForm.value;
-      if (this.role !== 'SELLER') {
-        this.snackBar.open('You must be a seller to create a store', 'Close', { duration: 3000 });
-        this.loading = false;
-        this.router.navigate(['/']);
-        return;
+
+      const formData = new FormData();
+      const formValue = this.storeForm.value;
+
+      // Append all form values to FormData
+      formData.append('storeName', formValue.storeName?.trim());
+      formData.append('description', formValue.description?.trim());
+      formData.append('category', formValue.category);
+      formData.append('address', formValue.address?.trim());
+      formData.append('status', 'true');
+      formData.append('featured', 'false');
+
+      // Append image files if they exist
+      if (formValue.image) {
+        formData.append('image', formValue.image);
       }
-  
-      const storeData = {
-        ...formData,
-        userId: this.tokenService.getDecodedToken()?.id, 
-        status: true,
-        featured: false
-      };
-  
-      this.storeService.create(storeData).subscribe({
+      if (formValue.coverImage) {
+        formData.append('coverImage', formValue.coverImage);
+      }
+      const storec: StoreReqDto = {
+            userId: 1,
+            storeName: formValue.storeName?.trim(),
+            description: formValue.description?.trim() || '',
+            category: formValue.category,
+            address: formValue.address?.trim(),
+            status: formValue.status,
+            featured: formValue.featured
+          };
+
+      this.storeService.create(storec).subscribe({
         next: (response) => {
           this.snackBar.open('Store created successfully', 'Close', { duration: 3000 });
           this.router.navigate(['/dashboard/stores']);

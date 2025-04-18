@@ -145,6 +145,27 @@
               </div>
             </div>
 
+            <!-- Product Tags -->
+            <div class="form-section mb-4">
+              <h3 class="section-title">Product Tags</h3>
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Tags</mat-label>
+                <mat-chip-grid #chipGrid aria-label="Enter tags" [formControl]="tagsControl">
+                  <mat-chip-row *ngFor="let tag of tagsControl.value" (removed)="removeTag(tag)">
+                    {{ tag }}
+                    <button matChipRemove mat-button [attr.aria-label]="'Remove ' + tag">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip-row>
+                  <input
+                    placeholder="New tag..."
+                    [matChipInputFor]="chipGrid"
+                    (matChipInputTokenEnd)="addTag($event)"
+                  />
+                </mat-chip-grid>
+              </mat-form-field>
+            </div>
+
             <!-- Form Actions -->
             <div class="form-actions d-flex justify-content-between">
               <div>

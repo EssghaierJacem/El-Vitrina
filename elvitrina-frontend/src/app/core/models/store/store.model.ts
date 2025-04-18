@@ -24,6 +24,8 @@ export interface Store {
   //virtualEventIds?: number[];
   //advertisementIds?: number[];
   feedbackCount?: number;
+  imageFile?: File; // New field for image file
+  coverImageFile?: File; // New field for cover image file
   
   // Relationships (optional - include only what you need)
   user?: User;
@@ -39,4 +41,17 @@ export interface Store {
   productCount?: number;
   activeProductCount?: number;
   reviewCount?: number;
+}
+
+export interface StoreReqDto {
+  storeName: string;
+  description?: string;
+  category: StoreCategoryType;
+  categoryDisplayName?: string;
+  address: string;
+  featured: boolean;
+  status: boolean;
+  image?: string;
+  coverImage?: string;
+  userId: number;
 }

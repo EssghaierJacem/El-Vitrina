@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -24,4 +25,6 @@ public class ProductUpdateDTO {
     private ProductCategoryType category;
     private boolean hasDiscount;
     private List<String> images;
+    private Set<String> tags;
+
 }

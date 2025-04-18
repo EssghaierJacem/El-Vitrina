@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -58,6 +59,11 @@ public class Product implements Serializable {
 
     @ElementCollection
     private List<String> images;
+
+    @ElementCollection
+    @CollectionTable(name = "product_tags", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "tag")
+    private Set<String> tags;
 
     @ManyToOne
     @JoinColumn(name = "store_id")
