@@ -35,7 +35,9 @@ import { BlogPost } from 'src/app/core/models/blogPost/blogPost.model';
 export class BlogPostCreateComponent implements OnInit {
   blogPostForm: FormGroup;
   isSubmitting = false;
-  userId: number | null = null;
+  imagePreview: string | null = null;
+  formData: FormData = new FormData();
+  userId: number | null = null; // Stocker l'ID de l'utilisateur
 
   constructor(
     private fb: FormBuilder,
@@ -44,73 +46,85 @@ export class BlogPostCreateComponent implements OnInit {
     private snackBar: MatSnackBar,
     private router: Router
   ) {
-    this.initForm();
-  }
-
-  ngOnInit(): void {
-    const token = this.tokenService.getToken();
-    if (!token) {
-      this.snackBar.open('Please log in to create a blog post', 'Close', {
-        duration: 3000,
-        panelClass: ['error-snackbar']
-      });
-      this.router.navigate(['/authentication/login']);
-    } else {
-      const decoded = this.tokenService.getDecodedToken();
-      this.userId = decoded?.id ?? null;
-
-    }
-  }
-
-  private initForm(): void {
+    // Initialisation du formulaire réactif
     this.blogPostForm = this.fb.group({
-      title: ['', [Validators.required, Validators.maxLength(150)]],
-      content: ['', [Validators.required]],
-      image: [''],
+      title: ['', Validators.required],
+      content: ['', Validators.required],
       tag: ['']
     });
   }
 
-  onSubmit(): void {
-    if (this.blogPostForm.invalid || !this.userId) {
-      this.snackBar.open('Please fill all required fields correctly', 'Close', {
+  ngOnInit(): void {
+    // Récupérer le token et en extraire l'ID de l'utilisateur
+    const token = this.tokenService.getToken();
+    if (token) {
+      const decoded = this.tokenService.getDecodedToken();
+      this.userId = decoded?.id ?? null;
+    } else {
+      this.snackBar.open('You must be logged in to create a blog post.', 'Close', {
         duration: 3000,
         panelClass: ['error-snackbar']
       });
-      return;
+      this.router.navigate(['/login']); // Rediriger vers la page de login si l'utilisateur n'est pas authentifié
     }
-
-    this.isSubmitting = true;
-    const formValue = this.blogPostForm.value;
-
-    const blogPost: BlogPost = {
-      ...formValue,
-      user: { id: this.userId } as any
-    };
-
-    this.blogPostService.createBlogPost(blogPost).subscribe({
-      next: () => {
-        this.snackBar.open('Blog post created successfully', 'Close', {
-          duration: 3000,
-          panelClass: ['success-snackbar']
-        });
-        this.router.navigate(['/dashboard/blogPosts']);
-      },
-      error: (err) => {
-        this.snackBar.open('Error creating blog post: ' + (err.error?.message || err.message), 'Close', {
-          duration: 5000,
-          panelClass: ['error-snackbar']
-        });
-        this.isSubmitting = false;
-      }
-    });
   }
 
-  resetForm(): void {
+  onFileChange(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.imagePreview = URL.createObjectURL(file); // Prévisualisation de l'image
+      this.formData.append('image', file, file.name); // Ajouter l'image au FormData
+    }
+  }
+
+  onSubmit() {
+    if (this.blogPostForm.valid && this.userId) {
+      this.isSubmitting = true;
+      const formValue = this.blogPostForm.value;
+      
+      // Ajouter les autres champs au FormData
+      this.formData.append('title', formValue.title);
+      this.formData.append('content', formValue.content);
+      this.formData.append('tag', formValue.tag);
+      this.formData.append('userId', this.userId.toString()); 
+
+
+      // Ajouter l'ID de l'utilisateur au FormData
+      this.formData.append('userId', this.userId.toString());
+
+      // Appel au service pour créer le blog post
+      this.blogPostService.createBlogPost(this.formData).subscribe(
+        (response) => {
+          // Réponse du serveur après succès
+          this.isSubmitting = false;
+          this.snackBar.open('Blog post created successfully!', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+          this.router.navigate(['/dashboard/blogPosts']);
+        },
+        (error) => {
+          // Gestion des erreurs
+          this.isSubmitting = false;
+          this.snackBar.open('Error creating blog post: ' + (error.error?.message || error.message), 'Close', {
+            duration: 5000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      );
+    } else {
+      this.snackBar.open('Please fill in all fields correctly.', 'Close', {
+        duration: 3000,
+        panelClass: ['error-snackbar']
+      });
+    }
+  }
+
+  resetForm() {
     this.blogPostForm.reset();
+    this.imagePreview = null;
     this.snackBar.open('Form has been cleared', 'Close', {
       duration: 3000
     });
-    this.router.navigate(['/dashboard/blog-posts']);
   }
 }

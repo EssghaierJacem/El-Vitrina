@@ -78,6 +78,9 @@ export class FormationListComponent implements OnInit {
       next: (formations) => {
         this.dataSource.data = formations;
         this.isLoading = false;
+        console.error(formations);
+
+      
       },
       error: (error) => {
         console.error('Error fetching formations', error);

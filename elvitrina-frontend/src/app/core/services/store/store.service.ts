@@ -8,7 +8,7 @@ import { StoreCategoryType } from '../../models/store/store-category-type.enum';
 
 @Injectable({ providedIn: 'root' })
 export class StoreService {
-  private apiUrl = 'http://localhost:8081/stores';
+  private apiUrl = 'http://localhost:8080/api/stores';
 
   constructor(private http: HttpClient) {}
 

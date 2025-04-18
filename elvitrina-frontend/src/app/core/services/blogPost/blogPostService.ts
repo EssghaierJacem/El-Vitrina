@@ -19,10 +19,16 @@ export class BlogPostService {
     return this.http.get<BlogPost>(`${this.apiUrl}/${id}`); 
   }
 
+  /*
   createBlogPost(blogPost: BlogPost): Observable<BlogPost> {
     return this.http.post<BlogPost>(`${this.apiUrl}/addblogpost`, blogPost);
   }
-  
+  */
+
+  createBlogPost(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/addblogpost`, formData);
+  }
+
 
   updateBlogPost(id: number, blogPost: BlogPost): Observable<BlogPost> {
     return this.http.put<BlogPost>(`${this.apiUrl}/${id}/updateblogpost` , blogPost);

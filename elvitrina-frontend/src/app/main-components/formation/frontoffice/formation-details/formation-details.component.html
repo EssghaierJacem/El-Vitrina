@@ -40,10 +40,53 @@
       </div>
 
       <div class="enroll-btn">
-        <button mat-raised-button color="primary" (click)="enroll()">
-          Enroll Now
-        </button>
+          <button mat-raised-button 
+                  [color]="isAlreadyEnrolled() ? 'warn' : 'primary'" 
+                  (click)="enroll()">
+            <mat-icon>{{ isAlreadyEnrolled() ? 'cancel' : 'school' }}</mat-icon>
+            {{ isAlreadyEnrolled() ? 'Unenroll' : 'Enroll Now' }}
+          </button>
       </div>
     </mat-card-content>
-  </mat-card>
-</div>
+    
+    <!-- Section des formations en cours -->
+    <div class="enrolled-section" *ngIf="!isLoading">
+      <div class="section-header">
+        <h2>Your Learning Journey</h2>
+        <p *ngIf="enrolledFormations.length > 0">Continue your progress with these courses</p>
+      </div>
+  
+      <div *ngIf="enrolledFormations.length > 0; else emptyEnrolledList">
+        <div class="compact-cards-container">
+          <div class="compact-card" *ngFor="let enrolledFormation of enrolledFormations">
+            <div class="card-header">
+              <img [src]="getCategoryImage(enrolledFormation.formationCategory)" 
+                   alt="Category" class="category-icon">
+              <div class="title-wrapper">
+                <h3 class="title">{{ enrolledFormation.courseTitle }}</h3>
+                <div class="meta-info">
+                  <span class="level-badge">{{ enrolledFormation.level }}</span>
+                  <span class="duration">
+                    <mat-icon>schedule</mat-icon>
+                    {{ enrolledFormation.duration }}h
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+        
+          </div>
+        </div>
+      </div>
+  
+      <ng-template #emptyEnrolledList>
+        <div class="empty-state">
+          <mat-icon class="empty-icon">school</mat-icon>
+          <h3>No enrolled courses yet</h3>
+          <p>Start your learning journey by enrolling in courses</p>
+          <button mat-raised-button color="primary" [routerLink]="['/formation']">
+            Browse Courses
+          </button>
+        </div>
+      </ng-template>
+    </div>

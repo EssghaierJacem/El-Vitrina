@@ -1,0 +1,49 @@
+.blog-post-card {
+    background-color: #fff;
+    padding: 16px;
+  }
+  
+  .image-container {
+    text-align: center;
+  }
+  
+  .blog-post-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .additional-info {
+    background-color: #f9f9f9;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .additional-info h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #3f3f3f;
+    margin-bottom: 16px;
+  }
+  
+  .info-item {
+    margin-bottom: 12px;
+    font-size: 1rem;
+  }
+  
+  .info-item mat-icon {
+    color: #007bff;
+  }
+  
+  .info-item p {
+    margin: 0;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .info-item strong {
+    color: #333;
+  }
+  

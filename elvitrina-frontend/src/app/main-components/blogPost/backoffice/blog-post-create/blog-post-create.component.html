@@ -1,47 +1,61 @@
 <mat-card class="cardWithShadow">
-    <mat-card-content>
-      <div class="d-flex justify-content-between align-items-center m-b-16">
-        <div class="d-flex align-items-center">
-          <button mat-icon-button color="primary" [routerLink]="['../']">
-            <mat-icon>arrow_back</mat-icon>
-          </button>
-          <mat-card-title>Create Blog Post</mat-card-title>
-        </div>
+  <mat-card-content>
+    <div class="d-flex justify-content-between align-items-center m-b-16">
+      <div class="d-flex align-items-center">
+        <button mat-icon-button color="primary" [routerLink]="['../']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <mat-card-title>Create Blog Post</mat-card-title>
       </div>
-  
-      <form [formGroup]="blogPostForm" (ngSubmit)="onSubmit()" class="m-t-16">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Title</mat-label>
-          <input matInput formControlName="title" required>
-        </mat-form-field>
-  
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Content</mat-label>
-          <textarea matInput formControlName="content" rows="5" required></textarea>
-        </mat-form-field>
-  
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Image URL</mat-label>
-          <input matInput formControlName="image">
-        </mat-form-field>
-  
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Tag</mat-label>
-          <input matInput formControlName="tag">
-        </mat-form-field>
-  
-        <div class="d-flex justify-content-end gap-2 m-t-16">
-          <button mat-button type="button" (click)="resetForm()" [disabled]="isSubmitting">
-            Cancel
-          </button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="blogPostForm.invalid || isSubmitting">
-            <ng-container *ngIf="isSubmitting; else createLabel">
-              <mat-spinner diameter="20"></mat-spinner>
-            </ng-container>
-            <ng-template #createLabel>Create Blog Post</ng-template>
-          </button>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
-  
+    </div>
+
+    <form [formGroup]="blogPostForm" (ngSubmit)="onSubmit()" class="m-t-16" enctype="multipart/form-data">
+      <!-- Title -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" required />
+      </mat-form-field>
+
+      <!-- Content -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Content</mat-label>
+        <textarea matInput formControlName="content" rows="5" required></textarea>
+      </mat-form-field>
+
+      <!-- Image Upload -->
+<div class="file-upload mb-3">
+  <label for="file-upload">Image</label>
+  <input type="file" accept="image/*" (change)="onFileChange($event)" hidden #fileInput />
+  <button mat-raised-button color="accent" type="button" (click)="fileInput.click()">
+    <mat-icon>upload</mat-icon> Upload Image
+  </button>
+
+  <!-- Image Preview -->
+  <div *ngIf="imagePreview" class="image-preview mt-2">
+    <h5>Image Preview:</h5>
+    <img [src]="imagePreview" alt="Image Preview" width="150" />
+  </div>
+</div>
+
+<!-- Tag -->
+<mat-form-field appearance="outline" class="w-100 mb-3">
+  <mat-label>Tag</mat-label>
+  <input matInput formControlName="tag" />
+</mat-form-field>
+
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 m-t-16">
+        <button mat-button type="button" (click)="resetForm()" [disabled]="isSubmitting">
+          Cancel
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="blogPostForm.invalid || isSubmitting">
+          <ng-container *ngIf="isSubmitting; else createLabel">
+            <mat-spinner diameter="20"></mat-spinner>
+          </ng-container>
+          <ng-template #createLabel>Create Blog Post</ng-template>
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

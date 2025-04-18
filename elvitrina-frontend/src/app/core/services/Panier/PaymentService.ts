@@ -7,7 +7,7 @@ import { Payment } from '../../models/Panier/payment';
   providedIn: 'root'
 })
 export class PaymentService {
-  private apiUrl = 'http://localhost:8081/api/payments';
+  private apiUrl = 'http://localhost:8080/api/payments';
 
   constructor(private http: HttpClient) {}
 

@@ -2,10 +2,18 @@
     <mat-card-content>
       <div class="d-flex justify-content-between align-items-center m-b-16">
         <mat-card-title>Formations</mat-card-title>
-        <button mat-raised-button color="primary" [routerLink]="['create']">
-          <mat-icon>add</mat-icon>
-          Add Formation
-        </button>
+        <div class="d-flex gap-2">
+          <button mat-raised-button color="primary" [routerLink]="['create']">
+            <mat-icon>add</mat-icon>
+            Add Formation
+          </button>
+      
+          <button mat-raised-button color="accent" [routerLink]="['history']">
+            <mat-icon>history</mat-icon>
+            History
+          </button>
+        </div>
+
       </div>
   
       <div class="d-flex justify-content-between align-items-center m-b-16">
@@ -17,6 +25,8 @@
         <button mat-icon-button color="primary" (click)="exportToPDF()" matTooltip="Export to PDF">
           <mat-icon>file_download</mat-icon>
         </button>
+
+
       </div>
   
       @if (isLoading) {

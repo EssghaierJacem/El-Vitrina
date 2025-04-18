@@ -53,7 +53,7 @@
           <p>{{post.title}}</p>
           <p>{{post.content}}</p>
 
-          <img *ngIf="post.image" [src]="post.image" alt="Post image" class="post-image">
+          <img *ngIf="post.image" [src]="getImageUrl(post.image)" alt="Post image" class="post-image">
         </div>
 
         <!-- Post tags -->

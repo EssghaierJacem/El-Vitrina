@@ -28,6 +28,7 @@ public class UserService implements IUser {
     @Autowired
     private EmailService emailService;
 
+
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -347,6 +348,11 @@ public class UserService implements IUser {
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+    }
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID : " + userId));
     }
 
 }
