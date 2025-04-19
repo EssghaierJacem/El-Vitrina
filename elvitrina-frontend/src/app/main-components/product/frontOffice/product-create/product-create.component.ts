@@ -53,6 +53,8 @@ export class ProductCreateComponent implements OnInit {
   role: string = '';
   canCreateProduct: boolean = false;
   tagsControl = new FormControl<string[]>([]);
+  uploadedFiles: File[] = []; // Now store selected image files here
+  uploadedImagesPreview: string[] = []; // for preview
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor(
@@ -150,61 +152,51 @@ export class ProductCreateComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.productForm.valid && !this.loading && this.canCreateProduct) {
+    if (this.productForm.valid && !this.loading) {
       this.loading = true;
-      
-      const decodedToken = this.tokenService.getDecodedToken();
-      if (!decodedToken) {
-        this.snackBar.open('Please log in to create a product', 'Close', { duration: 3000 });
-        this.router.navigate(['/authentication/login']);
-        return;
+  
+      const productData = { ...this.productForm.value };
+  
+      // Clean up images field
+      if (Array.isArray(productData.images)) {
+        productData.images = productData.images.map((url: string) => url.trim()).filter((url: string) => url);
+      } else {
+        productData.images = productData.images ? productData.images.split(',').map((url: string) => url.trim()).filter((url: string) => url) : [];
       }
-
-      if (this.role !== 'SELLER') {
-        this.snackBar.open('You must be a seller to create a product', 'Close', { duration: 3000 });
+  
+      // Validate category
+      if (!Object.values(ProductCategoryType).includes(productData.category)) {
+        this.snackBar.open('Invalid product category', 'Close', { duration: 5000 });
         this.loading = false;
-        this.router.navigate(['/']);
         return;
       }
-
-      const productData = {
-        ...this.productForm.value,
-        status: 'ACTIVE' as ProductStatus,
-        // Convert comma-separated image URLs to array
-        images: this.productForm.value.images ? 
-          this.productForm.value.images.split(',').map((url: string) => url.trim()).filter((url: string) => url) : 
-          [],
-        tags: this.tagsControl.value
-      };
-
-      // Calculate original price if there's a discount
-      if (productData.hasDiscount && productData.discountPercentage > 0) {
-        const discountMultiplier = 1 - (productData.discountPercentage / 100);
-        productData.originalPrice = productData.price;
-        productData.price = Math.round((productData.price * discountMultiplier) * 100) / 100;
+  
+      // Validate mandatory fields
+      if (!productData.productName || !productData.description || !productData.category || !productData.storeId) {
+        this.snackBar.open('Please fill in all required fields', 'Close', { duration: 5000 });
+        this.loading = false;
+        return;
       }
-
-      this.productService.create(productData).subscribe({
+  
+      // Now submit
+      this.productService.create(productData, this.uploadedFiles).subscribe({
         next: (response) => {
           console.log('Product created successfully:', response);
-          this.snackBar.open('Product created successfully', 'Close', {
-            duration: 3000
-          });
-          this.router.navigate(['/products']);
+          this.snackBar.open('Product created successfully', 'Close', { duration: 3000 });
+          this.router.navigate(['/dashboard/products']);
         },
         error: (error) => {
           console.error('Error creating product:', error);
-          this.snackBar.open(error.error?.message || 'Error creating product. Please try again.', 'Close', {
-            duration: 5000
-          });
+          this.snackBar.open(error.message || 'Error creating product', 'Close', { duration: 5000 });
           this.loading = false;
         },
         complete: () => {
           this.loading = false;
         }
       });
+  
     } else {
-      // Mark all fields as touched to trigger validation messages
+      // Mark invalid fields as touched
       Object.keys(this.productForm.controls).forEach(key => {
         const control = this.productForm.get(key);
         if (control?.errors) {
@@ -270,6 +262,36 @@ export class ProductCreateComponent implements OnInit {
     if (index >= 0) {
       tags.splice(index, 1);
       this.tagsControl.setValue([...tags]);
+    }
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.uploadedFiles = Array.from(input.files); // Store selected files
+    }
+  }
+
+  onImagesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.uploadedImagesPreview = [];
+      this.uploadedFiles = [];
+  
+      const files = Array.from(input.files);
+  
+      files.forEach(file => {
+        this.uploadedFiles.push(file); // store the real file
+  
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          const result = e.target?.result as string;
+          if (result) {
+            this.uploadedImagesPreview.push(result); // store preview
+          }
+        };
+        reader.readAsDataURL(file);
+      });
     }
   }
 }

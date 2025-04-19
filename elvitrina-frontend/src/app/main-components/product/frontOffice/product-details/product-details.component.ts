@@ -35,6 +35,8 @@ export class ProductDetailsComponent implements OnInit {
   selectedImageIndex = 0;
   isInWishlist = false;
   inBaskets = 0; // Mock data for UI
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
+
 
   constructor(
     private route: ActivatedRoute,
@@ -120,5 +122,17 @@ export class ProductDetailsComponent implements OnInit {
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+  }
+
+  getProductImageUrl(imageFilename: string): string {
+    if (!imageFilename) {
+      return 'assets/images/default-product.png'; 
+    }
+  
+    if (imageFilename.startsWith('http')) {
+      return imageFilename; 
+    }
+  
+    return this.IMAGE_BASE_URL + imageFilename; 
   }
 }

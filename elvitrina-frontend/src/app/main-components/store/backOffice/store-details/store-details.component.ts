@@ -35,6 +35,8 @@ export class StoreDetailsComponent implements OnInit {
   store: Store | null = null;
   isLoading = true;
 
+  IMAGE_BASE_URL = 'http://localhost:8080/api/stores/store/images/';
+
   constructor(
     private route: ActivatedRoute,
     private storeService: StoreService,
@@ -88,5 +90,29 @@ export class StoreDetailsComponent implements OnInit {
         }
       });
     }
+  }
+
+  getStoreImage(store: Store): string {
+    if (!store || !store.image) {
+      return '/assets/images/default-store.png'; // fallback image
+    }
+  
+    if (store.image.startsWith('http')) {
+      return store.image; 
+    }
+  
+    return this.IMAGE_BASE_URL + store.image;
+  }
+  
+  getCoverImage(store: Store): string {
+    if (!store || !store.coverImage) {
+      return '/assets/images/default-cover.png'; 
+    }
+  
+    if (store.coverImage.startsWith('http')) {
+      return store.coverImage;
+    }
+  
+    return this.IMAGE_BASE_URL + store.coverImage;
   }
 }

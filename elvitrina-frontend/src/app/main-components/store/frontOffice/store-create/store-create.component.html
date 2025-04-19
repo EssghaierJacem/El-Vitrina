@@ -51,36 +51,24 @@
             </mat-form-field>
 
             <!-- Store Profile Image URL -->
-            <mat-form-field appearance="outline" class="w-100 mb-3">
-              <mat-label>Store Profile Image URL</mat-label>
-              <input matInput formControlName="image" 
-                     placeholder="Enter image URL (e.g., https://example.com/image.jpg)">
-              <mat-error *ngIf="storeForm.get('image')?.hasError('pattern')">
-                Please enter a valid image URL (must start with http:// or https://)
-              </mat-error>
-              <div class="image-preview" *ngIf="storeForm.get('image')?.value">
-                <img [src]="storeForm.get('image')?.value" 
-                     alt="Store profile image preview"
-                     (error)="handleImageError($event)"
-                     class="preview-image">
+            <div class="form-group mb-4">
+              <label>Upload Store Logo</label>
+              <input type="file" (change)="onFileSelected($event, 'image')" accept="image/*" class="form-control">
+            
+              <div class="image-preview mt-2" *ngIf="imagePreviewUrl">
+                <img [src]="imagePreviewUrl" alt="Store Logo Preview" class="img-thumbnail" (error)="handleImageError($event)">
               </div>
-            </mat-form-field>
-
-            <!-- Store Cover Image URL -->
-            <mat-form-field appearance="outline" class="w-100 mb-4">
-              <mat-label>Store Cover Image URL</mat-label>
-              <input matInput formControlName="coverImage" 
-                     placeholder="Enter cover image URL (e.g., https://example.com/cover.jpg)">
-              <mat-error *ngIf="storeForm.get('coverImage')?.hasError('pattern')">
-                Please enter a valid image URL (must start with http:// or https://)
-              </mat-error>
-              <div class="image-preview" *ngIf="storeForm.get('coverImage')?.value">
-                <img [src]="storeForm.get('coverImage')?.value" 
-                     alt="Store cover image preview"
-                     (error)="handleImageError($event)"
-                     class="preview-image cover-preview">
+            </div>
+            
+            <div class="form-group mb-4">
+              <label>Upload Cover Image</label>
+              <input type="file" (change)="onFileSelected($event, 'coverImage')" accept="image/*" class="form-control">
+            
+              <div class="image-preview mt-2" *ngIf="coverImagePreviewUrl">
+                <img [src]="coverImagePreviewUrl" alt="Cover Image Preview" class="img-thumbnail" (error)="handleImageError($event)">
               </div>
-            </mat-form-field>
+            </div>
+            
 
             <!-- Submit Button -->
             <div class="d-grid">

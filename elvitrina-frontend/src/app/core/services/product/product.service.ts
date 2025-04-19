@@ -31,15 +31,22 @@ export class ProductService {
       .pipe(catchError(this.handleError));
   }
 
-  create(product: Partial<Product>): Observable<Product> {
-    return this.http.post<Product>(this.apiUrl, product)
+  create(productData: any, uploadedFiles: File[]): Observable<Product> {
+    const formData = new FormData();
+    formData.append('product', new Blob([JSON.stringify(productData)], { type: 'application/json' }));
+  
+    uploadedFiles.forEach(file => {
+      formData.append('images', file);
+    });
+  
+    return this.http.post<Product>(this.apiUrl, formData)
       .pipe(catchError(this.handleError));
-  }
+  }  
 
-  update(id: number, product: Product): Observable<Product> {
-    return this.http.put<Product>(`${this.apiUrl}/${id}`, product)
+  update(id: number, productData: FormData): Observable<Product> {
+    return this.http.put<Product>(`${this.apiUrl}/${id}`, productData)
       .pipe(catchError(this.handleError));
-  }
+  }  
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`)
@@ -52,12 +59,17 @@ export class ProductService {
       .pipe(catchError(this.handleError));
   }
 
+  getImageUrl(filename: string): string {
+    return `http://localhost:8080/api/products/images/${filename}`;
+  }
+
+
   uploadProductImage(productId: number, imageFile: File): Observable<Product> {
     const formData = new FormData();
     formData.append('image', imageFile);
-
+  
     return this.http.post<Product>(`${this.apiUrl}/${productId}/upload-image`, formData);
-  }
+  }  
 
   removeImage(productId: number, imageUrl: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${productId}/images?imageUrl=${imageUrl}`)

@@ -1,13 +1,13 @@
 <!-- Store Header -->
 <div class="store-header" *ngIf="store">
   <div class="store-cover">
-    <img [src]="getImageUrl(store.coverImage, 'store')" 
+    <img [src]="getCoverImage(store)" 
          [alt]="store.storeName"
          (error)="handleImageError($event, 'store')">
   </div>
   <div class="store-info">
     <div class="store-avatar">
-      <img [src]="getImageUrl(store.image, 'store')" 
+      <img [src]="getStoreImage(store)" 
            [alt]="store.storeName"
            (error)="handleImageError($event, 'store')">
     </div>
@@ -96,11 +96,11 @@
               <div class="discount-badge" *ngIf="product.hasDiscount">
                 -{{product.discountPercentage}}%
               </div>
-              <img mat-card-image 
-                   [src]="getImageUrl(product.images?.[0], 'product')" 
-                   [alt]="product?.productName"
-                   (error)="handleImageError($event, 'product')"
-                   class="product-image">
+              <img mat-card-image
+                [src]="getProductImageUrl(product.mainImage)"
+                [alt]="product.productName"
+                (error)="handleImageError($event, 'product')"
+                class="product-image">       
             </div>
             <mat-card-content>
               <h3 class="product-name">{{product?.productName}}</h3>

@@ -17,6 +17,7 @@ export class StoreListComponent implements OnInit {
   stores: Store[] = [];
   loading = true;
   error: string | null = null;
+  IMAGE_BASE_URL = 'http://localhost:8080/api/stores/store/images/';
 
   constructor(private storeService: StoreService) {}
 
@@ -62,5 +63,17 @@ export class StoreListComponent implements OnInit {
     if (imgElement) {
       imgElement.src = '/assets/images/stores/no-image.jpg';
     }
+  }
+
+  getStoreImageUrl(url: string | undefined): string {
+    if (!url) {
+      return '/assets/images/stores/no-image.jpg';
+    }
+  
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+  
+    return this.IMAGE_BASE_URL + url;
   }
 }

@@ -130,13 +130,10 @@
         </mat-form-field>
 
         <!-- Images -->
-        <div class="section-title m-t-24 m-b-16">Images</div>
-        
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Image URLs (comma-separated)</mat-label>
-          <textarea matInput formControlName="images" rows="3" placeholder="Enter image URLs separated by commas"></textarea>
-          <mat-hint>Enter multiple image URLs separated by commas</mat-hint>
-        </mat-form-field>
+        <div class="form-group">
+          <label>Upload New Product Images</label>
+          <input type="file" (change)="onImagesSelected($event)" multiple accept="image/*">
+        </div>
 
         <!-- Action Buttons -->
         <div class="d-flex justify-content-end gap-2 m-t-24">

@@ -130,14 +130,18 @@
         </mat-form-field>
 
         <!-- Image URLs Section -->
-        <div class="section-title m-t-24 m-b-16">Images</div>
+        <div class="form-group">
+          <label>Upload Product Images</label>
+          <input type="file" (change)="onImagesSelected($event)" multiple accept="image/*">
         
-        <!-- Image URLs -->
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Image URLs (comma-separated)</mat-label>
-          <textarea matInput formControlName="images" rows="3" placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"></textarea>
-          <mat-hint>Enter multiple image URLs separated by commas</mat-hint>
-        </mat-form-field>
+          <!-- Preview uploaded images -->
+          <div class="uploaded-images" *ngIf="uploadedImagesPreview.length > 0">
+            <div *ngFor="let img of uploadedImagesPreview" class="image-preview">
+              <img [src]="img" alt="Uploaded Image" class="preview-image">
+            </div>
+          </div>
+        </div>
+        
 
         <!-- Action Buttons -->
         <div class="d-flex justify-content-end gap-2 m-t-24">

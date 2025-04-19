@@ -43,7 +43,7 @@
                   [class.active]="i === selectedImageIndex"
                   (click)="selectImage(i)"
                 >
-                  <img [src]="image" [alt]="product.productName" (error)="onImageError($event)">
+                  <img [src]="getProductImageUrl(image)" [alt]="product.productName" (error)="onImageError($event)">
                 </div>
               }
             </div>
@@ -53,8 +53,8 @@
         <!-- Main Product Image (Center) -->
         <div class="main-image-container">
           <div class="main-image">
-            <img 
-              [src]="product.images && product.images.length > 0 ? product.images[selectedImageIndex] : 'assets/images/default-product.png'" 
+              <img 
+              [src]="product.images && product.images.length > 0 ? getProductImageUrl(product.images[selectedImageIndex]) : 'assets/images/default-product.png'" 
               [alt]="product.productName"
               class="featured-image"
               (error)="onImageError($event)"

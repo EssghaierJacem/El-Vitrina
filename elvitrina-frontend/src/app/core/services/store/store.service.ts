@@ -25,7 +25,11 @@ export class StoreService {
       .pipe(catchError(this.handleError));
   }
 
-  create(storeData: StoreReqDto): Observable<Store> {
+  create(formData: FormData): Observable<Store> {
+    return this.http.post<Store>(this.apiUrl, formData);
+  }
+
+  createSimple(storeData: StoreReqDto): Observable<Store> {
     return this.http.post<Store>(this.apiUrl, storeData);
   }
 

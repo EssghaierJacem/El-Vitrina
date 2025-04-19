@@ -38,6 +38,9 @@ import { Store, StoreReqDto } from 'src/app/core/models/store/store.model';
   styleUrls: ['./store-create.component.scss']
 })
 export class StoreCreateComponent implements OnInit {
+
+  IMAGE_BASE_URL = 'http://localhost:8080/uploads/store-images/';
+
   storeForm: FormGroup;
   isSubmitting = false;
   isLoading = false;
@@ -157,76 +160,66 @@ export class StoreCreateComponent implements OnInit {
 
   onSubmit(): void {
     if (this.storeForm.invalid) {
-        this.snackBar.open('Please fill in all required fields correctly', 'Close', {
-            duration: 3000,
-            panelClass: ['error-snackbar']
-        });
-        return;
-    }
-
-    this.isLoading = true;
-    const formData = new FormData();
-    const formValue = this.storeForm.value;
-
-    // Append all form values to FormData
-    formData.append('storeName', formValue.storeName?.trim());
-    formData.append('description', formValue.description?.trim() || '');
-    formData.append('category', formValue.category);
-    formData.append('address', formValue.address?.trim());
-    formData.append('status', String(formValue.status));
-    formData.append('featured', String(formValue.featured));
-
-    // Append image files if they exist
-    if (formValue.image) {
-        formData.append('image', formValue.image);
-    }
-    if (formValue.coverImage) {
-        formData.append('coverImage', formValue.coverImage);
-    }
-
-    // Make sure to include the user ID if required by your backend
-    if (this.userId) {
-        formData.append('userId', this.userId.toString());
-    } else {
-        this.snackBar.open('User ID is required', 'Close', {
-            duration: 3000,
-            panelClass: ['error-snackbar']
-        });
-        this.isLoading = false;
-        return;
+      this.snackBar.open('Please fill in all required fields correctly', 'Close', {
+        duration: 3000,
+        panelClass: ['error-snackbar']
+      });
+      return;
     }
   
-    const storec: StoreReqDto = {
-      userId: this.userId!,
-      storeName: formValue.storeName?.trim(),
+    if (!this.userId) {
+      this.snackBar.open('User ID is required', 'Close', {
+        duration: 3000,
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+  
+    this.isLoading = true;
+    const formValue = this.storeForm.value;
+  
+    const storeData: StoreReqDto = {
+      userId: this.userId,
+      storeName: formValue.storeName.trim(),
       description: formValue.description?.trim() || '',
       category: formValue.category,
-      address: formValue.address?.trim(),
+      address: formValue.address.trim(),
       status: formValue.status,
-      featured: formValue.featured,
-      image: formValue.image,
-      coverImage: formValue.coverImage,
+      featured: formValue.featured
     };
-    console.log('Store data to be sent:', storec);
-    
-    this.storeService.create(storec).subscribe({
-        next: (response) => {
-            this.snackBar.open('Store created successfully', 'Close', {
-                duration: 3000,
-                panelClass: ['success-snackbar']
-            });
-            this.router.navigate(['/dashboard/stores']);
-        },
-        error: (error) => {
-            console.error('Error creating store:', error);
-            this.snackBar.open('Error creating store', 'Close', {
-                duration: 5000,
-                panelClass: ['error-snackbar']
-            });
-            this.isLoading = false;
-        }
+  
+    console.log('Store data to be sent:', storeData);
+  
+    const formData = new FormData();
+    formData.append('store', new Blob([JSON.stringify(storeData)], { type: 'application/json' }));
+  
+    if (formValue.image instanceof File) {
+      formData.append('image', formValue.image);
+    }
+    if (formValue.coverImage instanceof File) {
+      formData.append('coverImage', formValue.coverImage);
+    }
+  
+    this.storeService.create(formData).subscribe({
+      next: (response) => {
+        this.snackBar.open('Store created successfully', 'Close', {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        });
+        this.router.navigate(['/dashboard/stores']);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error creating store:', error);
+        this.snackBar.open(error.message || 'Error creating store', 'Close', {
+          duration: 5000,
+          panelClass: ['error-snackbar']
+        });
+        this.isLoading = false;
+      }
     });
   }
+  
 
   resetForm(): void {
     this.storeForm.reset({

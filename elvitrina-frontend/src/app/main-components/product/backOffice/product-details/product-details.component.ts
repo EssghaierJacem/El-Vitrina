@@ -108,4 +108,17 @@ export class ProductDetailsComponent implements OnInit {
     const message = this.isInWishlist ? 'Added to wishlist' : 'Removed from wishlist';
     this.snackBar.open(message, 'Close', { duration: 3000 });
   }
+
+  getProductImageUrl(image: string): string {
+    if (!image) {
+      return 'assets/images/no-image.svg'; 
+    }
+  
+    if (image.startsWith('http')) {
+      return image; 
+    }
+  
+    return `http://localhost:8080/api/products/products/images/${image}`; 
+  }
+  
 }

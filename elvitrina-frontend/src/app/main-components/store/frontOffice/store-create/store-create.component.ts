@@ -12,7 +12,6 @@ import { StoreService } from '../../../../core/services/store/store.service';
 import { StoreCategoryType } from '../../../../core/models/store/store-category-type.enum';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { TokenService } from 'src/app/core/services/user/TokenService';
-import { StoreReqDto } from 'src/app/core/models/store/store.model';
 
 @Component({
   selector: 'app-store-create',
@@ -37,6 +36,9 @@ export class StoreCreateComponent implements OnInit {
   categories = Object.values(StoreCategoryType);
   canCreateStore: boolean = false;
 
+  imagePreviewUrl: string | null = null;
+  coverImagePreviewUrl: string | null = null;
+
   constructor(
     private fb: FormBuilder,
     private storeService: StoreService,
@@ -50,8 +52,8 @@ export class StoreCreateComponent implements OnInit {
       description: ['', [Validators.maxLength(1500)]],
       category: ['', Validators.required],
       address: ['', Validators.required],
-      image: ['', [Validators.pattern('^https?://.*$')]],
-      coverImage: ['', [Validators.pattern('^https?://.*$')]]
+      image: [null], 
+      coverImage: [null] 
     });
   }
 
@@ -60,7 +62,6 @@ export class StoreCreateComponent implements OnInit {
       const decodedToken = this.tokenService.getDecodedToken();
       if (decodedToken) {
         this.role = decodedToken?.role ?? 'USER';  
-        console.log(this.role);
         if (this.role === 'SELLER') {
           this.canCreateStore = true;
         } else {
@@ -71,48 +72,52 @@ export class StoreCreateComponent implements OnInit {
     }
   }
 
-  onFileSelected(event: Event, field: string): void {
+  onFileSelected(event: Event, field: 'image' | 'coverImage'): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       this.storeForm.patchValue({ [field]: file });
       this.storeForm.get(field)?.updateValueAndValidity();
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        if (field === 'image') {
+          this.imagePreviewUrl = e.target.result;
+        } else if (field === 'coverImage') {
+          this.coverImagePreviewUrl = e.target.result;
+        }
+      };
+      reader.readAsDataURL(file);
     }
   }
 
   onSubmit(): void {
     if (this.storeForm.valid && !this.loading && this.canCreateStore) {
       this.loading = true;
-
-      const formData = new FormData();
+  
       const formValue = this.storeForm.value;
-
-      // Append all form values to FormData
-      formData.append('storeName', formValue.storeName?.trim());
-      formData.append('description', formValue.description?.trim());
-      formData.append('category', formValue.category);
-      formData.append('address', formValue.address?.trim());
-      formData.append('status', 'true');
-      formData.append('featured', 'false');
-
-      // Append image files if they exist
+      
+      const storeDto = {
+        storeName: formValue.storeName?.trim(),
+        description: formValue.description?.trim() || '',
+        category: formValue.category,
+        address: formValue.address?.trim(),
+        status: true,
+        featured: false,
+        userId: this.tokenService.getDecodedToken()?.id 
+      };
+  
+      const formData = new FormData();
+      formData.append('store', new Blob([JSON.stringify(storeDto)], { type: 'application/json' }));
+  
       if (formValue.image) {
         formData.append('image', formValue.image);
       }
       if (formValue.coverImage) {
         formData.append('coverImage', formValue.coverImage);
       }
-      const storec: StoreReqDto = {
-            userId: 1,
-            storeName: formValue.storeName?.trim(),
-            description: formValue.description?.trim() || '',
-            category: formValue.category,
-            address: formValue.address?.trim(),
-            status: formValue.status,
-            featured: formValue.featured
-          };
-
-      this.storeService.create(storec).subscribe({
+  
+      this.storeService.create(formData).subscribe({
         next: (response) => {
           this.snackBar.open('Store created successfully', 'Close', { duration: 3000 });
           this.router.navigate(['/dashboard/stores']);
@@ -133,6 +138,7 @@ export class StoreCreateComponent implements OnInit {
       });
     }
   }
+  
 
   handleImageError(event: Event): void {
     const imgElement = event.target as HTMLImageElement;

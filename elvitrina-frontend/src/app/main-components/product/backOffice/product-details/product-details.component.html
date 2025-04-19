@@ -22,7 +22,11 @@
       <!-- Product Images -->
       <div class="product-images m-b-16">
         <div class="image-gallery">
-          <img *ngFor="let image of product.images" [src]="image" [alt]="product.productName" class="product-image" (error)="handleImageError($event)">
+          <img *ngFor="let image of product.images" 
+              [src]="getProductImageUrl(image)" 
+              [alt]="product.productName" 
+              class="product-image" 
+              (error)="handleImageError($event)">
         </div>
       </div>
 

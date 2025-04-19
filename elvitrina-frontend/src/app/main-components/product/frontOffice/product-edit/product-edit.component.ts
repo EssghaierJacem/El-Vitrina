@@ -57,6 +57,9 @@ export class ProductEditComponent implements OnInit {
   tagsControl = new FormControl<string[]>([]);
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
+
+
   constructor(
     private fb: FormBuilder,
     private productService: ProductService,
@@ -330,8 +333,15 @@ export class ProductEditComponent implements OnInit {
     
     return imagesValue
       .split(',')
-      .map((url: string) => url.trim())
-      .filter((url: string) => url && url.startsWith('http'));
+      .map((image: string) => image.trim())
+      .filter((image: string) => image)
+      .map((image: string) => {
+        if (image.startsWith('http')) {
+          return image; 
+        } else {
+          return this.IMAGE_BASE_URL + image;
+        }
+      });
   }
 
   isLoggedIn(): boolean {
@@ -342,7 +352,6 @@ export class ProductEditComponent implements OnInit {
     this.navigateToProducts();
   }
 
-  // Public method to navigate to products page - can be used in template
   navigateToProducts(): void {
     this.router.navigate(['/products']);
   }

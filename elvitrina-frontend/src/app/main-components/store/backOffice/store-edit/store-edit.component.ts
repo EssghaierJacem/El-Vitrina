@@ -35,9 +35,17 @@ import { StoreCategoryType } from 'src/app/core/models/store/store-category-type
   styleUrls: ['./store-edit.component.scss']
 })
 export class StoreEditComponent implements OnInit {
+
+  IMAGE_BASE_URL = 'http://localhost:8080/api/stores/store/images/';
+
   storeForm: FormGroup;
   isSubmitting = false;
+  existingImageUrl: string | null = null;
+ existingCoverImageUrl: string | null = null;
   storeId: number | null = null;
+
+  imagePreview: string | null = null;
+  coverImagePreview: string | null = null;
   
   categoryOptions = Object.values(StoreCategoryType);
 
@@ -84,6 +92,10 @@ export class StoreEditComponent implements OnInit {
           image: null,
           coverImage: null
         });
+  
+        const baseUrl = 'http://localhost:8080/api/stores/store/images/';
+        this.existingImageUrl = store.image ? baseUrl + store.image : null;
+        this.existingCoverImageUrl = store.coverImage ? baseUrl + store.coverImage : null;
       },
       error: (error) => {
         console.error('Error loading store:', error);
@@ -109,8 +121,25 @@ export class StoreEditComponent implements OnInit {
       const file = input.files[0];
       this.storeForm.patchValue({ [fieldName]: file });
       this.storeForm.get(fieldName)?.updateValueAndValidity();
+  
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (fieldName === 'image') {
+          this.imagePreview = reader.result as string;
+        } else if (fieldName === 'coverImage') {
+          this.coverImagePreview = reader.result as string;
+        }
+      };
+      reader.readAsDataURL(file);
     }
   }
+  
+
+  isFileSelected(fieldName: string): boolean {
+    const value = this.storeForm.get(fieldName)?.value;
+    return value instanceof File;
+  }
+  
 
   onSubmit(): void {
     if (this.storeForm.valid && !this.isSubmitting && this.storeId) {
@@ -124,8 +153,8 @@ export class StoreEditComponent implements OnInit {
       formData.append('description', formValue.description?.trim());
       formData.append('category', formValue.category);
       formData.append('address', formValue.address?.trim());
-      formData.append('status', formValue.status);
-      formData.append('featured', formValue.featured);
+      formData.append('status', String(formValue.status));
+      formData.append('featured', String(formValue.featured));
   
       // Append image files if they exist
       if (formValue.image instanceof File) {
@@ -169,5 +198,9 @@ export class StoreEditComponent implements OnInit {
     
     // Navigate back to the list
     this.router.navigate(['/dashboard/stores/details', this.storeId]);
+  }
+
+  getFullImageUrl(fileName: string): string {
+    return this.IMAGE_BASE_URL + fileName;
   }
 }

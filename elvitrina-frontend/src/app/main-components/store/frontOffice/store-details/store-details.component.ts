@@ -64,6 +64,9 @@ export class StoreDetailsComponent implements OnInit {
   categories: ProductCategoryType[] = Object.values(ProductCategoryType);
   selectedCategory: ProductCategoryType | null = null;
   filteredProducts: Product[] = [];
+
+  IMAGE_BASE_URL = 'http://localhost:8080/api/stores/store/images/';
+  readonly IMAGE_PRODUCT_BASE_URL = 'http://localhost:8080/api/products/products/images/';  
   
   // Sorting options
   sortOptions: SortOption[] = [
@@ -331,5 +334,43 @@ export class StoreDetailsComponent implements OnInit {
 
   goToCreateFeedback(): void {
     this.router.navigate(['/store-feedback/create']);
+  }
+
+  getStoreImage(store: Store): string {
+    if (!store || !store.image) {
+      return '/assets/images/default-store.png';
+    }
+  
+    if (store.image.startsWith('http')) {
+      return store.image; 
+    }
+  
+    return this.IMAGE_BASE_URL + store.image;
+  }
+  
+  getCoverImage(store: Store): string {
+    if (!store || !store.coverImage) {
+      return '/assets/images/default-cover.png'; 
+    }
+  
+    if (store.coverImage.startsWith('http')) {
+      return store.coverImage;
+    }
+  
+    return this.IMAGE_BASE_URL + store.coverImage;
+  }
+
+  getProductImageUrl(imageFilename: string | undefined | null, type: 'store' | 'product' = 'product'): string {
+    if (!imageFilename) {
+      return type === 'store'
+        ? '/assets/images/stores/no-image.jpg'
+        : '/assets/images/products/no-image.jpg';
+    }
+  
+    if (imageFilename.startsWith('http') || imageFilename.startsWith('https')) {
+      return imageFilename;
+    }
+  
+    return this.IMAGE_PRODUCT_BASE_URL + imageFilename;
   }
 }

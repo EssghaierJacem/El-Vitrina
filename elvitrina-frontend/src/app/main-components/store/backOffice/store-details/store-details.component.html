@@ -17,8 +17,8 @@
     <div *ngIf="store" class="store-details">
       <!-- Cover Image -->
       <div class="store-cover-image">
-        <img *ngIf="store.coverImage; else noCoverImage" 
-             [src]="store.coverImage" 
+        <img *ngIf="getCoverImage(store); else noCoverImage" 
+             [src]="getCoverImage(store)" 
              [alt]="store.storeName + ' Cover'" 
              class="w-100 cover-image" 
              (error)="handleImageError($event)">
@@ -29,8 +29,8 @@
 
       <!-- Store Logo -->
       <div class="store-image">
-        <img *ngIf="store.image; else noImage" 
-             [src]="store.image" 
+        <img *ngIf="getStoreImage(store); else noImage" 
+             [src]="getStoreImage(store)" 
              [alt]="store.storeName" 
              class="rounded-image shadow-sm" 
              (error)="handleImageError($event)">

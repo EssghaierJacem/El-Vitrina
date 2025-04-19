@@ -49,6 +49,8 @@ export class AllProductComponent implements OnInit {
   selectedCategory: ProductCategoryType | null = null;
   categoryDescription: string = '';
 
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
+  
   // Filters
   searchQuery = '';
   sortOptions = [
@@ -225,5 +227,17 @@ export class AllProductComponent implements OnInit {
     if (img) {
       img.src = 'assets/images/products/no-image.jpg';
     }
+  }
+
+  getProductImageUrl(imageFilename: string): string {
+    if (!imageFilename) {
+      return 'assets/images/products/no-image.jpg'; 
+    }
+    
+    if (imageFilename.startsWith('http')) {
+      return imageFilename; 
+    }
+  
+    return this.IMAGE_BASE_URL + imageFilename;
   }
 } 

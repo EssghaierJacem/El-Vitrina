@@ -55,17 +55,30 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- Image URL -->
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Image URL</mat-label>
-        <input matInput formControlName="image">
-      </mat-form-field>
+    <!-- Store Image -->
+    <div class="form-group">
+      <label>Store Image</label>
+      <input type="file" (change)="onFileSelected($event, 'image')">
+      <img *ngIf="isFileSelected('image'); else showExistingImage" 
+          [src]="imagePreview" 
+          class="preview-image">
+      <ng-template #showExistingImage>
+        <img *ngIf="existingImageUrl" [src]="existingImageUrl" class="preview-image">
+      </ng-template>
+    </div>
 
-      <!-- Cover Image URL -->
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Cover Image URL</mat-label>
-        <input matInput formControlName="coverImage">
-      </mat-form-field>
+    <!-- Cover Image -->
+    <div class="form-group">
+      <label>Cover Image</label>
+      <input type="file" (change)="onFileSelected($event, 'coverImage')">
+      <img *ngIf="isFileSelected('coverImage'); else showExistingCover" 
+          [src]="coverImagePreview" 
+          class="preview-image">
+      <ng-template #showExistingCover>
+        <img *ngIf="existingCoverImageUrl" [src]="existingCoverImageUrl" class="preview-image">
+      </ng-template>
+    </div>
+
 
       <!-- Status -->
       <div class="m-b-16">
