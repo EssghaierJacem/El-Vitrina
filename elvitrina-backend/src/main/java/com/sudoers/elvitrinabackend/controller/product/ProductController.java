@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -39,9 +40,12 @@ public class ProductController {
     private ProductService productService;
 
     // ---- CRUD Endpoints ----
-    @PostMapping
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductCreationDTO productDTO) {
-        ProductDTO createdProduct = productService.createProduct(productDTO);
+    @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<ProductDTO> createProduct(
+            @RequestPart("product") ProductCreationDTO productDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
+        ProductDTO createdProduct = productService.createProduct(productDTO, images);
         return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
@@ -66,10 +70,13 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<ProductDTO> updateProduct(
             @PathVariable Long id,
-            @RequestBody ProductUpdateDTO productDTO) {
-        ProductDTO updatedProduct = productService.updateProduct(id, productDTO);
+            @RequestPart("product") ProductUpdateDTO productDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
+        ProductDTO updatedProduct = productService.updateProduct(id, productDTO, images);
         return ResponseEntity.ok(updatedProduct);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
@@ -201,10 +208,35 @@ public class ProductController {
     }
 
     // ---- Image Handling Endpoints ----
-    @PostMapping("/{id}/images")
-    public ResponseEntity<ProductDTO> uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-        ProductDTO updatedProduct = productService.addImageToProduct(id, file);
+    @PostMapping("/{id}/upload-image")
+    public ResponseEntity<ProductDTO> uploadProductImage(@PathVariable Long id,
+                                                         @RequestParam("image") MultipartFile imageFile) {
+        ProductDTO updatedProduct = productService.addImageToProduct(id, imageFile);
         return ResponseEntity.ok(updatedProduct);
+    }
+
+    @GetMapping("/products/images/{filename:.+}")
+    public ResponseEntity<Resource> getProductImage(@PathVariable String filename) {
+        try {
+            Path filePath = Paths.get("uploads/product-images").resolve(filename);
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (!resource.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            String contentType = Files.probeContentType(filePath);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @DeleteMapping("/{id}/images")
@@ -255,32 +287,6 @@ public class ProductController {
             @RequestParam String tag) {
         List<ProductDTO> products = productService.findByTag(tag);
         return ResponseEntity.ok(products);
-    }
-
-    @GetMapping("/product/images/{filename:.+}")
-    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
-        try {
-            // Define the upload directory (this should match the directory used in saveImage)
-            String uploadDir = "uploads/product-images"; // Update this path as needed
-            Path filePath = Paths.get(uploadDir).resolve(filename);
-            
-            // Load the image as a Resource
-            Resource resource = new UrlResource(filePath.toUri());
-            
-            if (!resource.exists() || !resource.isReadable()) {
-                return ResponseEntity.notFound().build();
-            }
-            String contentType = Files.probeContentType(filePath);
-            if (contentType == null) {
-                contentType = "application/octet-stream";
-            }
-            // Return the image as a response
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .body(resource);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
     }
 
     private String saveImage(MultipartFile file) {

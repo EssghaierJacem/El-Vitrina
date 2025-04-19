@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,11 +41,10 @@ public class StoreService implements IStoreService{
     private ImageUploadService imageUploadService;
 
     @Transactional
-    public StoreDTO createStore(StoreDTO storeDTO) {
+    public StoreDTO createStore(StoreDTO storeDTO, MultipartFile image, MultipartFile coverImage) {
         try {
             System.out.println("Received storeDTO: " + storeDTO);
-            
-            // Validate required fields
+
             if (storeDTO.getStoreName() == null || storeDTO.getStoreName().trim().isEmpty()) {
                 throw new IllegalArgumentException("Store name is required");
             }
@@ -58,40 +58,39 @@ public class StoreService implements IStoreService{
                 throw new IllegalArgumentException("Address is required");
             }
 
-            // Validate category
-            try {
-                System.out.println("Validating category: " + storeDTO.getCategory());
-                StoreCategoryType.valueOf(storeDTO.getCategory().name());
-            } catch (IllegalArgumentException e) {
-                System.err.println("Invalid category: " + storeDTO.getCategory());
-                throw new IllegalArgumentException("Invalid category type: " + storeDTO.getCategory());
-            }
+            StoreCategoryType.valueOf(storeDTO.getCategory().name());
 
-            // Check if user exists
-            System.out.println("Looking for user with ID: " + storeDTO.getUserId());
             User user = userRepository.findById(storeDTO.getUserId())
                     .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + storeDTO.getUserId()));
 
             Store store = new Store();
-            System.out.println("Copying DTO to entity");
             copyDtoToEntity(storeDTO, store);
             store.setUser(user);
-            
-            // Set default values
-            store.setStatus(true); // Default to active
-            store.setFeatured(false); // Default to not featured
-            
-            System.out.println("Saving store: " + store);
+
+            if (image != null && !image.isEmpty()) {
+                String imageUrl = saveImageToLocalDisk(image);
+                store.setImage(imageUrl);
+            }
+
+            if (coverImage != null && !coverImage.isEmpty()) {
+                String coverImageUrl = saveImageToLocalDisk(coverImage);
+                store.setCoverImage(coverImageUrl);
+            }
+
+            store.setStatus(true);
+            store.setFeatured(false);
+
             Store savedStore = storeRepository.save(store);
-            System.out.println("Store saved successfully");
-            
+
             return copyEntityToDto(savedStore);
+
         } catch (Exception e) {
-            System.err.println("Error creating store: " + e.getMessage());
+            System.err.println("Error creating store with images: " + e.getMessage());
             e.printStackTrace();
-            throw e;
+            throw new RuntimeException("Failed to create store", e);
         }
     }
+
 
     @Transactional(readOnly = true)
     public StoreDTO getStoreById(Long id) {
@@ -108,20 +107,37 @@ public class StoreService implements IStoreService{
     }
 
     @Transactional
-    public StoreDTO updateStore(Long id, StoreDTO storeDTO) {
-        Store store = storeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Store not found"));
+    public StoreDTO updateStore(Long id, StoreDTO storeDTO, MultipartFile image, MultipartFile coverImage) {
+        try {
+            Store store = storeRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Store not found"));
 
-        copyDtoToEntity(storeDTO, store);
+            copyDtoToEntity(storeDTO, store);
 
-        if (storeDTO.getUserId() != null) {
-            User user = userRepository.findById(storeDTO.getUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            store.setUser(user);
+            if (storeDTO.getUserId() != null) {
+                User user = userRepository.findById(storeDTO.getUserId())
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+                store.setUser(user);
+            }
+
+            if (image != null && !image.isEmpty()) {
+                String imageUrl = saveImageToLocalDisk(image);
+                store.setImage(imageUrl);
+            }
+
+            if (coverImage != null && !coverImage.isEmpty()) {
+                String coverImageUrl = saveImageToLocalDisk(coverImage);
+                store.setCoverImage(coverImageUrl);
+            }
+
+            Store updatedStore = storeRepository.save(store);
+            return copyEntityToDto(updatedStore);
+
+        } catch (Exception e) {
+            System.err.println("Error updating store with images: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to update store", e);
         }
-
-        Store updatedStore = storeRepository.save(store);
-        return copyEntityToDto(updatedStore);
     }
 
     @Transactional
@@ -153,14 +169,21 @@ public class StoreService implements IStoreService{
     private void copyDtoToEntity(StoreDTO dto, Store entity) {
         try {
             System.out.println("Copying DTO to entity - DTO: " + dto);
+
             entity.setStoreName(dto.getStoreName().trim());
             entity.setDescription(dto.getDescription() != null ? dto.getDescription().trim() : null);
             entity.setCategory(dto.getCategory());
             entity.setStatus(dto.isStatus());
             entity.setAddress(dto.getAddress().trim());
-            entity.setImage(dto.getImage() != null ? dto.getImage().trim() : null);
-            entity.setCoverImage(dto.getCoverImage() != null ? dto.getCoverImage().trim() : null);
             entity.setFeatured(dto.isFeatured());
+
+            if (dto.getImage() != null && !dto.getImage().isBlank()) {
+                entity.setImage(dto.getImage().trim());
+            }
+            if (dto.getCoverImage() != null && !dto.getCoverImage().isBlank()) {
+                entity.setCoverImage(dto.getCoverImage().trim());
+            }
+
             System.out.println("Entity after copy: " + entity);
         } catch (Exception e) {
             System.err.println("Error in copyDtoToEntity: " + e.getMessage());
@@ -168,6 +191,7 @@ public class StoreService implements IStoreService{
             throw e;
         }
     }
+
     @Transactional(readOnly = true)
     public List<StoreDTO> getStoresByCategory(String category) {
         // 1. Valider et convertir la catégorie String en enum
@@ -339,7 +363,29 @@ public class StoreService implements IStoreService{
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new EntityNotFoundException("Store not found"));
 
-        store.setImage(null); // Remove the image
+        store.setImage(null);
         storeRepository.save(store);
     }
+
+    private String saveImageToLocalDisk(MultipartFile image) throws IOException {
+        String baseUploadDir = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "store-images";
+
+        File uploadDirectory = new File(baseUploadDir);
+        if (!uploadDirectory.exists()) {
+            boolean dirsCreated = uploadDirectory.mkdirs();
+            if (!dirsCreated) {
+                throw new IOException("Could not create directory for image upload: " + baseUploadDir);
+            }
+        }
+
+        String originalFilename = image.getOriginalFilename();
+        String filename = System.currentTimeMillis() + "_" + originalFilename;
+
+        File destFile = new File(uploadDirectory, filename);
+
+        image.transferTo(destFile);
+
+        return  filename;
+    }
+
 }

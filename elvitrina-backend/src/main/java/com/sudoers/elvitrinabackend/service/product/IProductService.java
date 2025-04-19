@@ -15,11 +15,11 @@ import java.util.Map;
 import java.util.Set;
 
 public interface IProductService {
-    ProductDTO createProduct(ProductCreationDTO productDTO);
+    ProductDTO createProduct(ProductCreationDTO productDTO, List<MultipartFile> images);
     ProductDTO getProductById(Long id);
     List<ProductDTO> getAllProducts();
     List<ProductSummaryDTO> getAllProductSummaries();
-    ProductDTO updateProduct(Long id, ProductUpdateDTO productDTO);
+    ProductDTO updateProduct(Long id, ProductUpdateDTO productDTO, List<MultipartFile> newImages);
     void deleteProduct(Long id);
     void deleteMultipleProducts(List<Long> productIds);
     void deleteAllProducts();

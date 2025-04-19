@@ -44,9 +44,14 @@ import java.net.MalformedURLException;
 public class StoreController {
 
     private final StoreService storeService;
-    @PostMapping
-    public ResponseEntity<StoreDTO> createStore(@RequestBody StoreDTO storeDTO) {
-        StoreDTO createdStore = storeService.createStore(storeDTO);
+
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<StoreDTO> createStore(
+            @RequestPart("store") StoreDTO storeDTO,
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @RequestPart(value = "coverImage", required = false) MultipartFile coverImage
+    ) {
+        StoreDTO createdStore = storeService.createStore(storeDTO, image, coverImage);
         return new ResponseEntity<>(createdStore, HttpStatus.CREATED);
     }
 
@@ -67,16 +72,18 @@ public class StoreController {
         return ResponseEntity.ok(storesPage);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<StoreDTO> updateStore(
             @PathVariable Long id,
-            @RequestParam Map<String, MultipartFile> files,
-            @RequestParam String storeName,
-            @RequestParam String description,
-            @RequestParam StoreCategoryType category,
-            @RequestParam String address,
-            @RequestParam boolean status,
-            @RequestParam boolean featured) {
+            @RequestParam("storeName") String storeName,
+            @RequestParam("description") String description,
+            @RequestParam("category") StoreCategoryType category,
+            @RequestParam("address") String address,
+            @RequestParam("status") boolean status,
+            @RequestParam("featured") boolean featured,
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @RequestPart(value = "coverImage", required = false) MultipartFile coverImage
+    ) {
         StoreDTO storeDTO = new StoreDTO();
         storeDTO.setStoreName(storeName);
         storeDTO.setDescription(description);
@@ -85,19 +92,11 @@ public class StoreController {
         storeDTO.setStatus(status);
         storeDTO.setFeatured(featured);
 
-        // Handle file uploads if necessary
-        if (files.containsKey("image")) {
-            MultipartFile imageFile = files.get("image");
-            // Process the image file (e.g., save it to the server)
-        }
-        if (files.containsKey("coverImage")) {
-            MultipartFile coverImageFile = files.get("coverImage");
-            // Process the cover image file (e.g., save it to the server)
-        }
+        StoreDTO updatedStore = storeService.updateStore(id, storeDTO, image, coverImage);
 
-        // Call the service to update the store
-        return ResponseEntity.ok(storeService.updateStore(id, storeDTO));
+        return ResponseEntity.ok(updatedStore);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStore(@PathVariable Long id) {
@@ -216,29 +215,30 @@ public class StoreController {
     @GetMapping("/store/images/{filename:.+}")
     public ResponseEntity<Resource> getImage(@PathVariable String filename) {
         try {
-            // Define the upload directory (this should match the directory used in saveImage)
-            String uploadDir = "/uploads/store-images"; // Update this path as needed
-            Path filePath = Paths.get(uploadDir).resolve(filename);
-            
-            // Load the image as a Resource
+            Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "store-images");
+            Path filePath = uploadDir.resolve(filename);
+
             Resource resource = new UrlResource(filePath.toUri());
-            
+
             if (!resource.exists() || !resource.isReadable()) {
                 return ResponseEntity.notFound().build();
             }
-            
+
             String contentType = Files.probeContentType(filePath);
-             if (contentType == null) {
-                 contentType = "application/octet-stream";
-             }
-            // Return the image as a response
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))
                     .body(resource);
-        } catch (Exception e) {
+        } catch (MalformedURLException e) {
             return ResponseEntity.badRequest().build();
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
     private String saveImage(MultipartFile file) {
         try {

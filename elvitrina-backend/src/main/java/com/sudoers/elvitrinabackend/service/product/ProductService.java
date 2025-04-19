@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -36,7 +37,7 @@ public class ProductService implements IProductService {
     // ---- CRUD Operations ----
     @Override
     @Transactional
-    public ProductDTO createProduct(ProductCreationDTO productDTO) {
+    public ProductDTO createProduct(ProductCreationDTO productDTO, List<MultipartFile> images) {
         Product product = new Product();
         copyCreationDtoToEntity(productDTO, product);
 
@@ -44,6 +45,15 @@ public class ProductService implements IProductService {
             Store store = storeRepository.findById(productDTO.getStoreId())
                     .orElseThrow(() -> new ResourceNotFoundException("Store not found"));
             product.setStore(store);
+        }
+
+        if (images != null && !images.isEmpty()) {
+            List<String> savedImagePaths = new ArrayList<>();
+            for (MultipartFile image : images) {
+                String savedPath = saveProductImageToLocalDisk(image);
+                savedImagePaths.add(savedPath);
+            }
+            product.setImages(savedImagePaths);
         }
 
         product.setStatus(ProductStatus.ACTIVE);
@@ -80,16 +90,32 @@ public class ProductService implements IProductService {
 
     @Override
     @Transactional
-    public ProductDTO updateProduct(Long id, ProductUpdateDTO productDTO) {
+    public ProductDTO updateProduct(Long id, ProductUpdateDTO productDTO, List<MultipartFile> newImages) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         copyUpdateDtoToEntity(productDTO, product);
+
+        if (newImages != null && !newImages.isEmpty()) {
+            List<String> savedImagePaths = new ArrayList<>();
+            for (MultipartFile image : newImages) {
+                String savedPath = saveProductImageToLocalDisk(image);
+                savedImagePaths.add(savedPath);
+            }
+
+            if (product.getImages() != null) {
+                product.getImages().addAll(savedImagePaths);
+            } else {
+                product.setImages(savedImagePaths);
+            }
+        }
+
         product.setUpdatedAt(LocalDateTime.now());
 
         Product updatedProduct = productRepository.save(product);
         return copyEntityToDto(updatedProduct);
     }
+
 
     @Override
     @Transactional
@@ -425,4 +451,30 @@ public class ProductService implements IProductService {
                 .map(this::copyEntityToDto)
                 .collect(Collectors.toList());
     }
+
+    private String saveProductImageToLocalDisk(MultipartFile image) {
+        try {
+            String baseUploadDir = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "product-images";
+
+            File uploadDirectory = new File(baseUploadDir);
+            if (!uploadDirectory.exists()) {
+                boolean dirsCreated = uploadDirectory.mkdirs();
+                if (!dirsCreated) {
+                    throw new IOException("Could not create directory for product image upload: " + baseUploadDir);
+                }
+            }
+
+            String originalFilename = image.getOriginalFilename();
+            String filename = System.currentTimeMillis() + "_" + originalFilename;
+
+            File destFile = new File(uploadDirectory, filename);
+
+            image.transferTo(destFile);
+
+            return  filename;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save product image: " + e.getMessage(), e);
+        }
+    }
+
 }

@@ -10,10 +10,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface IStoreService {
-    StoreDTO createStore(StoreDTO storeDTO);
+    StoreDTO createStore(StoreDTO storeDTO, MultipartFile image, MultipartFile coverImage);
     StoreDTO getStoreById(Long id);
     List<StoreDTO> getAllStores();
-    StoreDTO updateStore(Long id, StoreDTO storeDTO);
+    StoreDTO updateStore(Long id, StoreDTO storeDTO, MultipartFile image, MultipartFile coverImage);
     void deleteStore(Long id);
     List<StoreDTO> getStoresByCategory(String category);
     List<StoreDTO> searchStoresByName(String name);
