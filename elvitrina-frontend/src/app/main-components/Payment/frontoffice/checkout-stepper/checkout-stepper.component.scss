@@ -1,0 +1,133 @@
+:host {
+  display: block;
+  padding: 2rem;
+
+  /* ---- Container principal ---- */
+  .checkout-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 10%);
+    padding: 2rem;
+  }
+
+  /* ---- Titre principal ---- */
+  h1.checkout-title {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  /* ---- Stepper Angular Material ---- */
+  mat-horizontal-stepper {
+    background-color: transparent; /* On enlève le fond du stepper si nécessaire */
+
+    .mat-horizontal-stepper-header-container {
+      margin-bottom: 2rem; /* Espace sous les boutons du stepper */
+    }
+
+    .mat-step-icon {
+      background-color: #007bff; /* Couleur des icônes (chiffres) des étapes */
+      color: #fff;
+      font-weight: bold;
+    }
+
+    /* Couleur de la ligne reliant les étapes */
+    .mat-stepper-horizontal-line {
+      border-top: 2px solid #007bff;
+    }
+
+    /* Label des étapes */
+    .mat-step-label {
+      font-weight: 600;
+      color: #333;
+    }
+
+    /* Boutons stepper (Suivant / Retour) */
+    .mat-stepper-icon-selected,
+    .mat-button {
+      text-transform: none; /* Retire la mise en majuscules du texte */
+    }
+
+    .step-actions {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+  }
+
+  /* ---- Champs de formulaire Angular Material ---- */
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 1rem;
+
+    .mat-form-field-outline {
+      border-color: #ced4da;
+    }
+
+    .mat-form-field-label {
+      color: #6c757d;
+    }
+
+    .mat-focused .mat-form-field-outline {
+      border-color: #007bff !important;
+    }
+  }
+
+  /* ---- Résumé de commande ---- */
+  .order-summary {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fafafa;
+
+    .summary-title {
+      font-weight: 600;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.5rem;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+
+      &.total {
+        font-weight: 700;
+        margin-top: 1rem;
+        border-top: 1px solid #ddd;
+        padding-top: 0.5rem;
+      }
+    }
+
+    img.product-thumbnail {
+      width: 50px;
+      height: auto;
+      margin-right: 0.75rem;
+    }
+  }
+
+  /* ---- Bouton principal de confirmation ---- */
+  .confirm-button {
+    margin-top: 2rem;
+    width: 100%;
+    background-color: #28a745;
+    color: #fff;
+    &:hover {
+      background-color: #218838;
+    }
+  }
+  .stripe-card-element {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+  }
+
+}

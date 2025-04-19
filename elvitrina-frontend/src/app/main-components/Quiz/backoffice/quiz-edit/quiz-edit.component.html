@@ -1,0 +1,71 @@
+<mat-card class="cardWithShadow theme-card card">
+  <mat-card-header>
+    <mat-card-title>Modifier le Quiz</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form #quizForm="ngForm" (ngSubmit)="editQuiz(quizForm)">
+      <div class="row">
+        <!-- Question du Quiz -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Question</mat-label>
+            <input matInput type="text" [(ngModel)]="quiz.question" name="question" required #question="ngModel" />
+            <mat-error *ngIf="question.invalid && question.touched">La question est requise.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Option 1 -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Option 1</mat-label>
+            <input matInput type="text" [(ngModel)]="quiz.option1" name="option1" required #option1="ngModel" />
+            <mat-error *ngIf="option1.invalid && option1.touched">L'option 1 est requise.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Option 2 -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Option 2</mat-label>
+            <input matInput type="text" [(ngModel)]="quiz.option2" name="option2" required #option2="ngModel" />
+            <mat-error *ngIf="option2.invalid && option2.touched">L'option 2 est requise.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Option 3 -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Option 3</mat-label>
+            <input matInput type="text" [(ngModel)]="quiz.option3" name="option3" required #option3="ngModel" />
+            <mat-error *ngIf="option3.invalid && option3.touched">L'option 3 est requise.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Bonne Réponse -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Bonne Réponse</mat-label>
+            <input matInput type="text" [(ngModel)]="quiz.bonneReponse" name="bonneReponse" required #bonneReponse="ngModel" />
+            <mat-error *ngIf="bonneReponse.invalid && bonneReponse.touched">La bonne réponse est requise.</mat-error>
+          </mat-form-field>
+        </div>
+
+
+        <!-- Score -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Score</mat-label>
+            <input matInput type="number" [(ngModel)]="quiz.score" name="score" required min="0" #score="ngModel" />
+            <mat-error *ngIf="score.invalid && score.touched">Le score doit être un nombre positif.</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="m-t-12">
+        <button mat-flat-button color="primary" type="submit" [disabled]="quizForm.invalid">Modifier</button>
+        <button mat-stroked-button color="warn" routerLink="/quizzes">Annuler</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -1,1 +1,15 @@
-<p>Gift Create works!</p>
+<div class="coupon">
+    <div class="left">
+      <div>{{gift?.name  }}</div>
+    </div>
+    <div class="center">
+      <div>
+        <h2>{{ gift?.discount}}% OFF</h2>
+        <h3>Coupon</h3>
+        <small>Valid until {{ gift?.expirationDate | date:'MMM, yyyy' }}</small>
+    </div>
+    </div>
+    <div class="right">
+      <div>{{ gift?.giftCode  }}</div>
+    </div>
+  </div>

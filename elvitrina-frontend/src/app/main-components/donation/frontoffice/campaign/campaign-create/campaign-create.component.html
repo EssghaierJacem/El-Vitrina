@@ -1,0 +1,30 @@
+<div class="container">
+    <div *ngIf="step === 1">
+      <div class="heading">Create Campaign - Step 1</div>
+      <form [formGroup]="campaignForm" class="form">
+        <input formControlName="title" placeholder="Title" class="input" required />
+        <input formControlName="description" placeholder="Description" class="input" required />
+        <input formControlName="goalAmount" type="number" placeholder="Goal Amount" class="input" required />
+        <input formControlName="startDate" type="date" placeholder="Start Date" class="input" required />
+        <input formControlName="endDate" type="date" placeholder="End Date" class="input" required />
+        <button type="button" (click)="nextStep()" class="login-button">Next</button>
+      </form>
+    </div>
+    <div *ngIf="step === 2">
+      <div class="heading">Create Campaign - Step 2</div>
+      <form [formGroup]="campaignForm" class="form">
+        <div formArrayName="rewards">
+          <div *ngFor="let reward of rewards.controls; let i = index" [formGroupName]="i" class="reward-group">
+            <input formControlName="title" placeholder="Reward Title" class="input" required />
+            <input formControlName="description" placeholder="Reward Description" class="input" required />
+            <input formControlName="minimumDonationAmount" type="number" placeholder="Min Donation Amount" class="input" required />
+            <input formControlName="availableQuantity" type="number" placeholder="Available Quantity" class="input" required />
+            <button type="button" (click)="removeReward(i)" class="remove-button">Remove</button>
+          </div>
+        </div>
+        <button type="button" (click)="addReward()" class="login-button">Add Reward</button>
+        <button type="button" (click)="previousStep()" class="login-button">Back</button>
+        <button type="button" (click)="submitCampaign()" class="login-button">Submit</button>
+      </form>
+    </div>
+  </div>

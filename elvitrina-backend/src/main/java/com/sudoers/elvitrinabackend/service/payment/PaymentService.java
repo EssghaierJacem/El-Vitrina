@@ -1,5 +1,6 @@
 package com.sudoers.elvitrinabackend.service.payment;
 
+import com.sudoers.elvitrinabackend.model.dto.PaymentDTO;
 import com.sudoers.elvitrinabackend.model.entity.CustomOrder;
 import com.sudoers.elvitrinabackend.model.entity.Payment;
 import com.sudoers.elvitrinabackend.model.enums.OrderStatusType;
@@ -13,40 +14,52 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PaymentService implements IPaymentService {
+
     private final PaymentRepository paymentRepository;
     private final CustomOrderRepository customOrderRepository;
-
 
     public PaymentService(PaymentRepository paymentRepository, CustomOrderRepository customOrderRepository) {
         this.paymentRepository = paymentRepository;
         this.customOrderRepository = customOrderRepository;
     }
+
     @Override
-    public Payment createPayment(Payment payment) {
-        return paymentRepository.save(payment);
+    public PaymentDTO createPayment(PaymentDTO dto) {
+        Payment payment = new Payment();
+        payment.setAmount(dto.getAmount());
+        payment.setTransactionDate(dto.getTransactionDate());
+        payment.setMethod(dto.getMethod());
+        payment.setPaystatus(dto.getPaystatus());
+
+        Payment saved = paymentRepository.save(payment);
+        return convertToDTO(saved);
     }
 
     @Override
-    public Optional<Payment> getPaymentById(Long id) {
-        return paymentRepository.findById(id);
+    public Optional<PaymentDTO> getPaymentById(Long id) {
+        return paymentRepository.findById(id).map(this::convertToDTO);
     }
 
     @Override
-    public List<Payment> getAllPayments() {
-        return paymentRepository.findAll();
+    public List<PaymentDTO> getAllPayments() {
+        return paymentRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Payment updatePayment(Long id, Payment payment) {
+    public PaymentDTO updatePayment(Long id, PaymentDTO dto) {
         return paymentRepository.findById(id)
-                .map(existingPayment -> {
-                    existingPayment.setAmount(payment.getAmount());
-                    existingPayment.setTransactionDate(payment.getTransactionDate());
-                    existingPayment.setMethod(payment.getMethod());
-                    return paymentRepository.save(existingPayment);
+                .map(existing -> {
+                    existing.setAmount(dto.getAmount());
+                    existing.setTransactionDate(dto.getTransactionDate());
+                    existing.setMethod(dto.getMethod());
+                    existing.setPaystatus(dto.getPaystatus());
+                    return convertToDTO(paymentRepository.save(existing));
                 })
                 .orElseThrow(() -> new RuntimeException("Payment not found with id " + id));
     }
@@ -54,62 +67,55 @@ public class PaymentService implements IPaymentService {
     @Override
     public void deletePayment(Long id) {
         paymentRepository.deleteById(id);
-
-
     }
+
     @Transactional
-    public Payment processPayment(Long orderId, double amount, String paymentMethod) {
+    @Override
+    public PaymentDTO processPayment(Long orderId, double amount, String paymentMethod) {
         CustomOrder order = customOrderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Commande non trouvée"));
-
-     //   if (order.getTotalAmount() != amount) {
-      //      throw new RuntimeException("Montant incorrect");
-     //   }
 
         Payment payment = new Payment();
         payment.setAmount(amount);
         payment.setTransactionDate(LocalDateTime.now());
         payment.setMethod(PaymentMethodType.valueOf(paymentMethod));
         payment.setPaystatus(PaymentStatusType.SUCCESS);
-       // payment.setOrder(order);
+        payment.setOrders(List.of(order)); // association
 
-        paymentRepository.save(payment);
+        Payment saved = paymentRepository.save(payment);
 
-        // Mettre à jour le statut de la commande
-        // order.setStatus(PaymentStatusType.PAID);
-        //   customOrderRepository.save(order);
+        order.setStatus(OrderStatusType.PAID);
+        order.setPayment(saved);
+        customOrderRepository.save(order);
 
-        return payment;
+        return convertToDTO(saved);
     }
 
-    // methode 2 : validation d'un payment
-    public Payment validatePayment(Long paymentId) {
-        // Récupérer le paiement
+    @Override
+    public PaymentDTO validatePayment(Long paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
 
-        // Vérifier si le paiement est déjà validé
         if (payment.getPaystatus() == PaymentStatusType.SUCCESS) {
             throw new RuntimeException("Payment is already validated");
         }
 
-        // Récupérer la commande associée au paiement
-      //  CustomOrder order = payment.getCustomorder();
-
-        // Vérifier si le montant du paiement est correct
-        //if (payment.getAmount() != order.getPrice()) {
-       //     throw new RuntimeException("Payment amount does not match order amount");
-       // }
-
-        // Valider le paiement
         payment.setPaystatus(PaymentStatusType.SUCCESS);
-        paymentRepository.save(payment);
+        return convertToDTO(paymentRepository.save(payment));
+    }
 
-        // Mettre à jour le statut de la commande
-      //  CustomOrder order;
-       // order.setStatus(OrderStatusType.PAID);
-       // customOrderRepository.save(order);
+    private PaymentDTO convertToDTO(Payment payment) {
+        List<Long> orderIds = payment.getOrders() != null
+                ? payment.getOrders().stream().map(CustomOrder::getId).collect(Collectors.toList())
+                : null;
 
-        return payment;
+        return new PaymentDTO(
+                payment.getId(),
+                payment.getAmount(),
+                payment.getTransactionDate(),
+                payment.getMethod(),
+                payment.getPaystatus(),
+                orderIds
+        );
     }
 }

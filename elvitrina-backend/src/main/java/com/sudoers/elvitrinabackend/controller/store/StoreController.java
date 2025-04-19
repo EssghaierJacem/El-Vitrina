@@ -39,6 +39,7 @@ import java.util.UUID;
 import java.net.MalformedURLException;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @RequestMapping("/api/stores")
 @RequiredArgsConstructor
 public class StoreController {

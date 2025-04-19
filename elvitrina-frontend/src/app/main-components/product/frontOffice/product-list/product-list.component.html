@@ -58,7 +58,7 @@
 
       <mat-card-content>
         <h3 class="product-name">{{product.productName}}</h3>
-        
+
         <div class="product-price" [class.has-discount]="product.hasDiscount">
           <span class="current-price">{{product.price | currency:'EUR'}}</span>
           <span class="original-price" *ngIf="product.hasDiscount && product.originalPrice">
@@ -78,11 +78,12 @@
 
       <mat-card-actions>
         <button mat-stroked-button color="primary" [routerLink]="['/products', product.productId]">
-          View Details
+        View Details
         </button>
-        <button mat-raised-button color="primary" (click)="addToCart(product)" [disabled]="product.stockQuantity === 0">
+        <button mat-raised-button color="primary" [routerLink]="['/products/', product.productId]">
           Add to Cart
         </button>
+
       </mat-card-actions>
     </mat-card>
   </div>

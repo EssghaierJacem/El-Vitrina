@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { VirtualEvent } from '../../models/event/virtual-event.model';
+import { VirtualEvent, VirtualEventRequest } from '../../models/event/virtual-event.model';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
@@ -12,8 +12,8 @@ export class VirtualEventService {
 
   constructor(private http: HttpClient) {}
 
-  createEvent(event: VirtualEvent): Observable<VirtualEvent> {
-    return this.http.post<VirtualEvent>(this.apiUrl, event);
+  createEvent(event: VirtualEventRequest): Observable<VirtualEventRequest> {
+    return this.http.post<VirtualEventRequest>(this.apiUrl, event);
   }
 
   getAllEvents(): Observable<VirtualEvent[]> {

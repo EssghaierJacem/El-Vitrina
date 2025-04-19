@@ -46,11 +46,20 @@ export class UserService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  changePassword(changePasswordData: { userId: number, currentPassword: string, newPassword: string }): Observable<any> {
+  changePassword(changePasswordData: { userId: number, currentPassword: string, newPassword: string }): Observable<string> {
     const { userId, currentPassword, newPassword } = changePasswordData;
-    return this.http.put<any>(`http://localhost:8080/users/change-password/${userId}`, null, {
-      params: { currentPassword, newPassword }
+    return this.http.put(`http://localhost:8080/users/change-password/${userId}`, null, {
+      params: { currentPassword, newPassword },
+      responseType: 'text' 
     });
   }
+
+  uploadProfileImage(userId: number, imageFile: File): Observable<User> {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+  
+    return this.http.post<User>(`${this.baseUrl}/${userId}/upload-image`, formData);
+  }
+  
   
 }

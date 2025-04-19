@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TokenService } from 'src/app/core/services/user/TokenService';
-import { StoreService } from 'src/app/core/services/store/store.service'; 
+import { StoreService } from 'src/app/core/services/store/store.service';
 import { RouterModule } from '@angular/router';
 import { Store } from 'src/app/core/models/store/store.model';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,6 +11,11 @@ import { ProductService } from 'src/app/core/services/product/product.service';
 import { Product } from 'src/app/core/models/product/product.model';
 import { ProductCategoryType } from 'src/app/core/models/product/product-category-type.enum';
 import { FormsModule } from '@angular/forms';
+import { CustomOrder } from 'src/app/core/models/Panier/CustomOrder';
+import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { ShoppingCartComponent } from 'src/app/main-components/custom-order/Frontoffice/shopping-cart/shopping-cart.component';
 
 
 @Component({
@@ -19,7 +24,10 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    ShoppingCartComponent,
+    RouterModule,
+    MatSortModule,
   ],
   templateUrl: './front-header.component.html',
   styleUrls: ['./front-header.component.scss']
@@ -34,17 +42,26 @@ export class FrontHeaderComponent implements OnInit {
   searchResults: Product[] = [];
   selectedCategory: string | null = null;
   categories = Object.values(ProductCategoryType);
-  products: Product[] = []; // For search results display
+  products: Product[] = []; 
+  orders: CustomOrder[] = [];
+  dataSource: MatTableDataSource<CustomOrder> = new MatTableDataSource<CustomOrder>();
+  displayedColumns: string[] = ['client', 'date', 'montant', 'statut', 'actions'];
+  searchText: string = '';
+
+
 
   constructor(
     private tokenService: TokenService,
     private router: Router,
     private storeService: StoreService,
     private dialog: MatDialog,
-    private productService: ProductService
+    private productService: ProductService,
+    private orderService: CustomOrderService
   ) {}
 
   ngOnInit(): void {
+    this.loadOrders();
+
     if (this.isLoggedIn()) {
       const user = this.tokenService.getDecodedToken();
       this.firstName = user?.firstname || 'Guest';
@@ -57,13 +74,19 @@ export class FrontHeaderComponent implements OnInit {
           const userStore = stores.find(store => store.userId === this.userId);
           if (userStore) {
             this.hasStore = true;
-            this.storeId = userStore.storeId;  
+            this.storeId = userStore.storeId;
           }
         });
       }
     }
   }
+  loadOrders(): void {
+    this.orderService.getAllOrders().subscribe((data: CustomOrder[]) => {
+      this.orders = data;
+      this.dataSource.data = data;
 
+    });
+  }
   logout(): void {
     this.tokenService.logout();
     this.router.navigate(['/authentication/login']);
@@ -81,11 +104,12 @@ export class FrontHeaderComponent implements OnInit {
 
   handleStoreButton(): void {
     if (this.role !== 'SELLER') {
-      this.router.navigate(['/user/become-seller']); 
+      this.router.navigate(['/user/become-seller']);
+      this.router.navigate(['/users/become-seller']); 
     } else if (this.hasStore) {
-      this.router.navigate([`/stores/${this.storeId}`]); 
+      this.router.navigate([`/stores/${this.storeId}`]);
     } else {
-      this.router.navigate(['/stores/create']); 
+      this.router.navigate(['/stores/create']);
     }
   }
 
@@ -128,3 +152,4 @@ export class FrontHeaderComponent implements OnInit {
   }
 
 }
+

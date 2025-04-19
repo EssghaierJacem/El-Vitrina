@@ -8,7 +8,7 @@ import { Quiz } from 'src/app/core/models/Quiz/quiz';
 })
 export class QuizService {
 
-  private apiUrl = 'http://localhost:8081/api/quizzes';
+  private apiUrl = 'http://localhost:8080/api/quizzes';
 
   constructor(private http: HttpClient) {}
 
@@ -30,6 +30,12 @@ export class QuizService {
 
   deleteQuiz(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/delete/${id}`);
+  }
+
+  saveUserAnswer(quizId: number, userAnswer: string): Observable<string> {
+    return this.http.post<string>(`${this.apiUrl}/${quizId}/answer`, {
+      responseUser: userAnswer
+    });
   }
 
 }

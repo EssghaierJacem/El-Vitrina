@@ -1,1 +1,223 @@
-/* Styles for Campaign Details */
+/* Campaign Styles */
+.campaign-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 15px;
+  overflow: hidden;
+  display: flex;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid #1ABC9C;
+  padding: 30px 30px 0 30px;
+
+  h1 {
+    font-size: 42px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #212121;
+
+    .green-text {
+      color: #1ABC9C;
+    }
+  }
+
+  .description {
+    color: #616161;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    font-size: 15px;
+  }
+
+  .progress-section {
+    margin-bottom: 30px;
+
+    .amount {
+      color: #1ABC9C;
+      font-weight: bold;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background-color: #e0e0e0;
+      border-radius: 20px;
+      overflow: hidden;
+
+      .progress {
+        height: 100%;
+        background-color: #1ABC9C;
+        border-radius: 20px;
+      }
+    }
+  }
+
+  .stats-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+
+    .stat-box {
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      width: 30%;
+
+      .stat-number {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #212121;
+      }
+
+      .stat-label {
+        color: #757575;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    align-items: center;
+    margin-top: 90px;
+    gap: 15px;
+    justify-content: flex-end;
+
+    .contribute-btn {
+      background-color: #FF6F61;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: #1ABC9C;
+      }
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+
+    .more-info {
+      color: #212121;
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 12px 25px;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+/* Coupon Styles */
+.coupon {
+  width: 400px;
+  height: 200px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: auto;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
+  display: flex;
+  align-items: stretch;
+  position: relative;
+  text-transform: uppercase;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  &::before {
+    left: 0;
+    background-image: radial-gradient(circle at 0 50%, transparent 25px, gold 26px);
+  }
+
+  &::after {
+    right: 0;
+    background-image: radial-gradient(circle at 100% 50%, transparent 25px, gold 26px);
+  }
+
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .left {
+    width: 20%;
+    border-right: 2px dashed rgba(0, 0, 0, 0.13);
+
+    div {
+      transform: rotate(-90deg);
+      white-space: nowrap;
+      font-weight: bold;
+    }
+  }
+
+  .center {
+    flex-grow: 1;
+    text-align: center;
+
+    h2 {
+      background: #000;
+      color: gold;
+      padding: 0 10px;
+      font-size: 2.15rem;
+      white-space: nowrap;
+    }
+
+    h3 {
+      font-size: 2.15rem;
+    }
+
+    small {
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+    }
+  }
+
+  .right {
+    width: 120px;
+    background-image: radial-gradient(circle at 100% 50%, transparent 25px, #fff 26px);
+
+    div {
+      font-family: 'Libre Barcode 128 Text', cursive;
+      font-size: 2.5rem;
+      font-weight: 400;
+      transform: rotate(-90deg);
+    }
+  }
+
+  @media screen and (max-width: 500px) {
+    display: grid;
+    grid-template-columns: 1fr;
+
+    .left div {
+      transform: rotate(0deg);
+    }
+
+    .right div {
+      transform: rotate(0deg);
+    }
+  }
+}

@@ -1,0 +1,56 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <div class="d-flex justify-content-between align-items-center m-b-16">
+      <div class="d-flex align-items-center">
+        <button mat-icon-button color="primary" [routerLink]="['/dashboard/blogPosts']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <mat-card-title>Edit Blog Post</mat-card-title>
+      </div>
+    </div>
+
+    <!-- Affichage du spinner pendant le chargement -->
+    <div *ngIf="isLoading" class="d-flex justify-content-center m-t-16">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <!-- Formulaire de mise à jour d'un BlogPost -->
+    <div *ngIf="!isLoading">
+      <form [formGroup]="blogPostForm" (ngSubmit)="onSubmit()">
+        <!-- Titre du post -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Title</mat-label>
+          <input matInput formControlName="title" placeholder="Enter post title" />
+          <mat-error *ngIf="blogPostForm.get('title')?.hasError('required')">Title is required</mat-error>
+        </mat-form-field>
+
+        <!-- Contenu du post -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Content</mat-label>
+          <textarea matInput formControlName="content" placeholder="Enter post content"></textarea>
+          <mat-error *ngIf="blogPostForm.get('content')?.hasError('required')">Content is required</mat-error>
+        </mat-form-field>
+
+        <!-- Tag (optionnel) -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Tag</mat-label>
+          <input matInput formControlName="tag" placeholder="Enter post tag" />
+        </mat-form-field>
+
+        <!-- Image (optionnel) -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Image URL</mat-label>
+          <input matInput formControlName="image" placeholder="Enter image URL" />
+        </mat-form-field>
+
+        
+
+        <!-- Boutons de soumission et annulation -->
+        <div class="d-flex justify-content-end">
+          <button mat-raised-button color="primary" [disabled]="blogPostForm.invalid">Save</button>
+          <button mat-raised-button color="warn" [routerLink]="['/backoffice/blog-posts']">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </mat-card-content>
+</mat-card>

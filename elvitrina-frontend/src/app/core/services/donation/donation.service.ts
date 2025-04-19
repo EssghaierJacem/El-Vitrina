@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Donation } from '../../models/donation/donation.model';
+import { Donation, DonationRequest } from '../../models/donation/donation.model';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
@@ -12,8 +12,8 @@ export class DonationService {
 
   constructor(private http: HttpClient) {}
 
-  createDonation(donation: Donation): Observable<Donation> {
-    return this.http.post<Donation>(this.apiUrl, donation);
+  createDonation(donation: DonationRequest): Observable<DonationRequest> {
+    return this.http.post<DonationRequest>(this.apiUrl, donation);
   }
 
   getAllDonations(): Observable<Donation[]> {

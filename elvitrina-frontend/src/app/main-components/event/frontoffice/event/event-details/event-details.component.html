@@ -1,1 +1,69 @@
-<p>Event Details works!</p>
+<div *ngIf="loading" class="loading-container">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Loading event details...</p>
+</div>
+
+<div *ngIf="!loading && event" class="event-details-container">
+  <!-- Event Overview -->
+  <section class="event-overview">
+    <div class="event-header">
+      <h1>{{ event.title }}</h1>
+      <div class="event-meta">
+        <span><mat-icon>event</mat-icon> {{ event.startDateTime | date:'medium' }}</span>
+        <span><mat-icon>attach_money</mat-icon> {{ event.ticketPrice | currency }}</span>
+        <span><mat-icon>group</mat-icon> Max: {{ event.maxParticipants }}</span>
+        <span><mat-icon>live_tv</mat-icon> {{ event.eventType }} / {{ event.eventMode }}</span>
+      </div>
+    </div>
+    <p class="event-description">{{ event.description }}</p>
+  </section>
+
+  <!-- Event Timeline -->
+  <section class="timeline-section">
+    <h2 class="timeline-title">Event Timeline</h2>
+  
+    <div class="timeline-container">
+   
+      <div *ngFor="let session of event.sessions; let i = index"
+           [ngClass]="getTimelineCardClass(getSessionStatus(session))"
+           class="timeline-card">
+        <div class="timeline-dot" [ngClass]="getTimelineDotClass(getSessionStatus(session))"></div>
+        <div class="timeline-connector" [ngClass]="getTimelineLineClass(getSessionStatus(session))"></div>
+        <div class="timeline-content">
+          <h1 class="timeline-day">Day {{ i + 1}}</h1>
+          <h1 class="timeline-title">{{ session.sessionTitle }}</h1>
+          <h3 class="timeline-meta">{{ session.startTime | date:'medium' }}
+            <span *ngIf="session.endTime"> - {{ session.endTime | date:'medium' }}</span>
+          </h3>
+        </div>
+      </div>
+
+     
+    </div>
+  </section>
+
+  <!-- People Joined -->
+  <section class="event-participants">
+    <h2>People Joined</h2>
+    <div class="participants-list">
+      <ng-container *ngFor="let participant of event.participants">
+        <div class="participant-avatar" [matTooltip]="participant.user.name">
+          <img *ngIf="participant.user.image; else initials" [src]="participant.user.image" alt="avatar">
+          <ng-template #initials>
+            <span>{{ participant.user.name ? participant.user.name[0] : '?' }}</span>
+          </ng-template>
+        </div>
+      </ng-container>
+      <span *ngIf="!event.participants.length" class="no-participants">No participants yet.</span>
+    </div>
+  </section>
+<!-- In your Angular component template -->
+<div class="calendar-embed-container">
+  <app-calendar></app-calendar>
+</div>
+  <button (click)="addToCalendar()">Add to Google Calendar</button>
+</div>
+
+<div *ngIf="!loading && !event" class="no-data-message">
+  <p>Event not found.</p>
+</div>

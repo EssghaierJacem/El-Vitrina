@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { Store, StoreReqDto } from '../../models/store/store.model';
 import { StoreCategoryType } from '../../models/store/store-category-type.enum';
 import { StoreStatsDTO } from '../../models/store/Store-stats.dto';
@@ -10,7 +9,7 @@ import { Page } from '../../models/page.model';
 
 @Injectable({ providedIn: 'root' })
 export class StoreService {
-  private apiUrl = `${environment.apiUrl}/stores`;
+  private apiUrl = 'http://localhost:8080/api/stores';
 
   constructor(private http: HttpClient) {}
 
@@ -28,6 +27,7 @@ export class StoreService {
   create(formData: FormData): Observable<Store> {
     return this.http.post<Store>(this.apiUrl, formData);
   }
+
 
   createSimple(storeData: StoreReqDto): Observable<Store> {
     return this.http.post<Store>(this.apiUrl, storeData);
@@ -63,7 +63,7 @@ export class StoreService {
   private handleError(error: HttpErrorResponse) {
     console.error('API Error:', error);
     let errorMessage = 'An error occurred';
-    
+
     if (error.error instanceof ErrorEvent) {
       // Client-side error
       errorMessage = error.error.message;
@@ -75,7 +75,7 @@ export class StoreService {
         errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
       }
     }
-    
+
     return throwError(() => ({ message: errorMessage, error }));
   }
 
@@ -102,3 +102,4 @@ export class StoreService {
     return this.http.get<Store[]>(`${this.apiUrl}`);
   }
 }
+

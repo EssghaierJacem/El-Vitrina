@@ -62,18 +62,48 @@
             <mat-error *ngIf="formSubmitted && !user.address">Address is required</mat-error>
           </mat-form-field>
         
-          <!-- Profile Image URL (Editable) with preview button -->
+          <!-- 🌐 Profile Image URL or Upload (Unified Field) -->
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Profile Image URL</mat-label>
-            <input matInput [(ngModel)]="user.image" name="image" (input)="onImageUrlChange()">
-            <button *ngIf="user.image" mat-icon-button matSuffix type="button" 
-                    [matTooltip]="isImageValid ? 'View image' : 'Invalid image URL'" 
+            <mat-label>Profile Image</mat-label>
+
+            <!-- Editable input (URL or will be replaced on upload) -->
+            <input
+              matInput
+              [(ngModel)]="user.image"
+              name="image"
+              (input)="onImageUrlChange()"
+              [disabled]="isUploading"
+            />
+
+            <!-- 📎 Upload icon as suffix to trigger hidden input -->
+            <button mat-icon-button matSuffix type="button" (click)="fileInput.click()" [disabled]="isUploading">
+              <mat-icon>upload</mat-icon>
+            </button>
+
+            <!-- 👁️ Preview icon when an image is present -->
+            <button *ngIf="user.image" mat-icon-button matSuffix type="button"
+                    [matTooltip]="isImageValid ? 'View image' : 'Invalid image URL'"
                     (click)="previewImage()">
               <mat-icon [color]="isImageValid ? 'primary' : 'warn'">visibility</mat-icon>
             </button>
-            <mat-icon *ngIf="!user.image" matSuffix>image</mat-icon>
-            <mat-hint>Enter a valid image URL to display your profile image</mat-hint>
+
+            <!-- Hidden file input -->
+            <input #fileInput type="file" (change)="onFileSelected($event)" hidden />
+
+            <mat-hint>Enter an image URL or upload a file</mat-hint>
           </mat-form-field>
+
+          <!-- 🖼️ Live Image Preview -->
+          <div *ngIf="localImagePreview || user.image" class="mt-3">
+            <img
+              [src]="previewImageUrl()"
+              alt="Profile Preview"
+              class="rounded shadow-sm"
+              width="150"
+              height="150"
+              (error)="handleImageError($event)"
+            />
+          </div>
       
           <div class="actions-container">
             <button mat-stroked-button type="button" (click)="cancel()">

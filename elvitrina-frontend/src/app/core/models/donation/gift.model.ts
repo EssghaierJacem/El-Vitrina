@@ -1,6 +1,6 @@
 
-import { Donation } from "../donation.model";
-import { DonorReward } from "../donor-reward.model";
+import { Donation } from "../donation/donation.model";
+import { DonorReward } from "../donation/donor-reward.model";
 import { User } from "../user/user.model";
 export interface Gift {
   giftId: number;
@@ -15,4 +15,17 @@ export interface Gift {
   user: User;
   donorReward: DonorReward;
   donation: Donation;
+}
+
+
+export interface GiftRequestDTO {
+  name: string;
+  description: string;
+  imageUrl: string;
+  donationId: number;
+  rewardId: number;
+  userId: number;
+  discount: number;
+  giftCode: string;
+  expirationDate: string; 
 }

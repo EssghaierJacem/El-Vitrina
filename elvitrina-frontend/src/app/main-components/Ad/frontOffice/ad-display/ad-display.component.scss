@@ -1,0 +1,74 @@
+/* Container for all ads */
+.ad-container {
+  position: relative;
+  z-index: 1000;
+}
+
+/* Base Banner Style */
+.ad-banner {
+  position: fixed;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  padding: 10px;
+  overflow: hidden;
+}
+
+/* Position-Specific Styles */
+.position-top {
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.position-bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.position-left {
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.position-right {
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Content Styles */
+.ad-image {
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
+
+.text-content {
+  padding: 10px;
+  text-align: center;
+}
+
+.vertical-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-orientation: mixed;
+  margin: 0 auto;
+}
+
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 1001;
+}

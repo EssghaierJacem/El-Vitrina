@@ -4,11 +4,16 @@ import { ProductCreateComponent } from './product-create/product-create.componen
 import { ProductDetailsComponent } from './product-details/product-details.component';
 import { ProductEditComponent } from './product-edit/product-edit.component';
 import { ProductFavComponent } from './product-fav/product-fav.component';
+import { AddToCartDialogComponent } from '../../custom-order/Frontoffice/add-to-cart-dialog/add-to-cart-dialog.component';
 
 export const ProductRoutes: Routes = [
   {
     path: '',
     children: [
+      {
+        path: 'addtocart/:productId',
+        component: AddToCartDialogComponent
+      },
       {
         path: '',
         component: AllProductComponent
@@ -33,6 +38,7 @@ export const ProductRoutes: Routes = [
         path: 'favorite',
         component: ProductFavComponent
       }
+
     ]
   }
 ];

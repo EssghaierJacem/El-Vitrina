@@ -118,6 +118,12 @@ public class DonationCampaignServiceImpl implements DonationCampaignService {
 
         return donationCampaignMapper.toResponseDTO(donationCampaignRepository.save(existing));
     }
+    public void updateAmount(Long id, double currentAmount) {
+        DonationCampaign existing = donationCampaignRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Donation campaign not found with id: " + id));
+       existing.setCurrentAmount(existing.getCurrentAmount()+currentAmount);
+         donationCampaignRepository.save(existing);
+    }
 
     @Override
     public Page<DonationCampaignResponseDTO> getPaginated(Pageable pageable) {
@@ -164,10 +170,6 @@ public class DonationCampaignServiceImpl implements DonationCampaignService {
                 .orElseThrow(() -> new ResourceNotFoundException("Donation campaign not found with id: " + id));
 
         campaign.setStatus(statusRequest.getStatus());
-
-        if (statusRequest.getFeatured() != null) {
-            campaign.setFeatured(statusRequest.getFeatured());
-        }
 
         if (statusRequest.getVerified() != null) {
             campaign.setVerified(statusRequest.getVerified());

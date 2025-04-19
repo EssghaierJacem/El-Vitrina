@@ -1,5 +1,5 @@
-import { DonationCampaign } from "../donation-campaign.model";
-import { Gift } from "../gift.model";
+import { DonationCampaign } from "../donation/donation-campaign.model";
+import { Gift } from "../donation/gift.model";
 import { Store } from "../store/store.model";
 import { User } from "../user/user.model";
 
@@ -9,10 +9,19 @@ export interface Donation {
   type: string;
   anonymitySetting: boolean;
   donorMessage: string;
-  createdAt: Date;
-  updatedAt: Date;
   store: Store;
   donationCampaign: DonationCampaign;
   user: User;
   gift: Gift;
 }
+
+export interface DonationRequest {
+  donationId: number;
+  amount: number;
+  donorMessage: string;
+  storeId: number;
+  donationCampaignId: number;
+  userId: number;
+  giftId: number;
+}
+

@@ -1,0 +1,149 @@
+<div class="facebook-style-container">
+  <!-- Header similar to Facebook -->
+  <header class="facebook-header">
+    <h1>Blog Posts</h1>
+    <button mat-raised-button color="primary" [routerLink]="'create'" class="create-post-button">
+      <mat-icon>add</mat-icon> Create Post
+    </button>
+  </header>
+
+  <!-- Main content area -->
+  <div class="facebook-content">
+    <!-- Loading state -->
+    <div *ngIf="isLoading" class="loading-spinner">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading posts...</p>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!isLoading && blogPosts.length === 0" class="empty-state">
+      <mat-icon class="empty-icon">article</mat-icon>
+      <p>No posts available. Be the first to create one!</p>
+    </div>
+
+    <!-- Posts list -->
+    <div *ngFor="let post of blogPosts" class="facebook-post">
+      <mat-card class="post-card">
+        <!-- Post header with author info -->
+        <div class="post-header">
+          <div class="author-avatar">
+            <mat-icon class="avatar-icon">account_circle</mat-icon>
+          </div>
+          <div class="author-info">
+            <span class="author-name">{{post.user?.firstname}} {{post.user?.lastname}}</span>
+            <span class="post-time">{{formatDate(post.createdAt!)}}</span>
+          </div>
+          <button mat-icon-button class="post-menu" [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="navigateToEdit(post.id!)">
+              <mat-icon>edit</mat-icon>
+              <span>Edit Post</span>
+            </button>
+            <button mat-menu-item (click)="deleteBlogPost(post.id!)">
+              <mat-icon>delete</mat-icon>
+              <span>Delete Post</span>
+            </button>
+          </mat-menu>
+        </div>
+
+        <!-- Post content -->
+        <div class="post-content">
+          <p>{{post.title}}</p>
+          <p>{{post.content}}</p>
+
+          <img *ngIf="post.image" [src]="post.image" alt="Post image" class="post-image">
+        </div>
+
+        <!-- Post tags -->
+        <div *ngIf="post.tag" class="post-tags">
+          <mat-chip>{{post.tag}}</mat-chip>
+        </div>
+
+        <!-- Post actions (Like, Comment, Share) -->
+        <div class="post-actions">
+          <button mat-button class="action-button">
+            <mat-icon>thumb_up</mat-icon> Like
+          </button>
+          <button mat-button class="action-button" (click)="toggleCommentInput(post.id!)">
+            <mat-icon>comment</mat-icon> Comment
+          </button>
+          <button mat-button class="action-button" (click)="shareOnFacebook(post.id!)">
+            <mat-icon>share</mat-icon> Share
+          </button>
+        </div>
+
+        <!-- Comments section -->
+<div class="comments-section" *ngIf="comments[post.id!]?.length">
+  <div class="comment-count">{{comments[post.id!]?.length}} commentaires</div>
+
+  <div *ngFor="let comment of comments[post.id!]" class="comment-container">
+    <div class="comment-avatar">
+      <mat-icon  class="avatar-icon">account_circle</mat-icon>
+    </div>
+
+    <div class="comment-main-wrapper">
+
+      <div *ngIf="!editMode || currentEditComment?.id !== comment.id" class="comment-box">
+        <div class="comment-header">
+          <span class="comment-author">{{comment.user?.firstname}} {{comment.user?.lastname}}</span>
+          <span class="comment-time">{{ comment.createdAt | date: 'MMM d, yyyy à h:mm a' }}</span>
+        </div>
+        <div class="comment-text">{{comment.content}}</div>
+      </div>
+    
+      <div *ngIf="editMode && currentEditComment?.id === comment.id" class="edit-box">
+        <textarea 
+          [(ngModel)]="editedContent"
+          class="edit-textarea"
+          placeholder="Modifier votre commentaire..."
+        ></textarea>
+        <div class="edit-actions">
+          <button mat-button (click)="saveComment()" color="primary">Enregistrer</button>
+          <button mat-button (click)="cancelEdit()">Annuler</button>
+        </div>
+      </div>
+        
+        <!-- Menu des 3 points aligné à droite -->
+        <div class="comment-menu" *ngIf="comment.user?.id === userId">
+          <button mat-icon-button [matMenuTriggerFor]="commentMenu" class="menu-btn">
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #commentMenu="matMenu">
+            <button mat-menu-item (click)="editComment(comment)">
+              <mat-icon>edit</mat-icon>
+              <span>Edit</span>
+            </button>
+            <button mat-menu-item  (click)="deleteComment(comment.id! , post.id!)">
+              <mat-icon>delete</mat-icon>
+              <span>Delete</span>
+            </button>
+          </mat-menu>
+        </div>
+    </div>
+  </div>
+</div>
+ 
+
+        <!-- Add comment section -->
+        <div class="add-comment" *ngIf="showCommentInput[post.id!]">
+          <div class="comment-avatar">
+            <mat-icon class="avatar-icon">account_circle</mat-icon>
+          </div>
+          <div class="comment-input-container">
+            <mat-form-field appearance="outline" class="full-width">
+              <input matInput 
+                [(ngModel)]="commentInputs[post.id!]" 
+                placeholder="Write a comment..."
+                (keyup.enter)="addComment(post.id!)">
+            </mat-form-field>
+            <button mat-icon-button class="send-comment" (click)="addComment(post.id!)">
+              <mat-icon>send</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+/* Conteneur principal */
+.payment-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4f6f9;
+  padding: 1.5rem;
+}
+
+/* Style de la carte de paiement */
+.payment-card {
+  width: 100%;
+  max-width: 600px;
+  background: #ffffff;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #2e7d32;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Style des titres et textes */
+.order-title {
+  font-size: 2.5rem;
+  color: #2e7d32;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+}
+.payment-details p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+/* Style pour les statuts et icônes dynamiques */
+.status-icon {
+  font-size: 1.3rem;
+  margin-right: 0.5rem;
+}
+.success {
+  color: #2e7d32;
+}
+.pending {
+  color: #b8860b;
+}
+.failed {
+  color: #c62828;
+}
+
+/* Bouton d'action dans la carte */
+.button {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+}

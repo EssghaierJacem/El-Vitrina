@@ -20,6 +20,12 @@ public class Message {
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
 
+    @Column(name = "is_read", nullable = false)
+    private boolean read = false;
+
+    @Column(name = "delivered", nullable = false)
+    private boolean delivered = false;
+
     private String content;
 
     private LocalDateTime sentAt;

@@ -12,7 +12,8 @@ import { Page } from '../../models/page.model';
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = `${environment.apiUrl}/products`;
+  private apiUrl = `http://localhost:8080/api/products`;
+
 
   constructor(private http: HttpClient) { }
 
@@ -79,7 +80,7 @@ export class ProductService {
   private handleError(error: HttpErrorResponse) {
     console.error('API Error:', error);
     let errorMessage = 'An error occurred';
-    
+
     if (error.error instanceof ErrorEvent) {
       // Client-side error
       errorMessage = error.error.message;
@@ -91,7 +92,7 @@ export class ProductService {
         errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
       }
     }
-    
+
     return throwError(() => ({ message: errorMessage, error }));
   }
 

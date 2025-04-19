@@ -32,7 +32,7 @@ public class DonorReward {
     private LocalDateTime issuanceDate = LocalDateTime.now();
     private LocalDateTime expirationDate;
     private LocalDateTime redemptionDate;
-    private String redemptionCode;
+    private Integer redemptionCode;
     private String redemptionStatus;
     private String tierLevel;
     private Boolean isActive = true;

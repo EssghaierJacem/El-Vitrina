@@ -1,1 +1,18 @@
-<p>Campaign Donate works!</p>
+<div class="form-container">
+    <form [formGroup]="donationForm" (ngSubmit)="submitDonation()" class="form">
+      <span class="heading">Donation Form</span>
+  
+      <div class="form-group">
+        <input class="form-input" formControlName="amount" type="number" required />
+        <label>Amount</label>
+      </div>
+  
+      <div class="form-group">
+        <input class="form-input" formControlName="donorMessage" type="text" required />
+        <label>Donor Message</label>
+      </div>
+  
+      <button type="submit" [disabled]="donationForm.invalid">SUBMIT</button>
+    </form>
+  </div>
+  

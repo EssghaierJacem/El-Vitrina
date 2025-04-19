@@ -1,0 +1,77 @@
+<div class="ad-container">
+  <!-- TOP Banner -->
+  <div *ngIf="hasAd('top')" 
+       @fadeInOut
+       class="ad-banner position-top"
+       [style.width.px]="currentAds.top.width || 728"
+       [style.height.px]="currentAds.top.height || 90">
+    <a [href]="currentAds.top.targetUrl" target="_blank" (click)="trackClick(currentAds.top.id)">
+      <img *ngIf="currentAds.top.imageUrl" 
+           [src]="currentAds.top.imageUrl" 
+           [alt]="currentAds.top.title" 
+           class="ad-image">
+      <div *ngIf="!currentAds.top.imageUrl" class="text-content">
+        <h3>{{ currentAds.top.title }}</h3>
+        <p>{{ currentAds.top.content }}</p>
+      </div>
+    </a>
+    <button class="close-btn" (click)="removeAd('top')">×</button>
+  </div>
+
+  <!-- LEFT Sidebar Banner -->
+  <div *ngIf="hasAd('left')" 
+       @fadeInOut
+       class="ad-banner position-left"
+       [style.width.px]="currentAds.left.width || 160"
+       [style.height.px]="currentAds.left.height || 600">
+    <a [href]="currentAds.left.targetUrl" target="_blank" (click)="trackClick(currentAds.left.id)">
+      <img *ngIf="currentAds.left.imageUrl" 
+           [src]="currentAds.left.imageUrl" 
+           [alt]="currentAds.left.title" 
+           class="ad-image">
+      <div *ngIf="!currentAds.left.imageUrl" class="text-content vertical-text">
+        <h3>{{ currentAds.left.title }}</h3>
+        <p>{{ currentAds.left.content }}</p>
+      </div>
+    </a>
+    <button class="close-btn" (click)="removeAd('left')">×</button>
+  </div>
+
+  <!-- RIGHT Sidebar Banner -->
+  <div *ngIf="hasAd('right')" 
+       @fadeInOut
+       class="ad-banner position-right"
+       [style.width.px]="currentAds.right.width || 160"
+       [style.height.px]="currentAds.right.height || 600">
+    <a [href]="currentAds.right.targetUrl" target="_blank" (click)="trackClick(currentAds.right.id)">
+      <img *ngIf="currentAds.right.imageUrl" 
+           [src]="currentAds.right.imageUrl" 
+           [alt]="currentAds.right.title" 
+           class="ad-image">
+      <div *ngIf="!currentAds.right.imageUrl" class="text-content vertical-text">
+        <h3>{{ currentAds.right.title }}</h3>
+        <p>{{ currentAds.right.content }}</p>
+      </div>
+    </a>
+    <button class="close-btn" (click)="removeAd('right')">×</button>
+  </div>
+
+  <!-- BOTTOM Banner -->
+  <div *ngIf="hasAd('bottom')" 
+       @fadeInOut
+       class="ad-banner position-bottom"
+       [style.width.px]="currentAds.bottom.width || 728"
+       [style.height.px]="currentAds.bottom.height || 90">
+    <a [href]="currentAds.bottom.targetUrl" target="_blank" (click)="trackClick(currentAds.bottom.id)">
+      <img *ngIf="currentAds.bottom.imageUrl" 
+           [src]="currentAds.bottom.imageUrl" 
+           [alt]="currentAds.bottom.title" 
+           class="ad-image">
+      <div *ngIf="!currentAds.bottom.imageUrl" class="text-content">
+        <h3>{{ currentAds.bottom.title }}</h3>
+        <p>{{ currentAds.bottom.content }}</p>
+      </div>
+    </a>
+    <button class="close-btn" (click)="removeAd('bottom')">×</button>
+  </div>
+</div>

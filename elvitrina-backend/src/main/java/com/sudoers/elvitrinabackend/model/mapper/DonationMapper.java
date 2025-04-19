@@ -16,9 +16,8 @@ public class DonationMapper {
         if (dto == null) return null;
 
         Donation donation = new Donation();
-        donation.setAmount(dto.getAmount() != null ? dto.getAmount().doubleValue() : null);
-        donation.setDonorMessage(dto.getMessage());
-        donation.setAnonymitySetting(dto.getIsAnonymous());
+        donation.setAmount(dto.getAmount());
+        donation.setDonorMessage(dto.getDonorMessage());
         // campaign, gift, and user are handled in the service layer
         return donation;
     }
@@ -27,14 +26,14 @@ public class DonationMapper {
         if (donation == null) return null;
 
         return DonationResponseDTO.builder()
-                .id(donation.getDonationId())
+                .donationId(donation.getDonationId())
                 .amount(donation.getAmount() != null ? BigDecimal.valueOf(donation.getAmount()) : null)
                 .message(donation.getDonorMessage())
                 .campaignId(donation.getDonationCampaign() != null ? donation.getDonationCampaign().getCampaignId() : null)
                 .campaignTitle(donation.getDonationCampaign() != null ? donation.getDonationCampaign().getTitle() : null)
                 .userId(donation.getUser() != null ? donation.getUser().getId() : null)
                 .donorName(donation.getUser() != null ? donation.getUser().getName() : null)
-                .isAnonymous(donation.getAnonymitySetting())
+                .storeId(donation.getStore()!= null ? donation.getStore().getStoreId(): null)
                 .donationDate(donation.getCreatedAt())
                 .giftId(donation.getGift() != null ? donation.getGift().getGiftId() : null)
                 .status(null)
@@ -43,15 +42,10 @@ public class DonationMapper {
 
     public void updateEntityFromDTO(DonationRequestDTO dto, Donation donation) {
         if (dto == null || donation == null) return;
+            donation.setAmount(dto.getAmount());
+        if (dto.getDonorMessage() != null)
+            donation.setDonorMessage(dto.getDonorMessage());
 
-        if (dto.getAmount() != null)
-            donation.setAmount(dto.getAmount().doubleValue());
-
-        if (dto.getMessage() != null)
-            donation.setDonorMessage(dto.getMessage());
-
-        if (dto.getIsAnonymous() != null)
-            donation.setAnonymitySetting(dto.getIsAnonymous());
 
     }
 }

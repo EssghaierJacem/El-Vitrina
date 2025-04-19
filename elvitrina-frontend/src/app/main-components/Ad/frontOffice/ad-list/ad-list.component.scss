@@ -1,0 +1,59 @@
+.ads-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .ad-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+  
+  .ad-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ad-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+  }
+  
+  .ad-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  .text-ad {
+    padding: 15px;
+    background: #f9f9f9;
+  }
+  
+  .text-ad h3 {
+    margin-top: 0;
+    color: #1976d2;
+  }
+  
+  .ad-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+  }
+  
+  .no-ads {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+  }

@@ -32,13 +32,14 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class ChangePasswordComponent implements OnInit {
   currentPassword: string = '';
-  newPassword: string = '';
+  _newPassword: string = '';
   confirmNewPassword: string = '';
   isLoading: boolean = false;
   errorMessage: string | null = null;
   hideCurrentPassword: boolean = true;
   hideNewPassword: boolean = true;
   hideConfirmPassword: boolean = true;
+  passwordStrength: 'weak' | 'medium' | 'strong' | '' = '';
 
   userId: number | null = null;
   
@@ -60,7 +61,13 @@ export class ChangePasswordComponent implements OnInit {
   changePassword(): void {
     if (this.newPassword !== this.confirmNewPassword) {
       this.errorMessage = 'Passwords do not match!';
-      this.showNotification(this.errorMessage || 'Error occurred', 'error');
+      this.showNotification(this.errorMessage, 'error');
+      return;
+    }
+  
+    if (this.currentPassword === this.newPassword) {
+      this.errorMessage = 'New password must be different from the current password!';
+      this.showNotification(this.errorMessage, 'error');
       return;
     }
   
@@ -79,24 +86,27 @@ export class ChangePasswordComponent implements OnInit {
       newPassword: this.newPassword,
     };
   
-    this.userService.changePassword(changePasswordData).subscribe(
-      (response) => {
+    this.userService.changePassword(changePasswordData).subscribe({
+      next: (res) => {
         this.isLoading = false;
         this.showNotification('Password changed successfully!', 'success');
+  
         this.currentPassword = '';
         this.newPassword = '';
         this.confirmNewPassword = '';
+  
         setTimeout(() => {
-          this.router.navigate(['/profile']);
+          this.router.navigate(['/users', userId]);
         }, 1500);
       },
-      (error) => {
+      error: (error) => {
         this.isLoading = false;
-        this.errorMessage = error?.error?.message || 'Failed to change password. Please try again.';
-        this.showNotification(this.errorMessage || 'Error occurred', 'error');
+        const message = error?.error?.message || error?.message || 'Failed to change password.';
+        this.errorMessage = message;
+        this.showNotification(message, 'error');
       }
-    );
-  }
+    });
+  } 
 
   showNotification(message: string, type: 'success' | 'error'): void {
     this.snackBar.open(message, 'Close', {
@@ -112,9 +122,52 @@ export class ChangePasswordComponent implements OnInit {
   }
   
   isFormValid(): boolean {
-    return this.currentPassword !== '' && 
-           this.newPassword !== '' && 
-           this.confirmNewPassword !== '' && 
-           this.passwordsMatch();
+    return (
+      this.currentPassword.trim().length > 0 &&
+      this.newPassword.trim().length >= 8 &&
+      this.confirmNewPassword.trim().length > 0 &&
+      this.passwordsMatch()
+    );
+  }
+
+  evaluatePasswordStrength(password: string): void {
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /[0-9]/.test(password);
+    const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  
+    if (password.length >= 8 && hasUpperCase && hasNumbers && hasSpecialChars) {
+      this.passwordStrength = 'strong';
+    } else if (password.length >= 6 && ((hasUpperCase && hasNumbers) || (hasLowerCase && hasSpecialChars))) {
+      this.passwordStrength = 'medium';
+    } else {
+      this.passwordStrength = 'weak';
+    }
+  
+    if (!password) {
+      this.passwordStrength = '';
+    }
+  }
+
+  get newPassword(): string {
+    return this._newPassword;
+  }
+  
+  set newPassword(value: string) {
+    this._newPassword = value;
+    this.evaluatePasswordStrength(value);
+  }
+
+  getPasswordStrengthWidth(): string {
+    switch (this.passwordStrength) {
+      case 'weak':
+        return '33%';
+      case 'medium':
+        return '66%';
+      case 'strong':
+        return '100%';
+      default:
+        return '0';
+    }
   }
 }
