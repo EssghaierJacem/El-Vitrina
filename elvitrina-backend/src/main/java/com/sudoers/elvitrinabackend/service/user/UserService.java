@@ -250,26 +250,22 @@ public class UserService implements IUser {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         try {
-            // Generate a unique filename
-            String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+            String uuid = UUID.randomUUID().toString();
+            String extension = getExtension(imageFile.getOriginalFilename());
+            String fileName = uuid + "." + extension;
 
-            // Define the upload directory (you can change this path)
             Path uploadPath = Paths.get("uploads/user-images");
 
-            // Create directory if it doesn't exist
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
 
-            // Save the file to the server
             Path filePath = uploadPath.resolve(fileName);
             Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // Update user image field in the database
             user.setImage(fileName);
             User savedUser = userRepository.save(user);
 
-            // Return DTO
             return new UserDTO(
                     savedUser.getId(),
                     savedUser.getName(),
@@ -291,6 +287,7 @@ public class UserService implements IUser {
             throw new RuntimeException("Image upload failed", e);
         }
     }
+
 
 
     public void deleteUser(Long id) {
@@ -349,4 +346,14 @@ public class UserService implements IUser {
         userRepository.save(user);
     }
 
+    private String getExtension(String originalFilename) {
+        if (originalFilename == null) {
+            return "jpg";
+        }
+        int lastDot = originalFilename.lastIndexOf('.');
+        if (lastDot == -1) {
+            return "jpg";
+        }
+        return originalFilename.substring(lastDot + 1);
+    }
 }
