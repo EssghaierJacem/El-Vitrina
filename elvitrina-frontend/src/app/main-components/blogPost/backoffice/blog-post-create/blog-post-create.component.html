@@ -1,5 +1,6 @@
 <mat-card class="cardWithShadow">
   <mat-card-content>
+    <!-- Header avec retour et titre -->
     <div class="d-flex justify-content-between align-items-center m-b-16">
       <div class="d-flex align-items-center">
         <button mat-icon-button color="primary" [routerLink]="['../']">
@@ -9,46 +10,68 @@
       </div>
     </div>
 
+    <!-- Formulaire principal -->
     <form [formGroup]="blogPostForm" (ngSubmit)="onSubmit()" class="m-t-16" enctype="multipart/form-data">
-      <!-- Title -->
+      <!-- Titre -->
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Title</mat-label>
         <input matInput formControlName="title" required />
       </mat-form-field>
 
-      <!-- Content -->
+      <!-- Contenu -->
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Content</mat-label>
         <textarea matInput formControlName="content" rows="5" required></textarea>
       </mat-form-field>
 
-      <!-- Image Upload -->
-<div class="file-upload mb-3">
-  <label for="file-upload">Image</label>
-  <input type="file" accept="image/*" (change)="onFileChange($event)" hidden #fileInput />
-  <button mat-raised-button color="accent" type="button" (click)="fileInput.click()">
-    <mat-icon>upload</mat-icon> Upload Image
-  </button>
-
-  <!-- Image Preview -->
-  <div *ngIf="imagePreview" class="image-preview mt-2">
-    <h5>Image Preview:</h5>
-    <img [src]="imagePreview" alt="Image Preview" width="150" />
-  </div>
-</div>
-
-<!-- Tag -->
-<mat-form-field appearance="outline" class="w-100 mb-3">
-  <mat-label>Tag</mat-label>
-  <input matInput formControlName="tag" />
-</mat-form-field>
+      <!-- Tag -->
+      <mat-form-field appearance="outline" class="w-100 mb-3">
+        <mat-label>Tag</mat-label>
+        <input matInput formControlName="tag" />
+      </mat-form-field>
 
 
-      <!-- Action Buttons -->
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <!-- Bouton Upload Image -->
+        <div class="file-upload">
+          <input type="file" accept="image/*" (change)="onFileChange($event)" hidden #fileInput />
+          <button mat-raised-button color="accent" type="button"
+                  (click)="fileInput.click()"
+                  [disabled]="isCameraOpen">
+            <mat-icon>upload</mat-icon> Upload Image
+          </button>
+        </div>
+      
+        <!-- Bouton Start Camera -->
+        <div class="camera-start">
+          <button mat-raised-button color="primary" type="button"
+                  (click)="startCamera()"
+                  [disabled]="isFileUploaded">
+            <mat-icon>photo_camera</mat-icon> Start Camera
+          </button>
+        </div>
+      </div>
+
+
+      <div *ngIf="imagePreview" class="image-preview mt-2">
+        <h5>Image Preview:</h5>
+        <img [src]="imagePreview" alt="Image Preview" [style.width.px]="400" [style.height.px]="300" style="object-fit: cover;" />
+      </div>
+      
+      <!-- Fenêtre caméra -->
+      <div *ngIf="isCameraOpen" class="camera-window mt-2">
+        <video #videoElement width="400" height="300" autoplay></video>
+        <button mat-raised-button color="accent" type="button" (click)="takePhoto()">Take Photo</button>
+        <canvas #canvasElement style="display: none;"></canvas>
+      </div>
+
+
+
+      
+
+      <!-- Boutons d'action -->
       <div class="d-flex justify-content-end gap-2 m-t-16">
-        <button mat-button type="button" (click)="resetForm()" [disabled]="isSubmitting">
-          Cancel
-        </button>
+        <button mat-button type="button" (click)="resetForm()" [disabled]="isSubmitting">Cancel</button>
         <button mat-raised-button color="primary" type="submit" [disabled]="blogPostForm.invalid || isSubmitting">
           <ng-container *ngIf="isSubmitting; else createLabel">
             <mat-spinner diameter="20"></mat-spinner>

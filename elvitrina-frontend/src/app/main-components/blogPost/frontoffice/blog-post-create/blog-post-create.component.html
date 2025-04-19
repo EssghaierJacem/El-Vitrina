@@ -13,7 +13,7 @@
   <div class="facebook-content">
     <mat-card class="facebook-post">
       <mat-card-subtitle class="subtitle">Share your ideas with the world!</mat-card-subtitle>
-      
+     
       <mat-card-content>
         <form [formGroup]="blogPostForm" (ngSubmit)="onSubmit()" class="post-form">
           <!-- Title Field -->
@@ -24,22 +24,46 @@
             <mat-error *ngIf="blogPostForm.controls['title'].hasError('maxlength')">Title is too long</mat-error>
           </mat-form-field>
 
-          <!-- Content Field -->
+          <!-- Content Field 
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>Content</mat-label>
             <textarea matInput formControlName="content" placeholder="Enter content" rows="5"></textarea>
             <mat-error *ngIf="blogPostForm.controls['content'].hasError('required')">Content is required</mat-error>
           </mat-form-field>
+          -->
+
+          <!-- Champ Contenu avec option vocale -->
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Contenu</mat-label>
+        <textarea matInput formControlName="content" rows="5" required></textarea>
+        <button mat-icon-button matSuffix (click)="toggleVoiceInput()">
+          <mat-icon>{{ isListening ? 'mic_off' : 'mic' }}</mat-icon>
+        </button>
+      </mat-form-field>
 
           <div class="image-upload-section">
+            <!-- Upload Button -->
             <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden #fileInput>
-            
-            <button mat-raised-button color="accent" type="button" (click)="fileInput.click()">
+            <button mat-raised-button color="accent" type="button" (click)="fileInput.click()" [disabled]="isCameraOpen">
               <mat-icon>upload</mat-icon> Upload Image
             </button>
-          
-            <!-- Preview -->
-            <div *ngIf="imagePreview" class="image-preview-container">
+
+            <!-- Camera Button -->
+            <button mat-raised-button color="primary" type="button" (click)="startCamera()" [disabled]="isFileUploaded">
+              <mat-icon>photo_camera</mat-icon> Use Camera
+            </button>
+
+            <!-- Camera Preview -->
+            <div *ngIf="isCameraOpen" class="camera-preview">
+              <video #videoElement width="100%" autoplay></video>
+              <button mat-raised-button color="warn" type="button" (click)="takePhoto()" class="capture-btn">
+                <mat-icon>camera</mat-icon> Capture
+              </button>
+              <canvas #canvasElement style="display: none;"></canvas>
+            </div>
+
+            <!-- Image Preview -->
+            <div *ngIf="imagePreview && !isCameraOpen" class="image-preview-container">
               <img [src]="imagePreview" alt="Image Preview" class="preview-img">
             </div>
           </div>
@@ -49,6 +73,10 @@
             <mat-label>Tag</mat-label>
             <input matInput formControlName="tag" placeholder="Enter tag">
           </mat-form-field>
+
+
+
+          
 
           <!-- Post actions (Submit/Reset) -->
           <div class="post-actions">

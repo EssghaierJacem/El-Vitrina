@@ -16,7 +16,7 @@ export class BlogPostService {
   }
 
   getBlogPostById(id: number): Observable<BlogPost> {
-    return this.http.get<BlogPost>(`${this.apiUrl}/${id}`); 
+    return this.http.get<BlogPost>(`${this.apiUrl}/${id}`);
   }
 
   /*
