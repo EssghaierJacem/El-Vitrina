@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MessageService {
@@ -76,4 +78,25 @@ public class MessageService {
                 message.isRead()
         );
     }
+
+    public Map<Long, Long> countUnreadMessagesPerSender(Long userId) {
+        List<Object[]> results = messageRepository.countUnreadPerSender(userId);
+        Map<Long, Long> map = new HashMap<>();
+        for (Object[] row : results) {
+            map.put((Long) row[0], (Long) row[1]);
+        }
+        return map;
+    }
+
+    public Map<Long, MessageResponseDTO> getLastMessagesForAllFriends(Long userId) {
+        List<Message> lastMessages = messageRepository.findLastMessagesForUser(userId);
+        Map<Long, MessageResponseDTO> map = new HashMap<>();
+
+        for (Message message : lastMessages) {
+            Long friendId = message.getSender().getId().equals(userId) ? message.getReceiver().getId() : message.getSender().getId();
+            map.put(friendId, new MessageResponseDTO(message));
+        }
+        return map;
+    }
+
 }
