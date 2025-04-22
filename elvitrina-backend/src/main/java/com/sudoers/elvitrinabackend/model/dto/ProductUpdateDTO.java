@@ -24,6 +24,7 @@ public class ProductUpdateDTO {
     private int stockQuantity;
     private ProductCategoryType category;
     private boolean hasDiscount;
+    private double discountPercentage;
     private List<String> images;
     private Set<String> tags;
 

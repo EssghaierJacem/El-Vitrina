@@ -594,3 +594,15 @@
   gap: 24px;
   padding: 24px;
 }
+
+.map-container {
+  margin-top: 20px;
+  height: 400px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.map {
+  height: 100%;
+  width: 100%;
+}

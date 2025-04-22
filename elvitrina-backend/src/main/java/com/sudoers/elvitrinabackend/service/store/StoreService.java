@@ -22,8 +22,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -386,6 +388,88 @@ public class StoreService implements IStoreService{
         image.transferTo(destFile);
 
         return  filename;
+    }
+
+    @Transactional(readOnly = true)
+    public Map<StoreCategoryType, Long> getCategoryDistribution() {
+        List<Store> allStores = storeRepository.findAll();
+        return allStores.stream()
+                .filter(store -> store.getCategory() != null)
+                .collect(Collectors.groupingBy(
+                        Store::getCategory,
+                        Collectors.counting()
+                ));
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> getFeedbackAnalysis() {
+        // Get overall statistics
+        Double averageRating = storeFeedBackRepository.getAverageRating();
+        Long totalFeedbacks = storeFeedBackRepository.getTotalFeedbackCount();
+        List<Map<String, Object>> ratingDistribution = storeFeedBackRepository.getRatingDistribution();
+        Long positiveFeedbacks = storeFeedBackRepository.countPositiveFeedbacks();
+        Long negativeFeedbacks = storeFeedBackRepository.countNegativeFeedbacks();
+        
+        // Prepare the response
+        Map<String, Object> analysis = new HashMap<>();
+        analysis.put("averageRating", averageRating != null ? averageRating : 0.0);
+        analysis.put("totalFeedbacks", totalFeedbacks);
+        analysis.put("ratingDistribution", ratingDistribution);
+        analysis.put("positiveFeedbacks", positiveFeedbacks);
+        analysis.put("negativeFeedbacks", negativeFeedbacks);
+        
+        return analysis;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getStoreCategoryDistribution() {
+        List<Map<String, Object>> distribution = new ArrayList<>();
+        
+        // Get all stores
+        List<Store> stores = storeRepository.findAll();
+        
+        // Count stores by category
+        Map<StoreCategoryType, Long> categoryCounts = stores.stream()
+                .collect(Collectors.groupingBy(Store::getCategory, Collectors.counting()));
+        
+        // Convert to required format
+        for (Map.Entry<StoreCategoryType, Long> entry : categoryCounts.entrySet()) {
+            Map<String, Object> categoryData = new HashMap<>();
+            categoryData.put("category", entry.getKey());
+            categoryData.put("count", entry.getValue());
+            distribution.add(categoryData);
+        }
+        
+        return distribution;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getStoreFeedbackAnalysis() {
+        List<Map<String, Object>> analysis = new ArrayList<>();
+        
+        // Get store feedback statistics
+        List<Object[]> storeFeedbackStats = storeFeedBackRepository.getStoreFeedbackStats();
+        
+        for (Object[] stat : storeFeedbackStats) {
+            Map<String, Object> storeAnalysis = new HashMap<>();
+            Long storeId = (Long) stat[0];
+            Long feedbackCount = (Long) stat[1];
+            Double avgRating = (Double) stat[2];
+            
+            Store store = storeRepository.findById(storeId)
+                    .orElseThrow(() -> new EntityNotFoundException("Store not found with id: " + storeId));
+            
+            storeAnalysis.put("storeId", storeId);
+            storeAnalysis.put("storeName", store.getStoreName());
+            storeAnalysis.put("averageRating", avgRating != null ? avgRating : 0.0);
+            storeAnalysis.put("totalFeedbacks", feedbackCount != null ? feedbackCount : 0L);
+            
+            analysis.add(storeAnalysis);
+        }
+        
+        return analysis;
     }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +13,7 @@ import { StoreCategoryType } from 'src/app/core/models/store/store-category-type
 import { ProductCategoryType } from 'src/app/core/models/product/product-category-type.enum';
 import { ProductStatus } from 'src/app/core/models/product/product-status.enum';
 import { MatDividerModule } from '@angular/material/divider';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-store-details',
@@ -31,9 +32,11 @@ import { MatDividerModule } from '@angular/material/divider';
   templateUrl: './store-details.component.html',
   styleUrls: ['./store-details.component.scss']
 })
-export class StoreDetailsComponent implements OnInit {
+export class StoreDetailsComponent implements OnInit, AfterViewInit {
   store: Store | null = null;
   isLoading = true;
+  private map: L.Map | undefined;
+  private marker: L.Marker | undefined;
 
   IMAGE_BASE_URL = 'http://localhost:8080/api/stores/store/images/';
 
@@ -50,12 +53,55 @@ export class StoreDetailsComponent implements OnInit {
     }
   }
 
+  ngAfterViewInit() {
+    // Map will be initialized after store data is loaded
+  }
+
+  private extractCoordinates(address: string): { lat: number; lng: number } | null {
+    try {
+      const matches = address.match(/Lat: ([-\d.]+), Lng: ([-\d.]+)/);
+      if (matches && matches.length === 3) {
+        return {
+          lat: parseFloat(matches[1]),
+          lng: parseFloat(matches[2])
+        };
+      }
+    } catch (error) {
+      console.error('Error parsing coordinates:', error);
+    }
+    return null;
+  }
+
+  private initializeMap(coordinates: { lat: number; lng: number }) {
+    if (this.map) {
+      this.map.remove();
+    }
+
+    this.map = L.map('store-location-map').setView([coordinates.lat, coordinates.lng], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(this.map);
+
+    this.marker = L.marker([coordinates.lat, coordinates.lng]).addTo(this.map);
+  }
+
   loadStore(id: number): void {
     this.isLoading = true;
     this.storeService.getById(id).subscribe({
       next: (data) => {
         this.store = data;
         this.isLoading = false;
+
+        // Initialize map after store data is loaded
+        if (this.store && this.store.address) {
+          const coordinates = this.extractCoordinates(this.store.address);
+          if (coordinates) {
+            // Use setTimeout to ensure the map container is rendered
+            setTimeout(() => this.initializeMap(coordinates), 100);
+          }
+        }
       },
       error: (error) => {
         console.error('Error loading store:', error);

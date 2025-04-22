@@ -263,4 +263,16 @@ public class StoreController {
             throw new RuntimeException("Failed to save image: " + e.getMessage());
         }
     }
+
+    @GetMapping("/stats/category-distribution")
+    public ResponseEntity<List<Map<String, Object>>> getStoreCategoryDistribution() {
+        List<Map<String, Object>> distribution = storeService.getStoreCategoryDistribution();
+        return ResponseEntity.ok(distribution);
+    }
+
+    @GetMapping("/stats/feedback-analysis")
+    public ResponseEntity<List<Map<String, Object>>> getStoreFeedbackAnalysis() {
+        List<Map<String, Object>> analysis = storeService.getStoreFeedbackAnalysis();
+        return ResponseEntity.ok(analysis);
+    }
 }

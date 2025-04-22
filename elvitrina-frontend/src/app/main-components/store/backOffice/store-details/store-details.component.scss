@@ -39,6 +39,20 @@
         margin-bottom: 8px;
       }
     }
+  
+    .map-container {
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      padding: 8px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+      :host ::ng-deep {
+        .leaflet-container {
+          border-radius: 4px;
+        }
+      }
+    }
   }
   
   /* Utility classes from previous components */

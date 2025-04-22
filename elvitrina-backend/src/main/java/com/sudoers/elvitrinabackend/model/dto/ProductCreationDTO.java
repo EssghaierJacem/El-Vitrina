@@ -24,6 +24,7 @@ public class ProductCreationDTO {
     private int stockQuantity;
     private ProductCategoryType category;
     private boolean hasDiscount;
+    private double discountPercentage;
     private List<String> images;
     private Long storeId;
     private Set<String> tags;

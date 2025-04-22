@@ -1,53 +1,112 @@
-<div class="container py-5">
-  <div class="row">
-    <div class="col-12">
-      <div class="row align-items-center mb-4">
-        <div class="col">
-          <h2 class="mb-0">Available Stores</h2>
+<div class="stores-container">
+  <!-- Header Section -->
+  <div class="section-header">
+    <h2>Available Stores</h2>
+  </div>
+  
+  <!-- Search and Filter Bar -->
+  <div class="search-filter-container">
+    <div class="search-filter-row">
+      <!-- Search Bar -->
+      <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input 
+          type="text" 
+          placeholder="SEARCH STORES" 
+          [(ngModel)]="searchTerm" 
+          (input)="filterStores()"
+        >
+      </div>
+      
+      <!-- Filter Options -->
+      <div class="filter-options">
+        <div class="filter-group">
+          <select [(ngModel)]="selectedCategory" (change)="filterStores()">
+            <option value="">ALL CATEGORIES</option>
+            <option *ngFor="let category of categories" [value]="category">
+              {{getCategoryDisplayName(category)}}
+            </option>
+          </select>
         </div>
-      </div>
-
-      <!-- Loading State -->
-      <div *ngIf="loading" class="text-center py-5">
-        <mat-spinner class="mx-auto"></mat-spinner>
-      </div>
-
-      <!-- Error State -->
-      <div *ngIf="error" class="alert alert-danger" role="alert">
-        {{error}}
-      </div>
-
-      <!-- Stores Grid -->
-      <div *ngIf="!loading && !error" class="row">
-        <div *ngFor="let store of stores" class="col-12 col-md-6 col-lg-4 mb-4">
-          <div class="card h-100 store-card">
-            <img [src]="getStoreImageUrl(store.image)" 
-                 class="card-img-top" 
-                 [alt]="store.storeName"
-                 (error)="handleImageError($event)"
-                 style="height: 200px; object-fit: cover;">
-            <div class="card-body">
-              <h3 class="card-title h5">{{store.storeName}}</h3>
-              <p class="card-text text-muted">{{store.description}}</p>
-              <div class="store-details mb-3">
-                <div class="d-flex align-items-center mb-2">
-                  <i class="fe fe-map-pin me-2"></i>
-                  <span>{{store.address || 'Address not specified'}}</span>
-                </div>
-              </div>
-              <a [routerLink]="['/stores', store.storeId]" class="btn btn-primary w-100">
-                View Details
-              </a>
-            </div>
-          </div>
+        
+        <div class="filter-group">
+          <select [(ngModel)]="sortOption" (change)="filterStores()">
+            <option value="name">NAME (A-Z)</option>
+            <option value="nameDesc">NAME (Z-A)</option>
+            <option value="featured">FEATURED FIRST</option>
+            <option value="newest">NEWEST FIRST</option>
+          </select>
         </div>
-      </div>
-
-      <!-- Empty State -->
-      <div *ngIf="!loading && !error && stores.length === 0" class="text-center py-5">
-        <h3>No stores available</h3>
-        <p class="text-muted">Check back later for new stores</p>
       </div>
     </div>
+  </div>
+  
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40" color="primary"></mat-spinner>
+    <p class="loading-text">LOADING STORES</p>
+  </div>
+  
+  <!-- Error State -->
+  <div *ngIf="error" class="error-alert" role="alert">
+    <i class="fas fa-exclamation-circle"></i> 
+    <span>{{error}}</span>
+  </div>
+  
+  <!-- Stores Grid -->
+  <div *ngIf="!loading && !error" class="stores-grid">
+    <div *ngFor="let store of filteredStores" class="store-card" [class.highlight]="isNewlyFiltered(store)">
+      <!-- Featured Badge -->
+      <div *ngIf="store.featured" class="featured-badge">
+        FEATURED
+      </div>
+      
+      <!-- Store Image -->
+      <div class="image-container">
+        <img [src]="getStoreImageUrl(store.image)"
+             [alt]="store.storeName"
+             (error)="handleImageError($event)">
+        
+        <!-- Category Badge -->
+        <div class="category-badge">
+          <i [class]="'fas ' + getCategoryIcon(store.category)"></i>
+          {{store.categoryDisplayName || getCategoryDisplayName(store.category)}}
+        </div>
+      </div>
+      
+      <!-- Store Details -->
+      <div class="store-details">
+        <h3 class="store-name">{{store.storeName}}</h3>
+        <p class="store-description">{{store.description || 'No description available'}}</p>
+        
+        <div class="store-status" *ngIf="store.status !== undefined">
+          <span [class]="store.status ? 'status-open' : 'status-closed'">
+            <i class="status-indicator"></i>
+            {{store.status ? 'OPEN' : 'CLOSED'}}
+          </span>
+        </div>
+        
+        <a [routerLink]="['/stores', store.storeId]" class="btn-view-store">
+          VIEW STORE
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && filteredStores.length === 0" class="empty-state">
+    <div class="empty-icon">
+      <i class="fas fa-store-slash"></i>
+    </div>
+    <h3>NO STORES FOUND</h3>
+    <p *ngIf="searchTerm || selectedCategory">
+      Try adjusting your search criteria or clear filters.
+    </p>
+    <p *ngIf="!searchTerm && !selectedCategory">
+      Check back later for new stores.
+    </p>
+    <button *ngIf="searchTerm || selectedCategory" class="btn-clear-filters" (click)="clearFilters()">
+      CLEAR FILTERS
+    </button>
   </div>
 </div>

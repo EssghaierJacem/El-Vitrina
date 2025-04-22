@@ -17,6 +17,7 @@ import { ProductService } from '../../../../core/services/product/product.servic
 import { Product } from '../../../../core/models/product/product.model';
 import { ProductCategoryType } from '../../../../core/models/product/product-category-type.enum';
 import { FormControl } from '@angular/forms';
+import { FavoriteService } from '../../../../core/services/product/favorite.service';
 
 @Component({
   selector: 'app-all-product',
@@ -49,8 +50,6 @@ export class AllProductComponent implements OnInit {
   selectedCategory: ProductCategoryType | null = null;
   categoryDescription: string = '';
 
-  readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
-  
   // Filters
   searchQuery = '';
   sortOptions = [
@@ -67,13 +66,17 @@ export class AllProductComponent implements OnInit {
   priceRange = { min: 0, max: 1000 };
   tagSearchQuery = new FormControl('');
 
+  favoriteProductIds = new Set<number>();
+
   constructor(
-    private productService: ProductService,
-    private snackBar: MatSnackBar
+    public productService: ProductService,
+    private snackBar: MatSnackBar,
+    private favoriteService: FavoriteService
   ) {}
 
   ngOnInit(): void {
     this.loadProducts();
+    this.loadFavoritesFromLocalStorage();
     this.tagSearchQuery.valueChanges.subscribe(() => {
       this.applyFilters();
     });
@@ -85,7 +88,15 @@ export class AllProductComponent implements OnInit {
 
     this.productService.getAll().subscribe({
       next: (products) => {
-        this.products = products;
+        // Process products to ensure price fields are correct
+        this.products = products.map(product => ({
+          ...product,
+          price: this.getFinalPrice(product),
+          originalPrice: product.originalPrice || product.price,
+          hasDiscount: product.hasDiscount || false,
+          discountPercentage: this.getDiscountPercentage(product)
+        }));
+        this.updateFavorites();
         this.applyFilters();
         this.loading = false;
         this.updateCategoryDescription();
@@ -96,6 +107,14 @@ export class AllProductComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  loadFavoritesFromLocalStorage(): void {
+    const savedFavorites = localStorage.getItem('favorites');
+    if (savedFavorites) {
+      this.favoriteProductIds = new Set(JSON.parse(savedFavorites));
+      this.products.forEach(p => p.isFavorite = this.favoriteProductIds.has(p.productId));
+    }
   }
 
   updateCategoryDescription(): void {
@@ -184,13 +203,19 @@ export class AllProductComponent implements OnInit {
   }
 
   toggleFavorite(product: Product): void {
-    product.isFavorite = !product.isFavorite;
-    // TODO: Implement favorite toggle with backend
-    this.snackBar.open(
-      product.isFavorite ? 'Added to favorites' : 'Removed from favorites',
-      'Close',
-      { duration: 3000 }
-    );
+    const isNowFavorite = !product.isFavorite;
+    product.isFavorite = isNowFavorite;
+
+    if (isNowFavorite) {
+      this.favoriteProductIds.add(product.productId);
+      this.snackBar.open('Added to favorites', 'Close', { duration: 2000 });
+    } else {
+      this.favoriteProductIds.delete(product.productId);
+      this.snackBar.open('Removed from favorites', 'Close', { duration: 2000 });
+    }
+
+    // Save the updated favorites to local storage
+    localStorage.setItem('favorites', JSON.stringify(Array.from(this.favoriteProductIds)));
   }
 
   addToCart(product: Product): void {
@@ -229,15 +254,26 @@ export class AllProductComponent implements OnInit {
     }
   }
 
-  getProductImageUrl(imageFilename: string): string {
-    if (!imageFilename) {
-      return 'assets/images/products/no-image.jpg'; 
-    }
-    
-    if (imageFilename.startsWith('http')) {
-      return imageFilename; 
-    }
-  
-    return this.IMAGE_BASE_URL + imageFilename;
+  updateFavorites(): void {
+    const favorites = this.favoriteService.getFavorites();
+    this.products.forEach(product => {
+      product.isFavorite = favorites.has(product.productId);
+    });
+  }
+
+  getDisplayPrice(product: Product) {
+    return this.productService.getDisplayPrice(product);
+  }
+
+  getFinalPrice(product: Product): number {
+    return this.productService.calculateFinalPrice(product);
+  }
+
+  getOriginalPrice(product: Product): number | null {
+    return product.hasDiscount && product.originalPrice ? product.originalPrice : null;
+  }
+
+  getDiscountPercentage(product: Product): number {
+    return this.productService.calculateDiscountPercentage(product);
   }
 } 

@@ -19,6 +19,35 @@ mat-card {
   margin: 16px;
 }
 
+.map-container {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 16px;
+  background-color: #fff;
+}
+
+.form-label {
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.coordinates-display {
+  color: rgba(0, 0, 0, 0.6);
+  background-color: #f5f5f5;
+  padding: 8px;
+  border-radius: 4px;
+  text-align: center;
+  margin-top: 8px;
+}
+
+:host ::ng-deep {
+  .leaflet-container {
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+  }
+}
+
 @media (max-width: 600px) {
   .button-group {
     flex-direction: column;

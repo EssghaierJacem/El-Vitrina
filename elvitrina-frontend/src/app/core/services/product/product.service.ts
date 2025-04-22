@@ -111,4 +111,95 @@ export class ProductService {
     const params = { page: page.toString(), size: size.toString() };
     return this.http.get<Page<Product>>(`${this.apiUrl}/paginated`, { params });
   }
+
+  // Discount-related utility methods
+  calculateFinalPrice(product: Product): number {
+    // If there's no discount, return the original price
+    if (!product.hasDiscount) {
+      return product.price;
+    }
+
+    // If we have a discount percentage, calculate from original price
+    if (product.discountPercentage && product.originalPrice) {
+      return Number((product.originalPrice * (1 - product.discountPercentage / 100)).toFixed(2));
+    }
+
+    // If we have price and original price, use the price (it's already discounted)
+    if (product.price && product.originalPrice) {
+      return Number(product.price.toFixed(2));
+    }
+
+    // Default to current price
+    return Number(product.price.toFixed(2));
+  }
+
+  calculateDiscountPercentage(product: Product): number {
+    if (!product.hasDiscount) {
+      return 0;
+    }
+
+    if (product.discountPercentage) {
+      return Math.round(product.discountPercentage);
+    }
+
+    if (product.originalPrice && product.price) {
+      return Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+    }
+
+    return 0;
+  }
+
+  formatPrice(price: number): string {
+    return Number(price).toFixed(2);
+  }
+
+  getPriceDisplay(product: Product): { 
+    originalPrice: string | null, 
+    finalPrice: string, 
+    discountPercentage: number 
+  } {
+    const discountPercentage = this.calculateDiscountPercentage(product);
+    const finalPrice = this.calculateFinalPrice(product);
+    
+    return {
+      originalPrice: product.hasDiscount && product.originalPrice 
+        ? this.formatPrice(product.originalPrice) 
+        : null,
+      finalPrice: this.formatPrice(finalPrice),
+      discountPercentage
+    };
+  }
+
+  getDisplayPrice(product: Product): { 
+    finalPrice: number;
+    originalPrice: number | undefined;
+    hasDiscount: boolean;
+    discountPercentage: number;
+  } {
+    // Calculate final price
+    let finalPrice = product.price;
+    let originalPrice = product.originalPrice;
+    let hasDiscount = product.hasDiscount;
+    let discountPercentage = product.discountPercentage || 0;
+
+    // If there's a discount and we have both original price and percentage
+    if (hasDiscount && originalPrice && discountPercentage) {
+      finalPrice = originalPrice * (1 - discountPercentage / 100);
+    }
+    // If there's a discount but no percentage, calculate it
+    else if (hasDiscount && originalPrice && finalPrice) {
+      discountPercentage = Math.round(((originalPrice - finalPrice) / originalPrice) * 100);
+    }
+    // If no discount, set original price to undefined
+    else if (!hasDiscount) {
+      originalPrice = undefined;
+    }
+
+    return {
+      finalPrice: Number(finalPrice.toFixed(2)),
+      originalPrice: originalPrice ? Number(originalPrice.toFixed(2)) : undefined,
+      hasDiscount,
+      discountPercentage
+    };
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,6 +12,7 @@ import { StoreService } from '../../../../core/services/store/store.service';
 import { StoreCategoryType } from '../../../../core/models/store/store-category-type.enum';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { TokenService } from 'src/app/core/services/user/TokenService';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-store-create',
@@ -29,7 +30,7 @@ import { TokenService } from 'src/app/core/services/user/TokenService';
   templateUrl: './store-create.component.html',
   styleUrls: ['./store-create.component.scss']
 })
-export class StoreCreateComponent implements OnInit {
+export class StoreCreateComponent implements OnInit, AfterViewInit {
   role: string = '';  
   storeForm: FormGroup;
   loading = false;
@@ -39,6 +40,13 @@ export class StoreCreateComponent implements OnInit {
   imagePreviewUrl: string | null = null;
   coverImagePreviewUrl: string | null = null;
 
+  private map: L.Map | undefined;
+  private marker: L.Marker | undefined;
+  selectedLocation = {
+    lat: 36.8065,  // Default to Tunisia center
+    lng: 10.1815
+  };
+
   constructor(
     private fb: FormBuilder,
     private storeService: StoreService,
@@ -47,14 +55,24 @@ export class StoreCreateComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar
   ) {
+    this.initForm();
+  }
+
+  private initForm(): void {
     this.storeForm = this.fb.group({
       storeName: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', [Validators.maxLength(1500)]],
       category: ['', Validators.required],
-      address: ['', Validators.required],
-      image: [null], 
-      coverImage: [null] 
+      address: [this.formatCoordinatesAsAddress(this.selectedLocation.lat, this.selectedLocation.lng), Validators.required],
+      latitude: [this.selectedLocation.lat, Validators.required],
+      longitude: [this.selectedLocation.lng, Validators.required],
+      image: [null],
+      coverImage: [null]
     });
+  }
+
+  private formatCoordinatesAsAddress(lat: number, lng: number): string {
+    return `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
   }
 
   ngOnInit(): void {
@@ -70,6 +88,51 @@ export class StoreCreateComponent implements OnInit {
         }
       }
     }
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => this.initializeMap(), 100);
+  }
+
+  private initializeMap() {
+    this.map = L.map('map').setView([this.selectedLocation.lat, this.selectedLocation.lng], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(this.map);
+
+    this.marker = L.marker([this.selectedLocation.lat, this.selectedLocation.lng], {
+      draggable: true
+    }).addTo(this.map);
+
+    this.marker.on('dragend', (event) => {
+      const marker = event.target;
+      const position = marker.getLatLng();
+      this.updateFormLocation(position.lat, position.lng);
+    });
+
+    this.map.on('click', (e: L.LeafletMouseEvent) => {
+      const { lat, lng } = e.latlng;
+      this.updateMarkerPosition(lat, lng);
+      this.updateFormLocation(lat, lng);
+    });
+  }
+
+  private updateMarkerPosition(lat: number, lng: number) {
+    if (this.marker && this.map) {
+      this.marker.setLatLng([lat, lng]);
+      this.map.panTo([lat, lng]);
+    }
+  }
+
+  private updateFormLocation(lat: number, lng: number) {
+    this.selectedLocation = { lat, lng };
+    this.storeForm.patchValue({
+      latitude: lat,
+      longitude: lng,
+      address: this.formatCoordinatesAsAddress(lat, lng)
+    });
   }
 
   onFileSelected(event: Event, field: 'image' | 'coverImage'): void {
@@ -102,6 +165,8 @@ export class StoreCreateComponent implements OnInit {
         description: formValue.description?.trim() || '',
         category: formValue.category,
         address: formValue.address?.trim(),
+        latitude: formValue.latitude,
+        longitude: formValue.longitude,
         status: true,
         featured: false,
         userId: this.tokenService.getDecodedToken()?.id 

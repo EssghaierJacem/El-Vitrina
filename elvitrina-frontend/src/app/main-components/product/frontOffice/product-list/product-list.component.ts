@@ -14,7 +14,7 @@ import { ProductService } from '../../../../core/services/product/product.servic
 import { Product } from '../../../../core/models/product/product.model';
 import { ProductCategoryType } from '../../../../core/models/product/product-category-type.enum';
 import { MatDialog } from '@angular/material/dialog';
-import { AddToCartDialogComponent } from 'src/app/main-components/custom-order/Frontoffice/add-to-cart-dialog/add-to-cart-dialog.component';
+import { FavoriteService } from '../../../../core/services/product/favorite.service';
 
 @Component({
   selector: 'app-product-list',
@@ -45,14 +45,15 @@ export class ProductListComponent implements OnInit {
   // Filters
   searchQuery = '';
   selectedCategory: ProductCategoryType | null = null;
-  sortBy: 'price' | 'name' | 'newest' = 'newest';
+  sortBy: 'newest' | 'price' | 'name' = 'newest';
   showDiscounted = false;
   showInStock = false;
 
   constructor(
-    private productService: ProductService,
+    public productService: ProductService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private favoriteService: FavoriteService
   ) {}
 
   ngOnInit(): void {
@@ -65,7 +66,15 @@ export class ProductListComponent implements OnInit {
 
     this.productService.getAll().subscribe({
       next: (products) => {
-        this.products = products;
+        // Process products to ensure price fields are correct
+        this.products = products.map(product => ({
+          ...product,
+          price: this.getFinalPrice(product),
+          originalPrice: product.originalPrice || product.price,
+          hasDiscount: product.hasDiscount || false,
+          discountPercentage: this.getDiscountPercentage(product)
+        }));
+        this.updateFavorites();
         this.applyFilters();
         this.loading = false;
       },
@@ -75,6 +84,18 @@ export class ProductListComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  getFinalPrice(product: Product): number {
+    return this.productService.calculateFinalPrice(product);
+  }
+
+  getOriginalPrice(product: Product): number | null {
+    return product.hasDiscount && product.originalPrice ? product.originalPrice : null;
+  }
+
+  getDiscountPercentage(product: Product): number {
+    return this.productService.calculateDiscountPercentage(product);
   }
 
   applyFilters(): void {
@@ -112,9 +133,8 @@ export class ProductListComponent implements OnInit {
         case 'name':
           return a.productName.localeCompare(b.productName);
         case 'newest':
-          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
         default:
-          return 0;
+          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
       }
     });
 
@@ -123,8 +143,26 @@ export class ProductListComponent implements OnInit {
 
   toggleFavorite(product: Product): void {
     product.isFavorite = !product.isFavorite;
-    // TODO: Implement favorite toggle with backend
-    this.snackBar.open('Coming soon', 'Close', { duration: 3000 });
+    if (product.isFavorite) {
+      this.favoriteService.toggleFavorite(product.productId);
+      this.snackBar.open('Added to favorites', 'Close', { duration: 2000 });
+    } else {
+      this.favoriteService.removeFavorite(product.productId);
+      this.snackBar.open('Removed from favorites', 'Close', { duration: 2000 });
+    }
   }
 
+  updateFavorites(): void {
+    const favorites = this.favoriteService.getFavorites();
+    this.products.forEach(product => {
+      product.isFavorite = favorites.has(product.productId);
+    });
+  }
+
+  handleImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img) {
+      img.src = 'assets/images/products/no-image.jpg';
+    }
+  }
 }

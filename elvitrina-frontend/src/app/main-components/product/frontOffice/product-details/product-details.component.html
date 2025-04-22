@@ -84,31 +84,40 @@
   
         <!-- Product Info (Right Side) -->
         <div class="product-info">
+          <h1 class="product-name">{{product.productName}}</h1>
+          
+          <!-- Price Section -->
+          <div class="price-section">
+            <div class="price-display">
+              <span class="current-price" [class.has-discount]="product.hasDiscount">
+                {{ getFinalPrice(product) | currency:'EUR' }}
+              </span>
+              <ng-container *ngIf="product.hasDiscount">
+                <span class="original-price" *ngIf="getOriginalPrice(product)">
+                  {{ getOriginalPrice(product) | currency:'EUR' }}
+                </span>
+                <span class="discount-badge" *ngIf="getDiscountPercentage(product) > 0">
+                  -{{ getDiscountPercentage(product) }}%
+                </span>
+              </ng-container>
+            </div>
+            <div class="price-info">
+              <span class="vat-info">VAT included (if applicable), <a href="#">plus delivery charges</a></span>
+            </div>
+          </div>
+
+          <div class="product-meta">
+            <span class="shipping" *ngIf="product.freeShipping">FREE shipping</span>
+            <span class="bestseller" *ngIf="product.isBestseller">Bestseller</span>
+            <span class="stock" *ngIf="product.stockQuantity === 0">Out of Stock</span>
+          </div>
+  
           <!-- Inventory Status -->
           @if (product.stockQuantity <= 5 && product.stockQuantity > 0) {
             <div class="inventory-alert">
               Only {{ product.stockQuantity }} left, currently in {{ inBaskets }} baskets
             </div>
           }
-  
-          <!-- Price Section -->
-          <div class="price-section">
-            <div class="price-display">
-              <span class="current-price" [class.has-discount]="product.hasDiscount">
-                €{{ product.price }}+
-              </span>
-              @if (product.hasDiscount && product.originalPrice) {
-                <span class="original-price">€{{ product.originalPrice }}</span>
-                <span class="discount-badge">-{{ product.discountPercentage }}%</span>
-              }
-            </div>
-            <div class="price-info">
-              <span class="vat-info">VAT included (if applicable), <a href="#">plus delivery charges</a></span>
-            </div>
-          </div>
-  
-          <!-- Product Title -->
-          <h1 class="product-title">{{ product.productName }}</h1>
   
           <!-- Seller/Store Info -->
           <div class="seller-info">

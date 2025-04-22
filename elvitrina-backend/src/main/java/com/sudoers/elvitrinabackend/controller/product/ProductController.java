@@ -4,6 +4,7 @@ import com.sudoers.elvitrinabackend.model.dto.ProductCreationDTO;
 import com.sudoers.elvitrinabackend.model.dto.ProductDTO;
 import com.sudoers.elvitrinabackend.model.dto.ProductSummaryDTO;
 import com.sudoers.elvitrinabackend.model.dto.ProductUpdateDTO;
+import com.sudoers.elvitrinabackend.model.dto.ImageAnalysisDTO;
 import com.sudoers.elvitrinabackend.model.enums.ProductCategoryType;
 import com.sudoers.elvitrinabackend.model.enums.ProductStatus;
 import com.sudoers.elvitrinabackend.service.product.ProductService;
@@ -27,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -147,15 +149,27 @@ public class ProductController {
 
     // ---- Statistics Endpoints ----
     @GetMapping("/stats/category-count")
-    public ResponseEntity<Map<ProductCategoryType, Long>> countProductsByCategory() {
-        Map<ProductCategoryType, Long> stats = productService.countProductsByCategory();
-        return ResponseEntity.ok(stats);
+    public ResponseEntity<List<Map<String, Object>>> countProductsByCategory() {
+        Map<ProductCategoryType, Long> rawStats = productService.countProductsByCategory();
+        List<Map<String, Object>> formattedStats = new ArrayList<>();
+        
+        rawStats.forEach((category, count) -> {
+            Map<String, Object> categoryData = new HashMap<>();
+            categoryData.put("category", category);
+            categoryData.put("count", count);
+            formattedStats.add(categoryData);
+        });
+        
+        return ResponseEntity.ok(formattedStats);
     }
 
     @GetMapping("/stats/active-count")
-    public ResponseEntity<Long> countActiveProducts() {
+    public ResponseEntity<Map<String, Object>> countActiveProducts() {
         Long count = productService.countActiveProducts();
-        return ResponseEntity.ok(count);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "ACTIVE");
+        response.put("count", count);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/stats/discounted-count")
@@ -287,6 +301,34 @@ public class ProductController {
             @RequestParam String tag) {
         List<ProductDTO> products = productService.findByTag(tag);
         return ResponseEntity.ok(products);
+    }
+
+    // ---- Image Analysis Endpoints ----
+    
+    @PostMapping("/{id}/analyze-image")
+    public ResponseEntity<ImageAnalysisDTO> analyzeProductImage(
+            @PathVariable Long id,
+            @RequestParam String imageUrl) {
+        ImageAnalysisDTO analysisResult = productService.analyzeProductImage(id, imageUrl);
+        return ResponseEntity.ok(analysisResult);
+    }
+    
+    @PostMapping("/analyze-image-file")
+    public ResponseEntity<ImageAnalysisDTO> analyzeImageFile(
+            @RequestParam("image") MultipartFile imageFile) {
+        ImageAnalysisDTO analysisResult = productService.analyzeImageFile(imageFile);
+        return ResponseEntity.ok(analysisResult);
+    }
+    
+    @PostMapping("/{id}/apply-analysis")
+    public ResponseEntity<ProductDTO> applyImageAnalysis(
+            @PathVariable Long id,
+            @RequestParam String imageUrl,
+            @RequestParam(defaultValue = "true") boolean applyTags,
+            @RequestParam(defaultValue = "true") boolean applyCategory,
+            @RequestParam(defaultValue = "true") boolean applyDescription) {
+        ProductDTO updatedProduct = productService.applyImageAnalysis(id, imageUrl, applyTags, applyCategory, applyDescription);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     private String saveImage(MultipartFile file) {

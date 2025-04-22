@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/store-feedbacks")
@@ -71,5 +73,19 @@ public class StoreFeedbackController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(feedbacks);
+    }
+
+    @GetMapping("/analytics")
+    public ResponseEntity<Map<String, Object>> getFeedbackAnalytics() {
+        Double averageRating = storeFeedbackService.getAverageRating();
+        Long totalFeedbacks = storeFeedbackService.getTotalFeedbacks();
+        Map<Integer, Long> ratingDistribution = storeFeedbackService.getRatingDistribution();
+
+        Map<String, Object> analytics = new HashMap<>();
+        analytics.put("averageRating", averageRating);
+        analytics.put("totalFeedbacks", totalFeedbacks);
+        analytics.put("ratingDistribution", ratingDistribution);
+
+        return ResponseEntity.ok(analytics);
     }
 }

@@ -40,7 +40,7 @@ export class FrontHeaderComponent implements OnInit {
   storeId: number | null = null;
   searchTerm: string = '';
   searchResults: Product[] = [];
-  selectedCategory: string | null = null;
+  selectedCategory: string = '';
   categories = Object.values(ProductCategoryType);
   products: Product[] = []; 
   orders: CustomOrder[] = [];
@@ -69,6 +69,13 @@ export class FrontHeaderComponent implements OnInit {
       this.role = user?.role || '';
       console.log(user);
 
+      // Always fetch products for search, regardless of login
+      this.productService.getAll().subscribe((products) => {
+        console.log('Fetched products:', products); // Debug line
+        this.products = products;
+        this.applySearchFilters(); // Initial population
+      });
+
       if (this.userId) {
         this.storeService.getAll().subscribe((stores) => {
           const userStore = stores.find(store => store.userId === this.userId);
@@ -87,6 +94,15 @@ export class FrontHeaderComponent implements OnInit {
 
     });
   }
+
+  applySearchFilters() {
+    this.searchResults = this.products.filter(product => {
+      const matchesCategory = !this.selectedCategory || product.category === this.selectedCategory;
+      const matchesSearch = !this.searchTerm || product.productName.toLowerCase().includes(this.searchTerm.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }
+
   logout(): void {
     this.tokenService.logout();
     this.router.navigate(['/authentication/login']);
@@ -151,5 +167,13 @@ export class FrontHeaderComponent implements OnInit {
     return product.images && product.images.length > 0 ? product.images[0] : 'assets/images/default-product.jpg';
   }
 
+  wishlistClick(): void {
+    console.log('Navigating to favorites...'); // Debugging line
+    this.router.navigate(['/products/favorite']).then(success => {
+      console.log('Navigation success:', success);
+    }).catch(err => {
+      console.error('Navigation error:', err);
+    });
+  }
 }
 

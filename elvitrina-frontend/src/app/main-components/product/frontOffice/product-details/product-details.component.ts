@@ -11,6 +11,7 @@ import { ProductService } from '../../../../core/services/product/product.servic
 import { Product } from '../../../../core/models/product/product.model';
 import { ProductCategoryType } from '../../../../core/models/product/product-category-type.enum';
 import { ProductStatus } from '../../../../core/models/product/product-status.enum';
+import { PriceDisplayComponent } from '../../../../shared/components/price-display/price-display.component';
 
 @Component({
   selector: 'app-product-details',
@@ -23,7 +24,8 @@ import { ProductStatus } from '../../../../core/models/product/product-status.en
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatChipsModule
+    MatChipsModule,
+    PriceDisplayComponent
   ],
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.scss']
@@ -41,7 +43,7 @@ export class ProductDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private productService: ProductService,
+    public productService: ProductService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -53,6 +55,7 @@ export class ProductDetailsComponent implements OnInit {
       this.error = 'Invalid product ID';
       this.loading = false;
     }
+    console.log(productId);
   }
 
   loadProduct(id: number): void {
@@ -62,6 +65,7 @@ export class ProductDetailsComponent implements OnInit {
     this.productService.getById(id).subscribe({
       next: (product) => {
         this.product = product;
+        console.log(this.product);
         this.isInWishlist = product.isFavorite || false;
         // Add some mock data for UI elements
         this.inBaskets = Math.floor(Math.random() * 5) + 1;
@@ -134,5 +138,21 @@ export class ProductDetailsComponent implements OnInit {
     }
   
     return this.IMAGE_BASE_URL + imageFilename; 
+  }
+
+  getDisplayPrice(product: Product) {
+    return this.productService.getDisplayPrice(product);
+  }
+
+  getFinalPrice(product: Product): number {
+    return this.productService.calculateFinalPrice(product);
+  }
+
+  getOriginalPrice(product: Product): number | null {
+    return product.hasDiscount && product.originalPrice ? product.originalPrice : null;
+  }
+
+  getDiscountPercentage(product: Product): number {
+    return this.productService.calculateDiscountPercentage(product);
   }
 }

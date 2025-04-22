@@ -4,6 +4,7 @@ import com.sudoers.elvitrinabackend.model.dto.ProductCreationDTO;
 import com.sudoers.elvitrinabackend.model.dto.ProductDTO;
 import com.sudoers.elvitrinabackend.model.dto.ProductSummaryDTO;
 import com.sudoers.elvitrinabackend.model.dto.ProductUpdateDTO;
+import com.sudoers.elvitrinabackend.model.dto.ImageAnalysisDTO;
 import com.sudoers.elvitrinabackend.model.enums.ProductCategoryType;
 import com.sudoers.elvitrinabackend.model.enums.ProductStatus;
 import org.springframework.data.domain.Page;
@@ -60,4 +61,9 @@ public interface IProductService {
     ProductDTO addTags(Long productId, Set<String> tags);
     ProductDTO removeTags(Long productId, Set<String> tags);
     List<ProductDTO> findByTag(String tag);
+    
+    // Image Analysis
+    ImageAnalysisDTO analyzeProductImage(Long productId, String imageUrl);
+    ImageAnalysisDTO analyzeImageFile(MultipartFile imageFile);
+    ProductDTO applyImageAnalysis(Long productId, String imageUrl, boolean applyTags, boolean applyCategory, boolean applyDescription);
 }

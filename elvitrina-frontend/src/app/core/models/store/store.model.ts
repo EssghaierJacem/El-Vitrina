@@ -13,6 +13,8 @@ export interface Store {
   updatedAt?: string;
   status: boolean;
   address: string;
+  latitude: number;
+  longitude: number;
   image?: string;
   coverImage?: string;
   announcement?: string;
@@ -49,6 +51,8 @@ export interface StoreReqDto {
   category: StoreCategoryType;
   categoryDisplayName?: string;
   address: string;
+  latitude: number;
+  longitude: number;
   featured: boolean;
   status: boolean;
   image?: string;

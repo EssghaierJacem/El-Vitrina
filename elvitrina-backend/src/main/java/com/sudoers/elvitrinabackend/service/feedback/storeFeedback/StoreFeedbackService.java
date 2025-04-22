@@ -17,6 +17,9 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 @Service
 @Transactional
@@ -107,6 +110,34 @@ public class StoreFeedbackService implements IStoreFeedbackService {
     @Transactional(readOnly = true)
     public Long countByStoreId(Long storeId) {
         return storeFeedbackRepository.countByStore_StoreId(storeId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Double getAverageRating() {
+        return storeFeedbackRepository.findOverallAverageRating();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long getTotalFeedbacks() {
+        return storeFeedbackRepository.getTotalFeedbackCount();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Integer, Long> getRatingDistribution() {
+        Map<Integer, Long> distribution = new HashMap<>();
+        // Initialize all ratings with 0 count
+        IntStream.rangeClosed(1, 5).forEach(rating -> distribution.put(rating, 0L));
+        
+        // Get actual counts for each rating
+        IntStream.rangeClosed(1, 5).forEach(rating -> {
+            Long count = storeFeedbackRepository.countByRating(rating);
+            distribution.put(rating, count);
+        });
+        
+        return distribution;
     }
 
     private StoreFeedbackDTO convertToDTO(StoreFeedback storeFeedback) {

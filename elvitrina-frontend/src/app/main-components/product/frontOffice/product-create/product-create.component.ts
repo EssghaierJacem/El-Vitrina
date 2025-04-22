@@ -22,6 +22,11 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ImageAnalysisService, ImageAnalysisResult } from '../../../../core/services/product/image-analysis.service';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-product-create',
@@ -40,6 +45,10 @@ import { MatChipsModule } from '@angular/material/chips';
     MatSnackBarModule,
     MatCheckboxModule,
     MatChipsModule,
+    MatStepperModule,
+    MatDividerModule,
+    MatTooltipModule,
+    MatExpansionModule,
     RouterModule
   ],
   templateUrl: './product-create.component.html',
@@ -48,14 +57,22 @@ import { MatChipsModule } from '@angular/material/chips';
 export class ProductCreateComponent implements OnInit {
   productForm: FormGroup;
   loading = false;
+  analyzingImage = false;
   categories = Object.values(ProductCategoryType);
   userStores: Store[] = [];
   role: string = '';
   canCreateProduct: boolean = false;
   tagsControl = new FormControl<string[]>([]);
-  uploadedFiles: File[] = []; // Now store selected image files here
-  uploadedImagesPreview: string[] = []; // for preview
+  uploadedFiles: File[] = [];
+  uploadedImagesPreview: string[] = [];
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+  
+  // Image analysis results
+  imageAnalysisResult: ImageAnalysisResult | null = null;
+  showImageAnalysisOptions = false;
+  useAnalyzedCategory = true;
+  useAnalyzedTags = true;
+  useAnalyzedDescription = true;
 
   constructor(
     private fb: FormBuilder,
@@ -63,6 +80,7 @@ export class ProductCreateComponent implements OnInit {
     private authService: AuthService,
     private storeService: StoreService,
     private tokenService: TokenService,
+    private imageAnalysisService: ImageAnalysisService,
     private snackBar: MatSnackBar,
     private router: Router
   ) {
@@ -172,7 +190,7 @@ export class ProductCreateComponent implements OnInit {
       }
   
       // Validate mandatory fields
-      if (!productData.productName || !productData.description || !productData.category || !productData.storeId) {
+      if (!productData.productName || !productData.category || !productData.storeId) {
         this.snackBar.open('Please fill in all required fields', 'Close', { duration: 5000 });
         this.loading = false;
         return;
@@ -214,6 +232,11 @@ export class ProductCreateComponent implements OnInit {
       hasDiscount: false,
       images: ''
     });
+    
+    this.tagsControl.setValue([]);
+    this.uploadedFiles = [];
+    this.uploadedImagesPreview = [];
+    this.imageAnalysisResult = null;
     
     this.snackBar.open('Form has been cleared', 'Close', {
       duration: 3000
@@ -265,13 +288,6 @@ export class ProductCreateComponent implements OnInit {
     }
   }
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.uploadedFiles = Array.from(input.files); // Store selected files
-    }
-  }
-
   onImagesSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -292,6 +308,79 @@ export class ProductCreateComponent implements OnInit {
         };
         reader.readAsDataURL(file);
       });
+
+      // Reset analysis result when new image is selected
+      this.imageAnalysisResult = null;
+    }
+  }
+
+  analyzeImage(): void {
+    if (this.uploadedFiles.length === 0) {
+      this.snackBar.open('Please upload an image first', 'Close', { duration: 3000 });
+      return;
+    }
+
+    this.analyzingImage = true;
+    const imageFile = this.uploadedFiles[0]; // Analyze only the first image
+
+    this.imageAnalysisService.analyzeImageFile(imageFile).subscribe({
+      next: (result) => {
+        this.imageAnalysisResult = result;
+        this.analyzingImage = false;
+        this.showImageAnalysisOptions = true;
+        
+        // Display a success message
+        this.snackBar.open('Image analyzed successfully', 'Close', { duration: 3000 });
+      },
+      error: (error) => {
+        console.error('Error analyzing image:', error);
+        this.analyzingImage = false;
+        this.snackBar.open('Error analyzing image. Please try again.', 'Close', { duration: 5000 });
+      }
+    });
+  }
+
+  applyImageAnalysisResults(): void {
+    if (!this.imageAnalysisResult) {
+      return;
+    }
+
+    // Apply category - now the Python analyzer returns the exact enum value
+    if (this.useAnalyzedCategory && this.imageAnalysisResult.category) {
+      // The category should already be in the correct format (e.g., "HOME_DECOR")
+      // but we'll check if it's a valid enum value to be safe
+      const categoryValue = this.imageAnalysisResult.category;
+      
+      if (this.categories.includes(categoryValue as ProductCategoryType)) {
+        this.productForm.patchValue({
+          category: categoryValue
+        });
+      }
+    }
+
+    // Apply description
+    if (this.useAnalyzedDescription && this.imageAnalysisResult.description) {
+      this.productForm.patchValue({
+        description: this.imageAnalysisResult.description
+      });
+    }
+
+    // Apply tags
+    if (this.useAnalyzedTags && this.imageAnalysisResult.tags && this.imageAnalysisResult.tags.length > 0) {
+      this.tagsControl.setValue(this.imageAnalysisResult.tags);
+    }
+
+    this.snackBar.open('Analysis results applied to the form', 'Close', { duration: 3000 });
+  }
+
+  // Add this method to handle category display from analysis results
+  getAnalysisCategoryDisplay(category: string): string {
+    try {
+      // Try to convert the string to enum value and get display name
+      return this.getCategoryDisplayName(category as unknown as ProductCategoryType);
+    } catch (error) {
+      // Fallback to just returning the category
+      return category;
     }
   }
 }

@@ -68,9 +68,12 @@
               </div>
             </div>
 
-            <div class="col-md-6 m-b-16">
-              <p class="f-w-500 m-b-4">🏠 Address :</p>
-              <p class="text-muted">{{ store.address || 'Not provided' }}</p>
+            <!-- Store Location Map -->
+            <div class="col-12 m-b-16">
+              <p class="f-w-500 m-b-4">📍 Store Location :</p>
+              <div class="map-container">
+                <div id="store-location-map" style="height: 400px; width: 100%; border-radius: 4px;"></div>
+              </div>
             </div>
 
             <div class="col-md-6 m-b-16">

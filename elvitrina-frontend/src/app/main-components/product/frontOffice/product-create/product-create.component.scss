@@ -29,13 +29,36 @@
   margin-bottom: 8px;
 }
 
+.preview-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #555;
+  margin-top: 16px;
+  margin-bottom: 12px;
+}
+
+.image-preview-container {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    
+    .image-preview-overlay {
+      opacity: 1;
+    }
+  }
+}
+
 .image-preview {
   position: relative;
   width: 100%;
   padding-top: 100%; /* 1:1 Aspect Ratio */
   overflow: hidden;
-  border-radius: 4px;
-  border: 1px solid #ddd;
 }
 
 .preview-image {
@@ -45,6 +68,16 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.image-preview-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 0 0 0 8px;
 }
 
 .discount-section {
@@ -59,10 +92,75 @@
   margin-bottom: 20px;
 }
 
-.mat-chip-grid {
-  border: 1px solid #ccc;
+// File input styling
+.upload-area {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: #aaa;
+    background-color: #f9f9f9;
+  }
+}
+
+.file-input {
+  display: none;
+}
+
+// AI Analysis section styling
+.ai-analysis-section {
+  padding: 20px 0;
+}
+
+.ai-header {
+  margin-bottom: 16px;
+}
+
+.ai-icon {
+  color: #673ab7;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.analysis-results {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.result-text {
+  padding: 8px 12px;
+  background-color: #f0f0f0;
   border-radius: 4px;
-  padding: 10px;
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.suggested-tags {
+  margin-top: 8px;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+// Stepper styling
+::ng-deep .mat-horizontal-stepper-header {
+  height: 72px;
+}
+
+::ng-deep .mat-step-icon {
+  background-color: #673ab7;
+}
+
+.stepper-nav {
+  padding-top: 16px;
+  border-top: 1px solid #eee;
 }
 
 /* Responsive adjustments */
@@ -77,5 +175,17 @@
   
   .section-title {
     font-size: 16px;
+  }
+  
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  ::ng-deep .mat-horizontal-stepper-header-container {
+    display: none !important;
+  }
+  
+  ::ng-deep .mat-horizontal-content-container {
+    padding: 0 !important;
   }
 }

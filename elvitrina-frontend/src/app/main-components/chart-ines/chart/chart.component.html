@@ -1,0 +1,80 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>El-Vitrina Analytics Dashboard</h1>
+    <p class="dashboard-subtitle">Comprehensive statistics and performance metrics</p>
+  </div>
+
+  <div class="chart-grid">
+    <!-- Store Category Distribution -->
+    <div class="chart-card">
+      <div class="chart-wrapper">
+        <div *ngIf="isLoading.storeCategory" class="loading-indicator">
+          <div class="spinner"></div>
+          <p>Loading data...</p>
+        </div>
+        <div *ngIf="hasError.storeCategory" class="error-badge">
+          <span>Failed to load data</span>
+        </div>
+        <canvas id="storeCategoryCanvas"></canvas>
+      </div>
+      <div class="chart-footer">
+        <p>Distribution of stores across different categories</p>
+      </div>
+    </div>
+
+    <!-- Store Feedback Analysis -->
+    <div class="chart-card">
+      <div class="chart-wrapper">
+        <div *ngIf="isLoading.feedback" class="loading-indicator">
+          <div class="spinner"></div>
+          <p>Loading data...</p>
+        </div>
+        <div *ngIf="hasError.feedback" class="error-badge">
+          <span>Failed to load data</span>
+        </div>
+        <canvas id="feedbackCanvas"></canvas>
+      </div>
+      <div class="chart-footer">
+        <p>Customer ratings distribution</p>
+      </div>
+    </div>
+
+    <!-- Product Status Distribution -->
+    <div class="chart-card">
+      <div class="chart-wrapper">
+        <div *ngIf="isLoading.productStatus" class="loading-indicator">
+          <div class="spinner"></div>
+          <p>Loading data...</p>
+        </div>
+        <div *ngIf="hasError.productStatus" class="error-badge">
+          <span>Failed to load data</span>
+        </div>
+        <canvas id="productStatusCanvas"></canvas>
+      </div>
+      <div class="chart-footer">
+        <p>Current product status distribution across the platform</p>
+      </div>
+    </div>
+
+    <!-- Product Category Performance -->
+    <div class="chart-card">
+      <div class="chart-wrapper">
+        <div *ngIf="isLoading.productCategory" class="loading-indicator">
+          <div class="spinner"></div>
+          <p>Loading data...</p>
+        </div>
+        <div *ngIf="hasError.productCategory" class="error-badge">
+          <span>Failed to load data</span>
+        </div>
+        <canvas id="productCategoryCanvas"></canvas>
+      </div>
+      <div class="chart-footer">
+        <p>Top performing product categories by sales volume</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="hasError.storeCategory || hasError.feedback || hasError.productStatus || hasError.productCategory" class="data-notice">
+    <p><strong>Note:</strong> Some charts failed to load. Please check your connection and try again later.</p>
+  </div>
+</div>

@@ -41,14 +41,16 @@
               </mat-error>
             </mat-form-field>
 
-            <!-- Address -->
-            <mat-form-field appearance="outline" class="w-100 mb-3">
-              <mat-label>Address</mat-label>
-              <input matInput formControlName="address" placeholder="Enter store address">
-              <mat-error *ngIf="storeForm.get('address')?.hasError('required')">
-                Address is required
-              </mat-error>
-            </mat-form-field>
+            <!-- Map Location -->
+            <div class="map-container mb-4">
+              <label class="form-label">Select Store Location</label>
+              <div id="map" class="map-frame"></div>
+              <div class="coordinates-display mt-2">
+                <small class="text-muted">
+                  Store Address: {{storeForm.get('address')?.value}}
+                </small>
+              </div>
+            </div>
 
             <!-- Store Profile Image URL -->
             <div class="form-group mb-4">

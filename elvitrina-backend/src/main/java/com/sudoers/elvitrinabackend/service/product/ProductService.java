@@ -5,6 +5,7 @@ import com.sudoers.elvitrinabackend.model.dto.ProductCreationDTO;
 import com.sudoers.elvitrinabackend.model.dto.ProductDTO;
 import com.sudoers.elvitrinabackend.model.dto.ProductSummaryDTO;
 import com.sudoers.elvitrinabackend.model.dto.ProductUpdateDTO;
+import com.sudoers.elvitrinabackend.model.dto.ImageAnalysisDTO;
 import com.sudoers.elvitrinabackend.model.entity.Product;
 import com.sudoers.elvitrinabackend.model.entity.Store;
 import com.sudoers.elvitrinabackend.model.enums.ProductCategoryType;
@@ -12,6 +13,7 @@ import com.sudoers.elvitrinabackend.model.enums.ProductStatus;
 import com.sudoers.elvitrinabackend.repository.ProductRepository;
 import com.sudoers.elvitrinabackend.repository.StoreRepository;
 import com.sudoers.elvitrinabackend.service.Image.ImageUploadService;
+import com.sudoers.elvitrinabackend.service.image.ImageAnalyzerService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,6 +39,8 @@ public class ProductService implements IProductService {
     private StoreRepository storeRepository;
     @Autowired
     private ImageUploadService imageUploadService;
+    @Autowired
+    private ImageAnalyzerService imageAnalyzerService;
     // ---- CRUD Operations ----
     @Override
     @Transactional
@@ -219,7 +226,12 @@ public class ProductService implements IProductService {
     @Override
     @Transactional(readOnly = true)
     public Map<ProductCategoryType, Long> countProductsByCategory() {
-        return productRepository.countByCategoryGroup();
+        List<Map<String, Object>> categoryCounts = productRepository.countByCategoryGroup();
+        return categoryCounts.stream()
+                             .collect(Collectors.toMap(
+                                 map -> (ProductCategoryType) map.get("category"),
+                                 map -> (Long) map.get("count")
+                             ));
     }
 
     @Override
@@ -381,6 +393,7 @@ public class ProductService implements IProductService {
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .hasDiscount(product.isHasDiscount())
+                .discountPercentage(product.getDiscountPercentage())
                 .status(product.getStatus())
                 .images(product.getImages())
                 .storeId(product.getStore() != null ? product.getStore().getStoreId() : null)
@@ -401,6 +414,7 @@ public class ProductService implements IProductService {
                 .mainImage(product.getImages() != null && !product.getImages().isEmpty() ?
                         product.getImages().get(0) : null)
                 .hasDiscount(product.isHasDiscount())
+                .discountPercentage(product.getDiscountPercentage())
                 .inStock(product.getStockQuantity() > 0)
                 .build();
     }
@@ -412,6 +426,7 @@ public class ProductService implements IProductService {
         entity.setStockQuantity(dto.getStockQuantity());
         entity.setCategory(dto.getCategory());
         entity.setHasDiscount(dto.isHasDiscount());
+        entity.setDiscountPercentage(dto.getDiscountPercentage());
         entity.setImages(dto.getImages());
         entity.setTags(dto.getTags());
     }
@@ -423,6 +438,7 @@ public class ProductService implements IProductService {
         entity.setStockQuantity(dto.getStockQuantity());
         entity.setCategory(dto.getCategory());
         entity.setHasDiscount(dto.isHasDiscount());
+        entity.setDiscountPercentage(dto.getDiscountPercentage());
         entity.setImages(dto.getImages());
         if (dto.getTags() != null) {  // Only update if tags are provided
             entity.setTags(dto.getTags());
@@ -474,6 +490,136 @@ public class ProductService implements IProductService {
             return  filename;
         } catch (IOException e) {
             throw new RuntimeException("Failed to save product image: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public ImageAnalysisDTO analyzeProductImage(Long productId, String imageUrl) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                
+        String imagePath = getFullImagePath(imageUrl);
+        
+        if (imagePath == null) {
+            return new ImageAnalysisDTO();
+        }
+        
+        Optional<String> category = imageAnalyzerService.getSuggestedCategory(imagePath);
+        List<String> tags = imageAnalyzerService.getSuggestedTags(imagePath);
+        Optional<String> description = imageAnalyzerService.getSuggestedDescription(imagePath);
+        
+        return new ImageAnalysisDTO(
+                category.orElse(null),
+                tags,
+                description.orElse(null)
+        );
+    }
+    
+    @Override
+    @Transactional
+    public ImageAnalysisDTO analyzeImageFile(MultipartFile imageFile) {
+        try {
+            // Create a temporary file
+            Path tempDir = Files.createTempDirectory("image_analysis");
+            Path tempFile = tempDir.resolve(imageFile.getOriginalFilename());
+            imageFile.transferTo(tempFile.toFile());
+            
+            String imagePath = tempFile.toString();
+            
+            Optional<String> category = imageAnalyzerService.getSuggestedCategory(imagePath);
+            List<String> tags = imageAnalyzerService.getSuggestedTags(imagePath);
+            Optional<String> description = imageAnalyzerService.getSuggestedDescription(imagePath);
+            
+            // Clean up the temporary file
+            Files.deleteIfExists(tempFile);
+            Files.deleteIfExists(tempDir);
+            
+            return new ImageAnalysisDTO(
+                    category.orElse(null),
+                    tags,
+                    description.orElse(null)
+            );
+        } catch (IOException e) {
+            return new ImageAnalysisDTO();
+        }
+    }
+    
+    @Override
+    @Transactional
+    public ProductDTO applyImageAnalysis(Long productId, String imageUrl, boolean applyTags, boolean applyCategory, boolean applyDescription) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                
+        String imagePath = getFullImagePath(imageUrl);
+        
+        if (imagePath == null) {
+            throw new IllegalArgumentException("Invalid image URL");
+        }
+        
+        if (applyTags) {
+            List<String> tags = imageAnalyzerService.getSuggestedTags(imagePath);
+            if (tags != null && !tags.isEmpty()) {
+                // Add tags to the product
+                if (product.getTags() == null) {
+                    product.setTags(new HashSet<>(tags));
+                } else {
+                    product.getTags().addAll(tags);
+                }
+            }
+        }
+        
+        if (applyCategory) {
+            Optional<String> categoryOpt = imageAnalyzerService.getSuggestedCategory(imagePath);
+            if (categoryOpt.isPresent()) {
+                try {
+                    String categoryStr = categoryOpt.get().trim();
+                    // Try to convert to enum if possible, basic conversion by making uppercase and removing spaces
+                    String formattedCategory = categoryStr.toUpperCase().replaceAll("\\s+", "_");
+                    try {
+                        ProductCategoryType categoryType = ProductCategoryType.valueOf(formattedCategory);
+                        product.setCategory(categoryType);
+                    } catch (IllegalArgumentException e) {
+                        // If cannot convert to enum, just log but don't fail
+                        System.out.println("Cannot map suggested category to enum: " + categoryStr);
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error processing category: " + e.getMessage());
+                }
+            }
+        }
+        
+        if (applyDescription) {
+            Optional<String> description = imageAnalyzerService.getSuggestedDescription(imagePath);
+            if (description.isPresent()) {
+                product.setDescription(description.get());
+            }
+        }
+        
+        product.setUpdatedAt(LocalDateTime.now());
+        
+        Product updatedProduct = productRepository.save(product);
+        return copyEntityToDto(updatedProduct);
+    }
+    
+    private String getFullImagePath(String imageUrl) {
+        // Convert the URL to a physical file path
+        try {
+            String baseUploadDir = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "product-images";
+            
+            // Extract filename from URL - assume URL is in format like "/uploads/product-images/filename.jpg"
+            String filename = imageUrl;
+            if (imageUrl.contains("/")) {
+                filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+            }
+            
+            Path imagePath = Paths.get(baseUploadDir, filename);
+            if (Files.exists(imagePath)) {
+                return imagePath.toString();
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
         }
     }
 

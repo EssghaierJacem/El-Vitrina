@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -13,6 +13,7 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { StoreService } from 'src/app/core/services/store/store.service';
 import { StoreCategoryType } from 'src/app/core/models/store/store-category-type.enum';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-store-edit',
@@ -34,20 +35,27 @@ import { StoreCategoryType } from 'src/app/core/models/store/store-category-type
   templateUrl: './store-edit.component.html',
   styleUrls: ['./store-edit.component.scss']
 })
-export class StoreEditComponent implements OnInit {
+export class StoreEditComponent implements OnInit, AfterViewInit {
 
   IMAGE_BASE_URL = 'http://localhost:8080/api/stores/store/images/';
 
   storeForm: FormGroup;
   isSubmitting = false;
   existingImageUrl: string | null = null;
- existingCoverImageUrl: string | null = null;
+  existingCoverImageUrl: string | null = null;
   storeId: number | null = null;
 
   imagePreview: string | null = null;
   coverImagePreview: string | null = null;
   
   categoryOptions = Object.values(StoreCategoryType);
+
+  private map: L.Map | undefined;
+  private marker: L.Marker | undefined;
+  selectedLocation = {
+    lat: 36.8065,
+    lng: 10.1815
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -66,36 +74,115 @@ export class StoreEditComponent implements OnInit {
     }
   }
 
+  ngAfterViewInit() {
+    // We'll initialize the map after we load the store data
+  }
+
   private initForm(): void {
     this.storeForm = this.fb.group({
       storeName: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', [Validators.maxLength(500)]],
       category: ['', Validators.required],
       address: ['', Validators.required],
-      image: [null, Validators.required],
-      coverImage: [null, Validators.required],
+      latitude: [this.selectedLocation.lat, Validators.required],
+      longitude: [this.selectedLocation.lng, Validators.required],
+      image: [null],
+      coverImage: [null],
       status: [true],
       featured: [false]
+    });
+  }
+
+  private extractCoordinates(address: string): { lat: number; lng: number } {
+    try {
+      const matches = address.match(/Lat: ([-\d.]+), Lng: ([-\d.]+)/);
+      if (matches && matches.length === 3) {
+        return {
+          lat: parseFloat(matches[1]),
+          lng: parseFloat(matches[2])
+        };
+      }
+    } catch (error) {
+      console.error('Error parsing coordinates:', error);
+    }
+    return this.selectedLocation; // Return default location if parsing fails
+  }
+
+  private formatCoordinatesAsAddress(lat: number, lng: number): string {
+    return `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+  }
+
+  private initializeMap() {
+    if (this.map) {
+      this.map.remove();
+    }
+
+    this.map = L.map('map').setView([this.selectedLocation.lat, this.selectedLocation.lng], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(this.map);
+
+    this.marker = L.marker([this.selectedLocation.lat, this.selectedLocation.lng], {
+      draggable: true
+    }).addTo(this.map);
+
+    this.marker.on('dragend', (event) => {
+      const marker = event.target;
+      const position = marker.getLatLng();
+      this.updateFormLocation(position.lat, position.lng);
+    });
+
+    this.map.on('click', (e: L.LeafletMouseEvent) => {
+      const { lat, lng } = e.latlng;
+      this.updateMarkerPosition(lat, lng);
+      this.updateFormLocation(lat, lng);
+    });
+  }
+
+  private updateMarkerPosition(lat: number, lng: number) {
+    if (this.marker && this.map) {
+      this.marker.setLatLng([lat, lng]);
+      this.map.panTo([lat, lng]);
+    }
+  }
+
+  private updateFormLocation(lat: number, lng: number) {
+    this.selectedLocation = { lat, lng };
+    this.storeForm.patchValue({
+      latitude: lat,
+      longitude: lng,
+      address: this.formatCoordinatesAsAddress(lat, lng)
     });
   }
 
   loadStore(id: number): void {
     this.storeService.getById(id).subscribe({
       next: (store) => {
+        // Extract coordinates from address
+        const coordinates = this.extractCoordinates(store.address);
+        this.selectedLocation = coordinates;
+
         this.storeForm.patchValue({
           storeName: store.storeName,
           description: store.description,
           category: store.category,
           address: store.address,
+          latitude: coordinates.lat,
+          longitude: coordinates.lng,
           status: store.status,
           featured: store.featured,
           image: null,
           coverImage: null
         });
-  
+
         const baseUrl = 'http://localhost:8080/api/stores/store/images/';
         this.existingImageUrl = store.image ? baseUrl + store.image : null;
         this.existingCoverImageUrl = store.coverImage ? baseUrl + store.coverImage : null;
+
+        // Initialize map after loading store data
+        setTimeout(() => this.initializeMap(), 100);
       },
       error: (error) => {
         console.error('Error loading store:', error);
@@ -148,7 +235,6 @@ export class StoreEditComponent implements OnInit {
       const formData = new FormData();
       const formValue = this.storeForm.value;
   
-      // Append all form values to FormData
       formData.append('storeName', formValue.storeName?.trim());
       formData.append('description', formValue.description?.trim());
       formData.append('category', formValue.category);
@@ -156,7 +242,6 @@ export class StoreEditComponent implements OnInit {
       formData.append('status', String(formValue.status));
       formData.append('featured', String(formValue.featured));
   
-      // Append image files if they exist
       if (formValue.image instanceof File) {
         formData.append('image', formValue.image);
       }
