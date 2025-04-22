@@ -6,6 +6,7 @@ import com.stripe.model.PaymentIntent;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.sudoers.elvitrinabackend.model.dto.PaymentDTO;
+import com.sudoers.elvitrinabackend.model.entity.Payment;
 import com.sudoers.elvitrinabackend.service.payment.PaymentService;
 import com.sudoers.elvitrinabackend.service.payment.StripeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,4 +119,11 @@ public class paymentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PutMapping("/update-status/{id}")
+    public ResponseEntity<Payment> updateStatus(@PathVariable Long id) {
+        Payment payment = paymentService.updateStatusToSuccess(id);
+        return ResponseEntity.ok(payment);
+    }
+
 }

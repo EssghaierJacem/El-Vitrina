@@ -118,4 +118,13 @@ public class PaymentService implements IPaymentService {
                 orderIds
         );
     }
+
+
+    public Payment updateStatusToSuccess(Long id) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Payment not found with id " + id));
+        payment.setPaystatus(PaymentStatusType.SUCCESS);
+        return paymentRepository.save(payment);
+    }
+
 }

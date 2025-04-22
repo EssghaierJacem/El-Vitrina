@@ -60,7 +60,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: FullComponent,
-   // canActivate: [AdminGuard],
+   canActivate: [AdminGuard],
     children: [
       {
         path: '',
