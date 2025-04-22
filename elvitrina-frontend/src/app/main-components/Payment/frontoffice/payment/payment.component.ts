@@ -1,6 +1,5 @@
 // payment.component.ts
 import { Component } from '@angular/core';
-import { loadStripe } from '@stripe/stripe-js';
 import { CustomOrder } from 'src/app/core/models/Panier/CustomOrder';
 import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
 
@@ -14,6 +13,7 @@ import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
 })
 export class PaymentComponent {
   amountToPay = 12000; // ////Exemple : 12000 centimes = 120€
+
 
   constructor(private paymentService: PaymentService) {}
 

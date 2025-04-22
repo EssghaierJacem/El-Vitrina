@@ -43,6 +43,8 @@ export class PayementCreationComponent  implements OnInit {
     transactionDate: null,
     orderIds: []
   };
+  calculateTotal: number = 0;
+
   today: Date = new Date();
   @Input() stepper!: MatStepper;
   @Output() paymentCreated = new EventEmitter<boolean>();
@@ -87,4 +89,12 @@ export class PayementCreationComponent  implements OnInit {
   this.methodSelected.emit(this.payment.method);
   this.stepper.next();
     }
+    onOrdersSelectionChange() {
+      this.calculateTotal = this.availableOrders
+        .filter(order => this.payment.orderIds.includes(order.id))
+        .reduce((sum, order) => sum + (order.calculateTotal || 0), 0);
+
+      this.payment.amount = this.calculateTotal;
+    }
+
 }

@@ -3,10 +3,12 @@ import { CustomOrderListComponent } from './custom-order-list/custom-order-list.
 import { CustomOrderCreateComponent } from './custom-order-create/custom-order-create.component';
 import { CustomOrderEditComponent } from './custom-order-edit/custom-order-edit.component';
 import { CustomOrderViewComponent } from './custom-order-view/custom-order-view.component';
+import { StatDashboardComponent } from './StatDashboard/stat-dashboard/stat-dashboard.component';
 
 export const customOrderRoutes: Routes = [
   { path: 'list', component: CustomOrderListComponent },
   { path: 'create', component: CustomOrderCreateComponent },
   { path: 'edit/:id', component: CustomOrderEditComponent },
-  { path: 'view/:id', component: CustomOrderViewComponent }
+  { path: 'view/:id', component: CustomOrderViewComponent },
+  { path: 'Stat', component: StatDashboardComponent}
 ];

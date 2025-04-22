@@ -52,7 +52,7 @@
     <button class="btn btn-secondary" [disabled]="currentQuestionIndex !== quizzes.length - 1">Results ➡</button>
   </div>
   <div *ngIf="allQuestionsAnswered()" class="quiz-buttons">
-    <button class="btn" (click)="showQuizResults()">Voir les résultats ➡</button>
+    <button class="btn" [routerLink]="['/quiz/recommendation']">Voir les résultats ➡</button>
   </div>  <p class="confirmation" *ngIf="confirmationMessage">{{ confirmationMessage }}</p>
 
 </div>

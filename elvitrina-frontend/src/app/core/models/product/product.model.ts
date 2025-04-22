@@ -5,6 +5,7 @@ import { Store } from '../store/store.model';
 //import { CustomOrder } from '../order/custom-order.model';
 
 export interface Product {
+name: any;
   productId: number;
   productName: string;
   description?: string;
@@ -21,7 +22,7 @@ export interface Product {
   storeId: number;
   store?: Store;
   //customOrders?: CustomOrder[];
-  
+
   // Additional UI properties
   isFavorite?: boolean;
   freeShipping?: boolean;

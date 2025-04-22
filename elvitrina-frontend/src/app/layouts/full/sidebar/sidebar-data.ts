@@ -60,104 +60,39 @@ export const navItems: NavItem[] = [
     displayName: 'Offers',
     iconName: 'point',
     route: '/dashboard/offers',
-  }, 
+  },
   {
-    displayName: 'Order & Payment',
-    iconName: 'shopping-cart',
-    children: [
-      {
-        displayName: 'Custom Order',
-        iconName: 'shopping-cart',
-        route: 'dashboard/custom-order',
-        children: [
-          {
-            displayName: 'List',
-            iconName: 'list',
-            route: 'dashboard/custom-order/list',
+    navCap: 'Order & Payment',
+  },
+       {
+        displayName: 'Order List',
+        iconName: 'list',
+        route: 'dashboard/custom-order/list',
           },
           {
-            displayName: 'Create',
-            iconName: 'plus-circle',
-            route: 'dashboard/custom-order/create',
-          }
-        ],
-      },
-      {
-        displayName: 'Payment',
-        iconName: 'credit-card',
-        route: 'dashboard/payment',
-        children: [
-          {
-            displayName: 'List',
-            iconName: 'list',
-            route: 'dashboard/payment/list',
+        displayName: 'Statistiques Overview',
+        iconName: 'stat',
+        route: 'dashboard/custom-order/Stat',
           },
           {
-            displayName: 'Create',
-            iconName: 'plus-circle',
-            route: 'dashboard/payment/create',
-          }
-        ],
-      },
+        displayName: 'Payment List',
+        iconName: 'list',
+        route: 'dashboard/payment/list',
+           },
+  {
+    navCap: ' Quiz ',
+  },
+  {
+  displayName: 'Quiz List',
+  iconName: 'list',
+  route: 'dashboard/quiz/list',
+},
+{
+  displayName: 'Create Quiz',
+  iconName: 'plus-circle',
+  route: 'dashboard/quiz/create',
+},
 
-    ],
-  },
-  {
-    displayName: 'Quiz',
-    iconName: 'clipboard-list',
-    children: [
-      {
-        displayName: 'Quiz',
-        iconName: 'clipboard-list',
-        route: 'dashboard/quiz',
-        children: [
-          {
-            displayName: 'Quiz List',
-            iconName: 'list',
-            route: 'dashboard/quiz/list',
-          },
-          {
-            displayName: 'Create Quiz',
-            iconName: 'plus-circle',
-            route: 'dashboard/quiz/create',
-          }
-        ],
-      },
-      {
-        displayName: 'Question',
-        iconName: 'point',
-        route: 'dashboard/quiz/question',
-        children: [
-          {
-            displayName: 'Quesion List',
-            iconName: 'help-circle',
-            route: 'dashboard/question/list'
-          },
-          {
-            displayName: 'Question Create',
-            iconName: 'plus-circle',
-            route: 'dashboard/question/create'
-          }
-        ]
-      },
-      {
-        displayName: 'Reponse ',
-        iconName: 'point',
-        route: 'dashboard/quiz/reponse',
-            children: [
-             { displayName: 'Reponse List',
-            iconName: 'list',
-            route: 'dashboard/reponse/list'
-          },
-          {
-            displayName: 'Reponse Create',
-            iconName: 'plus-circle',
-            route: 'dashboard/reponse/create'
-          }
-        ]
-      },
-    ],
-  },
   {
     navCap: 'Ui Components',
   },
