@@ -1,10 +1,12 @@
 package com.sudoers.elvitrinabackend.controller.user;
 
 import com.sudoers.elvitrinabackend.model.dto.ProductCardDTO;
+import com.sudoers.elvitrinabackend.model.dto.RecentActivityDTO;
 import com.sudoers.elvitrinabackend.model.dto.TopUserDTO;
 import com.sudoers.elvitrinabackend.repository.DonationRepository;
 import com.sudoers.elvitrinabackend.repository.ProductRepository;
 import com.sudoers.elvitrinabackend.repository.UserRepository;
+import com.sudoers.elvitrinabackend.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +23,7 @@ public class StatsController {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final DonationRepository donationRepository;
+    private final UserService userService;
 
     @GetMapping("/top-products")
     public List<ProductCardDTO> getTopProducts() {
@@ -90,6 +93,11 @@ public class StatsController {
                         .image(user.getImage())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/recent")
+    public List<RecentActivityDTO> getRecentActivities() {
+        return userService.getRecentActivities();
     }
 
 }

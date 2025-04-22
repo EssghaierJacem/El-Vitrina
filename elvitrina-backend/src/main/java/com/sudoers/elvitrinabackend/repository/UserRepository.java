@@ -32,4 +32,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
         ORDER BY u.points DESC
     """)
     List<User> findTopUsersByPoints();
+
+    List<User> findTop5ByOrderByRegistrationDateDesc();
+
 }
