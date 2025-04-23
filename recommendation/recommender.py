@@ -10,7 +10,7 @@ CORS(app)
 MYSQL_CONFIG = {
     'host': 'localhost',
     'user': 'root',
-    'password': '0000',
+    'password': 'root',
     'database': 'elvitrina'
 }
 
