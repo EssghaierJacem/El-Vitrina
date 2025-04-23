@@ -1,4 +1,4 @@
-import { EventParticipant } from '../event/event-participant.model';
+import { EventParticipant, EventParticipantEvent } from '../event/event-participant.model';
 import { EventSession, EventSessionRequestDTO } from '../event/event-session.model';
 import { EventTicket } from "../event/event-ticket.model";
 import { Store } from '../store/store.model';
@@ -19,7 +19,7 @@ export interface VirtualEvent {
   createdAt: Date;
   updatedAt: Date;
   store: Store;
-  participants: EventParticipant[];
+  participants: EventParticipantEvent[];
   tickets: EventTicket[];
   user: User;
 }

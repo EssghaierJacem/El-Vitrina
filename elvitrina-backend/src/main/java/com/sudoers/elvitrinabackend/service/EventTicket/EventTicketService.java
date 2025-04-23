@@ -18,7 +18,7 @@ public interface EventTicketService {
 
     EventTicketResponseDTO generateQRCodeForTicket(Long ticketId);
     boolean validateTicket(Long ticketId);
-    List<EventTicketResponseDTO> issueMultiSessionTickets(EventTicketRequestDTO requestDTO, int quantity);
+//    List<EventTicketResponseDTO> issueMultiSessionTickets(EventTicketRequestDTO requestDTO, int quantity);
     EventTicketResponseDTO applyEarlyBirdPricing(Long ticketId);
     EventTicketResponseDTO trackTicketAvailability(Long ticketId);
     EventTicketResponseDTO cancelTicket(Long ticketId);

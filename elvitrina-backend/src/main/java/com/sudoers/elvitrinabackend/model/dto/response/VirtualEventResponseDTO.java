@@ -27,6 +27,7 @@ public class VirtualEventResponseDTO {
     private String streamUrl;
     private String chatChannelId;
     private List<EventTicketResponseDTO> tickets;
+    private List<EventParticipantResponseDTO> participants;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

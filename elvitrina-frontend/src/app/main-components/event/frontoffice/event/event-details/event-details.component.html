@@ -6,64 +6,84 @@
 <div *ngIf="!loading && event" class="event-details-container">
   <!-- Event Overview -->
   <section class="event-overview">
-    <div class="event-header">
-      <h1>{{ event.title }}</h1>
-      <div class="event-meta">
-        <span><mat-icon>event</mat-icon> {{ event.startDateTime | date:'medium' }}</span>
-        <span><mat-icon>attach_money</mat-icon> {{ event.ticketPrice | currency }}</span>
-        <span><mat-icon>group</mat-icon> Max: {{ event.maxParticipants }}</span>
-        <span><mat-icon>live_tv</mat-icon> {{ event.eventType }} / {{ event.eventMode }}</span>
-      </div>
-    </div>
-    <p class="event-description">{{ event.description }}</p>
-  </section>
-
-  <!-- Event Timeline -->
-  <section class="timeline-section">
-    <h2 class="timeline-title">Event Timeline</h2>
-  
-    <div class="timeline-container">
-   
-      <div *ngFor="let session of event.sessions; let i = index"
-           [ngClass]="getTimelineCardClass(getSessionStatus(session))"
-           class="timeline-card">
-        <div class="timeline-dot" [ngClass]="getTimelineDotClass(getSessionStatus(session))"></div>
-        <div class="timeline-connector" [ngClass]="getTimelineLineClass(getSessionStatus(session))"></div>
-        <div class="timeline-content">
-          <h1 class="timeline-day">Day {{ i + 1}}</h1>
-          <h1 class="timeline-title">{{ session.sessionTitle }}</h1>
-          <h3 class="timeline-meta">{{ session.startTime | date:'medium' }}
-            <span *ngIf="session.endTime"> - {{ session.endTime | date:'medium' }}</span>
-          </h3>
+    <mat-card class="overview-card">
+      <mat-card-content>
+        <h1 class="event-title">{{ event.title }}</h1>
+        <p class="event-description">{{ event.description }}</p>
+        <div class="event-meta">
+          <span><mat-icon>event</mat-icon> {{ event.startDateTime | date:'medium' }}</span>
+          <span><mat-icon>attach_money</mat-icon> {{ event.ticketPrice | currency }}</span>
+          <span><mat-icon>group</mat-icon> Max: {{ event.maxParticipants }}</span>
+          <span><mat-icon>live_tv</mat-icon> {{ event.eventType }} / {{ event.eventMode }}</span>
         </div>
-      </div>
-
-     
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button class="join-button" (click)="joinEvent()">
+          <mat-icon>login</mat-icon> Join Event
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </section>
+  
+  <!-- Calendar -->
+  <section class="calendar-section">
+    <h2 class="section-title">
+      Event Calendar
+    </h2>
+    <mat-card class="calendar-card">
+      <mat-card-content>
+        <div *ngIf="role === 'seller' && !googleEventsLoaded" class="loading-calendar">
+          <mat-spinner diameter="30"></mat-spinner>
+          <span>Loading Google Calendar events...</span>
+        </div>
+        <app-calendar [calendarEvents]="displayedCalendarEvents" [role]="role"></app-calendar>
+      </mat-card-content>
+    </mat-card>
+  </section>
+  
+  <!-- Timeline -->
+  <section class="timeline-section">
+    <h2 class="section-title">Event Timeline</h2>
+    <div class="timeline-container">
+      <mat-card *ngFor="let session of event.sessions; let i = index" class="timeline-card" 
+                [ngClass]="getTimelineCardClass(getSessionStatus(session))">
+        <mat-card-content>
+          <div class="timeline-header">
+            <span class="timeline-day">Day {{ i + 1 }}</span>
+            <mat-icon [ngClass]="getSessionStatus(session) === 'done' ? 'done' : 'upcoming'">
+              {{ getSessionStatus(session) === 'done' ? 'check_circle' : 'schedule' }}
+            </mat-icon>
+          </div>
+          <h3 class="timeline-title">{{ session.sessionTitle }}</h3>
+          <p class="timeline-time">
+            {{ session.startTime | date:'medium' }}
+            <span *ngIf="session.endTime"> - {{ session.endTime | date:'medium' }}</span>
+          </p>
+        </mat-card-content>
+      </mat-card>
     </div>
   </section>
-
-  <!-- People Joined -->
-  <section class="event-participants">
-    <h2>People Joined</h2>
+  
+  <!-- Participants -->
+  <section class="participants-section">
+    <h2 class="section-title">People Joined</h2>
     <div class="participants-list">
       <ng-container *ngFor="let participant of event.participants">
-        <div class="participant-avatar" [matTooltip]="participant.user.name">
-          <img *ngIf="participant.user.image; else initials" [src]="participant.user.image" alt="avatar">
+        <div class="participant-avatar" [matTooltip]="participant.userName || 'Unknown'">
+          <img *ngIf="participant.userImage; else initials" [src]="participant.userImage" alt="avatar">
           <ng-template #initials>
-            <span>{{ participant.user.name ? participant.user.name[0] : '?' }}</span>
+            <span>{{ participant.userName ? participant.userName[0] : '?' }}</span>
           </ng-template>
         </div>
       </ng-container>
-      <span *ngIf="!event.participants.length" class="no-participants">No participants yet.</span>
+      <span *ngIf="!event.participants || event.participants.length === 0" class="no-participants">
+        No participants yet.
+      </span>
     </div>
   </section>
-<!-- In your Angular component template -->
-<div class="calendar-embed-container">
-  <app-calendar></app-calendar>
-</div>
-  <button (click)="addToCalendar()">Add to Google Calendar</button>
 </div>
 
 <div *ngIf="!loading && !event" class="no-data-message">
+  <mat-icon>error_outline</mat-icon>
   <p>Event not found.</p>
 </div>
