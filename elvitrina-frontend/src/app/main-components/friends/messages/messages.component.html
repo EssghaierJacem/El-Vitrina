@@ -109,8 +109,14 @@
         <input [(ngModel)]="messageContent" 
                placeholder="Type a message..." 
                (keyup.enter)="sendMessage()"
+               (keydown)="onKeydown($event)"
                (focus)="markAsRead()"
                (input)="onInputChange()">
+               <div *ngIf="suggestedText && suggestedText !== messageContent" class="ghost-suggestion">
+                💡 Suggested correction: 
+                <span class="user-input">{{ messageContent }}</span
+                ><span class="ghost">{{ suggestedText.slice(messageContent.length) }}</span>
+              </div>
         <button class="emoji-btn" title="Add emoji"><i class="fa fa-smile"></i></button>
       </div>
       <button class="send-btn" (click)="sendMessage()" [disabled]="!messageContent.trim()" title="Send message">
@@ -119,7 +125,6 @@
     </div>
   </div>
 
-  <!-- Empty State when no conversation is selected -->
   <div class="empty-state" *ngIf="!selectedFriend">
     <div class="empty-illustration">
       <i class="fa fa-comments"></i>

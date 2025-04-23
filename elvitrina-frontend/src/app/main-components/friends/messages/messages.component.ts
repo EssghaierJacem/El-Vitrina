@@ -29,6 +29,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
   unreadCounts: { [key: number]: number } = {};
   shouldScrollToBottom = false;
   loadedMessageIds: Set<number> = new Set();
+  suggestedText: string = '';
 
   constructor(
     private wsService: WebSocketService,
@@ -307,7 +308,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
 
   
   onInputChange(): void {
-    this.onTyping(true); 
+    this.onTyping(true);
   
     if (this.typingTimeout) {
       clearTimeout(this.typingTimeout);
@@ -316,6 +317,37 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
     this.typingTimeout = setTimeout(() => {
       this.onTyping(false);
     }, 2000);
+  
+    const trimmed = this.messageContent.trim();
+  
+    if (trimmed.length > 2) {
+      this.getCorrectionSuggestion(trimmed);
+    } else {
+      this.suggestedText = '';
+    }
+  }
+  
+  getCorrectionSuggestion(text: string) {
+    this.wsService.getCorrection(text).subscribe(
+      (suggested) => {
+        this.suggestedText = suggested !== text ? suggested : '';
+      },
+      (error) => {
+        console.error('Correction failed:', error);
+      }
+    );
+  }
+  
+  applySuggestion(): void {
+    this.messageContent = this.suggestedText;
+    this.suggestedText = '';
+  }
+
+  onKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Tab' && this.suggestedText) {
+      this.applySuggestion();
+      event.preventDefault(); 
+    }
   }
 
   isLoggedIn(): boolean {

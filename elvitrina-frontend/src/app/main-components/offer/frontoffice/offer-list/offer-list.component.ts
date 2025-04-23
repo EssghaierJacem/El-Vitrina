@@ -16,6 +16,8 @@ import { MatDivider } from '@angular/material/divider';
 import { MatNativeDateModule } from '@angular/material/core'; 
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -36,7 +38,8 @@ import { map } from 'rxjs/operators';
     MatDatepickerModule,
     MatFormFieldModule,
     MatNativeDateModule,
-    MatDivider
+    MatDivider,
+    HttpClientModule,
   ]
 })
 export class OfferListComponent implements OnInit {
@@ -45,12 +48,16 @@ export class OfferListComponent implements OnInit {
   searchText = '';
   startDate: Date | null = null;
   endDate: Date | null = null;
+  suggestedOffer: string = '';
 
-  constructor(private offerService: OfferService) {}
+  constructor(private offerService: OfferService, private http: HttpClient) {}
 
   ngOnInit(): void {
     this.offers$ = this.offerService.getAllOffers();
     this.filteredOffers$ = this.offers$; 
+
+    const interests = localStorage.getItem('interestedIn') || 'shopping';
+    this.fetchSuggestedOffer(interests);
   }
 
   applySearch(): void {
@@ -97,4 +104,23 @@ export class OfferListComponent implements OnInit {
       })
     );
   }
+
+  fetchSuggestedOffer(interests: string): void {
+    const payload = { interests };
+  
+    this.http.post(
+      'http://localhost:8080/api/ai/suggest-offer', 
+      payload,
+      { responseType: 'text' }
+    ).subscribe(
+      (response) => {
+        this.suggestedOffer = response;
+      },
+      (error) => {
+        console.error('AI suggestion failed', error);
+        this.suggestedOffer = '';
+      }
+    );
+  }
+  
 }

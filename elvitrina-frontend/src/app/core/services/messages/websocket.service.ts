@@ -191,4 +191,7 @@ export class WebSocketService {
     return this.http.get<{ [friendId: number]: Message }>(`${this.apiUrl}/last-all/${userId}`);
   }
   
+  getCorrection(text: string): Observable<string> {
+    return this.http.post('http://localhost:8080/api/corrections', text, { responseType: 'text' });
+  }
 }
