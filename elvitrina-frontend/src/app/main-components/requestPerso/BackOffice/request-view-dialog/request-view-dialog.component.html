@@ -1,0 +1,30 @@
+<h2>Request Details</h2>
+
+<p><strong>Request Name:</strong> {{ data.request.title }}</p>
+<p><strong>Description:</strong> {{ data.request.description }}</p>
+<p><strong>Tags:</strong> {{ data.request.tags }}</p>
+
+<!-- Display request image if available -->
+<div *ngIf="data.request.image">
+  <p><strong>Request Image:</strong></p>
+  <img [src]="data.request.image" alt="Request Image" style="max-width: 100%; height: auto;">
+</div>
+
+<h3>Proposals</h3>
+<div *ngIf="data.proposals.length; else noProposals">
+  <ul>
+    <li *ngFor="let proposal of data.proposals">
+      <p><strong>Proposal Title:</strong> {{ proposal.price }}</p>
+      <p><strong>Description:</strong> {{ proposal.description }}</p>
+    
+
+
+    </li>
+  </ul>
+</div>
+
+<ng-template #noProposals>
+  <p>No proposals available for this request.</p>
+</ng-template>
+
+

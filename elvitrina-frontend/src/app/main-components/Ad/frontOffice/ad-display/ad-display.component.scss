@@ -1,48 +1,20 @@
-/* Container for all ads */
-.ad-container {
-  position: relative;
-  z-index: 1000;
-}
-
-/* Base Banner Style */
+/* Banner Base Styles */
 .ad-banner {
   position: fixed;
   background: white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  padding: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
   overflow: hidden;
+  z-index: 1000;
+  transition: all 0.3s ease;
 }
 
-/* Position-Specific Styles */
-.position-top {
-  top: 0;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  text-align: center;
+.ad-banner a {
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }
 
-.position-bottom {
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.position-left {
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.position-right {
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-/* Content Styles */
 .ad-image {
   max-width: 100%;
   max-height: 100%;
@@ -50,8 +22,18 @@
 }
 
 .text-content {
-  padding: 10px;
+  padding: 15px;
   text-align: center;
+}
+
+.text-content h3 {
+  margin: 0 0 8px 0;
+  color: #1976d2;
+}
+
+.text-content p {
+  margin: 0;
+  color: #666;
 }
 
 .vertical-text {
@@ -61,14 +43,63 @@
   margin: 0 auto;
 }
 
-/* Close Button */
 .close-btn {
   position: absolute;
   top: 5px;
   right: 5px;
-  background: transparent;
+  background: rgba(0,0,0,0.5);
+  color: white;
   border: none;
-  font-size: 16px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 14px;
   cursor: pointer;
-  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Position Specific */
+.position-top {
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 728px;
+  max-width: 90%;
+}
+
+.position-bottom {
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 728px;
+  max-width: 90%;
+}
+
+.position-left {
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 160px;
+  max-height: 90vh;
+}
+
+.position-right {
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 160px;
+  max-height: 90vh;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .position-left, .position-right {
+    display: none;
+  }
+  
+  .position-top, .position-bottom {
+    width: 95%;
+  }
 }

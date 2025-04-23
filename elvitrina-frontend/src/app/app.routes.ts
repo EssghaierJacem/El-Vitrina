@@ -58,6 +58,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/Ad/frontOffice/frontoffice_ad.routes').then((m) => m.AdCreate),
       },
+      {
+        path: 'RequestGenerate',
+        loadChildren: () =>
+          import('./main-components/threedgeneration/threedgeneration.routes').then((m) => m.RequestGenerate),
+      },
     ],
   },
 

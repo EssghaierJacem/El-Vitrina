@@ -70,7 +70,7 @@ public class FriendRequestService {
 
     public FriendRequestDTO rejectFriendRequest(Long requestId) {
         FriendRequest request = friendRequestRepository.findById(requestId).orElseThrow(() -> new RuntimeException("Friend request not found"));
-        request.setStatus(RequestStatus.DECLINED);
+        request.setStatus(RequestStatus.REJECTED);
         FriendRequest updatedRequest = friendRequestRepository.save(request);
 
         return new FriendRequestDTO(
