@@ -41,4 +41,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByTagsContaining(String tag);
 
 
+
+    List<Product> findTop4ByOrderByCreatedAtDesc();
+
+    @Query("""
+        SELECT FUNCTION('MONTH', p.createdAt) AS month, COUNT(p)
+        FROM Product p
+        WHERE p.createdAt IS NOT NULL
+        GROUP BY FUNCTION('MONTH', p.createdAt)
+        ORDER BY FUNCTION('MONTH', p.createdAt)
+    """)
+    List<Object[]> countProductsAddedPerMonth();
 }
