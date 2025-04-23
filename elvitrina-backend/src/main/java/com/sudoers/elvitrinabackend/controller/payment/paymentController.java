@@ -89,7 +89,7 @@ public class paymentController {
 
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
-                    .setSuccessUrl("http://localhost:4200/success")
+                    .setSuccessUrl("http://localhost:4200/payment/payment-success")
                     .setCancelUrl("http://localhost:4200/cancel")
                     .addLineItem(
                             SessionCreateParams.LineItem.builder()
@@ -120,10 +120,11 @@ public class paymentController {
         }
     }
 
-    @PutMapping("/update-status/{id}")
-    public ResponseEntity<Payment> updateStatus(@PathVariable Long id) {
+    @PutMapping("/updateStatusToSuccess/{id}")
+    public ResponseEntity<PaymentDTO> updateStatusToSuccess(@PathVariable Long id) {
         Payment payment = paymentService.updateStatusToSuccess(id);
-        return ResponseEntity.ok(payment);
+        return ResponseEntity.ok(paymentService.convertToDTO(payment));
     }
+
 
 }

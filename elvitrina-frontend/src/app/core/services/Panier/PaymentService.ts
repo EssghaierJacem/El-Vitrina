@@ -54,8 +54,9 @@ export class PaymentService {
     );  }
 
 
-  updateStatusToSuccess(id: number): Observable<Payment> {
-    return this.http.put<Payment>(`${this.apiUrl}/update-status/${id}`, {});
-  }
+    updateStatusToSuccess(id: number): Observable<Payment> {
+      return this.http.put<Payment>(`${this.apiUrl}/updateStatusToSuccess/${id}`, {});
+    }
+
 
 }

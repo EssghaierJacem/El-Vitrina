@@ -104,7 +104,7 @@ public class PaymentService implements IPaymentService {
         return convertToDTO(paymentRepository.save(payment));
     }
 
-    private PaymentDTO convertToDTO(Payment payment) {
+    public PaymentDTO convertToDTO(Payment payment) {
         List<Long> orderIds = payment.getOrders() != null
                 ? payment.getOrders().stream().map(CustomOrder::getId).collect(Collectors.toList())
                 : null;
