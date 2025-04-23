@@ -32,4 +32,8 @@ public class ProposalPersoServiceAdmin {
     public void deleteProposalPerso(Long id) {
         proposalPersoRepository.deleteById(id);
     }
+
+    public List<ProposalPerso> getProposalsByRequestId(Long requestId) {
+        return proposalPersoRepository.findProposalPersoByRequestPersoId(requestId); // Custom method to fetch all proposals for a request
+    }
 }

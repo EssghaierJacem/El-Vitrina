@@ -28,6 +28,11 @@ export class LoginComponent implements OnInit {
   recaptchaToken: string = '';
   hidePassword = true;
   rememberDevice = false;
+  selectedFile!: File;
+  isFaceLoginLoading = false;
+  isCameraOn = false;
+  videoElement!: HTMLVideoElement;
+  canvasElement!: HTMLCanvasElement;
   year = new Date().getFullYear();
 
   constructor(
@@ -159,4 +164,103 @@ export class LoginComponent implements OnInit {
   togglePasswordVisibility(): void {
     this.hidePassword = !this.hidePassword;
   }
+
+  onFaceFileSelected(event: any): void {
+    if (event.target.files.length > 0) {
+      this.selectedFile = event.target.files[0];
+    }
+  }
+  
+  onFaceLogin(): void {
+    if (!this.selectedFile) {
+      this.snackBar.open('Please select a face image first.', 'Close', { duration: 3000, panelClass: 'error-snackbar' });
+      return;
+    }
+  
+    this.isFaceLoginLoading = true;
+  
+    this.authService.faceLogin(this.selectedFile)
+      .pipe(finalize(() => this.isFaceLoginLoading = false))
+      .subscribe({
+        next: (res) => {
+          this.tokenService.saveToken(res.token);
+          const userRole = this.tokenService.getRole();
+          
+          this.snackBar.open('Face login successful!', 'Close', { 
+            duration: 3000,
+            panelClass: 'success-snackbar'
+          });
+  
+          this.router.navigate([userRole === 'ADMIN' ? '/dashboard' : '/']);
+        },
+        error: (err) => {
+          console.error(err);
+          this.snackBar.open('Face not recognized. Please try again.', 'Close', { 
+            duration: 3000,
+            panelClass: 'error-snackbar'
+          });
+        }
+      });
+  }
+
+  startCamera(): void {
+    this.isCameraOn = true;
+    
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((stream) => {
+        this.videoElement = document.querySelector('video')!;
+        this.videoElement.srcObject = stream;
+        this.videoElement.play();
+      })
+      .catch((err) => {
+        console.error('Error accessing camera', err);
+        this.snackBar.open('Cannot access camera. Please allow permissions.', 'Close', { duration: 3000 });
+      });
+  }
+  
+  captureAndLogin(): void {
+    this.canvasElement = document.createElement('canvas');
+    this.canvasElement.width = this.videoElement.videoWidth;
+    this.canvasElement.height = this.videoElement.videoHeight;
+  
+    const context = this.canvasElement.getContext('2d');
+    if (context) {
+      context.drawImage(this.videoElement, 0, 0, this.canvasElement.width, this.canvasElement.height);
+  
+      this.canvasElement.toBlob((blob) => {
+        if (blob) {
+          const file = new File([blob], 'face_capture.jpg', { type: 'image/jpeg' });
+  
+          this.isFaceLoginLoading = true;
+          this.authService.faceLogin(file)
+            .pipe(finalize(() => this.isFaceLoginLoading = false))
+            .subscribe({
+              next: (res) => {
+                this.tokenService.saveToken(res.token);
+                const userRole = this.tokenService.getRole();
+                
+                this.snackBar.open('Face login successful!', 'Close', { duration: 3000, panelClass: 'success-snackbar' });
+  
+                this.router.navigate([userRole === 'ADMIN' ? '/dashboard' : '/']);
+              },
+              error: (err) => {
+                console.error(err);
+                this.snackBar.open('Face not recognized. Please try again.', 'Close', { duration: 3000, panelClass: 'error-snackbar' });
+              }
+            });
+        }
+      }, 'image/jpeg');
+    }
+  }
+  
+  stopCamera(): void {
+    this.isCameraOn = false;
+    const video = document.querySelector('video');
+    if (video && video.srcObject) {
+      const stream = video.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+      video.srcObject = null;
+    }
+  }
+  
 }

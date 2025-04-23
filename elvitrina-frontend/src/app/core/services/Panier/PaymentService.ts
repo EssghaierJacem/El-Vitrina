@@ -7,7 +7,7 @@ import { Payment } from '../../models/Panier/payment';
   providedIn: 'root'
 })
 export class PaymentService {
-  private apiUrl = 'http://localhost:8081/api/payments';
+  private apiUrl = 'http://localhost:8080/api/payments';
 
   constructor(private http: HttpClient) {}
 
@@ -49,8 +49,14 @@ export class PaymentService {
   }
   createCheckoutSession(amount: number) {
     return this.http.post<{ url: string }>(
-      'http://localhost:8081/api/payments/create-checkout-session',
+      'http://localhost:8080/api/payments/create-checkout-session',
       { amount }
-    );
-  }
+    );  }
+
+
+    updateStatusToSuccess(id: number): Observable<Payment> {
+      return this.http.put<Payment>(`${this.apiUrl}/updateStatusToSuccess/${id}`, {});
+    }
+
+
 }

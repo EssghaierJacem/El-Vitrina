@@ -6,33 +6,74 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CustomOrder } from 'src/app/core/models/Panier/CustomOrder';
 import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
+import { TokenService } from 'src/app/core/services/user/TokenService';
 
 @Component({
   selector: 'app-pending-orders',
-  imports: [ CommonModule,
+  standalone: true,
+  imports: [
+    CommonModule,
     FormsModule,
     RouterModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
-    MatButtonModule],
+    MatButtonModule,
+    MatSnackBarModule
+  ],
   templateUrl: './pending-orders.component.html',
   styleUrl: './pending-orders.component.scss'
 })
-export class PendingOrdersComponent   implements OnInit{
+export class PendingOrdersComponent implements OnInit {
 
   pendingOrders: CustomOrder[] = [];
   searchText: string = '';
+  currentUser: any;
+  userId: number | null = null;
 
-  constructor(private orderService: CustomOrderService) {}
+  constructor(
+    private orderService: CustomOrderService,
+    private tokenService: TokenService,
+    private snackBar: MatSnackBar,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    const token = this.tokenService.getToken();
+    if (!token) {
+      this.snackBar.open('Connectez-vous pour accéder à vos commandes.', 'Fermer', {
+        duration: 3000,
+        panelClass: ['error-snackbar']
+      });
+      this.router.navigate(['/authentication/login']);
+    } else {
+      this.loadCurrentUser();
+      this.loadPendingOrders();
+    }
+  }
+
+  private loadCurrentUser(): void {
+    const decodedToken = this.tokenService.getDecodedToken();
+    if (decodedToken) {
+      this.userId = decodedToken.id ?? null;
+      this.currentUser = {
+        id: this.userId,
+        name: decodedToken.firstname || '',
+        email: decodedToken.email || ''
+      };
+    }
+  }
+
+  private loadPendingOrders(): void {
     this.orderService.getAllOrders().subscribe((data: CustomOrder[]) => {
-      this.pendingOrders = data.filter(order => order.status === 'PENDING');
+      this.pendingOrders = data.filter(order =>
+        order.status?.toLowerCase() === 'pending' && order.userId === this.userId
+      );
     });
   }
 

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -16,6 +16,10 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { RequestPersoService } from 'src/app/core/services/requestPerso/request-perso.service';
 import { TokenService } from 'src/app/core/services/user/TokenService';
 import { ConfirmDialogComponent } from './confirm-dialog.component';
+import { RequestPerso } from 'src/app/core/models/requestPerso/requestPerso.model';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { AdminRequestPersoService } from 'src/app/core/services/requestPerso/request-perso-admin.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-request-perso-list',
@@ -35,6 +39,8 @@ import { ConfirmDialogComponent } from './confirm-dialog.component';
     MatGridListModule,
     MatDialogModule, // Add this
     ConfirmDialogComponent ,
+    MatProgressBarModule,
+    FormsModule,
   ],
   templateUrl: './request-perso-list.component.html',
   styleUrls: ['./request-perso-list.component.scss']
@@ -46,6 +52,10 @@ export class RequestPersoListComponent {
   currentUser: any;
   firstName = '';
   email = '';
+
+  private adminRequestPersoService = inject(AdminRequestPersoService);
+  private toastr = inject(ToastrService);
+
   mineRequestsCount = 0;
 othersRequestsCount = 0;
 allRequestsCount = 0;
@@ -99,6 +109,7 @@ allRequestsCount = 0;
         this.allrequests = [...this.originalRequests];
         this.updateRequestCounts(); // Add this line
         this.applyFilter(this.filter);
+        console.log('Fetched Requests:', this.allrequests);
       },
       error: (error) => {
         console.error('Error fetching requests:', error);
@@ -110,10 +121,16 @@ allRequestsCount = 0;
     });
   }
   updateRequestCounts(): void {
-    this.allRequestsCount = this.originalRequests.length;
-    this.mineRequestsCount = this.originalRequests.filter(r => r.user?.id === this.userId).length;
+    // All requests with Accepted status
+    this.allRequestsCount = this.originalRequests.filter(request => request.status === 'ACCEPTED').length;
+  
+    // User's accepted requests count
+    this.mineRequestsCount = this.originalRequests.filter(request => request.status === 'ACCEPTED' && request.user?.id === this.userId).length;
+  
+    // Others' accepted requests count
     this.othersRequestsCount = this.allRequestsCount - this.mineRequestsCount;
-  }  
+  }
+  
   applyFilter(filterType: 'all' | 'mine' | 'others'): void {
     this.filter = filterType;
     
@@ -213,5 +230,34 @@ allRequestsCount = 0;
       }
     });
   }
-  
+  // Calculate "heat" score (0-100)
+getRequestHeat(request: RequestPerso): number {
+  const proposalScore = Math.min(request.proposals.length * 10, 50);
+  const viewScore = Math.min(request.viewCount, 50);
+  return proposalScore + viewScore;
+}
+
+getHeatLevelClass(request: RequestPerso): string {
+  const heat = this.getRequestHeat(request);
+  if (heat <= 2) return 'cool';
+  if (heat <= 5) return 'warming';
+  if (heat <= 10) return 'hot';
+  return 'blazing';
+}
+ changeStatus(request: RequestPerso, newStatus: string): void {
+    const confirmAction = confirm(`Are you sure you want to report this request? by doing this the request will be hidden untill the admin review it`);
+    if (!confirmAction) return;
+
+    const updated = { ...request, status: newStatus };
+    this.adminRequestPersoService.updateRequestPerso(request.id!, updated).subscribe({
+      next: () => {
+        request.status = newStatus;
+        this.toastr.success('Statut mis à jour');
+        this.updateRequestCounts();
+      },
+      error: () => this.toastr.error('Erreur lors de la mise à jour')
+    });
+  }
+
+
 }

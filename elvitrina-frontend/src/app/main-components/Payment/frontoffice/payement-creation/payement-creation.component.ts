@@ -8,11 +8,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatStepper } from '@angular/material/stepper';
 import { Router, RouterModule } from '@angular/router';
 import { PaymentMethodType } from 'src/app/core/models/Panier/PaymentMethodType.type';
 import { PaymentStatusType } from 'src/app/core/models/Panier/PaymentStatusType.type';
 import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
 import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
+import { CheckoutStepperComponent } from '../checkout-stepper/checkout-stepper.component';
 
 @Component({
   selector: 'app-payement-creation',
@@ -23,6 +25,7 @@ import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
         MatDatepickerModule,
         MatNativeDateModule,
         RouterModule,
+
         MatSelectModule,
         MatOptionModule,
         CommonModule,
@@ -40,9 +43,13 @@ export class PayementCreationComponent  implements OnInit {
     transactionDate: null,
     orderIds: []
   };
+  calculateTotal: number = 0;
+
   today: Date = new Date();
+  @Input() stepper!: MatStepper;
   @Output() paymentCreated = new EventEmitter<boolean>();
   @Output() methodSelected = new EventEmitter<PaymentMethodType>();
+  @Input() selectedMethod: any; // Assurez-vous que cela correspond bien au type de la méthode de paiement
 
 
 
@@ -80,5 +87,14 @@ export class PayementCreationComponent  implements OnInit {
       });
       this.paymentCreated.emit(true);
   this.methodSelected.emit(this.payment.method);
+  this.stepper.next();
     }
+    onOrdersSelectionChange() {
+      this.calculateTotal = this.availableOrders
+        .filter(order => this.payment.orderIds.includes(order.id))
+        .reduce((sum, order) => sum + (order.calculateTotal || 0), 0);
+
+      this.payment.amount = this.calculateTotal;
+    }
+
 }

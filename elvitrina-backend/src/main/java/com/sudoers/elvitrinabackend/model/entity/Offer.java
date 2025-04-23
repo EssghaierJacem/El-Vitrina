@@ -42,7 +42,6 @@ public class Offer {
     private OfferType offer;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    @NotNull(message = "User is mandatory")
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 }

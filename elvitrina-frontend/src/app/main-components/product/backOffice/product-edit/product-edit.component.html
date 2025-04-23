@@ -1,141 +1,144 @@
-<div class="container mt-4">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <button mat-icon-button (click)="onCancel()">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        Edit Product
-      </mat-card-title>
-    </mat-card-header>
-
+<div class="product-edit-container">
+  <mat-card class="cardWithShadow">
     <mat-card-content>
-      <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="mt-4">
-        <!-- Basic Information -->
-        <div class="form-section">
-          <h3>Basic Information</h3>
-          
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Product Name</mat-label>
-            <input matInput formControlName="productName" placeholder="Enter product name">
-            <mat-error *ngIf="productForm.get('productName')?.hasError('required')">
-              Product name is required
-            </mat-error>
-            <mat-error *ngIf="productForm.get('productName')?.hasError('maxlength')">
-              Product name cannot exceed 100 characters
-            </mat-error>
-          </mat-form-field>
+      <!-- Header with Back Button -->
+      <div class="d-flex justify-content-between align-items-center m-b-16">
+        <div class="d-flex align-items-center">
+          <button mat-icon-button color="primary" (click)="onCancel()">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <mat-card-title>Edit Product</mat-card-title>
+        </div>
+      </div>
 
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description" rows="3" placeholder="Enter product description"></textarea>
-            <mat-error *ngIf="productForm.get('description')?.hasError('maxlength')">
-              Description cannot exceed 500 characters
-            </mat-error>
-          </mat-form-field>
+      <!-- Form -->
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="m-t-16">
+        <!-- Basic Information Section -->
+        <div class="section-title m-b-16">Basic Information</div>
+        
+        <!-- Product Name -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Product Name</mat-label>
+          <input matInput formControlName="productName" required>
+          <mat-error *ngIf="productForm.get('productName')?.hasError('required')">
+            Product name is required
+          </mat-error>
+          <mat-error *ngIf="productForm.get('productName')?.hasError('maxlength')">
+            Product name must be less than 100 characters
+          </mat-error>
+        </mat-form-field>
 
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Category</mat-label>
-            <mat-select formControlName="category">
-              <mat-option *ngFor="let category of categories" [value]="category">
-                {{ getCategoryDisplayName(category) }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="productForm.get('category')?.hasError('required')">
-              Category is required
-            </mat-error>
-          </mat-form-field>
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="4"></textarea>
+          <mat-error *ngIf="productForm.get('description')?.hasError('maxlength')">
+            Description must be less than 500 characters
+          </mat-error>
+        </mat-form-field>
 
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Store</mat-label>
-            <mat-select formControlName="storeId">
-              <mat-option *ngFor="let store of stores" [value]="store.storeId">
-                {{ store.storeName }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="productForm.get('storeId')?.hasError('required')">
-              Store is required
-            </mat-error>
-          </mat-form-field>
+        <!-- Category -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="category" required>
+            <mat-option *ngFor="let category of categories" [value]="category">
+              {{ getCategoryDisplayName(category) }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="productForm.get('category')?.hasError('required')">
+            Category is required
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Store -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Store</mat-label>
+          <mat-select formControlName="storeId" required>
+            <mat-option *ngFor="let store of stores" [value]="store.storeId">
+              {{ store.storeName }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="productForm.get('storeId')?.hasError('required')">
+            Store is required
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Pricing and Inventory Section -->
+        <div class="section-title m-t-24 m-b-16">Pricing and Inventory</div>
+        
+        <!-- Price -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Price</mat-label>
+          <input matInput type="number" formControlName="price" required min="0">
+          <mat-error *ngIf="productForm.get('price')?.hasError('required')">
+            Price is required
+          </mat-error>
+          <mat-error *ngIf="productForm.get('price')?.hasError('min')">
+            Price must be greater than or equal to 0
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Stock Quantity -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Stock Quantity</mat-label>
+          <input matInput type="number" formControlName="stockQuantity" required min="0">
+          <mat-error *ngIf="productForm.get('stockQuantity')?.hasError('required')">
+            Stock quantity is required
+          </mat-error>
+          <mat-error *ngIf="productForm.get('stockQuantity')?.hasError('min')">
+            Stock quantity must be greater than or equal to 0
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Discount Options -->
+        <div class="m-b-16">
+          <mat-checkbox formControlName="hasDiscount" color="primary">
+            Has Discount
+          </mat-checkbox>
         </div>
 
-        <!-- Pricing and Inventory -->
-        <div class="form-section">
-          <h3>Pricing and Inventory</h3>
-          
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Price</mat-label>
-            <input matInput type="number" formControlName="price" min="0" step="0.01">
-            <mat-error *ngIf="productForm.get('price')?.hasError('required')">
-              Price is required
-            </mat-error>
-            <mat-error *ngIf="productForm.get('price')?.hasError('min')">
-              Price must be greater than or equal to 0
-            </mat-error>
-          </mat-form-field>
+        <!-- Discount Percentage -->
+        <mat-form-field appearance="outline" class="w-100" *ngIf="productForm.get('hasDiscount')?.value">
+          <mat-label>Discount Percentage</mat-label>
+          <input matInput type="number" formControlName="discountPercentage" min="0" max="100">
+          <mat-error *ngIf="productForm.get('discountPercentage')?.hasError('min')">
+            Discount percentage must be greater than or equal to 0
+          </mat-error>
+          <mat-error *ngIf="productForm.get('discountPercentage')?.hasError('max')">
+            Discount percentage cannot exceed 100
+          </mat-error>
+        </mat-form-field>
 
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Stock Quantity</mat-label>
-            <input matInput type="number" formControlName="stockQuantity" min="0">
-            <mat-error *ngIf="productForm.get('stockQuantity')?.hasError('required')">
-              Stock quantity is required
-            </mat-error>
-            <mat-error *ngIf="productForm.get('stockQuantity')?.hasError('min')">
-              Stock quantity must be greater than or equal to 0
-            </mat-error>
-          </mat-form-field>
-
-          <div class="checkbox-group">
-            <mat-checkbox formControlName="hasDiscount">Has Discount</mat-checkbox>
-            <mat-checkbox formControlName="freeShipping">Free Shipping</mat-checkbox>
-            <mat-checkbox formControlName="isBestseller">Is Bestseller</mat-checkbox>
-          </div>
-
-          <mat-form-field appearance="outline" class="w-100" *ngIf="productForm.get('hasDiscount')?.value">
-            <mat-label>Discount Percentage</mat-label>
-            <input matInput type="number" formControlName="discountPercentage" min="0" max="100">
-            <mat-error *ngIf="productForm.get('discountPercentage')?.hasError('min')">
-              Discount percentage must be greater than or equal to 0
-            </mat-error>
-            <mat-error *ngIf="productForm.get('discountPercentage')?.hasError('max')">
-              Discount percentage cannot exceed 100
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Images -->
-        <div class="form-section">
-          <h3>Images</h3>
-          
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Image URLs</mat-label>
-            <textarea matInput formControlName="images" rows="3" 
-                      placeholder="Enter image URLs separated by commas"></textarea>
-            <mat-hint>Enter multiple image URLs separated by commas</mat-hint>
-          </mat-form-field>
+        <!-- Free Shipping -->
+        <div class="m-b-16">
+          <mat-checkbox formControlName="freeShipping" color="primary">
+            Free Shipping
+          </mat-checkbox>
         </div>
 
         <!-- Status -->
-        <div class="form-section">
-          <h3>Status</h3>
-          
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Status</mat-label>
-            <mat-select formControlName="status">
-              <mat-option *ngFor="let status of statusOptions" [value]="status">
-                {{ status }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="productForm.get('status')?.hasError('required')">
-              Status is required
-            </mat-error>
-          </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status" required>
+            <mat-option *ngFor="let status of statusOptions" [value]="status">
+              {{ status }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="productForm.get('status')?.hasError('required')">
+            Status is required
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Images -->
+        <div class="form-group">
+          <label>Upload New Product Images</label>
+          <input type="file" (change)="onImagesSelected($event)" multiple accept="image/*">
         </div>
 
         <!-- Action Buttons -->
-        <div class="form-actions">
+        <div class="d-flex justify-content-end gap-2 m-t-24">
           <button mat-button type="button" (click)="onCancel()">Cancel</button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="!productForm.valid || loading">
+          <button mat-raised-button color="primary" type="submit" [disabled]="productForm.invalid || loading">
             <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
             <span *ngIf="!loading">Update Product</span>
           </button>
@@ -143,4 +146,9 @@
       </form>
     </mat-card-content>
   </mat-card>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
 </div>

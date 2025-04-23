@@ -210,3 +210,28 @@ mat-card-header {
       font-size: 0.85rem;
     }
   }
+  .image-upload-container {
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .image-preview {
+    margin-top: 16px;
+    max-width: 300px;
+    max-height: 300px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .preview-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .full-width {
+    width: 100%;
+  }

@@ -17,13 +17,27 @@
 
     <!-- Blog Post Content -->
     <div class="m-b-24">
-      <h3 class="post-title">{{ blogPost.title }}</h3>
-      <p class="post-content">{{ blogPost.content }}</p>
+
+      
+      <h3 class="post-title">Title : {{ blogPost.title }}</h3>
+      <p class="post-content">Content : {{ blogPost.content }}</p>
+
+      <!-- Image Preview with Correct URL -->
+      <div *ngIf="blogPost.image; else noImage" class="image-container mb-3 text-center">
+        <img [src]="getImageUrl(blogPost.image)" alt="Blog Post Image" class="blog-post-image"/>
+      </div>
+
+      <ng-template #noImage>
+        <div class="image-container mb-3 text-center">
+          <img src="path/to/default/image.jpg" alt="Default Image" class="blog-post-image"/>
+        </div>
+      </ng-template>
+
     </div>
 
     <mat-divider class="m-b-16"></mat-divider>
 
-    <!-- Additional Info -->
+    <!-- Additional Info Section -->
     <div class="additional-info">
       <h4 class="section-subtitle">Additional Information</h4>
       <div class="info-item d-flex align-items-center gap-2">
@@ -41,10 +55,6 @@
       <div class="info-item d-flex align-items-center gap-2">
         <mat-icon>tag</mat-icon>
         <p><strong>Tags:</strong> {{ blogPost.tag || 'None' }}</p>
-      </div>
-      <div class="info-item d-flex align-items-center gap-2">
-        <mat-icon>thumb_up</mat-icon>
-        <p><strong>Reactions:</strong> {{ blogPost.reactionNumber }}</p>
       </div>
       <div class="info-item d-flex align-items-center gap-2">
         <mat-icon>emoji_emotions</mat-icon>

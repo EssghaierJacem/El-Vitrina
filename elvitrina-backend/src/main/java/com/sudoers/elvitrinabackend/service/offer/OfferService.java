@@ -28,13 +28,17 @@ public class OfferService implements IOffer {
                 offer.getStartDate(),
                 offer.getEndDate(),
                 offer.getOffer(),
-                offer.getUser().getId()
+                offer.getUser() != null ? offer.getUser().getId() : null
         );
     }
 
     private Offer mapToEntity(OfferDTO dto) {
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = null;
+        if (dto.getUserId() != null) {
+            user = userRepository.findById(dto.getUserId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+        }
+
         return new Offer(
                 dto.getId(),
                 dto.getName(),
@@ -47,9 +51,10 @@ public class OfferService implements IOffer {
         );
     }
 
-
     public List<OfferDTO> getAllOffers() {
-        return offerRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
+        return offerRepository.findAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
     public OfferDTO getOfferById(Long id) {
@@ -74,8 +79,14 @@ public class OfferService implements IOffer {
         existingOffer.setStartDate(dto.getStartDate());
         existingOffer.setEndDate(dto.getEndDate());
         existingOffer.setOffer(dto.getOffer());
-        existingOffer.setUser(userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found")));
+
+        if (dto.getUserId() != null) {
+            User user = userRepository.findById(dto.getUserId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            existingOffer.setUser(user);
+        } else {
+            existingOffer.setUser(null);
+        }
 
         Offer updatedOffer = offerRepository.save(existingOffer);
         return mapToDTO(updatedOffer);

@@ -3,6 +3,7 @@ package com.sudoers.elvitrinabackend.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sudoers.elvitrinabackend.model.enums.RequestStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,7 +35,7 @@ public class RequestPerso {
     private float minPrice;
 
     private float maxPrice;
-
+    @Lob
     private String image;
 
     private Date deliveryTime;
@@ -43,7 +44,9 @@ public class RequestPerso {
 
     private List<String> tags;
     private Date date;
+    @Enumerated(EnumType.STRING)
 
+    private RequestStatus status;
     // One RequestPerson can have many ProposalPersons (One-to-Many)
 
     @OneToMany(mappedBy = "requestPerso", cascade = CascadeType.ALL, orphanRemoval = true)

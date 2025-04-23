@@ -13,36 +13,40 @@ export class LeafletMapComponent implements AfterViewInit {
   private marker: L.Marker | undefined;
 
   ngAfterViewInit(): void {
-    // Initialiser la carte
-    this.map = L.map('map', {
-      center: [36.8065, 10.1815],  // Coordonnées de Tunis
-      zoom: 13,  // Niveau de zoom par défaut
-      dragging: true,  // Permet de déplacer la carte
-      zoomControl: true,  // Contrôle de zoom visible
-      scrollWheelZoom: true,  // Permet le zoom avec la molette de la souris
-      doubleClickZoom: true,  // Permet de zoomer avec un double clic
-  });
-    // Ajouter la couche OpenStreetMap
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors',
-    }).addTo(this.map);
-
-    // Ajouter un marqueur draggable par défaut
-    this.marker = L.marker([36.8065, 10.1815], { draggable: true }).addTo(this.map);
-
-    // Quand on clique sur la carte
-    this.map.on('click', async (e: L.LeafletMouseEvent) => {
-      const { lat, lng } = e.latlng;
-
-      // Déplacer le marqueur existant
-      if (this.marker) {
-        this.marker.setLatLng([lat, lng]);
+    // Laisse Angular rendre le DOM avant d'initialiser Leaflet
+    setTimeout(() => {
+      const mapElement = document.getElementById('map');
+      if (!mapElement) {
+        console.error('Map container not found.');
+        return;
       }
 
-      // Récupérer l'adresse et l’émettre
-      const address = await this.reverseGeocode(lat, lng);
-      this.addressSelected.emit(address);
-    });
+      this.map = L.map(mapElement, {
+        center: [36.8065, 10.1815],
+        zoom: 13,
+        dragging: true,
+        zoomControl: true,
+        scrollWheelZoom: true,
+        doubleClickZoom: true,
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+      }).addTo(this.map);
+
+      this.marker = L.marker([36.8065, 10.1815], { draggable: true }).addTo(this.map);
+
+      this.map.on('click', async (e: L.LeafletMouseEvent) => {
+        const { lat, lng } = e.latlng;
+
+        if (this.marker) {
+          this.marker.setLatLng([lat, lng]);
+        }
+
+        const address = await this.reverseGeocode(lat, lng);
+        this.addressSelected.emit(address);
+      });
+    }, 0);
   }
 
   private async reverseGeocode(lat: number, lon: number): Promise<string> {
