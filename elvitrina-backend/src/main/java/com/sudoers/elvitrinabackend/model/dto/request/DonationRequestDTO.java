@@ -12,9 +12,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DonationRequestDTO {
-    private BigDecimal amount;
-    private String message;
-    private Long campaignId;
+    private double amount;
+    private String donorMessage;
+    private Long donationCampaignId;
     private Long userId;
-    private Boolean isAnonymous;
+    private Long storeId;
 }

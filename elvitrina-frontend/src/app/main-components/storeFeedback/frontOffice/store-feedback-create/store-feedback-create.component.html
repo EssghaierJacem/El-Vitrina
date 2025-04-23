@@ -1,1 +1,96 @@
-<p>store-feedback-create works!</p>
+<div class="feedback-container">
+    <mat-card class="feedback-card">
+      <mat-card-header>
+        <mat-card-title>
+          <h2>Share Your Feedback</h2>
+        </mat-card-title>
+        <mat-card-subtitle>Your opinion helps us improve our services</mat-card-subtitle>
+      </mat-card-header>
+  
+      <mat-divider></mat-divider>
+      
+      <mat-card-content>
+        <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" class="feedback-form">
+          <!-- Feedback Type -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>What aspect are you reviewing?</mat-label>
+            <mat-select formControlName="storeFeedbackType" required>
+              <mat-option *ngFor="let option of feedbackTypeOptions" [value]="option.value">
+                {{ option.label }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="isFieldInvalid('storeFeedbackType')">
+              {{ getErrorMessage('storeFeedbackType') }}
+            </mat-error>
+          </mat-form-field>
+  
+          <!-- Rating -->
+          <div class="rating-section">
+            <mat-label class="rating-label">Your Rating</mat-label>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-select formControlName="rating" required>
+                <mat-option *ngFor="let rate of [1, 2, 3, 4, 5]" [value]="rate">
+                  <div class="rating-option">
+                    <span>{{ rate }}</span>
+                    <span class="star-rating">
+                      <mat-icon *ngFor="let i of [1, 2, 3, 4, 5]" 
+                        [class.filled]="i <= rate">
+                        star
+                      </mat-icon>
+                    </span>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="isFieldInvalid('rating')">
+                {{ getErrorMessage('rating') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+  
+          <!-- Comment -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Your Feedback</mat-label>
+            <textarea 
+              matInput 
+              formControlName="comment" 
+              rows="4" 
+              required 
+              placeholder="Please share your experience with us..."
+            ></textarea>
+            <mat-hint align="end">{{ getRemainingCharacters() }} characters remaining</mat-hint>
+            <mat-error *ngIf="isFieldInvalid('comment')">
+              {{ getErrorMessage('comment') }}
+            </mat-error>
+          </mat-form-field>
+  
+          <!-- Would Recommend -->
+          <div class="recommendation-section">
+            <mat-checkbox formControlName="wouldRecommend" color="primary">
+              I would recommend this store to others
+            </mat-checkbox>
+          </div>
+        </form>
+      </mat-card-content>
+  
+      <mat-divider></mat-divider>
+  
+      <mat-card-actions class="card-actions">
+        <button 
+          mat-button 
+          type="button" 
+          (click)="resetForm()" 
+          [disabled]="isSubmitting"
+          matTooltip="Clear all form fields">
+          RESET
+        </button>
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="onSubmit()" 
+          [disabled]="isSubmitting">
+          <mat-spinner *ngIf="isSubmitting" diameter="20" class="spinner"></mat-spinner>
+          <span>SUBMIT FEEDBACK</span>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>

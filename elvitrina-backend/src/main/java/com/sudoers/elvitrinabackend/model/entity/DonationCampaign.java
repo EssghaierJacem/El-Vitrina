@@ -38,6 +38,7 @@ public class DonationCampaign {
     private boolean featured = false;
     private boolean verified = false;
     private Double campaignCost;
+    private String imageUrl;
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;

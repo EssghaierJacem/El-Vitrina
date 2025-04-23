@@ -116,7 +116,7 @@ export class StoreFeedbackEditComponent implements OnInit {
       this.storeFeedbackService.update(this.feedbackId, updatedFeedback).subscribe({
         next: () => {
           this.snackBar.open('Feedback updated successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/dashboard/store-feedbacks']);
+          this.router.navigate(['/dashboard/store-feedback']);
         },
         error: (error: HttpErrorResponse) => {
           this.snackBar.open('Error updating feedback', 'Close', { duration: 3000 });

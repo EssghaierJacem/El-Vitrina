@@ -4,19 +4,30 @@ import { Router } from '@angular/router';
 import { TokenService } from 'src/app/core/services/user/TokenService';
 import { StoreService } from 'src/app/core/services/store/store.service';
 import { RouterModule } from '@angular/router';
+import { Store } from 'src/app/core/models/store/store.model';
+import { MatDialog } from '@angular/material/dialog';
+import { AppFeedbackDialogComponent } from 'src/app/main-components/appFeedback/frontOffice/app-feedback-dialog/app-feedback-dialog.component';
+import { ProductService } from 'src/app/core/services/product/product.service';
+import { Product } from 'src/app/core/models/product/product.model';
+import { ProductCategoryType } from 'src/app/core/models/product/product-category-type.enum';
+import { FormsModule } from '@angular/forms';
 import { CustomOrder } from 'src/app/core/models/Panier/CustomOrder';
 import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { ShoppingCartComponent } from 'src/app/main-components/custom-order/Frontoffice/shopping-cart/shopping-cart.component';
+
+
 @Component({
   selector: 'front-header',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
+    FormsModule,
     ShoppingCartComponent,
     RouterModule,
-    MatSortModule
+    MatSortModule,
   ],
   templateUrl: './front-header.component.html',
   styleUrls: ['./front-header.component.scss']
@@ -25,12 +36,17 @@ export class FrontHeaderComponent implements OnInit {
   firstName = '';
   userId: number | null = null;
   role = '';
-  hasStore: boolean = false;
+  hasStore: boolean = false; 
   storeId: number | null = null;
+  searchTerm: string = '';
+  searchResults: Product[] = [];
+  selectedCategory: string = '';
+  categories = Object.values(ProductCategoryType);
+  products: Product[] = []; 
   orders: CustomOrder[] = [];
   dataSource: MatTableDataSource<CustomOrder> = new MatTableDataSource<CustomOrder>();
-   displayedColumns: string[] = ['client', 'date', 'montant', 'statut', 'actions'];
-   searchText: string = '';
+  displayedColumns: string[] = ['client', 'date', 'montant', 'statut', 'actions'];
+  searchText: string = '';
 
 
 
@@ -38,6 +54,8 @@ export class FrontHeaderComponent implements OnInit {
     private tokenService: TokenService,
     private router: Router,
     private storeService: StoreService,
+    private dialog: MatDialog,
+    private productService: ProductService,
     private orderService: CustomOrderService
   ) {}
 
@@ -50,6 +68,13 @@ export class FrontHeaderComponent implements OnInit {
       this.userId = user?.id ?? null;
       this.role = user?.role || '';
       console.log(user);
+
+      // Always fetch products for search, regardless of login
+      this.productService.getAll().subscribe((products) => {
+        console.log('Fetched products:', products); // Debug line
+        this.products = products;
+        this.applySearchFilters(); // Initial population
+      });
 
       if (this.userId) {
         this.storeService.getAll().subscribe((stores) => {
@@ -69,6 +94,15 @@ export class FrontHeaderComponent implements OnInit {
 
     });
   }
+
+  applySearchFilters() {
+    this.searchResults = this.products.filter(product => {
+      const matchesCategory = !this.selectedCategory || product.category === this.selectedCategory;
+      const matchesSearch = !this.searchTerm || product.productName.toLowerCase().includes(this.searchTerm.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }
+
   logout(): void {
     this.tokenService.logout();
     this.router.navigate(['/authentication/login']);
@@ -94,5 +128,59 @@ export class FrontHeaderComponent implements OnInit {
       this.router.navigate(['/stores/create']);
     }
   }
+
+  openFeedbackDialog(): void {
+    const dialogRef = this.dialog.open(AppFeedbackDialogComponent, {
+      width: '400px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Handle the result if needed
+      }
+    });
+  }
+
+  onSearch() {
+    if (this.searchTerm.trim()) {
+      this.productService.searchProducts(this.searchTerm).subscribe(results => {
+        this.searchResults = results;
+      });
+    } else {
+      this.searchResults = [];
+    }
+  }
+
+  searchProducts(query: string): void {
+    // Use your ProductService to search and update products array
+    if (query && query.trim()) {
+      this.productService.searchProducts(query).subscribe((results: Product[]) => {
+        console.log('Search results:', results);
+        this.products = results;
+      });
+    } else {
+      this.products = [];
+    }
+  }
+
+  getProductImage(product: Product): string {
+    return product.images && product.images.length > 0 ? product.images[0] : 'assets/images/default-product.jpg';
+  }
+
+  wishlistClick(): void {
+    console.log('Navigating to favorites...'); // Debugging line
+    this.router.navigate(['/products/favorite']).then(success => {
+      console.log('Navigation success:', success);
+    }).catch(err => {
+      console.error('Navigation error:', err);
+    });
+  }
+  trackInterest(topic: string): void {
+    const existing = localStorage.getItem('interestedIn') || '';
+    const keywords = new Set(existing.split(',').map(k => k.trim()).filter(k => k));
+    keywords.add(topic);
+    localStorage.setItem('interestedIn', Array.from(keywords).join(', '));
+  }
+  
 }
 

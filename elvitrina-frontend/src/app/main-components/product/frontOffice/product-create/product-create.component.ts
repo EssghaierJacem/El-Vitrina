@@ -17,6 +17,16 @@ import { ProductStatus } from '../../../../core/models/product/product-status.en
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { StoreService } from '../../../../core/services/store/store.service';
 import { Store } from '../../../../core/models/store/store.model';
+import { TokenService } from 'src/app/core/services/user/TokenService';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { FormControl } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ImageAnalysisService, ImageAnalysisResult } from '../../../../core/services/product/image-analysis.service';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-product-create',
@@ -34,6 +44,11 @@ import { Store } from '../../../../core/models/store/store.model';
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatCheckboxModule,
+    MatChipsModule,
+    MatStepperModule,
+    MatDividerModule,
+    MatTooltipModule,
+    MatExpansionModule,
     RouterModule
   ],
   templateUrl: './product-create.component.html',
@@ -42,14 +57,30 @@ import { Store } from '../../../../core/models/store/store.model';
 export class ProductCreateComponent implements OnInit {
   productForm: FormGroup;
   loading = false;
+  analyzingImage = false;
   categories = Object.values(ProductCategoryType);
   userStores: Store[] = [];
+  role: string = '';
+  canCreateProduct: boolean = false;
+  tagsControl = new FormControl<string[]>([]);
+  uploadedFiles: File[] = [];
+  uploadedImagesPreview: string[] = [];
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+  
+  // Image analysis results
+  imageAnalysisResult: ImageAnalysisResult | null = null;
+  showImageAnalysisOptions = false;
+  useAnalyzedCategory = true;
+  useAnalyzedTags = true;
+  useAnalyzedDescription = true;
 
   constructor(
     private fb: FormBuilder,
     private productService: ProductService,
     private authService: AuthService,
     private storeService: StoreService,
+    private tokenService: TokenService,
+    private imageAnalysisService: ImageAnalysisService,
     private snackBar: MatSnackBar,
     private router: Router
   ) {
@@ -57,22 +88,28 @@ export class ProductCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Check if user is logged in and is a seller
-    const user = this.authService.getCurrentUser();
-    if (!user) {
+    if (this.isLoggedIn()) {
+      const decodedToken = this.tokenService.getDecodedToken();
+      if (decodedToken && decodedToken.id) {
+        this.role = decodedToken?.role ?? 'USER';
+        console.log('User role:', this.role);
+        
+        if (this.role === 'SELLER') {
+          this.canCreateProduct = true;
+          // Load user's stores
+          this.loadUserStores(decodedToken.id);
+        } else {
+          this.snackBar.open('You must be a seller to create a product', 'Close', { duration: 3000 });
+          this.router.navigate(['/']);
+        }
+      } else {
+        this.snackBar.open('Invalid user token', 'Close', { duration: 3000 });
+        this.router.navigate(['/authentication/login']);
+      }
+    } else {
       this.snackBar.open('Please log in to create a product', 'Close', { duration: 3000 });
       this.router.navigate(['/authentication/login']);
-      return;
     }
-
-    if (user.role !== 'SELLER') {
-      this.snackBar.open('Only sellers can create products', 'Close', { duration: 3000 });
-      this.router.navigate(['/']);
-      return;
-    }
-
-    // Load user's stores
-    this.loadUserStores(user.id);
   }
 
   private loadUserStores(userId: number): void {
@@ -113,7 +150,8 @@ export class ProductCreateComponent implements OnInit {
       hasDiscount: [false],
       discountPercentage: [0, [Validators.min(0), Validators.max(100)]],
       freeShipping: [false],
-      images: ['', [Validators.pattern('^https?://.*$')]]
+      images: ['', [Validators.pattern('^https?://.*$')]],
+      tags: this.tagsControl
     });
 
     // Disable discount percentage by default
@@ -134,51 +172,49 @@ export class ProductCreateComponent implements OnInit {
   onSubmit(): void {
     if (this.productForm.valid && !this.loading) {
       this.loading = true;
-      
-      const user = this.authService.getCurrentUser();
-      if (!user) {
-        this.snackBar.open('Please log in to create a product', 'Close', { duration: 3000 });
-        this.router.navigate(['/authentication/login']);
+  
+      const productData = { ...this.productForm.value };
+  
+      // Clean up images field
+      if (Array.isArray(productData.images)) {
+        productData.images = productData.images.map((url: string) => url.trim()).filter((url: string) => url);
+      } else {
+        productData.images = productData.images ? productData.images.split(',').map((url: string) => url.trim()).filter((url: string) => url) : [];
+      }
+  
+      // Validate category
+      if (!Object.values(ProductCategoryType).includes(productData.category)) {
+        this.snackBar.open('Invalid product category', 'Close', { duration: 5000 });
+        this.loading = false;
         return;
       }
-
-      const productData = {
-        ...this.productForm.value,
-        status: 'ACTIVE' as ProductStatus,
-        // Convert comma-separated image URLs to array
-        images: this.productForm.value.images ? 
-          this.productForm.value.images.split(',').map((url: string) => url.trim()).filter((url: string) => url) : 
-          []
-      };
-
-      // Calculate original price if there's a discount
-      if (productData.hasDiscount && productData.discountPercentage > 0) {
-        const discountMultiplier = 1 - (productData.discountPercentage / 100);
-        productData.originalPrice = productData.price;
-        productData.price = Math.round((productData.price * discountMultiplier) * 100) / 100;
+  
+      // Validate mandatory fields
+      if (!productData.productName || !productData.category || !productData.storeId) {
+        this.snackBar.open('Please fill in all required fields', 'Close', { duration: 5000 });
+        this.loading = false;
+        return;
       }
-
-      this.productService.create(productData).subscribe({
+  
+      // Now submit
+      this.productService.create(productData, this.uploadedFiles).subscribe({
         next: (response) => {
           console.log('Product created successfully:', response);
-          this.snackBar.open('Product created successfully', 'Close', {
-            duration: 3000
-          });
-          this.router.navigate(['/products']);
+          this.snackBar.open('Product created successfully', 'Close', { duration: 3000 });
+          this.router.navigate(['/dashboard/products']);
         },
         error: (error) => {
           console.error('Error creating product:', error);
-          this.snackBar.open(error.message || 'Error creating product', 'Close', {
-            duration: 5000
-          });
+          this.snackBar.open(error.message || 'Error creating product', 'Close', { duration: 5000 });
           this.loading = false;
         },
         complete: () => {
           this.loading = false;
         }
       });
+  
     } else {
-      // Mark all fields as touched to trigger validation messages
+      // Mark invalid fields as touched
       Object.keys(this.productForm.controls).forEach(key => {
         const control = this.productForm.get(key);
         if (control?.errors) {
@@ -197,6 +233,11 @@ export class ProductCreateComponent implements OnInit {
       images: ''
     });
     
+    this.tagsControl.setValue([]);
+    this.uploadedFiles = [];
+    this.uploadedImagesPreview = [];
+    this.imageAnalysisResult = null;
+    
     this.snackBar.open('Form has been cleared', 'Close', {
       duration: 3000
     });
@@ -208,19 +249,138 @@ export class ProductCreateComponent implements OnInit {
     ).join(' ');
   }
 
-  handleImagePreview(event: Event): void {
+  handleImageError(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    if (imgElement) {
+      imgElement.src = '/assets/images/products/no-image.jpg';
+    }
+  }
+
+  getImageUrls(): string[] {
+    const imagesValue = this.productForm.get('images')?.value;
+    if (!imagesValue) return [];
+    
+    return imagesValue
+      .split(',')
+      .map((url: string) => url.trim())
+      .filter((url: string) => url && url.startsWith('http'));
+  }
+
+  isLoggedIn(): boolean {
+    return this.tokenService.getToken() !== null;
+  }
+
+  addTag(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    if (value) {
+      const tags = this.tagsControl.value || [];
+      this.tagsControl.setValue([...tags, value]);
+    }
+    event.chipInput!.clear();
+  }
+
+  removeTag(tag: string): void {
+    const tags = this.tagsControl.value || [];
+    const index = tags.indexOf(tag);
+    if (index >= 0) {
+      tags.splice(index, 1);
+      this.tagsControl.setValue([...tags]);
+    }
+  }
+
+  onImagesSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.value) {
-      const imgElement = document.createElement('img');
-      imgElement.src = input.value;
-      imgElement.onerror = () => {
-        this.snackBar.open('Invalid image URL', 'Close', { duration: 3000 });
-        input.value = '';
-        const control = this.productForm.get('images');
-        if (control) {
-          control.setValue('');
-        }
-      };
+    if (input.files && input.files.length > 0) {
+      this.uploadedImagesPreview = [];
+      this.uploadedFiles = [];
+  
+      const files = Array.from(input.files);
+  
+      files.forEach(file => {
+        this.uploadedFiles.push(file); // store the real file
+  
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          const result = e.target?.result as string;
+          if (result) {
+            this.uploadedImagesPreview.push(result); // store preview
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Reset analysis result when new image is selected
+      this.imageAnalysisResult = null;
+    }
+  }
+
+  analyzeImage(): void {
+    if (this.uploadedFiles.length === 0) {
+      this.snackBar.open('Please upload an image first', 'Close', { duration: 3000 });
+      return;
+    }
+
+    this.analyzingImage = true;
+    const imageFile = this.uploadedFiles[0]; // Analyze only the first image
+
+    this.imageAnalysisService.analyzeImageFile(imageFile).subscribe({
+      next: (result) => {
+        this.imageAnalysisResult = result;
+        this.analyzingImage = false;
+        this.showImageAnalysisOptions = true;
+        
+        // Display a success message
+        this.snackBar.open('Image analyzed successfully', 'Close', { duration: 3000 });
+      },
+      error: (error) => {
+        console.error('Error analyzing image:', error);
+        this.analyzingImage = false;
+        this.snackBar.open('Error analyzing image. Please try again.', 'Close', { duration: 5000 });
+      }
+    });
+  }
+
+  applyImageAnalysisResults(): void {
+    if (!this.imageAnalysisResult) {
+      return;
+    }
+
+    // Apply category - now the Python analyzer returns the exact enum value
+    if (this.useAnalyzedCategory && this.imageAnalysisResult.category) {
+      // The category should already be in the correct format (e.g., "HOME_DECOR")
+      // but we'll check if it's a valid enum value to be safe
+      const categoryValue = this.imageAnalysisResult.category;
+      
+      if (this.categories.includes(categoryValue as ProductCategoryType)) {
+        this.productForm.patchValue({
+          category: categoryValue
+        });
+      }
+    }
+
+    // Apply description
+    if (this.useAnalyzedDescription && this.imageAnalysisResult.description) {
+      this.productForm.patchValue({
+        description: this.imageAnalysisResult.description
+      });
+    }
+
+    // Apply tags
+    if (this.useAnalyzedTags && this.imageAnalysisResult.tags && this.imageAnalysisResult.tags.length > 0) {
+      this.tagsControl.setValue(this.imageAnalysisResult.tags);
+    }
+
+    this.snackBar.open('Analysis results applied to the form', 'Close', { duration: 3000 });
+  }
+
+  // Add this method to handle category display from analysis results
+  getAnalysisCategoryDisplay(category: string): string {
+    try {
+      // Try to convert the string to enum value and get display name
+      return this.getCategoryDisplayName(category as unknown as ProductCategoryType);
+    } catch (error) {
+      // Fallback to just returning the category
+      return category;
     }
   }
 }

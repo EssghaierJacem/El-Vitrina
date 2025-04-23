@@ -16,15 +16,10 @@ import java.util.List;
 public class DonationCampaignRequestDTO {
     private String title;
     private String description;
-    private String cause;
-    private BigDecimal goalAmount;
-    private BigDecimal currentAmount;
+    private double goalAmount;
+    private double currentAmount;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private String status;
-    private Boolean featured;
-    private Boolean verified;
-    private Double campaignCost;
     private Long userId;
     private Long storeId;
     private List<DonorRewardRequestDTO> rewards;

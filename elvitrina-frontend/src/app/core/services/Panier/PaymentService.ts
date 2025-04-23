@@ -49,7 +49,7 @@ export class PaymentService {
   }
   createCheckoutSession(amount: number) {
     return this.http.post<{ url: string }>(
-      'http://localhost:8081/api/payments/create-checkout-session',
+      'http://localhost:8080/api/payments/create-checkout-session',
       { amount }
     );
   }

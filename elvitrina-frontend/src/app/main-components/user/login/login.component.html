@@ -104,6 +104,30 @@
             </button>
           </form>
 
+          <!-- Face Login -->
+          <div class="m-t-30 text-center">
+            <button mat-flat-button color="accent" (click)="startCamera()" *ngIf="!isCameraOn">
+              <mat-icon>photo_camera</mat-icon> Login with Face
+            </button>
+
+            <!-- Camera Live Preview -->
+            <div *ngIf="isCameraOn" class="camera-login-container">
+              <video autoplay playsinline style="width: 100%; border-radius: 8px; margin-top: 20px;"></video>
+              
+              <div class="d-flex justify-content-between mt-3">
+                <button mat-stroked-button color="warn" (click)="stopCamera()">
+                  <mat-icon>close</mat-icon> Cancel
+                </button>
+                <button mat-flat-button color="primary" (click)="captureAndLogin()" [disabled]="isFaceLoginLoading">
+                  <mat-spinner *ngIf="isFaceLoginLoading" diameter="20" class="spinner-inline"></mat-spinner>
+                  <span *ngIf="!isFaceLoginLoading">
+                    <mat-icon>face</mat-icon> Capture & Login
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+
           <!-- Sign Up Link -->
           <div class="text-center mt-4">
             <span class="d-block f-w-500 m-t-24">New to El Vitrina?

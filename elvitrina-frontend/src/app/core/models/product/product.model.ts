@@ -19,8 +19,10 @@ export interface Product {
   status: ProductStatus;
   images: string[];
   storeId: number;
+  mainImage: string;
   store?: Store;
   //customOrders?: CustomOrder[];
+  tags?: string[]; // Add tags field to the Product model
   
   // Additional UI properties
   isFavorite?: boolean;

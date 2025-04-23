@@ -181,5 +181,17 @@ export class WebSocketService {
       //console.log(' Online users received from backend:', ids);
       this.onlineUsersSubject.next(ids);
     });    
+    
+  }
+  getUnreadCounts(userId: number): Observable<{ [senderId: number]: number }> {
+    return this.http.get<{ [senderId: number]: number }>(`${this.apiUrl}/unread/${userId}`);
+  }
+
+  getAllLastMessages(userId: number): Observable<{ [friendId: number]: Message }> {
+    return this.http.get<{ [friendId: number]: Message }>(`${this.apiUrl}/last-all/${userId}`);
+  }
+  
+  getCorrection(text: string): Observable<string> {
+    return this.http.post('http://localhost:8080/api/corrections', text, { responseType: 'text' });
   }
 }

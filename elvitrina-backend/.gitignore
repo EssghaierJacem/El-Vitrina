@@ -35,4 +35,11 @@ build/
 # Ignore uploaded user images
 /uploads/user-images/*
 !/uploads/user-images/.gitkeep
+<<<<<<< HEAD
+/uploads/product-images/*
+!/uploads/product-images/.gitkeep
+/uploads/store-images/*
+!/uploads/store-images/.gitkeep
+=======
+>>>>>>> b3ed212a85aab4dbeae799ad610fd791b8dbc765
 

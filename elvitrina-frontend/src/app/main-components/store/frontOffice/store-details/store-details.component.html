@@ -1,13 +1,13 @@
 <!-- Store Header -->
 <div class="store-header" *ngIf="store">
   <div class="store-cover">
-    <img [src]="getImageUrl(store.coverImage, 'store')" 
+    <img [src]="getCoverImage(store)" 
          [alt]="store.storeName"
          (error)="handleImageError($event, 'store')">
   </div>
   <div class="store-info">
     <div class="store-avatar">
-      <img [src]="getImageUrl(store.image, 'store')" 
+      <img [src]="getStoreImage(store)" 
            [alt]="store.storeName"
            (error)="handleImageError($event, 'store')">
     </div>
@@ -22,6 +22,9 @@
         <button mat-raised-button color="accent" (click)="contactSeller()">
           <mat-icon>message</mat-icon>
           Contact Seller
+        </button>
+        <button mat-raised-button color="primary">
+          Request a customization
         </button>
       </div>
     </div>
@@ -39,12 +42,15 @@
       </button>
       <button mat-button [class.active]="activeTab === 'reviews'" (click)="setActiveTab(1)">
         Reviews
-        <span class="count">{{store?.reviewCount || 0}}</span>
+        <span class="count">{{store?.feedbackCount || 0}}</span>
+      </button>
+      <button mat-button [class.active]="activeTab === 'analytics'" (click)="setActiveTab(2)">
+        Feedback Analytics
       </button>
     </div>
 
     <!-- Right Search -->
-    <div class="search-bar">
+    <div class="search-bar" *ngIf="activeTab === 'products'">
       <mat-form-field appearance="outline">
         <mat-label>Search among {{store?.productCount || 0}} products</mat-label>
         <input matInput [value]="searchQuery" (input)="searchQuery = $any($event.target).value; searchProducts()" placeholder="Search products...">
@@ -93,11 +99,11 @@
               <div class="discount-badge" *ngIf="product.hasDiscount">
                 -{{product.discountPercentage}}%
               </div>
-              <img mat-card-image 
-                   [src]="getImageUrl(product.images?.[0], 'product')" 
-                   [alt]="product?.productName"
-                   (error)="handleImageError($event, 'product')"
-                   class="product-image">
+              <img mat-card-image
+                [src]="getProductImageUrl(product)"
+                [alt]="product.productName"
+                (error)="handleImageError($event, 'product')"
+                class="product-image">       
             </div>
             <mat-card-content>
               <h3 class="product-name">{{product?.productName}}</h3>
@@ -144,9 +150,158 @@
             </mat-card-actions>
           </mat-card>
         </div>
+        
         <!-- Reviews Tab -->
-        <div *ngSwitchCase="'reviews'" class="reviews-placeholder">
-          <p>Reviews coming soon</p>
+        <div *ngSwitchCase="'reviews'" class="reviews-section">
+          <div class="reviews-header">
+            <h2>Customer Reviews</h2>
+            <button mat-raised-button color="primary" (click)="toggleSummaries()">
+              {{ showSummaries ? 'Show Full Reviews' : 'Show Summarized Reviews' }}
+            </button>
+          </div>
+          
+          <!-- Analyzed Feedback List -->
+          <div class="analyzed-reviews" *ngIf="analyzedFeedbacks.length > 0">
+            <mat-card class="review-card" *ngFor="let feedback of analyzedFeedbacks">
+              <mat-card-header>
+                <div mat-card-avatar class="reviewer-avatar">
+                  <img *ngIf="feedback.userImage" [src]="feedback.userImage" alt="User avatar">
+                  <mat-icon *ngIf="!feedback.userImage">account_circle</mat-icon>
+                </div>
+                <mat-card-title>{{ feedback.userName || 'Anonymous' }}</mat-card-title>
+                <mat-card-subtitle>
+                  <div class="rating">
+                    <mat-icon *ngFor="let star of [1, 2, 3, 4, 5]" 
+                              [class.filled]="star <= feedback.rating">star</mat-icon>
+                  </div>
+                  <span class="review-date">{{ feedback.createdAt | date }}</span>
+                </mat-card-subtitle>
+                
+                <!-- Sentiment Badge -->
+                <div class="sentiment-badge" *ngIf="feedback.sentimentScore !== undefined" 
+                     [ngClass]="getSentimentClass(feedback.sentimentScore)" 
+                     matTooltip="Sentiment Score: {{feedback.sentimentScore | number:'1.1-1'}}">
+                  <mat-icon>{{ getSentimentIcon(feedback.sentimentScore) }}</mat-icon>
+                  {{ feedback.sentimentScore >= 0.25 ? 'Positive' : 
+                     feedback.sentimentScore <= -0.25 ? 'Negative' : 'Neutral' }}
+                </div>
+              </mat-card-header>
+              
+              <mat-card-content>
+                <!-- Show either summarized or full review based on toggle -->
+                <p class="review-comment" *ngIf="!showSummaries || !feedback.summarizedComment">
+                  {{ feedback.comment }}
+                </p>
+                <p class="review-summary" *ngIf="showSummaries && feedback.summarizedComment">
+                  {{ feedback.summarizedComment }}
+                  <span class="summary-badge" matTooltip="AI-generated summary">Summary</span>
+                </p>
+                
+                <div class="feedback-metadata">
+                  <mat-chip-set>
+                    <mat-chip>{{ feedback.storeFeedbackType }}</mat-chip>
+                    <mat-chip [color]="feedback.wouldRecommend ? 'primary' : 'warn'" selected>
+                      {{ feedback.wouldRecommend ? 'Recommends' : 'Does Not Recommend' }}
+                    </mat-chip>
+                  </mat-chip-set>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          
+          <div *ngIf="analyzedFeedbacks.length === 0 && !loadingFeedback" class="no-reviews">
+            <p>No reviews yet. Be the first to leave a review!</p>
+          </div>
+          
+          <div *ngIf="loadingFeedback" class="loading-reviews">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Loading reviews...</p>
+          </div>
+          
+          <!-- Create Feedback Form -->
+          <div class="create-feedback-section">
+            <app-store-feedback-create [storeId]="store?.storeId ?? 0"></app-store-feedback-create>
+          </div>
+        </div>
+        
+        <!-- Analytics Tab -->
+        <div *ngSwitchCase="'analytics'" class="analytics-section">
+          <h2>Feedback Analytics</h2>
+          
+          <div class="analytics-overview" *ngIf="feedbackAnalytics">
+            <mat-card class="analytics-card">
+              <mat-card-header>
+                <mat-card-title>Overview</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="analytics-stats">
+                  <div class="stat-item">
+                    <div class="stat-value">{{ feedbackAnalytics.averageRating | number:'1.1-1' }}</div>
+                    <div class="stat-label">Average Rating</div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-value">{{ feedbackAnalytics.totalFeedbacks }}</div>
+                    <div class="stat-label">Total Reviews</div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            
+            <!-- Sentiment Distribution Chart (Static Version) -->
+            <mat-card class="analytics-card" *ngIf="sentimentChartData.length > 0">
+              <mat-card-header>
+                <mat-card-title>Sentiment Distribution</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="chart-container static-chart">
+                  <div class="sentiment-bars">
+                    <div *ngFor="let item of sentimentChartData" class="sentiment-bar-item">
+                      <div class="sentiment-label">{{ item.name }}</div>
+                      <div class="sentiment-bar" 
+                          [ngClass]="'sentiment-' + item.name.toLowerCase()"
+                          [style.width.%]="item.value / (feedbackAnalytics.totalFeedbacks || 1) * 100">
+                        <span class="sentiment-value">{{ item.value }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            
+            <!-- Feedback Type Sentiment Chart (Static Version) -->
+            <mat-card class="analytics-card" *ngIf="feedbackTypeChartData.length > 0">
+              <mat-card-header>
+                <mat-card-title>Sentiment by Feedback Type</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="chart-container static-chart">
+                  <div class="type-bars">
+                    <div *ngFor="let item of feedbackTypeChartData" class="type-bar-item">
+                      <div class="type-label">{{ item.name }}</div>
+                      <div class="type-bar" 
+                          [ngClass]="{ 
+                            'positive': item.value > 0.25, 
+                            'neutral': item.value >= -0.25 && item.value <= 0.25, 
+                            'negative': item.value < -0.25 
+                          }"
+                          [style.width.%]="calculateBarWidth(item.value, feedbackAnalytics.totalFeedbacks)">
+                        <span class="type-value">{{ item.value | number:'1.1-1' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          
+          <div *ngIf="!feedbackAnalytics && !loadingFeedback" class="no-analytics">
+            <p>No analytics available. Store needs more reviews to generate analytics.</p>
+          </div>
+          
+          <div *ngIf="loadingFeedback" class="loading-analytics">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Loading analytics...</p>
+          </div>
         </div>
       </div>
     </div>

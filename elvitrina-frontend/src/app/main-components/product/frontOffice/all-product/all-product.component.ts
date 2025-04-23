@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +16,8 @@ import { RouterModule } from '@angular/router';
 import { ProductService } from '../../../../core/services/product/product.service';
 import { Product } from '../../../../core/models/product/product.model';
 import { ProductCategoryType } from '../../../../core/models/product/product-category-type.enum';
+import { FormControl } from '@angular/forms';
+import { FavoriteService } from '../../../../core/services/product/favorite.service';
 
 @Component({
   selector: 'app-all-product',
@@ -22,6 +25,7 @@ import { ProductCategoryType } from '../../../../core/models/product/product-cat
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -60,14 +64,23 @@ export class AllProductComponent implements OnInit {
   showDiscounted = false;
   showInStock = false;
   priceRange = { min: 0, max: 1000 };
+  tagSearchQuery = new FormControl('');
+
+  favoriteProductIds = new Set<number>();
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
 
   constructor(
-    private productService: ProductService,
-    private snackBar: MatSnackBar
+    public productService: ProductService,
+    private snackBar: MatSnackBar,
+    private favoriteService: FavoriteService
   ) {}
 
   ngOnInit(): void {
     this.loadProducts();
+    this.loadFavoritesFromLocalStorage();
+    this.tagSearchQuery.valueChanges.subscribe(() => {
+      this.applyFilters();
+    });
   }
 
   loadProducts(): void {
@@ -76,7 +89,15 @@ export class AllProductComponent implements OnInit {
 
     this.productService.getAll().subscribe({
       next: (products) => {
-        this.products = products;
+        // Process products to ensure price fields are correct
+        this.products = products.map(product => ({
+          ...product,
+          price: this.getFinalPrice(product),
+          originalPrice: product.originalPrice || product.price,
+          hasDiscount: product.hasDiscount || false,
+          discountPercentage: this.getDiscountPercentage(product)
+        }));
+        this.updateFavorites();
         this.applyFilters();
         this.loading = false;
         this.updateCategoryDescription();
@@ -87,6 +108,11 @@ export class AllProductComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  loadFavoritesFromLocalStorage(): void {
+    this.favoriteProductIds = this.favoriteService.getFavorites();
+    this.products.forEach(p => p.isFavorite = this.favoriteProductIds.has(p.productId));
   }
 
   updateCategoryDescription(): void {
@@ -121,12 +147,13 @@ export class AllProductComponent implements OnInit {
   applyFilters(): void {
     let filtered = [...this.products];
 
-    // Search filter
+    // Search filter (includes both product name/description and tags)
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(product => 
         product.productName.toLowerCase().includes(query) ||
-        product.description?.toLowerCase().includes(query)
+        product.description?.toLowerCase().includes(query) ||
+        product.tags?.some(tag => tag.toLowerCase().includes(query)) // Include tag search
       );
     }
 
@@ -174,13 +201,15 @@ export class AllProductComponent implements OnInit {
   }
 
   toggleFavorite(product: Product): void {
-    product.isFavorite = !product.isFavorite;
-    // TODO: Implement favorite toggle with backend
-    this.snackBar.open(
-      product.isFavorite ? 'Added to favorites' : 'Removed from favorites',
-      'Close',
-      { duration: 3000 }
-    );
+    // Toggle favorite in the service, which handles localStorage
+    this.favoriteService.toggleFavorite(product.productId);
+    
+    // Update the local UI state
+    product.isFavorite = this.favoriteService.isFavorite(product.productId);
+    
+    // Show notification
+    const message = product.isFavorite ? 'Added to favorites' : 'Removed from favorites';
+    this.snackBar.open(message, 'Close', { duration: 2000 });
   }
 
   addToCart(product: Product): void {
@@ -217,5 +246,44 @@ export class AllProductComponent implements OnInit {
     if (img) {
       img.src = 'assets/images/products/no-image.jpg';
     }
+  }
+
+  getProductImageUrl(product: Product): string {
+    if (!product || !product.images || product.images.length === 0) {
+      return 'assets/images/products/no-image.jpg';
+    }
+
+    const imageUrl = product.images[0];
+    
+    // If it's already a full URL, return it as is
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    
+    // Otherwise, append it to the API URL
+    return this.IMAGE_BASE_URL + imageUrl;
+  }
+
+  updateFavorites(): void {
+    const favorites = this.favoriteService.getFavorites();
+    this.products.forEach(product => {
+      product.isFavorite = favorites.has(product.productId);
+    });
+  }
+
+  getDisplayPrice(product: Product) {
+    return this.productService.getDisplayPrice(product);
+  }
+
+  getFinalPrice(product: Product): number {
+    return this.productService.calculateFinalPrice(product);
+  }
+
+  getOriginalPrice(product: Product): number | null {
+    return product.hasDiscount && product.originalPrice ? product.originalPrice : null;
+  }
+
+  getDiscountPercentage(product: Product): number {
+    return this.productService.calculateDiscountPercentage(product);
   }
 } 

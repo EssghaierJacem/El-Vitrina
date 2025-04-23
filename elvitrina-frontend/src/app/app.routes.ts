@@ -6,6 +6,7 @@ import { AdminGuard } from './main-components/user/adminGuard.component';
 import { NotFoundComponent } from './layouts/not-found/not-found.component';
 import { OauthSuccessComponent } from './main-components/user/oauth-success/oauth-success.component';
 import { RequestPersoCreateComponent } from './main-components/requestPerso/frontOffice/request-perso-create/request-perso-create.component';
+import { chartRoutes } from './main-components/chart-ines/chart/charts-routes';
 
 export const routes: Routes = [   
   {  
@@ -73,7 +74,18 @@ export const routes: Routes = [
           import('./main-components/formation/frontoffice/frontoffice_formation.routes').then((m) => m.FormationRoutes),
       },
 
+      {
+        path: 'events',
+        loadChildren: () =>
+          import('./main-components/event/frontoffice/eventfront.routes').then((m) => m.EVENT_FRONT_ROUTES),
+      },
 
+
+      {
+        path: 'donations',
+        loadChildren: () =>
+          import('./main-components/donation/frontoffice/donationfront.routes').then((m) => m.DONATION_FRONT_ROUTES),
+      },
     ],
   },
 
@@ -151,6 +163,12 @@ export const routes: Routes = [
           import('./main-components/product/backOffice/product.routes')
             .then(m => m.ProductRoutes)
       },
+      {
+        path: 'charts',
+        loadChildren: () =>
+          import('./main-components/chart-ines/chart/charts-routes')
+            .then(m => m.chartRoutes)
+      },
 
       {
         path: 'formations',
@@ -182,6 +200,12 @@ export const routes: Routes = [
         path: 'extra',
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
+      },
+      
+      {
+        path: 'donations',
+        loadChildren: () =>
+          import('./main-components/donation/backoffice/donationback.routes').then((m) => m.DONATION_BACK_ROUTES),
       },
     ],
   },
