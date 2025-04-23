@@ -20,9 +20,9 @@ export class ProductRecommendationService {
   getVisualRecommendations(imageFile: File, limit: number = 6): Observable<ProductRecommendation[]> {
     const formData = new FormData();
     formData.append('image', imageFile);
-    
+
     return this.http.post<ProductRecommendation[]>(
-      `${this.apiUrl}/visual?limit=${limit}`, 
+      `${this.apiUrl}/visual?limit=${limit}`,
       formData
     );
   }
@@ -48,4 +48,4 @@ export class ProductRecommendationService {
       `${this.apiUrl}/category/${category}?limit=${limit}`
     );
   }
-} 
+}

@@ -2,6 +2,7 @@ import { User } from '../user/user.model';
 import { ProposalPerso } from '../proposalPerso/proposalPerso.model';
 
 export interface RequestPerso {
+  status: string;
   id: number;
   user: User;
   title: string;

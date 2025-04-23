@@ -1,0 +1,125 @@
+<div class="admin-dashboard" *ngIf="!loading; else loadingIndicator">
+  <div class="header">
+    <h1>Admin Dashboard</h1>
+    <div class="date-range-picker">
+      <mat-form-field appearance="fill">
+        <mat-label>Start date</mat-label>
+        <input matInput [matDatepicker]="startPicker" [value]="dateRange.start" (dateChange)="onDateChange('start', $event)">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>End date</mat-label>
+        <input matInput [matDatepicker]="endPicker" [value]="dateRange.end" (dateChange)="onDateChange('end', $event)">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="stats-summary">
+    <mat-card class="stat-card" *ngFor="let item of [
+      {label: 'Total Requests', value: stats?.totalRequests},
+      {label: 'Total Proposals', value: stats?.totalProposals},
+      {label: 'Active Users', value: stats?.activeUsers}
+    ]">
+      <mat-card-header>
+        <mat-card-title>{{item.label}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ item.value || 0 }}</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="charts-section">
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Requests Over Time</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ngx-charts-line-chart
+          [view]="view"
+          [customColors]="colorScheme"
+          [results]="chartData.requestsByDate"
+          [gradient]="gradient"
+          [xAxis]="showXAxis"
+          [yAxis]="showYAxis"
+          [legend]="showLegend"
+          [showXAxisLabel]="showXAxisLabel"
+          [showYAxisLabel]="showYAxisLabel"
+          xAxisLabel="Date"
+          yAxisLabel="Requests">
+        </ngx-charts-line-chart>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Proposals Over Time</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ngx-charts-line-chart
+          [view]="view"
+          [customColors]="colorScheme"
+          [results]="chartData.proposalsByDate"
+          [gradient]="gradient"
+          [xAxis]="showXAxis"
+          [yAxis]="showYAxis"
+          [legend]="showLegend"
+          [showXAxisLabel]="showXAxisLabel"
+          [showYAxisLabel]="showYAxisLabel"
+          xAxisLabel="Date"
+          yAxisLabel="Proposals">
+        </ngx-charts-line-chart>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Requests by Status</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ngx-charts-pie-chart
+          [view]="[400, 400]"
+          [customColors]="colorScheme"
+          [results]="chartData.requestsByStatus"
+          [legend]="true"
+          [labels]="true">
+        </ngx-charts-pie-chart>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="top-lists">
+    <mat-card class="top-list-card">
+      <mat-card-header><mat-card-title>Top Requesters</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <mat-list>
+          <mat-list-item *ngFor="let requester of stats?.topRequesters">
+            <span matLine>User {{requester[0]}} — {{requester[1]}} requests</span>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="top-list-card">
+      <mat-card-header><mat-card-title>Top Proposers</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <mat-list>
+          <mat-list-item *ngFor="let proposer of stats?.topProposers">
+            <span matLine>User {{proposer[0]}} — {{proposer[1]}} proposals</span>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<ng-template #loadingIndicator>
+  <div class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading dashboard data...</p>
+  </div>
+</ng-template>

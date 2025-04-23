@@ -40,45 +40,56 @@ export class RequestPersoCreateComponent implements OnInit {
   currentUser: any;
   firstName = '';
   email = '';
+  selectedFile: File | null = null;
+  previewUrl: string | ArrayBuffer | null = null;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private snackBar: MatSnackBar,
-    private requestPersoService : RequestPersoService, // Inject the service here
-      private route: ActivatedRoute,
-      private tokenService: TokenService,
+    private requestPersoService: RequestPersoService,
+    private route: ActivatedRoute,
+    private tokenService: TokenService,
   ) {}
 
   ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    console.log(id);
+    const token = this.tokenService.getToken();
 
-
-      const id = Number(this.route.snapshot.paramMap.get('id'));
-     console.log(id);
-     const token = this.tokenService.getToken();
-
-     if (!token) {
+    if (!token) {
       this.snackBar.open('Please log in to create a store', 'Close', {
-          duration: 3000,
-          panelClass: ['error-snackbar']
+        duration: 3000,
+        panelClass: ['error-snackbar']
       });
       this.router.navigate(['/authentication/login']);
-
-  } 
-else {
-        this.loadCurrentUser();
+    } else {
+      this.loadCurrentUser();
     }
 
-
-    console.log(token);
     this.RequestForm = this.fb.group({
       title: ['', Validators.required],
       description: ['', [Validators.required, Validators.maxLength(5000)]],
       minPrice: [0, [Validators.required, Validators.min(0)]],
       maxPrice: [0, [Validators.required, Validators.min(0)]],
-      image: ['', Validators.required],
       deliveryTime: [null, Validators.required],
     });
   }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   private loadCurrentUser(): void {
     const decodedToken = this.tokenService.getDecodedToken();
     if (decodedToken) {
@@ -87,7 +98,6 @@ else {
       this.firstName = decodedToken.firstname || '';
       this.email = decodedToken.email || '';
       
-      // For backward compatibility
       this.currentUser = {
         id: this.userId,
         name: this.firstName,
@@ -95,12 +105,12 @@ else {
       };
     }
   }
+
   add(event: any) {
     const value = (event.value || '').trim();
     if (value) {
       this.tags.push(value);
     }
-    // Clear the input value
     if (event.chipInput) {
       event.chipInput.clear();
     }
@@ -112,21 +122,34 @@ else {
       this.tags.splice(index, 1);
     }
   }
+
   createRequest() {
-    const formValues = this.RequestForm.value;
-  
+    if (!this.selectedFile) {
+      this.snackBar.open('Please select an image', 'Close', { duration: 3000 });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', this.selectedFile);
+    formData.append('title', this.RequestForm.get('title')?.value);
+    formData.append('description', this.RequestForm.get('description')?.value);
+    formData.append('minPrice', this.RequestForm.get('minPrice')?.value);
+    formData.append('maxPrice', this.RequestForm.get('maxPrice')?.value);
+    formData.append('deliveryTime', this.RequestForm.get('deliveryTime')?.value);
+    formData.append('userId', this.currentUser.id);
+    formData.append('tags', JSON.stringify(this.tags));
+
     const requestData = {
-      userId: this.currentUser.id, // Send only the user's ID
-      title: formValues.title,
-      description: formValues.description,
-      minPrice: formValues.minPrice,
-      maxPrice: formValues.maxPrice,
-      image: formValues.image,
-      deliveryTime: formValues.deliveryTime,
-      viewCount: 0,
+      userId: this.currentUser.id,
+      title: this.RequestForm.get('title')?.value,
+      description: this.RequestForm.get('description')?.value,
+      minPrice: this.RequestForm.get('minPrice')?.value,
+      maxPrice: this.RequestForm.get('maxPrice')?.value,
+      image: this.previewUrl as string,
+      deliveryTime: this.RequestForm.get('deliveryTime')?.value,
       tags: this.tags
     };
-  
+
     this.requestPersoService.createNewRequestPerso(requestData).subscribe(
       res => {
         this.snackBar.open('Request created successfully!', 'Close', { duration: 3000 });
@@ -137,9 +160,4 @@ else {
       }
     );
   }
-
- 
-
-
-  
 }

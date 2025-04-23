@@ -88,7 +88,7 @@ public class ProductRecommendationService {
 
     public List<ProductRecommendationDTO> getCategoryBasedRecommendations(ProductCategoryType category, int limit) {
         List<Product> categoryProducts = productRepository.findByCategory(category);
-        
+
         return categoryProducts.stream()
                 .map(product -> new ProductRecommendationDTO(product, 1.0, CATEGORY_TYPE))
                 .limit(limit)

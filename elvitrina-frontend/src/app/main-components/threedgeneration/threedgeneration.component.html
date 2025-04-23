@@ -1,0 +1,14 @@
+<div #sceneContainer class="scene-container">
+  <div class="controls-overlay">
+    <div class="generation-controls">
+      <input #modelInput placeholder="Enter model description (e.g. 'modern sofa')">
+      <button (click)="generateModel(modelInput.value)" [disabled]="isLoading">
+        {{ isLoading ? 'Generating...' : 'Generate 3D Model' }}
+      </button>
+    </div>
+    
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+  </div>
+</div>

@@ -104,7 +104,7 @@ public class PaymentService implements IPaymentService {
         return convertToDTO(paymentRepository.save(payment));
     }
 
-    private PaymentDTO convertToDTO(Payment payment) {
+    public PaymentDTO convertToDTO(Payment payment) {
         List<Long> orderIds = payment.getOrders() != null
                 ? payment.getOrders().stream().map(CustomOrder::getId).collect(Collectors.toList())
                 : null;
@@ -118,4 +118,13 @@ public class PaymentService implements IPaymentService {
                 orderIds
         );
     }
+
+
+    public Payment updateStatusToSuccess(Long id) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Payment not found with id " + id));
+        payment.setPaystatus(PaymentStatusType.SUCCESS);
+        return paymentRepository.save(payment);
+    }
+
 }

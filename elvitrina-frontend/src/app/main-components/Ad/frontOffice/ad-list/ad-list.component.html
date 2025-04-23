@@ -1,28 +1,12 @@
-<div class="ads-container">
-    <div *ngFor="let ad of ads" class="ad-card" (click)="trackClick(ad.id)">
-      <a [href]="ad.targetUrl" target="_blank" class="ad-link">
-        <!-- Image Ad -->
-        <img 
-          *ngIf="ad.imageUrl" 
-          [src]="ad.imageUrl" 
-          [alt]="ad.title"
-          [style.width.px]="ad.width || 300"
-          [style.height.px]="ad.height || 250"
-          class="ad-image"
-        >
-  
-        <!-- Text Ad (Fallback) -->
-        <div *ngIf="!ad.imageUrl" class="text-ad">
-          <h3>{{ ad.title }}</h3>
-          <p>{{ ad.content }}</p>
-        </div>
-  
-        <!-- Ad Badge -->
-        <span class="ad-badge">Ad</span>
-      </a>
+<!-- ad-list.component.html -->
+<div class="pins-container">
+  <div *ngFor="let ad of ads" class="pin" [style.height.px]="ad.imageUrl ? 280 : 160">
+    <div class="pin-content">
+      <img *ngIf="ad.imageUrl" [src]="ad.imageUrl" [alt]="ad.title" class="pin-image">
+      <div class="pin-text">
+        <h3>{{ad.title}}</h3>
+        <p *ngIf="ad.content">{{ad.content}}</p>
+      </div>
     </div>
   </div>
-  
-  <div *ngIf="ads.length === 0" class="no-ads">
-    No active ads at the moment.
-  </div> 
+</div>

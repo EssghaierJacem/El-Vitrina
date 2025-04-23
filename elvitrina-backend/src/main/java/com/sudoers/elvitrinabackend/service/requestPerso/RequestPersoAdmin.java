@@ -1,5 +1,6 @@
 package com.sudoers.elvitrinabackend.service.requestPerso;
 import com.sudoers.elvitrinabackend.model.entity.RequestPerso;
+import com.sudoers.elvitrinabackend.model.enums.RequestStatus;
 import com.sudoers.elvitrinabackend.repository.RequestPersoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,23 @@ public class RequestPersoAdmin {
         existing.setDeliveryTime(requestPerso.getDeliveryTime());
         existing.setTags(requestPerso.getTags());
         existing.setDate(requestPerso.getDate());
+        existing.setStatus(requestPerso.getStatus());
         return requestPersoRepository.save(existing);
     }
 
     public void deleteRequestPerso(Long id) {
         requestPersoRepository.deleteById(id);
+    }
+
+
+    public List<RequestPerso> getPendingRequests() {
+        return requestPersoRepository.findByStatus(RequestStatus.PENDING);
+    }
+
+    public void moderateRequest(Long id, RequestStatus newStatus) {
+        RequestPerso req = requestPersoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+        req.setStatus(newStatus);
+        requestPersoRepository.save(req);
     }
 }

@@ -1,4 +1,6 @@
 <!-- Filter buttons -->
+
+
 <div class="filter-buttons" style="margin: 20px 0; text-align: center;">
   <button mat-raised-button 
           [class.active-filter]="filter === 'all'"
@@ -33,7 +35,10 @@
  -->
 <!-- Request cards -->
 <div class="card-container" *ngFor="let request of allrequests" [attr.data-id]="request.id">
-  <mat-card>
+  
+
+  
+  <mat-card *ngIf="request.status === 'ACCEPTED'">
     <!-- Delete button (only for request owner) 
     <button *ngIf="userId === request.user?.id" mat-icon-button class="delete-button" 
             (click)="removeRequestFromView(request.id)">  -->
@@ -79,7 +84,9 @@
       <button *ngIf="userId === request.user?.id" mat-raised-button color="accent" [routerLink]="['/requestperso/edit', request.id]">
   <mat-icon>edit</mat-icon> Edit
 </button>
-
+<button *ngIf="userId !== request.user?.id" mat-raised-button color="accent" (click)="changeStatus(request, 'PENDING')">
+  <mat-icon>report</mat-icon> aaa
+</button>
 
 <!-- Add this new button in your mat-card-actions section -->
 <mat-card-actions>
@@ -96,5 +103,27 @@ Delete
 </mat-card-actions>
 
     </mat-card-actions>
+    <mat-card-footer class="request-heat-footer">
+      <div class="heat-info">
+        <span class="heat-value">{{getRequestHeat(request)}}%</span>
+        
+        <!-- Compact progress bar on the right -->
+        <div class="compact-progress-container">
+          <mat-progress-bar 
+              mode="determinate" 
+              [value]="getRequestHeat(request)"
+              [class]="getHeatLevelClass(request)">
+          </mat-progress-bar>
+          
+          <!-- Moving fire icon -->
+          <mat-icon class="moving-fire" 
+                    [style.left]="getRequestHeat(request) + '%'"
+                    [class]="getHeatLevelClass(request)">
+            whatshot
+          </mat-icon>
+        </div>
+      </div>
+    </mat-card-footer>
+
   </mat-card>
 </div>
