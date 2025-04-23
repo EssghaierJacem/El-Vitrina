@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RewardTierResponseDTO {
-    private Long id;
+    private Long rewardId;
     private String name;
     private String description;
     private BigDecimal minimumDonationThreshold;

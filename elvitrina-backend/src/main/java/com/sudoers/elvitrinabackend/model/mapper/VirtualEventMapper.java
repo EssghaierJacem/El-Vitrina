@@ -31,12 +31,9 @@ public class VirtualEventMapper {
         event.setDescription(dto.getDescription());
         event.setEventDate(dto.getStartDateTime());
         event.setTicketPrice(dto.getTicketPrice());
-        event.setStatus(dto.getStatus());
         event.setEventType(dto.getEventType());
         event.setEventMode(dto.getEventMode());
         event.setMaxParticipants(dto.getMaxParticipants());
-        event.setStreamUrl(dto.getStreamUrl());
-        event.setChatChannelId(dto.getChatChannelId());
 
         // Map sessions if provided
         if (dto.getSessions() != null && !dto.getSessions().isEmpty()) {
@@ -59,7 +56,7 @@ public class VirtualEventMapper {
 
     public VirtualEventResponseDTO toResponseDTO(VirtualEvent event) {
         VirtualEventResponseDTO dto = new VirtualEventResponseDTO();
-        dto.setId(event.getEventId());
+        dto.setEventId(event.getEventId());
         dto.setTitle(event.getTitle());
         dto.setDescription(event.getDescription());
         dto.setStartDateTime(event.getEventDate());
@@ -99,12 +96,9 @@ public class VirtualEventMapper {
         if (dto.getDescription() != null) event.setDescription(dto.getDescription());
         if (dto.getStartDateTime() != null) event.setEventDate(dto.getStartDateTime());
         if (dto.getTicketPrice() != null) event.setTicketPrice(dto.getTicketPrice());
-        if (dto.getStatus() != null) event.setStatus(dto.getStatus());
         if (dto.getEventType() != null) event.setEventType(dto.getEventType());
         if (dto.getEventMode() != null) event.setEventMode(dto.getEventMode());
         if (dto.getMaxParticipants() != null) event.setMaxParticipants(dto.getMaxParticipants());
-        if (dto.getStreamUrl() != null) event.setStreamUrl(dto.getStreamUrl());
-        if (dto.getChatChannelId() != null) event.setChatChannelId(dto.getChatChannelId());
 
         // Update sessions if provided
         if (dto.getSessions() != null && !dto.getSessions().isEmpty()) {

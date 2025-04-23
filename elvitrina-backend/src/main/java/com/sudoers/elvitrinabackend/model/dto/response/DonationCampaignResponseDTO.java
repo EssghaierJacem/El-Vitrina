@@ -18,6 +18,7 @@ public class DonationCampaignResponseDTO {
     private String title;
     private String description;
     private String cause;
+    private String imageUrl;
     private BigDecimal goalAmount;
     private BigDecimal currentAmount;
     private double progressPercentage;
@@ -34,4 +35,5 @@ public class DonationCampaignResponseDTO {
     private Long userId;
     private String userName;
     private List<DonorRewardResponseDTO> rewards;
+
 }

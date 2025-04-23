@@ -3,6 +3,7 @@ package com.sudoers.elvitrinabackend.controller.donation;
 import com.sudoers.elvitrinabackend.model.dto.request.DonationRequestDTO;
 import com.sudoers.elvitrinabackend.model.dto.response.DonationResponseDTO;
 import com.sudoers.elvitrinabackend.service.Donation.DonationService;
+import com.sudoers.elvitrinabackend.service.DonationCampaign.DonationCampaignServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,14 +19,20 @@ public class DonationController {
 
     private final DonationService donationService;
 
+    private final DonationCampaignServiceImpl donationCampaignServiceImp;
+
     @Autowired
-    public DonationController(DonationService donationService) {
+    public DonationController(DonationService donationService ,DonationCampaignServiceImpl donationCampaignServiceImp ) {
         this.donationService = donationService;
+        this.donationCampaignServiceImp = donationCampaignServiceImp;
     }
 
     @PostMapping
     public ResponseEntity<DonationResponseDTO> createDonation(@RequestBody DonationRequestDTO requestDTO) {
+        System.out.println(requestDTO);
         DonationResponseDTO savedDonation = donationService.saveDonation(requestDTO);
+        donationCampaignServiceImp.updateAmount(savedDonation.getCampaignId(),savedDonation.getAmount().doubleValue());
+        System.out.println("testt" + savedDonation);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDonation);
     }
 

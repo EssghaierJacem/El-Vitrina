@@ -1,6 +1,13 @@
-<p>quiz-result works!</p>
-<div *ngFor="let product of recommendedProducts">
-  <h3>{{ product.name }}</h3>
-  <p>{{ product.description }}</p>
-  <p>Score: {{ product.score }}</p>
+<div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+<div *ngIf="recommendedProducts.length > 0; else noResults">
+  <div *ngFor="let product of recommendedProducts" class="card">
+    <h3>{{ product.name }}</h3>
+    <p>{{ product.description }}</p>
+    <p><strong>Score:</strong> {{ product.score }}</p>
+  </div>
 </div>
+
+<ng-template #noResults>
+  <p>Aucune recommandation pour le moment.</p>
+</ng-template>

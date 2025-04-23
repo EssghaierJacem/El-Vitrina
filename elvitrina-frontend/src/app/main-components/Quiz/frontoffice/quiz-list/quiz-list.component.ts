@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { NgModel } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Quiz } from 'src/app/core/models/Quiz/quiz';
 import { QuizService } from 'src/app/core/services/Quiz/QuizService';
 
 @Component({
   selector: 'app-quiz-list',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './quiz-list.component.html',
   styleUrl: './quiz-list.component.scss'
 })

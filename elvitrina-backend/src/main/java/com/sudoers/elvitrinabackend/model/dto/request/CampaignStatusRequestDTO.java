@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CampaignStatusRequestDTO {
     private String status;
-    private Boolean featured;
     private Boolean verified;
 }

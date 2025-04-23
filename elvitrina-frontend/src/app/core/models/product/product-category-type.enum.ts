@@ -14,4 +14,4 @@ export enum ProductCategoryType {
   DIGITAL_PRODUCTS = 'DIGITAL_PRODUCTS',
   CRAFTS_DIY = 'CRAFTS_DIY',
   PET_SUPPLIES = 'PET_SUPPLIES'
-} 
+}

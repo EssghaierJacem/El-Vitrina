@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { MaterialModule } from 'src/app/material.module';
-
+import { FormsModule } from '@angular/forms';
 
 interface stats {
     id: number;
@@ -13,50 +16,34 @@ interface stats {
 }
 
 @Component({
-    selector: 'app-recent-transactions',
-    imports: [NgApexchartsModule, MaterialModule],
-    templateUrl: './recent-transactions.component.html',
+  selector: 'app-recent-transactions',
+  standalone: true,
+  imports: [
+    NgApexchartsModule,
+    MaterialModule,
+    HttpClientModule,
+    FormsModule,
+    CommonModule,
+    RouterModule
+  ],
+  templateUrl: './recent-transactions.component.html',
 })
-export class AppRecentTransactionsComponent {
-    stats: stats[] = [
-        {
-            id: 1,
-            time: '09.30 am',
-            color: 'primary',
-            subtext: 'Payment received from John Doe of $385.90',
-        },
-        {
-            id: 2,
-            time: '10.30 am',
-            color: 'accent',
-            title: 'New sale recorded',
-            link: '#ML-3467',
-        },
-        {
-            id: 3,
-            time: '12.30 pm',
-            color: 'success',
-            subtext: 'Payment was made of $64.95 to Michael',
-        },
-        {
-            id: 4,
-            time: '12.30 pm',
-            color: 'warning',
-            title: 'New sale recorded',
-            link: '#ML-3467',
-        },
-        {
-            id: 5,
-            time: '12.30 pm',
-            color: 'error',
-            title: 'New arrival recorded',
-            link: '#ML-3467',
-        },
-        {
-            id: 6,
-            time: '12.30 pm',
-            color: 'success',
-            subtext: 'Payment Done',
-        },
-    ];
+export class AppRecentTransactionsComponent implements OnInit {
+  stats: stats[] = [];
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.http.get<any[]>('http://localhost:8080/api/stats/recent')
+      .subscribe(data => {
+        this.stats = data.slice(0, 6).map(activity => ({
+          id: activity.id,
+          time: activity.time,
+          color: activity.color,
+          title: activity.title,
+          subtext: activity.description, 
+          link: activity.link ? activity.link : undefined 
+        }));
+      });
+  }
 }

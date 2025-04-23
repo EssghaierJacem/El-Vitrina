@@ -19,13 +19,13 @@ public class DonorRewardMapper {
                 .minimumDonationAmount(dto.getMinimumDonationAmount() != null ?
                         dto.getMinimumDonationAmount().doubleValue() : null)
                 .availableQuantity(dto.getAvailableQuantity())
-                .imageUrl(dto.getImageUrl())
+                .redemptionCode(dto.getRedemptionCode())
                 .build();
     }
 
     public DonorRewardResponseDTO toResponseDTO(DonorReward reward) {
         return DonorRewardResponseDTO.builder()
-                .id(reward.getRewardId())
+                .rewardId(reward.getRewardId())
                 .title(reward.getTitle())
                 .description(reward.getDescription())
                 .minimumDonationAmount(reward.getMinimumDonationAmount() != null ?
@@ -33,6 +33,7 @@ public class DonorRewardMapper {
                 .availableQuantity(reward.getAvailableQuantity())
                 .claimedQuantity(reward.getClaimedQuantity())
                 .imageUrl(reward.getImageUrl())
+                .redemptionCode(reward.getRedemptionCode())
                 .campaignId(reward.getCampaign() != null ? reward.getCampaign().getCampaignId() : null)
                 .campaignTitle(reward.getCampaign() != null ? reward.getCampaign().getTitle() : null)
                 .build();

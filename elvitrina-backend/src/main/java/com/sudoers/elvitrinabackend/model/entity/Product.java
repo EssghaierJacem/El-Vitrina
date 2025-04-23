@@ -1,6 +1,5 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sudoers.elvitrinabackend.model.enums.ProductCategoryType;
 import com.sudoers.elvitrinabackend.model.enums.ProductStatus;
 import jakarta.persistence.*;
@@ -8,7 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.validator.constraints.URL;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -16,6 +14,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -52,12 +51,18 @@ public class Product implements Serializable {
     private LocalDateTime updatedAt;
 
     private boolean hasDiscount;
+    private double discountPercentage;
 
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
     @ElementCollection
-    private List<@URL(message = "Image must be a valid URL") String> images;
+    private List<String> images;
+
+    @ElementCollection
+    @CollectionTable(name = "product_tags", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "tag")
+    private Set<String> tags;
 
     @ManyToOne
     @JoinColumn(name = "store_id")

@@ -30,12 +30,7 @@ public class VirtualEventController {
     }
 
     @PostMapping
-    @Operation(summary = "Create a new virtual event", description = "Creates a virtual event with the provided details.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Event created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid request data")
-    })
-    public ResponseEntity<VirtualEventResponseDTO> createEvent(@Valid @RequestBody VirtualEventRequestDTO requestDTO) {
+    public ResponseEntity<VirtualEventResponseDTO> createEvent(@RequestBody VirtualEventRequestDTO requestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(virtualEventService.createEvent(requestDTO));
     }
 

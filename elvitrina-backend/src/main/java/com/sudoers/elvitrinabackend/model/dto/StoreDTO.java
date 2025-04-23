@@ -25,8 +25,8 @@ public class StoreDTO {
     private boolean status;
     private String address;
     private String image;
-    private boolean featured;
     private String coverImage;
+    private boolean featured;
     private Long userId;
     private List<Long> feedbackIds;
     private List<StoreFeedbackDTO> feedbacks;

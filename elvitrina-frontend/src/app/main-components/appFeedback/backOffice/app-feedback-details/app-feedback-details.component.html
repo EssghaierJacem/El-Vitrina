@@ -1,13 +1,11 @@
-<mat-card class="cardWithShadow">
+<mat-card class="cardWithShadow theme-card p-4">
   <mat-card-content>
     <!-- Header with Back Button -->
-    <div class="d-flex justify-content-between align-items-center m-b-16">
-      <div class="d-flex align-items-center">
-        <button mat-icon-button color="primary" [routerLink]="['../']">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <mat-card-title>Feedback Details</mat-card-title>
-      </div>
+    <div class="d-flex align-items-center gap-16 m-b-24">
+      <button mat-icon-button color="primary" [routerLink]="['../']">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2 class="f-w-600 f-s-20 m-0">Feedback Details</h2>
     </div>
 
     <!-- Loading State -->
@@ -30,54 +28,51 @@
 
     <!-- Feedback Details -->
     @if (!isLoading && !error && feedback) {
-      <div class="feedback-details">
-        <!-- Type -->
-        <div class="detail-section">
-          <mat-chip-listbox>
-            <mat-chip [color]="'primary'" selected>
-              {{ getTypeDisplayName(feedback.appFeedbackType) }}
-            </mat-chip>
-          </mat-chip-listbox>
+      <div>
+        <!-- Feedback Type Chip -->
+        <mat-chip-listbox class="m-b-16">
+          <mat-chip [color]="'primary'" selected>
+            {{ getTypeDisplayName(feedback.appFeedbackType) }}
+          </mat-chip>
+        </mat-chip-listbox>
+
+        <mat-divider></mat-divider>
+
+        <!-- Comment Section -->
+        <div class="p-x-20 p-y-16">
+          <p class="f-w-500 m-b-4">💬 Comment :</p>
+          <p class="text-muted comment-text">{{ feedback.comment }}</p>
         </div>
 
-        <mat-divider class="m-y-16"></mat-divider>
+        <mat-divider></mat-divider>
 
-        <!-- Comment -->
-        <div class="detail-section">
-          <h3 class="m-b-8 text-secondary">Comment</h3>
-          <p class="comment-text">{{ feedback.comment }}</p>
-        </div>
-
-        <mat-divider class="m-y-16"></mat-divider>
-
-        <!-- Metadata -->
-        <div class="detail-section">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h3 class="m-b-8 text-secondary">Created At</h3>
-              <p>{{ formatDate(feedback.createdAt) }}</p>
+        <!-- Metadata Section -->
+        <div class="p-x-20 p-y-16">
+          <div class="row">
+            <div class="col-md-6 m-b-16">
+              <p class="f-w-500 m-b-4">📅 Created At :</p>
+              <p class="text-muted">{{ formatDate(feedback.createdAt) }}</p>
             </div>
+            
             @if (feedback.contactEmail) {
-              <div>
-                <h3 class="m-b-8 text-secondary">Contact Email</h3>
-                <p>{{ feedback.contactEmail }}</p>
+              <div class="col-md-6 m-b-16">
+                <p class="f-w-500 m-b-4">📧 Contact Email :</p>
+                <p class="text-muted">{{ feedback.contactEmail }}</p>
               </div>
             }
           </div>
         </div>
 
+        <mat-divider class="m-t-24"></mat-divider>
+
         <!-- Actions -->
-        <div class="actions m-t-32">
-          <div class="d-flex gap-2">
-            <button mat-button color="primary" [routerLink]="['../edit', feedback.id]">
-              <mat-icon>edit</mat-icon>
-              Edit Feedback
-            </button>
-            <button mat-button color="warn" (click)="deleteFeedback()">
-              <mat-icon>delete</mat-icon>
-              Delete Feedback
-            </button>
-          </div>
+        <div class="d-flex justify-content-end gap-8 m-t-20">
+          <button mat-flat-button color="primary" [routerLink]="['../edit', feedback.id]">
+            <mat-icon class="m-r-4">edit</mat-icon> Edit
+          </button>
+          <button mat-stroked-button color="warn" (click)="deleteFeedback()">
+            <mat-icon class="m-r-4">delete</mat-icon> Delete
+          </button>
         </div>
       </div>
     }

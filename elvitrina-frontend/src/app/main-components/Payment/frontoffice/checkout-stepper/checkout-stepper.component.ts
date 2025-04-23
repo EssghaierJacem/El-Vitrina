@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatRadioModule } from '@angular/material/radio';
+import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 import { MatStepperModule } from '@angular/material/stepper';
 
 import { loadStripe, Stripe } from '@stripe/stripe-js';
+
 import { PaymentMethodType } from 'src/app/core/models/Panier/PaymentMethodType.type';
+
 import { LeafletMapComponent } from '../leaflet-map/leaflet-map.component';
 import { PaymentComponent } from '../payment/payment.component';
 import { PayementCreationComponent } from '../payement-creation/payement-creation.component';
@@ -24,6 +26,7 @@ import { PayementCreationComponent } from '../payement-creation/payement-creatio
     PayementCreationComponent,
     PaymentComponent,
     LeafletMapComponent,
+    FormsModule,
     ReactiveFormsModule,
     MatStepperModule,
     MatFormFieldModule,
@@ -47,14 +50,19 @@ export class CheckoutStepperComponent implements OnInit {
   deliveryFormGroup: FormGroup;
   creditCardFormGroup: FormGroup;
 
-  // Méthode de paiement sélectionnée dynamiquement
-  selectedPaymentMethod: PaymentMethodType = PaymentMethodType.CASHONDELIVER;
-  PaymentMethodType = PaymentMethodType;
+  // Méthode de paiement sélectionnée
+  selectedPaymentMethod: PaymentMethodType ;
+  PaymentMethodType = PaymentMethodType; // utilisé dans le HTML
 
-  // Flag pour savoir si le paiement est créé
+  // Indicateur de création du paiement
   paymentCreated: boolean = false;
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {
+    // Formulaire pour paiement à la livraison
     this.personalInfoFormGroup = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -62,37 +70,39 @@ export class CheckoutStepperComponent implements OnInit {
       address: ['', Validators.required]
     });
 
+    // Formulaire pour carte bancaire
     this.deliveryFormGroup = this.fb.group({
       fullName: ['', Validators.required],
       address: ['', Validators.required],
       phone: ['', [Validators.required, Validators.pattern('[0-9]{8}')]]
     });
 
+    // Formulaire Stripe (vide pour Stripe Elements)
     this.creditCardFormGroup = this.fb.group({});
   }
 
   ngOnInit(): void {
-    console.log('CheckoutStepperComponent INIT');
+    console.log('✅ CheckoutStepperComponent initialisé');
   }
 
-  // Met à jour l'adresse en fonction de la carte
-  handleMapAddress(address: string) {
-    const formGroup = this.selectedPaymentMethod === PaymentMethodType.CASHONDELIVER
+  // Mettre à jour l'adresse avec celle sélectionnée sur la carte
+  handleMapAddress(address: string): void {
+    const targetForm = this.selectedPaymentMethod === PaymentMethodType.CASHONDELIVER
       ? this.personalInfoFormGroup
       : this.deliveryFormGroup;
 
-    formGroup.get('address')?.setValue(address);
+    targetForm.get('address')?.setValue(address);
   }
 
-  // Réceptionne le signal que le paiement est bien créé
+  // Callback quand le paiement a été créé dans le composant enfant
   onPaymentCreated(value: boolean): void {
     this.paymentCreated = value;
-    console.log('Paiement marqué comme créé.');
+    console.log('🟢 Paiement marqué comme créé :', value);
   }
 
-  // Récupère la méthode de paiement sélectionnée
-  onPaymentMethodSelected(method: PaymentMethodType): void {
-    this.selectedPaymentMethod = method;
-    console.log('Méthode de paiement sélectionnée :', method);
+  // Callback quand l’utilisateur change la méthode de paiement
+  onPaymentMethodSelected(event: MatRadioChange): void {
+    this.selectedPaymentMethod = event.value;  // event.value est de type PaymentMethodType
+    console.log(this.selectedPaymentMethod);
   }
 }

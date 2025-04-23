@@ -29,6 +29,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
   unreadCounts: { [key: number]: number } = {};
   shouldScrollToBottom = false;
   loadedMessageIds: Set<number> = new Set();
+  suggestedText: string = '';
 
   constructor(
     private wsService: WebSocketService,
@@ -76,14 +77,17 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
         (message.senderId === this.selectedFriend.id || message.receiverId === this.selectedFriend.id);
     
       if (isParticipant) {
-        this.conversation.push(message);
-        this.shouldScrollToBottom = true;
+        const index = this.conversation.findIndex(m => m.id === message.id);
+        if (index !== -1) {
+          this.conversation[index] = { ...this.conversation[index], ...message };
+        } else {
+          this.conversation.push(message);
+          this.shouldScrollToBottom = true;
+        }
       }
     
       this.updateFriendLastMessage(message);
-    });
-    
-    
+    });  
   
     this.wsService.typingIndicator$.subscribe(data => {
       if (this.selectedFriend && data.senderId === this.selectedFriend.id) {
@@ -126,7 +130,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
               firstname: req.receiverFirstName,
               lastname: req.receiverLastName,
               image: req.receiver?.image || 'assets/images/default-avatar.png',
-              isOnline: false, 
+              isOnline: false,
               lastMessage: '',
               lastMessageTime: null,
               unreadCount: 0
@@ -159,22 +163,30 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
         });
       });
   
-      this.friends.forEach(friend => {
-        this.wsService.getLastMessage(this.userId, friend.id).subscribe(
-          message => {
-            if (message) {
-              friend.lastMessage = message.content;
-              friend.lastMessageTime = message.sentAt;
-            }
-          },
-          error => console.error(`Error getting last message for friend ${friend.id}:`, error)
-        );
+      this.wsService.getAllLastMessages(this.userId).subscribe(lastMessages => {
+        for (const [friendIdStr, message] of Object.entries(lastMessages)) {
+          const friend = this.friends.find(f => f.id === Number(friendIdStr));
+          if (friend) {
+            friend.lastMessage = message.content;
+            friend.lastMessageTime = message.sentAt;
+          }
+        }
+  
+        this.sortFriendsByRecent();
+      });
+  
+      this.wsService.getUnreadCounts(this.userId).subscribe(unreadMap => {
+        for (const [senderId, count] of Object.entries(unreadMap)) {
+          const friend = this.friends.find(f => f.id === Number(senderId));
+          if (friend) {
+            friend.unreadCount = Number(count);
+          }
+        }
       });
   
       console.log('Final unique friends list:', this.friends);
     });
   }
-   
 
   updateFriendLastMessage(message: Message): void {
     const friendId = message.senderId === this.userId ? message.receiverId : message.senderId;
@@ -226,13 +238,14 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
       (conversation: any[]) => {
         const mapped = conversation.map(m => ({
           id: m.id,
-          senderId: m.sender?.id,         
-          receiverId: m.receiver?.id,    
+          senderId: m.senderId,
+          receiverId: m.receiverId,
           content: m.content,
           sentAt: m.sentAt,
           read: m.read,
           delivered: m.delivered ?? false
         }));
+        console.log('Loaded conversation:', conversation);
     
         this.conversation = mapped;
         this.conversation.sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime());
@@ -295,7 +308,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
 
   
   onInputChange(): void {
-    this.onTyping(true); 
+    this.onTyping(true);
   
     if (this.typingTimeout) {
       clearTimeout(this.typingTimeout);
@@ -304,6 +317,37 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
     this.typingTimeout = setTimeout(() => {
       this.onTyping(false);
     }, 2000);
+  
+    const trimmed = this.messageContent.trim();
+  
+    if (trimmed.length > 2) {
+      this.getCorrectionSuggestion(trimmed);
+    } else {
+      this.suggestedText = '';
+    }
+  }
+  
+  getCorrectionSuggestion(text: string) {
+    this.wsService.getCorrection(text).subscribe(
+      (suggested) => {
+        this.suggestedText = suggested !== text ? suggested : '';
+      },
+      (error) => {
+        console.error('Correction failed:', error);
+      }
+    );
+  }
+  
+  applySuggestion(): void {
+    this.messageContent = this.suggestedText;
+    this.suggestedText = '';
+  }
+
+  onKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Tab' && this.suggestedText) {
+      this.applySuggestion();
+      event.preventDefault(); 
+    }
   }
 
   isLoggedIn(): boolean {

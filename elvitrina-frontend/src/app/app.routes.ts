@@ -6,6 +6,7 @@ import { AdminGuard } from './main-components/user/adminGuard.component';
 import { NotFoundComponent } from './layouts/not-found/not-found.component';
 import { OauthSuccessComponent } from './main-components/user/oauth-success/oauth-success.component';
 import { RequestPersoCreateComponent } from './main-components/requestPerso/frontOffice/request-perso-create/request-perso-create.component';
+import { chartRoutes } from './main-components/chart-ines/chart/charts-routes';
 
 export const routes: Routes = [   
   {  
@@ -27,6 +28,7 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/store/frontOffice/store.routes').then((m) => m.routes),
       },
+
       {
         path: 'products',
         loadChildren: () =>
@@ -63,6 +65,31 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/threedgeneration/threedgeneration.routes').then((m) => m.RequestGenerate),
       },
+      {
+        path: 'blog',
+        loadChildren: () =>
+          import('./main-components/blogPost/frontoffice/frontoffice_blogPost.routes').then((m) => m.BlogPostRoutes),
+      },
+
+
+      {
+        path: 'formation',
+        loadChildren: () =>
+          import('./main-components/formation/frontoffice/frontoffice_formation.routes').then((m) => m.FormationRoutes),
+      },
+
+      {
+        path: 'events',
+        loadChildren: () =>
+          import('./main-components/event/frontoffice/eventfront.routes').then((m) => m.EVENT_FRONT_ROUTES),
+      },
+
+
+      {
+        path: 'donations',
+        loadChildren: () =>
+          import('./main-components/donation/frontoffice/donationfront.routes').then((m) => m.DONATION_FRONT_ROUTES),
+      },
     ],
   },
 
@@ -77,7 +104,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: FullComponent,
-    canActivate: [AdminGuard],
+   canActivate: [AdminGuard],
     children: [
       {
         path: '',
@@ -91,6 +118,7 @@ export const routes: Routes = [
             (m) => m.UiComponentsRoutes
           ),
       },
+
       {
         path: 'custom-order',
         loadChildren: () =>
@@ -140,10 +168,27 @@ export const routes: Routes = [
             .then(m => m.ProductRoutes)
       },
       {
-        path: 'extra',
+        path: 'charts',
         loadChildren: () =>
-          import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
+          import('./main-components/chart-ines/chart/charts-routes')
+            .then(m => m.chartRoutes)
       },
+
+      {
+        path: 'formations',
+        loadChildren: () =>
+          import('./main-components/formation/backoffice/backoffice_formation.routes')
+            .then(m => m.FormationRoutes)
+      },
+
+
+      {
+        path: 'blogPosts',
+        loadChildren: () =>
+          import('./main-components/blogPost/backoffice/backoffice_blogPost.routes')
+            .then(m => m.BlogPostRoutes)
+      },
+
       {
         path: 'RequestPerso',
         loadChildren: () =>
@@ -153,6 +198,18 @@ export const routes: Routes = [
         path: 'AdAdmin',
         loadChildren: () =>
           import('./main-components/Ad/backOffice/backoffice_ad.routes').then((m) => m.AdAdmin),
+      },
+
+      {
+        path: 'extra',
+        loadChildren: () =>
+          import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
+      },
+      
+      {
+        path: 'donations',
+        loadChildren: () =>
+          import('./main-components/donation/backoffice/donationback.routes').then((m) => m.DONATION_BACK_ROUTES),
       },
     ],
   },

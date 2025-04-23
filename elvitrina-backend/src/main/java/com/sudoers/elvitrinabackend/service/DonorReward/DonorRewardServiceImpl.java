@@ -61,7 +61,6 @@ public class DonorRewardServiceImpl implements DonorRewardService {
         reward.setMinimumDonationAmount(dto.getMinimumDonationAmount() != null ?
                 dto.getMinimumDonationAmount().doubleValue() : null);
         reward.setAvailableQuantity(dto.getAvailableQuantity());
-        reward.setImageUrl(dto.getImageUrl());
 
         return donorRewardMapper.toResponseDTO(donorRewardRepository.save(reward));
     }

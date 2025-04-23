@@ -1,121 +1,191 @@
-.product-create-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
-  mat-card {
-    padding: 2rem;
-  }
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  border: none;
+}
 
-  mat-card-header {
-    margin-bottom: 2rem;
+.card-title {
+  font-size: 24px;
+  font-weight: 500;
+  color: #333;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.hint-text {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.preview-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #555;
+  margin-top: 16px;
+  margin-bottom: 12px;
+}
+
+.image-preview-container {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     
-    mat-card-title {
-      font-size: 24px;
-      margin-bottom: 0.5rem;
+    .image-preview-overlay {
+      opacity: 1;
     }
-
-    mat-card-subtitle {
-      font-size: 16px;
-      color: rgba(0, 0, 0, 0.6);
-    }
-  }
-
-  .form-section {
-    margin-bottom: 2rem;
-    
-    h3 {
-      font-size: 18px;
-      font-weight: 500;
-      margin-bottom: 1rem;
-      color: rgba(0, 0, 0, 0.87);
-    }
-
-    .hint-text {
-      color: rgba(0, 0, 0, 0.6);
-      font-size: 14px;
-      margin-bottom: 1rem;
-    }
-  }
-
-  .full-width {
-    width: 100%;
-  }
-
-  .form-row {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-
-    mat-form-field {
-      flex: 1;
-      min-width: 200px;
-    }
-  }
-
-  .discount-section {
-    margin: 1rem 0;
-
-    mat-checkbox {
-      margin-right: 1rem;
-    }
-
-    mat-form-field {
-      width: 200px;
-    }
-  }
-
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 2rem;
-
-    button {
-      min-width: 120px;
-
-      mat-icon {
-        margin-right: 0.5rem;
-      }
-    }
-  }
-
-  .loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(255, 255, 255, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
   }
 }
 
-// Responsive adjustments
-@media (max-width: 600px) {
-  .product-create-container {
-    mat-card {
-      padding: 1rem;
-    }
+.image-preview {
+  position: relative;
+  width: 100%;
+  padding-top: 100%; /* 1:1 Aspect Ratio */
+  overflow: hidden;
+}
 
-    .form-row {
-      flex-direction: column;
-      gap: 0;
+.preview-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-      mat-form-field {
-        width: 100%;
-      }
-    }
+.image-preview-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 0 0 0 8px;
+}
 
-    .form-actions {
-      flex-direction: column;
-      
-      button {
-        width: 100%;
-      }
-    }
+.discount-section {
+  margin-top: 16px;
+}
+
+.form-actions {
+  margin-top: 24px;
+}
+
+.form-section {
+  margin-bottom: 20px;
+}
+
+// File input styling
+.upload-area {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: #aaa;
+    background-color: #f9f9f9;
+  }
+}
+
+.file-input {
+  display: none;
+}
+
+// AI Analysis section styling
+.ai-analysis-section {
+  padding: 20px 0;
+}
+
+.ai-header {
+  margin-bottom: 16px;
+}
+
+.ai-icon {
+  color: #673ab7;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.analysis-results {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.result-text {
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.suggested-tags {
+  margin-top: 8px;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+// Stepper styling
+::ng-deep .mat-horizontal-stepper-header {
+  height: 72px;
+}
+
+::ng-deep .mat-step-icon {
+  background-color: #673ab7;
+}
+
+.stepper-nav {
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .card-title {
+    font-size: 20px;
+  }
+  
+  .section-title {
+    font-size: 16px;
+  }
+  
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  ::ng-deep .mat-horizontal-stepper-header-container {
+    display: none !important;
+  }
+  
+  ::ng-deep .mat-horizontal-content-container {
+    padding: 0 !important;
   }
 }
