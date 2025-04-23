@@ -15,12 +15,15 @@
           <mat-icon>favorite_border</mat-icon>
           <h3>No Favorites Yet</h3>
           <p>Browse our collection and add products to your wishlist</p>
+          <button mat-raised-button color="primary" [routerLink]="['/products']">
+            Browse Products
+          </button>
         </div>
         
         <!-- Product Cards -->
         <mat-card class="product-card" *ngFor="let product of products">
           <!-- Product Image -->
-          <div class="product-image">
+          <div class="product-image" (click)="viewProductDetails(product.productId)">
             <img [src]="product.images?.[0] || 'assets/images/products/no-image.jpg'" 
                  [alt]="product.productName"
                  (error)="handleImageError($event)">
@@ -28,7 +31,7 @@
           
           <!-- Product Details -->
           <mat-card-content>
-            <h3 [routerLink]="['/products', product.productId]" class="product-name">
+            <h3 (click)="viewProductDetails(product.productId)" class="product-name">
               {{ product.productName }}
             </h3>
             
@@ -50,9 +53,9 @@
           <mat-card-actions>
             <button mat-button color="warn" (click)="onRemoveFavorite(product.productId)">
               <mat-icon>favorite_border</mat-icon>
-              Remove from Favorites
+              Remove
             </button>
-            <button mat-button color="primary" [routerLink]="['/products', product.productId]">
+            <button mat-button color="primary" (click)="viewProductDetails(product.productId)">
               <mat-icon>visibility</mat-icon>
               View Details
             </button>

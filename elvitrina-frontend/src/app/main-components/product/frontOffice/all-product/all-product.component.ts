@@ -110,11 +110,8 @@ export class AllProductComponent implements OnInit {
   }
 
   loadFavoritesFromLocalStorage(): void {
-    const savedFavorites = localStorage.getItem('favorites');
-    if (savedFavorites) {
-      this.favoriteProductIds = new Set(JSON.parse(savedFavorites));
-      this.products.forEach(p => p.isFavorite = this.favoriteProductIds.has(p.productId));
-    }
+    this.favoriteProductIds = this.favoriteService.getFavorites();
+    this.products.forEach(p => p.isFavorite = this.favoriteProductIds.has(p.productId));
   }
 
   updateCategoryDescription(): void {
@@ -203,19 +200,15 @@ export class AllProductComponent implements OnInit {
   }
 
   toggleFavorite(product: Product): void {
-    const isNowFavorite = !product.isFavorite;
-    product.isFavorite = isNowFavorite;
-
-    if (isNowFavorite) {
-      this.favoriteProductIds.add(product.productId);
-      this.snackBar.open('Added to favorites', 'Close', { duration: 2000 });
-    } else {
-      this.favoriteProductIds.delete(product.productId);
-      this.snackBar.open('Removed from favorites', 'Close', { duration: 2000 });
-    }
-
-    // Save the updated favorites to local storage
-    localStorage.setItem('favorites', JSON.stringify(Array.from(this.favoriteProductIds)));
+    // Toggle favorite in the service, which handles localStorage
+    this.favoriteService.toggleFavorite(product.productId);
+    
+    // Update the local UI state
+    product.isFavorite = this.favoriteService.isFavorite(product.productId);
+    
+    // Show notification
+    const message = product.isFavorite ? 'Added to favorites' : 'Removed from favorites';
+    this.snackBar.open(message, 'Close', { duration: 2000 });
   }
 
   addToCart(product: Product): void {

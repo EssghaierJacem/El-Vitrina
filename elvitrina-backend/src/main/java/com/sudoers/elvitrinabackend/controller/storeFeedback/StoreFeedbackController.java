@@ -1,6 +1,8 @@
 package com.sudoers.elvitrinabackend.controller.storeFeedback;
 
 import com.sudoers.elvitrinabackend.model.dto.StoreFeedbackDTO;
+import com.sudoers.elvitrinabackend.model.entity.StoreFeedback;
+import com.sudoers.elvitrinabackend.model.enums.StoreFeedbackType;
 import com.sudoers.elvitrinabackend.service.feedback.storeFeedback.IStoreFeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -74,6 +76,27 @@ public class StoreFeedbackController {
         }
         return ResponseEntity.ok(feedbacks);
     }
+    
+    @GetMapping("/store/{storeId}/analyzed")
+    public ResponseEntity<List<StoreFeedbackDTO>> getAnalyzedFeedbacksByStoreId(@PathVariable Long storeId) {
+        List<StoreFeedbackDTO> analyzedFeedbacks = storeFeedbackService.getAnalyzedFeedbacksByStoreId(storeId);
+        if (analyzedFeedbacks.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(analyzedFeedbacks);
+    }
+    
+    @GetMapping("/store/{storeId}/sentiment-distribution")
+    public ResponseEntity<Map<String, Long>> getSentimentDistributionByStoreId(@PathVariable Long storeId) {
+        Map<String, Long> distribution = storeFeedbackService.getSentimentDistributionByStoreId(storeId);
+        return ResponseEntity.ok(distribution);
+    }
+    
+    @GetMapping("/store/{storeId}/sentiment-by-type")
+    public ResponseEntity<Map<StoreFeedbackType, Double>> getAverageSentimentByTypeForStore(@PathVariable Long storeId) {
+        Map<StoreFeedbackType, Double> sentimentByType = storeFeedbackService.getAverageSentimentByTypeForStore(storeId);
+        return ResponseEntity.ok(sentimentByType);
+    }
 
     @GetMapping("/analytics")
     public ResponseEntity<Map<String, Object>> getFeedbackAnalytics() {
@@ -86,6 +109,26 @@ public class StoreFeedbackController {
         analytics.put("totalFeedbacks", totalFeedbacks);
         analytics.put("ratingDistribution", ratingDistribution);
 
+        return ResponseEntity.ok(analytics);
+    }
+    
+    @GetMapping("/store/{storeId}/advanced-analytics")
+    public ResponseEntity<Map<String, Object>> getAdvancedAnalytics(@PathVariable Long storeId) {
+        Map<String, Object> analytics = new HashMap<>();
+        
+        // Basic statistics
+        Double averageRating = storeFeedbackService.getAverageRatingByStoreId(storeId);
+        Long totalFeedbacks = storeFeedbackService.countByStoreId(storeId);
+        
+        // Sentiment analysis
+        Map<String, Long> sentimentDistribution = storeFeedbackService.getSentimentDistributionByStoreId(storeId);
+        Map<StoreFeedbackType, Double> sentimentByType = storeFeedbackService.getAverageSentimentByTypeForStore(storeId);
+        
+        analytics.put("averageRating", averageRating);
+        analytics.put("totalFeedbacks", totalFeedbacks);
+        analytics.put("sentimentDistribution", sentimentDistribution);
+        analytics.put("sentimentByFeedbackType", sentimentByType);
+        
         return ResponseEntity.ok(analytics);
     }
 }

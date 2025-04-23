@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,21 +10,26 @@ import { Store } from '../../../../core/models/store/store.model';
 import { Product } from '../../../../core/models/product/product.model';
 import { StoreService } from '../../../../core/services/store/store.service';
 import { ProductService } from '../../../../core/services/product/product.service';
+import { FavoriteService } from '../../../../core/services/product/favorite.service';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ProductCategoryType } from '../../../../core/models/product/product-category-type.enum';
 import { environment } from '../../../../../environments/environment';
 import { StoreFeedbackListComponent } from '../../../../main-components/storeFeedback/frontOffice/store-feedback-list/store-feedback-list.component';
 import { StoreStatsDTO } from '../../../../core/models/store/Store-stats.dto';
 import { StoreFeedbackCreateComponent } from '../../../../main-components/storeFeedback/frontOffice/store-feedback-create/store-feedback-create.component';
 import { StoreFeedbackService } from '../../../../core/services/storeFeedback/store-feedback.service';
+import { StoreFeedbackAnalysisService, FeedbackAnalytics } from '../../../../core/services/storeFeedback/store-feedback-analysis.service';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StoreFeedbackType } from '../../../../core/models/storeFeedback/store-feedback-type.enum';
+import { StoreFeedback, getSentimentCategory } from '../../../../core/models/storeFeedback/store-feedback.model';
 
 interface SortOption {
   value: string;
@@ -36,6 +41,7 @@ interface SortOption {
   standalone: true,
   imports: [
     CommonModule,
+    NgClass,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -47,6 +53,8 @@ interface SortOption {
     MatListModule,
     MatTabsModule,
     MatMenuModule,
+    MatChipsModule,
+    MatTooltipModule,
     RouterModule,
     StoreFeedbackListComponent,
     StoreFeedbackCreateComponent
@@ -59,11 +67,33 @@ export class StoreDetailsComponent implements OnInit {
   products: Product[] = [];
   loading = true;
   error: string | null = null;
-  activeTab: 'products' | 'reviews' = 'products';
+  activeTab: 'products' | 'reviews' | 'analytics' = 'products';
   searchQuery = '';
   categories: ProductCategoryType[] = Object.values(ProductCategoryType);
   selectedCategory: ProductCategoryType | null = null;
   filteredProducts: Product[] = [];
+
+  // Make Math available in the template
+  Math = Math;
+  
+  // Feedback data
+  analyzedFeedbacks: StoreFeedback[] = [];
+  feedbackAnalytics: FeedbackAnalytics | null = null;
+  loadingFeedback = false;
+  
+  // For charts
+  sentimentChartData: any[] = [];
+  feedbackTypeChartData: any[] = [];
+  showSummaries = true;
+
+  // Helper methods for templates
+  getAbsoluteValue(value: number): number {
+    return Math.abs(value);
+  }
+  
+  calculateBarWidth(value: number, total: number): number {
+    return (Math.abs(value) * 100) / 2; // Same calculation as in the template
+  }
 
   IMAGE_BASE_URL = 'http://localhost:8080/api/stores/store/images/';
   readonly IMAGE_PRODUCT_BASE_URL = 'http://localhost:8080/api/products/products/images/';  
@@ -88,11 +118,13 @@ export class StoreDetailsComponent implements OnInit {
     private storeService: StoreService,
     private productService: ProductService,
     private storeFeedbackService: StoreFeedbackService,
+    private storeFeedbackAnalysisService: StoreFeedbackAnalysisService,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private authService: AuthService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private favoriteService: FavoriteService
   ) {
     this.feedbackForm = this.fb.group({
       storeFeedbackType: [StoreFeedbackType.PRODUCT_QUALITY, Validators.required],
@@ -126,6 +158,7 @@ export class StoreDetailsComponent implements OnInit {
         this.store = store;
         this.loadProducts(storeId);
         this.loadStoreStats(storeId);
+        this.loadAnalyzedFeedback(storeId);
       },
       error: (error: Error) => {
         console.error('Error loading store:', error);
@@ -176,6 +209,92 @@ export class StoreDetailsComponent implements OnInit {
       }
     });
   }
+  
+  loadAnalyzedFeedback(storeId: number): void {
+    this.loadingFeedback = true;
+    
+    // Get analyzed feedback with sentiment and summaries
+    this.storeFeedbackAnalysisService.getAnalyzedFeedback(storeId).subscribe({
+      next: (feedbacks: StoreFeedback[]) => {
+        this.analyzedFeedbacks = feedbacks;
+        this.loadingFeedback = false;
+        this.prepareChartData();
+      },
+      error: (error: Error) => {
+        console.error('Error loading analyzed feedback:', error);
+        this.loadingFeedback = false;
+      }
+    });
+    
+    // Get advanced analytics
+    this.storeFeedbackAnalysisService.getAdvancedAnalytics(storeId).subscribe({
+      next: (analytics: FeedbackAnalytics) => {
+        this.feedbackAnalytics = analytics;
+        this.prepareChartData();
+      },
+      error: (error: Error) => {
+        console.error('Error loading feedback analytics:', error);
+      }
+    });
+  }
+  
+  prepareChartData(): void {
+    // Prepare sentiment distribution chart data
+    if (this.feedbackAnalytics?.sentimentDistribution) {
+      this.sentimentChartData = [
+        {
+          name: 'Positive',
+          value: this.feedbackAnalytics.sentimentDistribution.Positive
+        },
+        {
+          name: 'Neutral',
+          value: this.feedbackAnalytics.sentimentDistribution.Neutral
+        },
+        {
+          name: 'Negative',
+          value: this.feedbackAnalytics.sentimentDistribution.Negative
+        }
+      ];
+    }
+    
+    // Prepare feedback type chart data
+    if (this.feedbackAnalytics?.sentimentByFeedbackType) {
+      this.feedbackTypeChartData = Object.entries(this.feedbackAnalytics.sentimentByFeedbackType)
+        .map(([key, value]) => ({
+          name: this.formatFeedbackType(key),
+          value: value
+        }));
+    }
+  }
+  
+  formatFeedbackType(type: string): string {
+    // Convert SNAKE_CASE to Title Case
+    return type
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  }
+  
+  getSentimentClass(score: number): string {
+    const sentiment = getSentimentCategory(score);
+    return `sentiment-${sentiment.toLowerCase()}`;
+  }
+  
+  getSentimentIcon(score: number): string {
+    const sentiment = getSentimentCategory(score);
+    switch (sentiment) {
+      case 'Positive':
+        return 'sentiment_very_satisfied';
+      case 'Negative':
+        return 'sentiment_very_dissatisfied';
+      default:
+        return 'sentiment_neutral';
+    }
+  }
+  
+  toggleSummaries(): void {
+    this.showSummaries = !this.showSummaries;
+  }
 
   followStore(): void {
     if (!this.store) return;
@@ -201,7 +320,7 @@ export class StoreDetailsComponent implements OnInit {
   }
 
   setActiveTab(index: number): void {
-    this.activeTab = index === 0 ? 'products' : 'reviews';
+    this.activeTab = index === 0 ? 'products' : index === 1 ? 'reviews' : 'analytics';
   }
 
   searchProducts(): void {
@@ -218,10 +337,25 @@ export class StoreDetailsComponent implements OnInit {
   }
 
   toggleFavorite(product: Product): void {
-    // TODO: Implement favorite toggle functionality
-    this.snackBar.open('Coming soon', 'Close', {
+    // Toggle favorite using the service
+    this.favoriteService.toggleFavorite(product.productId);
+    
+    // Update the local UI state
+    product.isFavorite = this.favoriteService.isFavorite(product.productId);
+    
+    // Show notification
+    const message = product.isFavorite ? 'Added to favorites' : 'Removed from favorites';
+    
+    const snackBarRef = this.snackBar.open(message, product.isFavorite ? 'View Favorites' : 'Close', { 
       duration: 3000
     });
+    
+    // Add an action if the product was added to favorites
+    if (product.isFavorite) {
+      snackBarRef.onAction().subscribe(() => {
+        this.router.navigate(['/products/favorites']);
+      });
+    }
   }
 
   setSort(sort: string): void {
@@ -324,6 +458,8 @@ export class StoreDetailsComponent implements OnInit {
         this.snackBar.open('Feedback submitted successfully!', 'Close', {
           duration: 3000
         });
+        // Reload analyzed feedback after submitting new feedback
+        this.loadAnalyzedFeedback(this.store.storeId);
       },
       error: (error: Error) => {
         console.error('Error submitting feedback:', error);

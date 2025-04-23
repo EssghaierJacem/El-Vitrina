@@ -121,6 +121,20 @@
             <version>2.61.0</version>
         </dependency>
 
+        <!-- Google Cloud Vision API -->
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-vision</artifactId>
+            <version>3.31.0</version>
+        </dependency>
+        
+        <!-- Apache Commons Text -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.10.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

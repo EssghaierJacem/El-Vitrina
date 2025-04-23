@@ -353,3 +353,17 @@
     }
   }
 }
+
+/* Recommendations Section */
+.recommendations-section {
+  margin-top: 2rem;
+  
+  app-product-recommendations {
+    display: block;
+    margin-bottom: 2rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

@@ -4,13 +4,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { ProductService } from 'src/app/core/services/product/product.service';
 import { FavoriteService } from 'src/app/core/services/product/favorite.service';
 import { Product } from 'src/app/core/models/product/product.model';
 import { Observable, Subject, of } from 'rxjs';
-import { map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { map, switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-product-fav',
@@ -36,6 +36,8 @@ export class ProductFavComponent implements OnInit, OnDestroy {
   constructor(
     private productService: ProductService,
     private favoriteService: FavoriteService,
+    private snackBar: MatSnackBar,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -61,17 +63,31 @@ export class ProductFavComponent implements OnInit, OnDestroy {
           return of([]);
         }
 
-        console.log('Fetching products for IDs:', Array.from(favoriteIds));
-        return this.productService.getAll().pipe(
-          tap(products => console.log('All products fetched:', products)),
-          map(products => {
-            const filteredProducts = products.filter(product => {
-              const isFavorite = favoriteIds.has(product.productId);
-              console.log(`Product ${product.productId} is favorite:`, isFavorite);
-              return isFavorite;
+        // Convert Set to Array for the API call
+        const favoriteIdsArray = Array.from(favoriteIds);
+        console.log('Fetching products for IDs:', favoriteIdsArray);
+        
+        // Use the direct method to get products by IDs
+        return this.productService.getProductsByIds(favoriteIdsArray).pipe(
+          catchError(error => {
+            console.error('Error fetching products:', error);
+            this.snackBar.open('Error loading favorite products', 'Close', { 
+              duration: 3000 
             });
-            console.log('Filtered favorite products:', filteredProducts);
-            return filteredProducts;
+            this.isLoading = false;
+            this.cdr.markForCheck();
+            return of([]);
+          }),
+          tap(products => {
+            console.log('Products fetched by IDs:', products.length);
+            // Check for missing products
+            const fetchedIds = new Set(products.map(p => p.productId));
+            const missingIds = favoriteIdsArray.filter(id => !fetchedIds.has(id));
+            if (missingIds.length > 0) {
+              console.warn('Some favorite products could not be found:', missingIds);
+              // Clean up favorites by removing non-existent product IDs
+              this.cleanupFavorites(fetchedIds);
+            }
           }),
           tap(() => {
             this.isLoading = false;
@@ -85,7 +101,7 @@ export class ProductFavComponent implements OnInit, OnDestroy {
     // Subscribe to ensure the stream is active
     this.favoriteProducts$.subscribe({
       next: (products) => {
-        console.log('Products received in component:', products);
+        console.log('Products received in component:', products.length);
         this.cdr.markForCheck();
       },
       error: (error) => {
@@ -104,7 +120,16 @@ export class ProductFavComponent implements OnInit, OnDestroy {
   onRemoveFavorite(productId: number): void {
     console.log('Removing product from favorites:', productId);
     this.favoriteService.removeFavorite(productId);
+    
+    this.snackBar.open('Removed from favorites', 'Close', {
+      duration: 3000
+    });
+    
     this.cdr.markForCheck();
+  }
+
+  viewProductDetails(productId: number): void {
+    this.router.navigate(['/products', productId]);
   }
 
   handleImageError(event: Event): void {
@@ -124,5 +149,28 @@ export class ProductFavComponent implements OnInit, OnDestroy {
 
   getDiscountPercentage(product: Product): number {
     return this.productService.calculateDiscountPercentage(product);
+  }
+
+  private cleanupFavorites(existingIds: Set<number>): void {
+    // First get all existing products from backend to use for cleanup
+    this.productService.getAll().pipe(
+      tap(allProducts => {
+        // Create a set of all valid product IDs from the backend
+        const allProductIds = new Set(allProducts.map(p => p.productId));
+        
+        // Use the FavoriteService to clean up non-existent favorites
+        this.favoriteService.cleanupFavorites(allProductIds);
+        
+        // Show a notification to the user
+        this.snackBar.open('Some products were removed from favorites because they no longer exist', 
+          'OK', { duration: 5000 });
+      }),
+      catchError(err => {
+        console.error('Failed to get all products for favorites cleanup:', err);
+        // If we can't get all products, we'll at least clean up based on what we know exists
+        this.favoriteService.cleanupFavorites(existingIds);
+        return of(null);
+      })
+    ).subscribe();
   }
 }

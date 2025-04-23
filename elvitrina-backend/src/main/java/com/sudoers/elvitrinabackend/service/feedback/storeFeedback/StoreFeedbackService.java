@@ -4,9 +4,11 @@ import com.sudoers.elvitrinabackend.model.dto.StoreFeedbackDTO;
 import com.sudoers.elvitrinabackend.model.entity.StoreFeedback;
 import com.sudoers.elvitrinabackend.model.entity.Store;
 import com.sudoers.elvitrinabackend.model.entity.User;
+import com.sudoers.elvitrinabackend.model.enums.StoreFeedbackType;
 import com.sudoers.elvitrinabackend.repository.StoreFeedBackRepository;
 import com.sudoers.elvitrinabackend.repository.StoreRepository;
 import com.sudoers.elvitrinabackend.repository.UserRepository;
+import com.sudoers.elvitrinabackend.service.ReviewAnalysis.ReviewAnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
+import java.util.ArrayList;
 
 @Service
 @Transactional
@@ -33,6 +36,9 @@ public class StoreFeedbackService implements IStoreFeedbackService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private ReviewAnalysisService reviewAnalysisService;
 
     @Override
     public StoreFeedbackDTO saveStoreFeedback(StoreFeedbackDTO storeFeedbackDTO) {
@@ -48,7 +54,7 @@ public class StoreFeedbackService implements IStoreFeedbackService {
         StoreFeedback storeFeedback = new StoreFeedback();
         storeFeedback.setRating(storeFeedbackDTO.getRating());
         storeFeedback.setComment(storeFeedbackDTO.getComment());
-        storeFeedback.setWouldRecommend(storeFeedbackDTO.getWouldRecommend());
+        storeFeedback.setWouldRecommend(storeFeedbackDTO.isWouldRecommend());
         storeFeedback.setStoreFeedbackType(storeFeedbackDTO.getStoreFeedbackType());
         storeFeedback.setStore(store);
         storeFeedback.setUser(user); // null is acceptable if your entity allows it
@@ -88,7 +94,7 @@ public class StoreFeedbackService implements IStoreFeedbackService {
 
         existingFeedback.setRating(storeFeedbackDTO.getRating());
         existingFeedback.setComment(storeFeedbackDTO.getComment());
-        existingFeedback.setWouldRecommend(storeFeedbackDTO.getWouldRecommend());
+        existingFeedback.setWouldRecommend(storeFeedbackDTO.isWouldRecommend());
         existingFeedback.setStoreFeedbackType(storeFeedbackDTO.getStoreFeedbackType());
 
         StoreFeedback updatedFeedback = storeFeedbackRepository.save(existingFeedback);
@@ -143,25 +149,99 @@ public class StoreFeedbackService implements IStoreFeedbackService {
     private StoreFeedbackDTO convertToDTO(StoreFeedback storeFeedback) {
         User user = storeFeedback.getUser();
 
-        return StoreFeedbackDTO.builder()
-                .storeFeedbackId(storeFeedback.getStoreFeedbackId())
-                .rating(storeFeedback.getRating())
-                .comment(storeFeedback.getComment())
-                .createdAt(storeFeedback.getCreatedAt())
-                .wouldRecommend(storeFeedback.isWouldRecommend())
-                .storeFeedbackType(storeFeedback.getStoreFeedbackType())
-                .storeId(storeFeedback.getStore().getStoreId())
-                .userId(user != null ? user.getId() : null)
-                .userName(user != null ? user.getName() : null)
-                .userEmail(user != null ? user.getEmail() : null)
-                .userImage(user != null ? user.getImage() : null)
-                .build();
+        StoreFeedbackDTO dto = new StoreFeedbackDTO();
+        dto.setStoreFeedbackId(storeFeedback.getStoreFeedbackId());
+        dto.setRating(storeFeedback.getRating());
+        dto.setComment(storeFeedback.getComment());
+        dto.setCreatedAt(storeFeedback.getCreatedAt());
+        dto.setWouldRecommend(storeFeedback.isWouldRecommend());
+        dto.setStoreFeedbackType(storeFeedback.getStoreFeedbackType());
+        dto.setStoreId(storeFeedback.getStore().getStoreId());
+        
+        if (user != null) {
+            dto.setUserId(user.getId());
+            dto.setUsername(user.getName());
+            dto.setUserProfilePicture(user.getImage());
+        }
+        
+        return dto;
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<StoreFeedbackDTO> getFeedbacksByStoreId(Long storeId) {
         return storeFeedbackRepository.findByStoreStoreId(storeId).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<StoreFeedbackDTO> getAnalyzedFeedbacksByStoreId(Long storeId) {
+        List<StoreFeedbackDTO> feedbacks = getFeedbacksByStoreId(storeId);
+        
+        // Perform analysis for each feedback
+        for (StoreFeedbackDTO feedback : feedbacks) {
+            if (feedback.getComment() != null && !feedback.getComment().isEmpty()) {
+                // Analyze sentiment
+                ReviewAnalysisService.SentimentResult sentiment = 
+                        reviewAnalysisService.analyzeSentiment(feedback.getComment());
+                feedback.setSentimentScore(sentiment.getScore());
+                feedback.setSentimentMagnitude(sentiment.getMagnitude());
+                
+                // Generate summary
+                String summary = reviewAnalysisService.summarizeReview(feedback.getComment());
+                feedback.setSummarizedComment(summary);
+            }
+        }
+        
+        return feedbacks;
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Long> getSentimentDistributionByStoreId(Long storeId) {
+        List<StoreFeedbackDTO> analyzedFeedbacks = getAnalyzedFeedbacksByStoreId(storeId);
+        
+        Map<String, Long> distribution = new HashMap<>();
+        distribution.put("Positive", 0L);
+        distribution.put("Neutral", 0L);
+        distribution.put("Negative", 0L);
+        
+        for (StoreFeedbackDTO feedback : analyzedFeedbacks) {
+            String sentiment = feedback.getSentimentCategory();
+            distribution.put(sentiment, distribution.getOrDefault(sentiment, 0L) + 1);
+        }
+        
+        return distribution;
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Map<StoreFeedbackType, Double> getAverageSentimentByTypeForStore(Long storeId) {
+        List<StoreFeedbackDTO> analyzedFeedbacks = getAnalyzedFeedbacksByStoreId(storeId);
+        
+        Map<StoreFeedbackType, List<Float>> scoresByType = new HashMap<>();
+        
+        // Group sentiment scores by feedback type
+        for (StoreFeedbackDTO feedback : analyzedFeedbacks) {
+            StoreFeedbackType type = feedback.getStoreFeedbackType();
+            if (!scoresByType.containsKey(type)) {
+                scoresByType.put(type, new ArrayList<>());
+            }
+            scoresByType.get(type).add(feedback.getSentimentScore());
+        }
+        
+        // Calculate average for each type
+        Map<StoreFeedbackType, Double> result = new HashMap<>();
+        for (Map.Entry<StoreFeedbackType, List<Float>> entry : scoresByType.entrySet()) {
+            double average = entry.getValue().stream()
+                    .mapToDouble(Float::doubleValue)
+                    .average()
+                    .orElse(0.0);
+            result.put(entry.getKey(), average);
+        }
+        
+        return result;
     }
 }

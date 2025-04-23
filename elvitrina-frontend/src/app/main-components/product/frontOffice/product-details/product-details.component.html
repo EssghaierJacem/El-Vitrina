@@ -204,5 +204,18 @@
           </div>
         </div>
       </div>
+      
+      <!-- Product Recommendations Section -->
+      <div class="recommendations-section">
+        <app-product-recommendations 
+          [product]="product" 
+          [recommendationType]="recommendationTypes.CATEGORY">
+        </app-product-recommendations>
+        
+        <app-product-recommendations 
+          [product]="product" 
+          [recommendationType]="recommendationTypes.TEXT">
+        </app-product-recommendations>
+      </div>
     }
   </div>

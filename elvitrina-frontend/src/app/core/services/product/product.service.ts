@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { Product } from '../../models/product/product.model';
 import { ProductCategoryType } from '../../models/product/product-category-type.enum';
 import { Page } from '../../models/page.model';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -201,5 +202,32 @@ export class ProductService {
       hasDiscount,
       discountPercentage
     };
+  }
+
+  // Get products by specific IDs
+  getProductsByIds(productIds: number[]): Observable<Product[]> {
+    if (!productIds || productIds.length === 0) {
+      return new Observable(subscriber => {
+        subscriber.next([]);
+        subscriber.complete();
+      });
+    }
+    
+    // Create a comma-separated list of IDs for the query parameter
+    const idsParam = productIds.join(',');
+    console.log(`Requesting products by IDs: ${idsParam}`);
+    
+    // As a fallback, if the endpoint doesn't exist, we'll use getAll and filter client-side
+    return this.getAll().pipe(
+      map(allProducts => {
+        console.log(`Filtering all products for IDs: ${idsParam}`);
+        const idSet = new Set(productIds);
+        return allProducts.filter(product => idSet.has(product.productId));
+      })
+    );
+    
+    // Uncomment this when the backend endpoint is available
+    // return this.http.get<Product[]>(`${this.apiUrl}/by-ids?ids=${idsParam}`)
+    //   .pipe(catchError(this.handleError));
   }
 }

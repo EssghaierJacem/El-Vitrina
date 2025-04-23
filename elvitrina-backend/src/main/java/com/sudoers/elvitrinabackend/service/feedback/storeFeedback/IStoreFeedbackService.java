@@ -2,6 +2,7 @@ package com.sudoers.elvitrinabackend.service.feedback.storeFeedback;
 
 import com.sudoers.elvitrinabackend.model.dto.StoreFeedbackDTO;
 import com.sudoers.elvitrinabackend.model.entity.StoreFeedback;
+import com.sudoers.elvitrinabackend.model.enums.StoreFeedbackType;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -21,4 +22,9 @@ public interface IStoreFeedbackService {
     Double getAverageRating();
     Long getTotalFeedbacks();
     Map<Integer, Long> getRatingDistribution();
+    
+    // New sentiment analysis methods
+    List<StoreFeedbackDTO> getAnalyzedFeedbacksByStoreId(Long storeId);
+    Map<String, Long> getSentimentDistributionByStoreId(Long storeId);
+    Map<StoreFeedbackType, Double> getAverageSentimentByTypeForStore(Long storeId);
 }
