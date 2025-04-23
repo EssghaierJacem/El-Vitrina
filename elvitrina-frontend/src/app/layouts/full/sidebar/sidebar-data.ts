@@ -14,12 +14,12 @@ export const navItems: NavItem[] = [
   },
   {
     displayName: 'App Feedback',
-    iconName: 'feedback',
+    iconName: 'help-circle',
     route: '/dashboard/app-feedback',
   },
   {
     displayName: 'Store Feedback',
-    iconName: 'feedback',
+    iconName: 'heart',
     route: '/dashboard/store-feedback',
   },
   {
@@ -27,7 +27,7 @@ export const navItems: NavItem[] = [
   },
   {
     displayName: 'Store',
-    iconName: 'store',
+    iconName: 'shopping-cart',
     route: '/dashboard/stores',
   },
   {
@@ -37,6 +37,14 @@ export const navItems: NavItem[] = [
     displayName: 'Product',
     iconName: 'shopping-cart',
     route: '/dashboard/products',
+  },
+  {
+    navCap: 'Charts',
+  },
+  {
+    displayName: 'Analytics Dashboard',
+    iconName: 'chart-bar',
+    route: '/dashboard/charts',
   },
   // {
   //   displayName: 'Analytical',

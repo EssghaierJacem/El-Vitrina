@@ -6,6 +6,7 @@ import { AdminGuard } from './main-components/user/adminGuard.component';
 import { NotFoundComponent } from './layouts/not-found/not-found.component';
 import { OauthSuccessComponent } from './main-components/user/oauth-success/oauth-success.component';
 import { RequestPersoCreateComponent } from './main-components/requestPerso/frontOffice/request-perso-create/request-perso-create.component';
+import { chartRoutes } from './main-components/chart-ines/chart/charts-routes';
 
 export const routes: Routes = [   
   {  
@@ -161,6 +162,12 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/product/backOffice/product.routes')
             .then(m => m.ProductRoutes)
+      },
+      {
+        path: 'charts',
+        loadChildren: () =>
+          import('./main-components/chart-ines/chart/charts-routes')
+            .then(m => m.chartRoutes)
       },
 
       {

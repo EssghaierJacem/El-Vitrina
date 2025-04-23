@@ -89,6 +89,10 @@
                 <mat-icon>more_vert</mat-icon>
               </button>
               <mat-menu #menu="matMenu">
+                <button mat-menu-item [routerLink]="['edit', feedback.storeFeedbackId]">
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
+                </button>
                 <button mat-menu-item [routerLink]="[feedback.storeFeedbackId]">
                   <mat-icon>visibility</mat-icon>
                   <span>View</span>
@@ -105,7 +109,13 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
 
-        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        <mat-paginator 
+          [length]="totalFeedbacks" 
+          [pageSize]="pageSize" 
+          [pageSizeOptions]="[5, 10, 25]" 
+          showFirstLastButtons 
+          (page)="onPageChange($event)">
+        </mat-paginator>
       </div>
     }
   </mat-card-content>

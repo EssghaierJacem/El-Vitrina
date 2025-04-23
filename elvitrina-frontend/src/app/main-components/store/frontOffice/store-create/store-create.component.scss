@@ -19,6 +19,28 @@
   margin-bottom: 0.5rem;
 }
 
+.map-container {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  .map-frame {
+    height: 400px;
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .coordinates-display {
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 4px;
+    text-align: center;
+  }
+}
+
 .image-preview {
   width: 150px;
   height: 150px;
@@ -65,5 +87,12 @@ button[type="submit"] {
 
   mat-spinner {
     margin: 0 auto;
+  }
+}
+
+:host ::ng-deep {
+  .leaflet-container {
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
   }
 }

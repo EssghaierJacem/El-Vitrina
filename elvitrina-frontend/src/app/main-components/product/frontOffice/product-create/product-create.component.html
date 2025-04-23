@@ -1,146 +1,329 @@
-<div class="product-create-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Create New Product</mat-card-title>
-      <mat-card-subtitle>Add a new product to your store</mat-card-subtitle>
-    </mat-card-header>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-10">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4">Create New Product</h2>
 
-    <mat-card-content>
-      <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
-        <!-- Store Selection -->
-        <div class="form-section" *ngIf="userStores.length > 0">
-          <h3>Select Store</h3>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Store</mat-label>
-            <mat-select formControlName="storeId">
-              <mat-option *ngFor="let store of userStores" [value]="store.storeId">
-                {{ store.storeName }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="productForm.get('storeId')?.errors?.['required']">
-              Please select a store
-            </mat-error>
-          </mat-form-field>
+          <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+            <!-- Stepper approach - horizontal on desktop, vertical on mobile -->
+            <mat-stepper [orientation]="'horizontal'" #stepper>
+              <!-- Step 1: Product Images -->
+              <mat-step label="Images & AI Analysis">
+                <div class="image-upload-section mb-4">
+                  <h3 class="section-title">Product Images</h3>
+                  <p class="hint-text">Upload images of your product for customers to see</p>
+                  
+                  <div class="mb-3 upload-area">
+                    <input 
+                      type="file" 
+                      class="file-input" 
+                      accept="image/*" 
+                      multiple 
+                      (change)="onImagesSelected($event)" 
+                      #fileInput>
+                    
+                    <div class="text-center">
+                      <button 
+                        type="button" 
+                        mat-raised-button 
+                        color="primary" 
+                        (click)="fileInput.click()">
+                        <mat-icon>add_photo_alternate</mat-icon> Upload Product Images
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Image preview grid -->
+                  <div class="image-previews" *ngIf="uploadedImagesPreview.length > 0">
+                    <h4 class="preview-title">Image Previews</h4>
+                    <div class="row">
+                      <div class="col-6 col-md-4 mb-3" *ngFor="let imageUrl of uploadedImagesPreview; let i = index">
+                        <div class="image-preview-container">
+                          <div class="image-preview">
+                            <img [src]="imageUrl" alt="Product image preview" class="preview-image">
+                          </div>
+                          <div class="image-preview-overlay">
+                            <button mat-icon-button color="warn" type="button" (click)="uploadedImagesPreview.splice(i, 1); uploadedFiles.splice(i, 1)">
+                              <mat-icon>delete</mat-icon>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- AI Analysis -->
+                  <div class="ai-analysis-section mt-4" *ngIf="uploadedImagesPreview.length > 0">
+                    <mat-divider></mat-divider>
+                    <div class="ai-header d-flex justify-content-between align-items-center mt-3">
+                      <h3 class="section-title">
+                        <mat-icon class="ai-icon">auto_awesome</mat-icon> 
+                        AI Product Analysis
+                      </h3>
+                      <button 
+                        mat-raised-button 
+                        color="accent" 
+                        type="button" 
+                        [disabled]="analyzingImage" 
+                        (click)="analyzeImage()">
+                        <mat-icon>psychology</mat-icon>
+                        <span *ngIf="!analyzingImage">Analyze with AI</span>
+                        <mat-spinner diameter="20" *ngIf="analyzingImage"></mat-spinner>
+                      </button>
+                    </div>
+                    <p class="hint-text">
+                      Let AI analyze your product image to suggest category, tags, and description
+                    </p>
+
+                    <!-- Analysis Results -->
+                    <div *ngIf="imageAnalysisResult" class="analysis-results mt-3">
+                      <mat-expansion-panel expanded>
+                        <mat-expansion-panel-header>
+                          <mat-panel-title>
+                            <mat-icon>receipt_long</mat-icon>
+                            Analysis Results
+                          </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        
+                        <div class="row">
+                          <div class="col-md-12 mb-2">
+                            <h5>Suggested Category:</h5>
+                            <p class="result-text">
+                              {{ imageAnalysisResult.category || 'No category detected' }}
+                            </p>
+                          </div>
+                          
+                          <div class="col-md-12 mb-2">
+                            <h5>Suggested Tags:</h5>
+                            <div class="suggested-tags">
+                              <mat-chip-set>
+                                <mat-chip *ngFor="let tag of imageAnalysisResult.tags">
+                                  {{ tag }}
+                                </mat-chip>
+                              </mat-chip-set>
+                              <p *ngIf="!imageAnalysisResult.tags?.length" class="result-text">No tags suggested</p>
+                            </div>
+                          </div>
+                          
+                          <div class="col-md-12">
+                            <h5>Suggested Description:</h5>
+                            <p class="result-text">{{ imageAnalysisResult.description || 'No description generated' }}</p>
+                          </div>
+                        </div>
+                        
+                        <div class="apply-options mt-3">
+                          <h5>Apply to Product:</h5>
+                          <div class="options-grid">
+                            <mat-checkbox [(ngModel)]="useAnalyzedCategory" [ngModelOptions]="{standalone: true}">
+                              Use suggested category
+                            </mat-checkbox>
+                            <mat-checkbox [(ngModel)]="useAnalyzedTags" [ngModelOptions]="{standalone: true}">
+                              Use suggested tags
+                            </mat-checkbox>
+                            <mat-checkbox [(ngModel)]="useAnalyzedDescription" [ngModelOptions]="{standalone: true}">
+                              Use suggested description
+                            </mat-checkbox>
+                          </div>
+                          
+                          <div class="d-flex justify-content-end mt-3">
+                            <button 
+                              mat-raised-button 
+                              color="primary" 
+                              type="button" 
+                              (click)="applyImageAnalysisResults()">
+                              <mat-icon>check_circle</mat-icon>
+                              Apply Selected Options
+                            </button>
+                          </div>
+                        </div>
+                      </mat-expansion-panel>
+                    </div>
+                  </div>
+
+                  <div class="stepper-nav d-flex justify-content-end mt-4">
+                    <button mat-button matStepperNext type="button" [disabled]="uploadedImagesPreview.length === 0">
+                      Next <mat-icon>arrow_forward</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </mat-step>
+
+              <!-- Step 2: Store Selection & Basic Info -->
+              <mat-step label="Store & Basic Info">
+                <!-- Store Selection -->
+                <div class="form-section mb-4" *ngIf="userStores.length > 0">
+                  <h3 class="section-title">Select Store</h3>
+                  
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Store</mat-label>
+                    <mat-select formControlName="storeId">
+                      <mat-option *ngFor="let store of userStores" [value]="store.storeId">
+                        {{ store.storeName }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="productForm.get('storeId')?.hasError('required')">
+                      Please select a store
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <!-- Basic Information -->
+                <div class="form-section mb-4">
+                  <h3 class="section-title">Basic Information</h3>
+                  
+                  <mat-form-field appearance="outline" class="w-100 mb-3">
+                    <mat-label>Product Name</mat-label>
+                    <input matInput formControlName="productName" placeholder="Enter product name">
+                    <mat-error *ngIf="productForm.get('productName')?.hasError('required')">
+                      Product name is required
+                    </mat-error>
+                    <mat-error *ngIf="productForm.get('productName')?.hasError('maxlength')">
+                      Product name must be less than 100 characters
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="w-100 mb-3">
+                    <mat-label>Description</mat-label>
+                    <textarea matInput formControlName="description" rows="4" 
+                              placeholder="Enter product description"></textarea>
+                    <mat-error *ngIf="productForm.get('description')?.hasError('maxlength')">
+                      Description must be less than 500 characters
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="w-100 mb-3">
+                    <mat-label>Category</mat-label>
+                    <mat-select formControlName="category">
+                      <mat-option *ngFor="let category of categories" [value]="category">
+                        {{ getCategoryDisplayName(category) }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="productForm.get('category')?.hasError('required')">
+                      Category is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="stepper-nav d-flex justify-content-between mt-4">
+                  <button mat-button matStepperPrevious type="button">
+                    <mat-icon>arrow_back</mat-icon> Back
+                  </button>
+                  <button mat-button matStepperNext type="button" [disabled]="!productForm.get('storeId')?.valid || !productForm.get('productName')?.valid || !productForm.get('category')?.valid">
+                    Next <mat-icon>arrow_forward</mat-icon>
+                  </button>
+                </div>
+              </mat-step>
+
+              <!-- Step 3: Pricing and Stock -->
+              <mat-step label="Pricing & Stock">
+                <div class="form-section mb-4">
+                  <h3 class="section-title">Pricing and Stock</h3>
+                  
+                  <div class="row">
+                    <div class="col-md-6">
+                      <mat-form-field appearance="outline" class="w-100 mb-3">
+                        <mat-label>Price</mat-label>
+                        <input matInput type="number" formControlName="price" min="0" step="0.01">
+                        <span matPrefix>€&nbsp;</span>
+                        <mat-error *ngIf="productForm.get('price')?.hasError('required')">
+                          Price is required
+                        </mat-error>
+                        <mat-error *ngIf="productForm.get('price')?.hasError('min')">
+                          Price must be greater than or equal to 0
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-md-6">
+                      <mat-form-field appearance="outline" class="w-100 mb-3">
+                        <mat-label>Stock Quantity</mat-label>
+                        <input matInput type="number" formControlName="stockQuantity" min="0">
+                        <mat-error *ngIf="productForm.get('stockQuantity')?.hasError('required')">
+                          Stock quantity is required
+                        </mat-error>
+                        <mat-error *ngIf="productForm.get('stockQuantity')?.hasError('min')">
+                          Stock quantity must be greater than or equal to 0
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <div class="discount-section mb-3">
+                    <mat-checkbox formControlName="hasDiscount" class="mb-2">Apply Discount</mat-checkbox>
+                    
+                    <mat-form-field appearance="outline" class="w-100" *ngIf="productForm.get('hasDiscount')?.value">
+                      <mat-label>Discount Percentage</mat-label>
+                      <input matInput type="number" formControlName="discountPercentage" min="0" max="100">
+                      <span matSuffix>%</span>
+                      <mat-error *ngIf="productForm.get('discountPercentage')?.hasError('min')">
+                        Discount must be greater than or equal to 0
+                      </mat-error>
+                      <mat-error *ngIf="productForm.get('discountPercentage')?.hasError('max')">
+                        Discount must be less than or equal to 100
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <mat-checkbox formControlName="freeShipping" class="mb-3">Free Shipping</mat-checkbox>
+                </div>
+                
+                <div class="stepper-nav d-flex justify-content-between mt-4">
+                  <button mat-button matStepperPrevious type="button">
+                    <mat-icon>arrow_back</mat-icon> Back
+                  </button>
+                  <button mat-button matStepperNext type="button" [disabled]="!productForm.get('price')?.valid || !productForm.get('stockQuantity')?.valid">
+                    Next <mat-icon>arrow_forward</mat-icon>
+                  </button>
+                </div>
+              </mat-step>
+
+              <!-- Step 4: Tags -->
+              <mat-step label="Tags">
+                <!-- Product Tags -->
+                <div class="form-section mb-4">
+                  <h3 class="section-title">Product Tags</h3>
+                  <p class="hint-text">Add tags to help customers find your product</p>
+                  
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Tags</mat-label>
+                    <mat-chip-grid #chipGrid aria-label="Enter tags" [formControl]="tagsControl">
+                      <mat-chip-row *ngFor="let tag of tagsControl.value" (removed)="removeTag(tag)">
+                        {{ tag }}
+                        <button matChipRemove [attr.aria-label]="'Remove ' + tag">
+                          <mat-icon>cancel</mat-icon>
+                        </button>
+                      </mat-chip-row>
+                      <input
+                        placeholder="New tag..."
+                        [matChipInputFor]="chipGrid"
+                        (matChipInputTokenEnd)="addTag($event)"
+                      />
+                    </mat-chip-grid>
+                  </mat-form-field>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions d-flex justify-content-between">
+                  <div>
+                    <button mat-button matStepperPrevious type="button">
+                      <mat-icon>arrow_back</mat-icon> Back
+                    </button>
+                    <button mat-stroked-button type="button" (click)="resetForm()" [disabled]="loading" class="ms-2">
+                      <mat-icon>refresh</mat-icon> Clear Form
+                    </button>
+                  </div>
+                  <button mat-raised-button color="primary" type="submit" 
+                          [disabled]="!productForm.valid || loading || !canCreateProduct">
+                    <span *ngIf="!loading">Create Product</span>
+                    <mat-spinner diameter="24" *ngIf="loading"></mat-spinner>
+                  </button>
+                </div>
+              </mat-step>
+            </mat-stepper>
+          </form>
         </div>
-
-        <!-- Basic Information -->
-        <div class="form-section">
-          <h3>Basic Information</h3>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Product Name</mat-label>
-            <input matInput formControlName="productName" placeholder="Enter product name">
-            <mat-error *ngIf="productForm.get('productName')?.errors?.['required']">
-              Product name is required
-            </mat-error>
-            <mat-error *ngIf="productForm.get('productName')?.errors?.['maxlength']">
-              Product name must be less than 100 characters
-            </mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description" rows="4" 
-                      placeholder="Enter product description"></textarea>
-            <mat-error *ngIf="productForm.get('description')?.errors?.['maxlength']">
-              Description must be less than 500 characters
-            </mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Category</mat-label>
-            <mat-select formControlName="category">
-              <mat-option *ngFor="let category of categories" [value]="category">
-                {{ getCategoryDisplayName(category) }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="productForm.get('category')?.errors?.['required']">
-              Category is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Pricing and Stock -->
-        <div class="form-section">
-          <h3>Pricing and Stock</h3>
-          
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Price</mat-label>
-              <input matInput type="number" formControlName="price" min="0" step="0.01">
-              <span matPrefix>€&nbsp;</span>
-              <mat-error *ngIf="productForm.get('price')?.errors?.['required']">
-                Price is required
-              </mat-error>
-              <mat-error *ngIf="productForm.get('price')?.errors?.['min']">
-                Price must be greater than or equal to 0
-              </mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Stock Quantity</mat-label>
-              <input matInput type="number" formControlName="stockQuantity" min="0">
-              <mat-error *ngIf="productForm.get('stockQuantity')?.errors?.['required']">
-                Stock quantity is required
-              </mat-error>
-              <mat-error *ngIf="productForm.get('stockQuantity')?.errors?.['min']">
-                Stock quantity must be greater than or equal to 0
-              </mat-error>
-            </mat-form-field>
-          </div>
-
-          <div class="discount-section">
-            <mat-checkbox formControlName="hasDiscount">Apply Discount</mat-checkbox>
-            
-            <mat-form-field appearance="outline" *ngIf="productForm.get('hasDiscount')?.value">
-              <mat-label>Discount Percentage</mat-label>
-              <input matInput type="number" formControlName="discountPercentage" min="0" max="100">
-              <span matSuffix>%</span>
-              <mat-error *ngIf="productForm.get('discountPercentage')?.errors?.['min']">
-                Discount must be greater than or equal to 0
-              </mat-error>
-              <mat-error *ngIf="productForm.get('discountPercentage')?.errors?.['max']">
-                Discount must be less than or equal to 100
-              </mat-error>
-            </mat-form-field>
-          </div>
-
-          <mat-checkbox formControlName="freeShipping">Free Shipping</mat-checkbox>
-        </div>
-
-        <!-- Images -->
-        <div class="form-section">
-          <h3>Product Images</h3>
-          <p class="hint-text">Enter image URLs separated by commas</p>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Image URLs</mat-label>
-            <input matInput formControlName="images" 
-                   placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
-                   (input)="handleImagePreview($event)">
-            <mat-error *ngIf="productForm.get('images')?.errors?.['pattern']">
-              Please enter valid image URLs (starting with http:// or https://)
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Form Actions -->
-        <div class="form-actions">
-          <button mat-stroked-button type="button" (click)="resetForm()" [disabled]="loading">
-            Clear Form
-          </button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="loading || productForm.invalid">
-            <mat-icon>add</mat-icon>
-            {{ loading ? 'Creating...' : 'Create Product' }}
-          </button>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Loading Overlay -->
-  <div class="loading-overlay" *ngIf="loading">
-    <mat-spinner></mat-spinner>
+      </div>
+    </div>
   </div>
 </div>

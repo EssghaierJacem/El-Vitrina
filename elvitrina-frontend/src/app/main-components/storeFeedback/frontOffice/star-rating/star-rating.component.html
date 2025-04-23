@@ -1,0 +1,13 @@
+<div class="star-rating">
+    <mat-icon 
+      *ngFor="let star of stars; let i = index" 
+      [class.filled]="star.filled" 
+      [class.half]="star.half"
+      [style.width]="iconSize"
+      [style.height]="iconSize"
+      [style.font-size]="iconSize"
+    >
+      {{ star.half ? 'star_half' : (star.filled ? 'star' : 'star_border') }}
+    </mat-icon>
+    <span class="rating-value" *ngIf="showRating">{{ rating | number:'1.1-1' }}</span>
+  </div>

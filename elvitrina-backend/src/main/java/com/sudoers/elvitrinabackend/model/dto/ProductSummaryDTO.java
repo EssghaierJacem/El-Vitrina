@@ -17,5 +17,6 @@ public class ProductSummaryDTO {
     private ProductCategoryType category;
     private String mainImage;
     private boolean hasDiscount;
+    private double discountPercentage;
     private boolean inStock;
 }
