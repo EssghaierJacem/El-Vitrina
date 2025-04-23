@@ -94,5 +94,13 @@ export class FrontHeaderComponent implements OnInit {
       this.router.navigate(['/stores/create']);
     }
   }
+
+  trackInterest(topic: string): void {
+    const existing = localStorage.getItem('interestedIn') || '';
+    const keywords = new Set(existing.split(',').map(k => k.trim()).filter(k => k));
+    keywords.add(topic);
+    localStorage.setItem('interestedIn', Array.from(keywords).join(', '));
+  }
+  
 }
 

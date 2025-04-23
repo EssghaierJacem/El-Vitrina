@@ -32,6 +32,15 @@
       <h2 class="section-title">Available Offers</h2>
     </div>
     <mat-divider></mat-divider>
+
+    <div *ngIf="suggestedOffer" class="suggested-offer">
+      <h2 class="section-title">✨ Suggested For You</h2>
+      <mat-card class="suggested-offer-card">
+        <mat-card-content>
+          <p>{{ suggestedOffer }}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
   
     <!-- Offer Cards Grid -->
     <div class="offer-grid">

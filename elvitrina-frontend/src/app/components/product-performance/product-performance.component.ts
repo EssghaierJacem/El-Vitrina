@@ -1,80 +1,76 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MaterialModule } from 'src/app/material.module';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { TablerIconsModule } from 'angular-tabler-icons';
-import { CommonModule } from '@angular/common';
-import { MaterialModule } from 'src/app/material.module';
+import { User } from 'src/app/core/models/user/user.model';
 
-export interface performanceData {
+interface TopUser {
   id: number;
-  imagePath: string;
-  pname: string;
-  category: string;
-  progress: number;
-  sales: number;
-  status: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  points: number;
+  image: string;
 }
 
-const ELEMENT_DATA: performanceData[] = [
-  {
-    id: 1,
-    imagePath: 'assets/images/products/s6.jpg',
-    pname: 'Gaming Console',
-    category: 'Electronics',
-    progress: 78.5,
-    sales: 3.9,
-    status: 'low',
-  },
-  {
-    id: 2,
-    imagePath: 'assets/images/products/s9.jpg',
-    pname: 'Leather Purse',
-    category: 'Fashion',
-    progress: 58.6,
-    sales: 3.5,
-    status: 'medium',
-  },
-  {
-    id: 3,
-    imagePath: 'assets/images/products/s7.jpg',
-    pname: 'Red Velvate Dress',
-    category: 'Womens Fashion',
-    progress: 25,
-    sales: 3.8,
-    status: 'high',
-  },
-  {
-    id: 4,
-    imagePath: 'assets/images/products/s4.jpg',
-    pname: 'Headphone Boat',
-    category: 'Electronics',
-    progress: 96.3,
-    sales: 3.54,
-    status: 'critical',
-  },
-];
-
-interface month {
+interface Month {
   value: string;
   viewValue: string;
 }
 
 @Component({
   selector: 'app-product-performance',
+  templateUrl: './product-performance.component.html',
+  standalone: true,
   imports: [
     NgApexchartsModule,
     MaterialModule,
     TablerIconsModule,
     CommonModule,
+    FormsModule
   ],
-  templateUrl: './product-performance.component.html',
 })
-export class AppProductPerformanceComponent {
-  displayedColumns: string[] = ['product', 'progress', 'status', 'sales'];
-  dataSource = ELEMENT_DATA;
+export class AppProductPerformanceComponent implements OnInit {
+  displayedColumns: string[] = ['rank', 'user', 'points', 'status']; 
+  dataSource: TopUser[] = [];
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
 
-  months: month[] = [
+
+  months: Month[] = [
     { value: 'mar', viewValue: 'March 2025' },
     { value: 'apr', viewValue: 'April 2025' },
     { value: 'june', viewValue: 'June 2025' },
   ];
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.loadTopUsers();
+  }
+
+  loadTopUsers(): void {
+    this.http.get<TopUser[]>('http://localhost:8080/api/stats/top-users').subscribe({
+      next: (data) => {
+        this.dataSource = data.slice(0, 4);
+      },
+      error: (err) => {
+        console.error('Failed to fetch top users', err);
+      }
+    });
+  }
+
+    getUserImage(user: User): string {
+      if (!user || !user.image) {
+        return '/assets/images/default-avatar.png';
+      }
+    
+      if (user.image.startsWith('http')) {
+        return user.image;
+      }
+    
+      return this.IMAGE_BASE_URL + user.image;
+    }  
 }
