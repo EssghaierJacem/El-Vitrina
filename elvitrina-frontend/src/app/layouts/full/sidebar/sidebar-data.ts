@@ -122,7 +122,16 @@ export const navItems: NavItem[] = [
     route: '/dashboard/AdAdmin/admin/ads',
   },
 
-
+  {
+    displayName: 'Stats',
+    iconName: 'point',
+    route: '/dashboard/RequestPerso/stats',
+  }, 
+  {
+    displayName: 'moderation',
+    iconName: 'point',
+    route: '/dashboard/RequestPerso/moderation',
+  }, 
 
   {
     displayName: "Donations",

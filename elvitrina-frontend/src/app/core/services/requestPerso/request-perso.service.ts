@@ -38,11 +38,15 @@ getRequestPersoById(id: number): Observable<RequestPerso> {
   return this.http.get<RequestPerso>(`${this.apiUrl}/${id}`).pipe(catchError(this.handleError));
 }
 
-updateRequestPerso(id: number, requestData: any): Observable<any> {
-  return this.http.put<RequestPerso>(`${this.apiUrl}/${id}`, requestData);
+updateRequestPerso(id: number, formData: FormData): Observable<RequestPerso> {
+  return this.http.put<RequestPerso>(`${this.apiUrl}/${id}`, formData);
 }
 deleteRequestPerso(id: number): Observable<void> {
   return this.http.delete<void>(`${this.apiUrl}/${id}`);
 }
-
+uploadImage(file: File): Observable<any> {
+  const formData = new FormData();
+  formData.append('image', file);
+  return this.http.post(`${this.apiUrl}/images/upload`, formData);
+}
 }

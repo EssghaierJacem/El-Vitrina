@@ -86,6 +86,7 @@ public class RequestPersoService implements IRequestPersoService{
                         .map(this::copyProposalPersoToDto)
                         .collect(Collectors.toList()))
                 .user(copyUserToDto(requestPerso.getUser()))
+                .status(requestPerso.getStatus().toString())
                 //.userId(requestPerso.getUser().getId())
                 .build();
     }
@@ -134,22 +135,24 @@ else {
         requestPersoRepository.deleteById(id);
     }
 
-    @Override
     public RequestPerso updateRequestPerso(Long id, RequestPersoDTO requestDTO) {
-        RequestPerso existing = requestPersoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("RequestPerso not found with id: " + id));
+        RequestPerso existingRequest = requestPersoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Request not found"));
 
-        existing.setTitle(requestDTO.getTitle());
-        existing.setDescription(requestDTO.getDescription());
-        existing.setMinPrice(requestDTO.getMinPrice());
-        existing.setMaxPrice(requestDTO.getMaxPrice());
-        existing.setImage(requestDTO.getImage());
-        existing.setDeliveryTime(requestDTO.getDeliveryTime());
-        existing.setTags(requestDTO.getTags());
-        existing.setDate(requestDTO.getDate()); // Optional: depends if frontend sends date
-        // Note: We don’t update viewCount or user here unless you want to allow that
+        // Update fields from DTO
+        existingRequest.setTitle(requestDTO.getTitle());
+        existingRequest.setDescription(requestDTO.getDescription());
+        existingRequest.setMinPrice(requestDTO.getMinPrice());
+        existingRequest.setMaxPrice(requestDTO.getMaxPrice());
+        existingRequest.setDeliveryTime(requestDTO.getDeliveryTime());
+        existingRequest.setTags(requestDTO.getTags());
 
-        return requestPersoRepository.save(existing);
+        // Only update image if a new one was provided
+        if (requestDTO.getImage() != null) {
+            existingRequest.setImage(requestDTO.getImage());
+        }
+
+        return requestPersoRepository.save(existingRequest);
     }
 
 

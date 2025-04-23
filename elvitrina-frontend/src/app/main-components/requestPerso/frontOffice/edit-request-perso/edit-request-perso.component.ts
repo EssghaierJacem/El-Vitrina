@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { RequestPersoService } from 'src/app/core/services/requestPerso/request-perso.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { CommonModule } from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-edit-request-perso',
@@ -38,6 +39,8 @@ export class EditRequestPersoComponent implements OnInit {
   editForm!: FormGroup;
   requestId!: number;
   selectedRequest: any;
+  selectedFile: File | null = null;
+  previewUrl: string | ArrayBuffer | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -55,61 +58,116 @@ export class EditRequestPersoComponent implements OnInit {
 
   initForm(): void {
     this.editForm = this.fb.group({
-      title: [''],
-      description: [''],
-      minPrice: [0],
-      maxPrice: [0],
-      image: [''],
-      deliveryTime: [''],
-      tags: [[]]
+      title: ['', Validators.required],
+      description: ['', Validators.required],
+      minPrice: [0, [Validators.required, Validators.min(0)]],
+      maxPrice: [0, [Validators.required, Validators.min(0)]],
+      deliveryTime: ['', Validators.required],
+      tags: [[], Validators.required]
     });
   }
 
   loadRequest(): void {
-    this.requestPersoService.getRequestPersoById(this.requestId).subscribe(request => {
-      this.selectedRequest = request; // Store the selected request
-      
-      const formattedDate = request.deliveryTime
-        ? new Date(request.deliveryTime).toISOString().substring(0, 10)
-        : '';
+    this.requestPersoService.getRequestPersoById(this.requestId).subscribe({
+      next: (request) => {
+        this.selectedRequest = request;
+        const formattedDate = request.deliveryTime 
+          ? new Date(request.deliveryTime).toISOString().substring(0, 10)
+          : '';
 
-      this.editForm.patchValue({
-        title: request.title,
-        description: request.description,
-        minPrice: request.minPrice,
-        maxPrice: request.maxPrice,
-        image: request.image,
-        deliveryTime: formattedDate,
-        tags: request.tags
-      });
+        this.editForm.patchValue({
+          title: request.title,
+          description: request.description,
+          minPrice: request.minPrice,
+          maxPrice: request.maxPrice,
+          deliveryTime: formattedDate,
+          tags: request.tags || []
+        });
+      },
+      error: (err) => {
+        console.error('Error loading request:', err);
+        this.snackBar.open('Failed to load request', 'Close', { duration: 3000 });
+        this.router.navigate(['/requestperso/getAllRequestPerso']);
+      }
     });
   }
 
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.match('image.*')) {
+        this.snackBar.open('Only image files are allowed', 'Close', { duration: 3000 });
+        return;
+      }
+
+      // Validate file size (e.g., 5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        this.snackBar.open('Image must be less than 5MB', 'Close', { duration: 3000 });
+        return;
+      }
+
+      this.selectedFile = file;
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeSelectedFile(): void {
+    this.selectedFile = null;
+    this.previewUrl = null;
+  }
+
+  getImageUrl(filename: string): string {
+    return filename ? `${environment.apiUrl}/images/${filename}` : '';
+  }
+
   onSubmitUpdateForm(event: Event): void {
-    event.preventDefault(); // Prevent default form submission behavior
+    event.preventDefault();
 
-    if (!this.selectedRequest || !this.selectedRequest.id) return;
+    if (this.editForm.invalid) {
+      this.snackBar.open('Please fill all required fields correctly', 'Close', { duration: 3000 });
+      return;
+    }
 
-    const updatedData = {
+    const formData = new FormData();
+    
+    // Convert form values to JSON
+    const requestData = {
       title: this.editForm.value.title,
       description: this.editForm.value.description,
       minPrice: this.editForm.value.minPrice,
       maxPrice: this.editForm.value.maxPrice,
       deliveryTime: this.editForm.value.deliveryTime,
-      image: this.editForm.value.image,
       tags: this.editForm.value.tags,
+      // Preserve existing values
       viewCount: this.selectedRequest.viewCount,
-      user: this.selectedRequest.user,
-      date: this.selectedRequest.date
+      userId: this.selectedRequest.user.id,
+      status: this.selectedRequest.status
     };
 
-    this.requestPersoService.updateRequestPerso(this.selectedRequest.id, updatedData).subscribe({
-      next: updated => {
+    // Append JSON data
+    formData.append('request', new Blob([JSON.stringify(requestData)], {
+      type: 'application/json'
+    }));
+
+    // Append image file if selected
+    if (this.selectedFile) {
+      formData.append('image', this.selectedFile);
+    }
+
+    this.requestPersoService.updateRequestPerso(this.requestId, formData).subscribe({
+      next: (updated) => {
         this.snackBar.open('Request updated successfully!', 'Close', { duration: 3000 });
-        this.router.navigate(['/somewhere']);
+        this.router.navigate(['/requestperso/getAllRequestPerso']);
       },
-      error: err => {
-        console.error(err);
+      error: (err) => {
+        console.error('Error updating request:', err);
         this.snackBar.open('Failed to update request', 'Close', { duration: 3000 });
       }
     });

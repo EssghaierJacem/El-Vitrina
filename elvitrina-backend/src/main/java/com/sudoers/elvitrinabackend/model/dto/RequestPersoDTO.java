@@ -26,4 +26,5 @@ public class RequestPersoDTO {
     private List<String> tags;
     private List<ProposalPersoDTO> proposals; // Ensure this field is present
     private UserDTO user;
+    private String status;
 }
