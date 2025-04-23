@@ -39,14 +39,16 @@ import { TokenService } from 'src/app/core/services/user/TokenService';
   styleUrls: ['./blog-post-details.component.scss']
 })
 export class BlogPostDetailsComponent implements OnInit {
-
-  blogPost!: BlogPost ;  // Initialize with null to handle null case
+  blogPost!: BlogPost;
   isLoading: boolean = true;
   errorMessage: string = '';
   newComment: string = '';  // Store the new comment text
   commentForm: FormGroup;  // FormGroup for adding comment
 
   userId: number | null = null;
+
+  // URL de base pour accéder aux images
+  baseUrl: string = 'http://localhost:8080/images/'; // Remplace avec ton URL de serveur d'images
 
   constructor(
     private blogPostService: BlogPostService,
@@ -94,5 +96,8 @@ export class BlogPostDetailsComponent implements OnInit {
     );
   }
 
-  
+  // Méthode pour obtenir l'URL complète de l'image
+  getImageUrl(imagePath: string): string {
+    return this.baseUrl + imagePath;
+  }
 }

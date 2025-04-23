@@ -24,9 +24,9 @@ public class ReviewAnalysisService {
                     .setContent(text)
                     .setType(Document.Type.PLAIN_TEXT)
                     .build();
-            
+
             Sentiment sentiment = languageService.analyzeSentiment(document).getDocumentSentiment();
-            
+
             return new SentimentResult(sentiment.getScore(), sentiment.getMagnitude());
         } catch (IOException e) {
             log.error("Error analyzing sentiment: {}", e.getMessage());
@@ -43,30 +43,30 @@ public class ReviewAnalysisService {
         if (review == null || review.isEmpty()) {
             return "";
         }
-        
+
         try (LanguageServiceClient languageService = LanguageServiceClient.create()) {
             Document document = Document.newBuilder()
                     .setContent(review)
                     .setType(Document.Type.PLAIN_TEXT)
                     .build();
-            
+
             // Analyze syntax to break text into sentences
             AnalyzeSyntaxResponse syntaxResponse = languageService.analyzeSyntax(document);
             List<Token> tokens = syntaxResponse.getTokensList();
-            
+
             // Get sentiment for each sentence
             AnalyzeSentimentResponse sentimentResponse = languageService.analyzeSentiment(document);
             List<Sentence> sentences = sentimentResponse.getSentencesList();
-            
+
             if (sentences.isEmpty()) {
                 return review;
             }
-            
+
             // If review is short (1-2 sentences), return as is
             if (sentences.size() <= 2) {
                 return review;
             }
-            
+
             // Find sentences with most significant sentiment (highest absolute value of score * magnitude)
             List<Sentence> significantSentences = sentences.stream()
                     .sorted((s1, s2) -> {
@@ -76,22 +76,22 @@ public class ReviewAnalysisService {
                     })
                     .limit(2)
                     .collect(Collectors.toList());
-            
+
             // Order sentences by their appearance in the original text
             significantSentences.sort((s1, s2) -> {
                 int beginOffset1 = s1.getText().getBeginOffset();
                 int beginOffset2 = s2.getText().getBeginOffset();
                 return Integer.compare(beginOffset1, beginOffset2);
             });
-            
+
             // Build summary
             StringBuilder summary = new StringBuilder();
             for (Sentence sentence : significantSentences) {
                 summary.append(sentence.getText().getContent()).append(" ");
             }
-            
+
             return summary.toString().trim();
-            
+
         } catch (IOException e) {
             log.error("Error summarizing review: {}", e.getMessage());
             return review.length() > 100 ? review.substring(0, 100) + "..." : review;
@@ -107,40 +107,40 @@ public class ReviewAnalysisService {
         if (reviews == null || reviews.isEmpty()) {
             return new ArrayList<>();
         }
-        
+
         return reviews.stream()
                 .map(this::summarizeReview)
                 .collect(Collectors.toList());
     }
-    
+
     /**
      * Class representing the result of sentiment analysis
      */
     public static class SentimentResult {
         private float score;
         private float magnitude;
-        
+
         public SentimentResult(float score, float magnitude) {
             this.score = score;
             this.magnitude = magnitude;
         }
-        
+
         public float getScore() {
             return score;
         }
-        
+
         public void setScore(float score) {
             this.score = score;
         }
-        
+
         public float getMagnitude() {
             return magnitude;
         }
-        
+
         public void setMagnitude(float magnitude) {
             this.magnitude = magnitude;
         }
-        
+
         @Override
         public String toString() {
             return "SentimentResult{" +

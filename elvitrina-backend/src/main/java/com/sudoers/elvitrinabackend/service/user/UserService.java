@@ -36,6 +36,7 @@ public class UserService implements IUser {
     @Autowired
     private EmailService emailService;
 
+
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, StoreRepository storeRepository, DonationRepository donationRepository, OfferRepository offerRepository, BlogPostRepository blogPostRepository) {
         this.userRepository = userRepository;
@@ -358,6 +359,10 @@ public class UserService implements IUser {
         userRepository.save(user);
     }
 
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID : " + userId));
+    }
     private String getExtension(String originalFilename) {
         if (originalFilename == null) {
             return "jpg";
