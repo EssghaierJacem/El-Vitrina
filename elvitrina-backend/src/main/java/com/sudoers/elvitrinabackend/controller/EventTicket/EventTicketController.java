@@ -77,12 +77,12 @@ public class EventTicketController {
         return ResponseEntity.ok(eventTicketService.validateTicket(ticketId));
     }
 
-    @PostMapping("/multi-session")
+ /*   @PostMapping("/multi-session")
     public ResponseEntity<List<EventTicketResponseDTO>> issueMultiSessionTickets(
             @RequestBody EventTicketRequestDTO requestDTO,
             @RequestParam(defaultValue = "1") int quantity) {
         return new ResponseEntity<>(eventTicketService.issueMultiSessionTickets(requestDTO, quantity), HttpStatus.CREATED);
-    }
+    }*/
 
     @PatchMapping("/{ticketId}/early-bird")
     public ResponseEntity<EventTicketResponseDTO> applyEarlyBirdPricing(

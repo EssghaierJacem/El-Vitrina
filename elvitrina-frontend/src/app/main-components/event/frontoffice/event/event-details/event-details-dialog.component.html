@@ -1,0 +1,7 @@
+  <h2>{{ data.title }}</h2>
+  <p>{{ data.description }}</p>
+  <p><strong>Start:</strong> {{ data.start | date: 'short' }}</p>
+  <p><strong>End:</strong> {{ data.end | date: 'short' }}</p>
+  <button mat-button (click)="onClose()">Close</button>
+  <button mat-button *ngIf="data.hangoutLink" (click)="joinMeet()">Join Meet</button>
+

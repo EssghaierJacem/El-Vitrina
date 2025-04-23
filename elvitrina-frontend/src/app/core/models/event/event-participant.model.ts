@@ -14,3 +14,19 @@ export interface EventParticipant {
   virtualEvent: VirtualEvent;
   eventTicket: EventTicket;
 }
+
+// event-participant.model.ts
+
+
+export interface EventParticipantRequest {
+  userId: number;
+  eventId: number;
+  ticketCount: number;
+}
+
+
+export interface EventParticipantEvent {
+  id: number;
+  userName : string;
+  userImage:string;
+}

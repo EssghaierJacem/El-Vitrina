@@ -19,10 +19,12 @@ import java.util.stream.Collectors;
 public class VirtualEventMapper {
 
     private final EventTicketMapper eventTicketMapper;
+    private final EventParticipantMapper eventParticipantMapper;
 
     @Autowired
-    public VirtualEventMapper(EventTicketMapper eventTicketMapper) {
+    public VirtualEventMapper(EventTicketMapper eventTicketMapper ,EventParticipantMapper eventParticipantMapper ) {
         this.eventTicketMapper = eventTicketMapper;
+        this.eventParticipantMapper = eventParticipantMapper;
     }
 
     public VirtualEvent toEntity(VirtualEventRequestDTO dto) {
@@ -88,6 +90,10 @@ public class VirtualEventMapper {
                 .map(eventTicketMapper::toResponseDTO)
                 .collect(Collectors.toList()) : Collections.emptyList());
 
+        // Map par
+        dto.setParticipants(event.getParticipants() != null ? event.getParticipants().stream()
+                .map(eventParticipantMapper::toResponseDTO)
+                .collect(Collectors.toList()) : Collections.emptyList());
         return dto;
     }
 

@@ -1,344 +1,228 @@
-.event-details-container {
-  max-width: 900px;
-  margin: 40px auto;
-  background: linear-gradient(145deg, #ffffff, #f9fbfc);
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  padding: 48px;
-  font-family: 'Montserrat', sans-serif;
-  overflow: hidden;
+$primary: #1976d2;
+$background: #f5f5f5;
+$text-primary: #333;
+$text-secondary: #666;
+$success: #38a169;
+$error: #f44336;
+$accent: #ff4081;
+
+:host {
+  display: block;
+  font-family: 'Roboto', sans-serif;
 }
 
-/* Event Overview */
+.event-details-container {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 16px;
+}
+
 .event-overview {
-  margin-bottom: 48px;
-  position: relative;
-  padding: 24px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease;
+  margin-bottom: 32px;
 
-  &:hover {
-    transform: translateY(-5px);
-  }
+  .overview-card {
+    background: $background;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 24px;
 
-  .event-header {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 20px;
+    .event-title {
+      font-size: 1.75rem;
+      font-weight: 500;
+      color: $text-primary;
+      margin: 0 0 12px;
+    }
 
-    h1 {
-      margin: 0;
-      color: #1ABC9C;
-      font-size: 1.8rem;
-      font-weight: 800;
-      letter-spacing: -0.8px;
-      line-height: 1.2;
-      transition: color 0.3s ease;
-
-      &:hover {
-        color: darken(#1ABC9C, 15%);
-      }
+    .event-description {
+      font-size: 1rem;
+      color: $text-secondary;
+      line-height: 1.5;
+      margin: 0 0 16px;
     }
 
     .event-meta {
       display: flex;
-      gap: 16px;
       flex-wrap: wrap;
-      color: #6b7280;
-      font-size: 1rem;
-      font-weight: 600;
-
-      mat-icon {
-        font-size: 1.3em;
-        vertical-align: middle;
-        margin-right: 8px;
-        color: #1ABC9C;
-        transition: transform 0.3s ease;
-
-        &:hover {
-          transform: scale(1.15);
-        }
-      }
+      gap: 16px;
+      margin-bottom: 16px;
 
       span {
         display: flex;
         align-items: center;
-        background: #e6f7f5;
-        padding: 8px 16px;
-        border-radius: 24px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-        transition: background 0.3s ease;
+        font-size: 0.9rem;
+        color: $text-secondary;
 
-        &:hover {
-          background: #d1f0eb;
+        mat-icon {
+          margin-right: 6px;
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          color: $primary;
         }
       }
     }
   }
 
-  .event-description {
-    color: #4b5563;
-    font-size: 1.15rem;
-    line-height: 1.9;
-    margin: 0;
-    padding: 20px;
-    background: #f9fafb;
-    border-radius: 10px;
-    border-left: 5px solid #1ABC9C;
-    transition: background 0.3s ease;
+  .join-button {
+    background: linear-gradient(90deg, $primary 0%, lighten($primary, 20%) 100%);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background 0.2s, transform 0.2s;
+
+    mat-icon {
+      margin-right: 8px;
+    }
 
     &:hover {
-      background: #f1f5f9;
+      background: linear-gradient(90deg, darken($primary, 10%) 0%, $primary 100%);
+      transform: translateY(-2px);
     }
   }
 }
 
-/* Timeline Section */
-.timeline-section {
-  margin: 48px 0;
-  padding: 24px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: $text-primary;
+  margin: 0 0 16px;
+}
 
-  .timeline-title {
-    text-align: left;
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #1ABC9C;
-    margin-bottom: 2.5rem;
-    position: relative;
+.calendar-section {
+  margin-bottom: 32px;
 
-   
+  .calendar-card {
+    background: $background;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    min-height: 400px;
   }
+}
+
+.timeline-section {
+  margin-bottom: 32px;
 
   .timeline-container {
-    border-left: 3px solid #1ABC9C;
-    margin-top: 2rem;
-    position: relative;
-    padding-left: 2rem;
-  }
+    display: grid;
+    gap: 16px;
 
-  .timeline-card {
-    position: relative;
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    background: #1ABC9C;
-    color: #1ABC9C;
-    border-radius: 12px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    .timeline-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
 
-    &:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    }
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
 
-    @media (min-width: 768px) {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.5rem 2rem;
-    }
-  }
+      .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
 
-  .timeline-card-done,
-  .timeline-card-upcoming {
-    background: linear-gradient(135deg, #1ABC9C, #16a085); /* Gradient for depth */
-    color: #fff;
-  }
+        .timeline-day {
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: $primary;
+        }
 
-  .timeline-dot {
-    position: absolute;
-    left: -1.15rem;
-    top: 1.5rem;
-    width: 1.5rem;
-    height: 1.5rem;
-    background: #1ABC9C;
-    border-radius: 50%;
-    z-index: 10;
-    box-shadow: 0 0 0 4px #fff;
-    transition: transform 0.3s ease;
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
 
-    &:hover {
-      transform: scale(1.2);
-    }
+          &.done {
+            color: $success;
+          }
 
-    &.timeline-dot-done,
-    &.timeline-dot-upcoming {
-      background: #1ABC9C;
-    }
-  }
+          &.upcoming {
+            color: $primary;
+          }
+        }
+      }
 
-  .timeline-connector {
-    position: absolute;
-    left: -1.15rem;
-    top: 1.5rem;
-    width: 1rem;
-    height: 0.3rem;
-    background: #1ABC9C;
-    z-index: 0;
+      .timeline-title {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: $text-primary;
+        margin: 0 0 8px;
+      }
 
-    &.timeline-connector-done,
-    &.timeline-connector-upcoming {
-      background: #1ABC9C;
-    }
-  }
-
-  .timeline-content {
-    flex: 1;
-
-    .timeline-day {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    .timeline-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .timeline-meta {
-      font-size: 1rem;
-      opacity: 0.9;
+      .timeline-time {
+        font-size: 0.9rem;
+        color: $text-secondary;
+        line-height: 1.4;
+      }
     }
   }
 }
 
-/* Event Participants */
-.event-participants {
-  padding: 24px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-
-  h2 {
-    color: #1ABC9C;
-    font-size: 1rem;
-    font-weight: 800;
-    margin-bottom: 20px;
-    position: relative;
-
-    &::after {
-      content: '';
-      width: 50px;
-      height: 4px;
-      background: linear-gradient(to right, #1ABC9C, #16a085);
-      position: absolute;
-      bottom: -6px;
-      left: 0;
-      border-radius: 2px;
-    }
-  }
-
+.participants-section {
   .participants-list {
     display: flex;
-    gap: 16px;
     flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
+    gap: 12px;
 
     .participant-avatar {
-      width: 56px;
-      height: 56px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: linear-gradient(145deg, #e0f7f4, #b5e8e0);
+      border: 2px solid #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      background: #e0e0e0;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
-      color: #1ABC9C;
-      font-size: 1.6rem;
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      position: relative;
-      border: 3px solid #fff;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      font-size: 1rem;
+      font-weight: 500;
+      color: $text-primary;
+      transition: transform 0.2s;
 
       img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
         border-radius: 50%;
-      }
-
-      span {
-        font-size: 1.6rem;
+        object-fit: cover;
       }
 
       &:hover {
-        transform: scale(1.15);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        transform: scale(1.1);
+        border-color: $accent;
       }
     }
-  }
 
-  .no-participants {
-    color: #6b7280;
-    font-style: italic;
-    font-size: 1.1rem;
-    text-align: center;
-    padding: 20px;
-    background: #f1f5f9;
-    border-radius: 8px;
+    .no-participants {
+      font-size: 0.9rem;
+      color: $text-secondary;
+      font-style: italic;
+    }
   }
 }
 
-/* Loading and No Data States */
-.loading-container {
+.loading-container,
+.no-data-message {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 50vh;
-  color: #6b7280;
+  min-height: 300px;
+  background: $background;
+  border-radius: 8px;
+  color: $text-secondary;
+  font-size: 1rem;
 
-  p {
-    margin-top: 16px;
-    font-size: 1.2rem;
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: $error;
+    margin-bottom: 8px;
   }
-}
-
-.no-data-message {
-  text-align: center;
-  padding: 40px;
-  color: #6b7280;
-  font-size: 1.2rem;
-  background: #f9fafb;
-  border-radius: 12px;
-  margin: 40px auto;
-  max-width: 400px;
-}
-
-.live-stream-section {
-  margin: 20px 0;
-  button {
-    margin-bottom: 10px;
-  }
-  vg-player {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    video {
-      width: 100%;
-      height: auto;
-    }
-  }
-}
-
-.loading-container {
-  text-align: center;
-  margin-top: 50px;
-}
-
-.no-data-message {
-  text-align: center;
-  margin-top: 50px;
-  color: #666;
 }

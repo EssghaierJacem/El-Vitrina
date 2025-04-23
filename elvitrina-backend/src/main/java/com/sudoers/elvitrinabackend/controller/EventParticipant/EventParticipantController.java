@@ -67,7 +67,10 @@ public class EventParticipantController {
 
     @PostMapping("/register")
     public ResponseEntity<EventParticipantResponseDTO> registerParticipant(
+
             @RequestBody EventParticipantRequestDTO requestDTO) {
+
+System.out.println(requestDTO);
         return new ResponseEntity<>(eventParticipantService.registerParticipant(requestDTO), HttpStatus.CREATED);
     }
 

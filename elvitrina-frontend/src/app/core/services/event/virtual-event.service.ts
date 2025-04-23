@@ -31,4 +31,17 @@ export class VirtualEventService {
   deleteEvent(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  
+  joinEvent(eventId: number, tickets: number): Observable<void> {
+    // Mock implementation; replace with actual API call
+    
+    return new Observable(observer => {
+      setTimeout(() => {
+        console.log(`Joined event with ID: ${eventId}, Tickets: ${tickets}`);
+        observer.next();
+        observer.complete();
+      }, 1000);
+    });
+  }
 }

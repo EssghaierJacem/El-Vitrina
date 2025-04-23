@@ -14,11 +14,12 @@ public class EventParticipantResponseDTO {
     private Long userId;
     private String userName;
     private String userEmail;
+    private String userImage;
     private Long eventId;
     private String eventTitle;
     private Long ticketId;
     private String ticketType;
-    private Boolean attended; // Renamed from checkedIn for clarity
+    private Boolean attended;
     private LocalDateTime registrationDate;
     private Boolean hasAccessToChat;
     private Boolean hasAccessToRecordings;
