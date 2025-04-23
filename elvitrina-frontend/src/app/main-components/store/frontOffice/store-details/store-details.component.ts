@@ -496,17 +496,16 @@ export class StoreDetailsComponent implements OnInit {
     return this.IMAGE_BASE_URL + store.coverImage;
   }
 
-  getProductImageUrl(imageFilename: string | undefined | null, type: 'store' | 'product' = 'product'): string {
-    if (!imageFilename) {
-      return type === 'store'
-        ? '/assets/images/stores/no-image.jpg'
-        : '/assets/images/products/no-image.jpg';
+  getProductImageUrl(product: Product): string {
+    if (!product || !product.images || product.images.length === 0) {
+      return '/assets/images/products/no-image.jpg';
     }
   
-    if (imageFilename.startsWith('http') || imageFilename.startsWith('https')) {
-      return imageFilename;
+    const imageUrl = product.images[0];
+    if (imageUrl.startsWith('http') || imageUrl.startsWith('https')) {
+      return imageUrl;
     }
   
-    return this.IMAGE_PRODUCT_BASE_URL + imageFilename;
+    return this.IMAGE_PRODUCT_BASE_URL + imageUrl;
   }
 }

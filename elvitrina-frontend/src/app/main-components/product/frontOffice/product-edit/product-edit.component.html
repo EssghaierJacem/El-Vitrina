@@ -119,26 +119,48 @@
             <!-- Images -->
             <div class="form-section mb-4">
               <h3 class="section-title">Product Images</h3>
-              <p class="hint-text">Enter image URLs separated by commas</p>
               
-              <mat-form-field appearance="outline" class="w-100 mb-3">
-                <mat-label>Image URLs</mat-label>
-                <input matInput formControlName="images" 
-                       placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg">
-                <mat-error *ngIf="productForm.get('images')?.hasError('pattern')">
-                  Please enter valid image URLs (starting with http:// or https://)
-                </mat-error>
-              </mat-form-field>
-
-              <!-- Image Previews -->
-              <div class="image-previews" *ngIf="productForm.get('images')?.value">
+              <!-- Current images display -->
+              <div class="current-images mb-3" *ngIf="product && product.images && product.images.length > 0">
+                <p class="mb-2">Current Images:</p>
                 <div class="row">
-                  <div class="col-md-4 mb-3" *ngFor="let imageUrl of getImageUrls()">
+                  <div class="col-md-4 mb-3" *ngFor="let imageUrl of product.images">
                     <div class="image-preview">
-                      <img [src]="imageUrl" 
-                           alt="Product image preview"
+                      <img [src]="getImageSrc(imageUrl)" 
+                           alt="Product image"
                            (error)="handleImageError($event)"
-                           class="preview-image">
+                           class="preview-image img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- New image upload -->
+              <div class="upload-section">
+                <label class="form-label">Upload New Images</label>
+                <input 
+                  type="file" 
+                  class="form-control mb-3" 
+                  (change)="onImagesSelected($event)"
+                  multiple
+                  accept="image/*">
+                <small class="form-text text-muted">Select multiple images to upload (JPG, PNG, GIF)</small>
+              </div>
+              
+              <!-- New image previews -->
+              <div class="new-image-previews mt-3" *ngIf="uploadedFiles.length > 0">
+                <p class="mb-2">New Images to Upload:</p>
+                <div class="row">
+                  <div class="col-md-4 mb-3" *ngFor="let file of uploadedFiles; let i = index">
+                    <div class="image-preview position-relative">
+                      <img [src]="getUploadedImagePreview(file)" 
+                           alt="New image preview"
+                           class="preview-image img-fluid">
+                      <button type="button" 
+                              class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+                              (click)="removeUploadedFile(i)">
+                        <mat-icon>close</mat-icon>
+                      </button>
                     </div>
                   </div>
                 </div>

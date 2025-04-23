@@ -56,6 +56,7 @@ export class ProductEditComponent implements OnInit {
   product: Product | null = null;
   tagsControl = new FormControl<string[]>([]);
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+  uploadedFiles: File[] = [];
 
   readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
 
@@ -162,8 +163,10 @@ export class ProductEditComponent implements OnInit {
       discountPercentage = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
     }
     
-    // Create an array of image URLs separated by commas
-    const imageUrls = product.images ? product.images.join(', ') : '';
+    // Set the tags if available
+    if (product.tags && product.tags.length > 0) {
+      this.tagsControl.setValue(product.tags);
+    }
     
     this.productForm.patchValue({
       storeId: product.storeId,
@@ -174,9 +177,7 @@ export class ProductEditComponent implements OnInit {
       category: product.category,
       hasDiscount: hasDiscount,
       discountPercentage: discountPercentage,
-      freeShipping: product.freeShipping || false,
-      images: imageUrls,
-      tags: product.tags || []
+      freeShipping: product.freeShipping || false
     });
     
     // Update discountPercentage control based on hasDiscount
@@ -213,9 +214,7 @@ export class ProductEditComponent implements OnInit {
       category: ['', Validators.required],
       hasDiscount: [false],
       discountPercentage: [0, [Validators.min(0), Validators.max(100)]],
-      freeShipping: [false],
-      images: ['', [Validators.pattern('^https?://.*$')]],
-      tags: this.tagsControl
+      freeShipping: [false]
     });
 
     // Disable discount percentage by default
@@ -259,10 +258,7 @@ export class ProductEditComponent implements OnInit {
         ...this.productForm.value,
         productId: this.productId,
         status: this.product?.status || 'ACTIVE' as ProductStatus,
-        // Convert comma-separated image URLs to array
-        images: this.productForm.value.images ? 
-          this.productForm.value.images.split(',').map((url: string) => url.trim()).filter((url: string) => url) : 
-          []
+        tags: this.tagsControl.value || []
       };
 
       // Calculate original price if there's a discount
@@ -274,7 +270,18 @@ export class ProductEditComponent implements OnInit {
         productData.originalPrice = null;
       }
 
-      this.productService.update(this.productId, productData).subscribe({
+      // Create FormData to send both JSON data and files
+      const formData = new FormData();
+      formData.append('product', new Blob([JSON.stringify(productData)], { type: 'application/json' }));
+      
+      // Add uploaded image files if any
+      if (this.uploadedFiles.length > 0) {
+        this.uploadedFiles.forEach(file => {
+          formData.append('images', file);
+        });
+      }
+
+      this.productService.update(this.productId, formData).subscribe({
         next: (response) => {
           console.log('Product updated successfully:', response);
           this.snackBar.open('Product updated successfully', 'Close', {
@@ -308,6 +315,7 @@ export class ProductEditComponent implements OnInit {
   resetForm(): void {
     if (this.product) {
       this.populateForm(this.product);
+      this.uploadedFiles = [];
       this.snackBar.open('Form has been reset to original values', 'Close', {
         duration: 3000
       });
@@ -327,21 +335,33 @@ export class ProductEditComponent implements OnInit {
     }
   }
 
-  getImageUrls(): string[] {
-    const imagesValue = this.productForm.get('images')?.value;
-    if (!imagesValue) return [];
-    
-    return imagesValue
-      .split(',')
-      .map((image: string) => image.trim())
-      .filter((image: string) => image)
-      .map((image: string) => {
-        if (image.startsWith('http')) {
-          return image; 
-        } else {
-          return this.IMAGE_BASE_URL + image;
-        }
-      });
+  getImageSrc(imageUrl: string): string {
+    if (imageUrl.startsWith('http')) {
+      return imageUrl;
+    } else {
+      return this.IMAGE_BASE_URL + imageUrl;
+    }
+  }
+
+  onImagesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      // Add the new files to the uploaded files array
+      const newFiles = Array.from(input.files);
+      this.uploadedFiles = [...this.uploadedFiles, ...newFiles];
+    }
+  }
+
+  removeUploadedFile(index: number): void {
+    if (index >= 0 && index < this.uploadedFiles.length) {
+      this.uploadedFiles.splice(index, 1);
+      // Create a new array to trigger change detection
+      this.uploadedFiles = [...this.uploadedFiles];
+    }
+  }
+
+  getUploadedImagePreview(file: File): string {
+    return URL.createObjectURL(file);
   }
 
   isLoggedIn(): boolean {

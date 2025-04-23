@@ -100,7 +100,7 @@
                 -{{product.discountPercentage}}%
               </div>
               <img mat-card-image
-                [src]="getProductImageUrl(product.mainImage)"
+                [src]="getProductImageUrl(product)"
                 [alt]="product.productName"
                 (error)="handleImageError($event, 'product')"
                 class="product-image">       

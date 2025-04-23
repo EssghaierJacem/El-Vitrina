@@ -49,6 +49,8 @@ export class ProductListComponent implements OnInit {
   showDiscounted = false;
   showInStock = false;
 
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
+
   constructor(
     public productService: ProductService,
     private snackBar: MatSnackBar,
@@ -164,5 +166,21 @@ export class ProductListComponent implements OnInit {
     if (img) {
       img.src = 'assets/images/products/no-image.jpg';
     }
+  }
+
+  getProductImageUrl(product: Product): string {
+    if (!product || !product.images || product.images.length === 0) {
+      return 'assets/images/products/no-image.jpg';
+    }
+
+    const imageUrl = product.images[0];
+    
+    // If it's already a full URL, return it as is
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    
+    // Otherwise, append it to the API URL
+    return this.IMAGE_BASE_URL + imageUrl;
   }
 }
