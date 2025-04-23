@@ -51,6 +51,12 @@ export class PaymentService {
     return this.http.post<{ url: string }>(
       'http://localhost:8080/api/payments/create-checkout-session',
       { amount }
-    );
-  }
+    );  }
+
+
+    updateStatusToSuccess(id: number): Observable<Payment> {
+      return this.http.put<Payment>(`${this.apiUrl}/updateStatusToSuccess/${id}`, {});
+    }
+
+
 }

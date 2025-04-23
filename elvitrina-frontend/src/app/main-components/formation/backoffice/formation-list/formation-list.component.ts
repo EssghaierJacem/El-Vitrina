@@ -80,7 +80,7 @@ export class FormationListComponent implements OnInit {
         this.isLoading = false;
         console.error(formations);
 
-      
+
       },
       error: (error) => {
         console.error('Error fetching formations', error);

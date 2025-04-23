@@ -6,6 +6,7 @@ import com.stripe.model.PaymentIntent;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.sudoers.elvitrinabackend.model.dto.PaymentDTO;
+import com.sudoers.elvitrinabackend.model.entity.Payment;
 import com.sudoers.elvitrinabackend.service.payment.PaymentService;
 import com.sudoers.elvitrinabackend.service.payment.StripeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,7 @@ public class paymentController {
 
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
-                    .setSuccessUrl("http://localhost:4200/success")
+                    .setSuccessUrl("http://localhost:4200/payment/payment-success")
                     .setCancelUrl("http://localhost:4200/cancel")
                     .addLineItem(
                             SessionCreateParams.LineItem.builder()
@@ -118,4 +119,12 @@ public class paymentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PutMapping("/updateStatusToSuccess/{id}")
+    public ResponseEntity<PaymentDTO> updateStatusToSuccess(@PathVariable Long id) {
+        Payment payment = paymentService.updateStatusToSuccess(id);
+        return ResponseEntity.ok(paymentService.convertToDTO(payment));
+    }
+
+
 }

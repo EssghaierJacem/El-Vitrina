@@ -5,20 +5,27 @@ import { RecoService } from 'src/app/core/services/Recommendation/reco.service';
 
 @Component({
   selector: 'app-quiz-result',
-  imports: [CommonModule],
+  imports: [CommonModule] ,
   templateUrl: './quiz-result.component.html',
-  styleUrl: './quiz-result.component.scss'
+  styleUrls: ['./quiz-result.component.scss']
 })
 export class QuizResultComponent implements OnInit {
-  quizAnswers: string[] = [];  // Contient les réponses du quiz
-  recommendedProducts: ProductRecommendation[] = [];
 
+  recommendedProducts: ProductRecommendation[] = [];
+  // à remplacer dynamiquement si besoin
+  errorMessage = '';
   constructor(private recoService: RecoService) {}
 
-  ngOnInit() {
-    // Assume que `quizAnswers` est un tableau des réponses utilisateurs
-    this.recoService.getRecommendations(this.quizAnswers).subscribe(products => {
-      this.recommendedProducts = products;
+  ngOnInit(): void {
+    const userId = 1;
+    this.recoService.getRecommendations(userId).subscribe({
+      next: (recommendations) => {
+        this.recommendedProducts = recommendations;
+      },
+      error: (err) => {
+        console.error('Erreur API:', err);
+        this.errorMessage = 'Erreur lors de la récupération des recommandations.';
+      }
     });
   }
 }

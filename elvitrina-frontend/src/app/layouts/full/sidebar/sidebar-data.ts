@@ -68,104 +68,38 @@ export const navItems: NavItem[] = [
     displayName: 'Offers',
     iconName: 'point',
     route: '/dashboard/offers',
-  }, 
-  {
-    displayName: 'Order & Payment',
-    iconName: 'shopping-cart',
-    children: [
-      {
-        displayName: 'Custom Order',
-        iconName: 'shopping-cart',
-        route: 'dashboard/custom-order',
-        children: [
-          {
-            displayName: 'List',
-            iconName: 'list',
-            route: 'dashboard/custom-order/list',
-          },
-          {
-            displayName: 'Create',
-            iconName: 'plus-circle',
-            route: 'dashboard/custom-order/create',
-          }
-        ],
-      },
-      {
-        displayName: 'Payment',
-        iconName: 'credit-card',
-        route: 'dashboard/payment',
-        children: [
-          {
-            displayName: 'List',
-            iconName: 'list',
-            route: 'dashboard/payment/list',
-          },
-          {
-            displayName: 'Create',
-            iconName: 'plus-circle',
-            route: 'dashboard/payment/create',
-          }
-        ],
-      },
-
-    ],
   },
   {
-    displayName: 'Quiz',
-    iconName: 'clipboard-list',
-    children: [
-      {
-        displayName: 'Quiz',
-        iconName: 'clipboard-list',
-        route: 'dashboard/quiz',
-        children: [
-          {
-            displayName: 'Quiz List',
-            iconName: 'list',
-            route: 'dashboard/quiz/list',
-          },
-          {
-            displayName: 'Create Quiz',
-            iconName: 'plus-circle',
-            route: 'dashboard/quiz/create',
-          }
-        ],
-      },
-      {
-        displayName: 'Question',
-        iconName: 'point',
-        route: 'dashboard/quiz/question',
-        children: [
-          {
-            displayName: 'Quesion List',
-            iconName: 'help-circle',
-            route: 'dashboard/question/list'
-          },
-          {
-            displayName: 'Question Create',
-            iconName: 'plus-circle',
-            route: 'dashboard/question/create'
-          }
-        ]
-      },
-      {
-        displayName: 'Reponse ',
-        iconName: 'point',
-        route: 'dashboard/quiz/reponse',
-            children: [
-             { displayName: 'Reponse List',
-            iconName: 'list',
-            route: 'dashboard/reponse/list'
-          },
-          {
-            displayName: 'Reponse Create',
-            iconName: 'plus-circle',
-            route: 'dashboard/reponse/create'
-          }
-        ]
-      },
-    ],
+    navCap: 'Order & Payment',
   },
+       {
+        displayName: 'Order List',
+        iconName: 'list',
+        route: 'dashboard/custom-order/list',
+          },
+          {
+        displayName: 'Statistiques Overview',
+        iconName: 'stat',
+        route: 'dashboard/custom-order/Stat',
+          },
+          {
+        displayName: 'Payment List',
+        iconName: 'list',
+        route: 'dashboard/payment/list',
+           },
+  {
+    navCap: ' Quiz ',
+  },
+  {
+  displayName: 'Quiz List',
+  iconName: 'list',
+  route: 'dashboard/quiz/list',
+},
+{
+  displayName: 'Create Quiz',
+  iconName: 'plus-circle',
+  route: 'dashboard/quiz/create',
+},
 
 
   {
@@ -180,13 +114,13 @@ export const navItems: NavItem[] = [
     displayName: 'propsalPerso',
     iconName: 'point',
     route: '/dashboard/RequestPerso/listproposal',
-  }, 
+  },
 
   {
     displayName: 'Ads',
     iconName: 'point',
     route: '/dashboard/AdAdmin/admin/ads',
-  }, 
+  },
 
 
 
@@ -207,8 +141,8 @@ export const navItems: NavItem[] = [
     iconName: 'calendar-event',
     route: 'dashboard/events',
     children: []
-  }, 
-  
+  },
+
   {
     navCap: 'Ui Components',
   },
