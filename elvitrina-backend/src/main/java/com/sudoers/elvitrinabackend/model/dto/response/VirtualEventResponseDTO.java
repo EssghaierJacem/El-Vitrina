@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VirtualEventResponseDTO {
-    private Long id;
+    private Long eventId;
     private String title;
     private String description;
     private LocalDateTime startDateTime; // Maps to eventDate

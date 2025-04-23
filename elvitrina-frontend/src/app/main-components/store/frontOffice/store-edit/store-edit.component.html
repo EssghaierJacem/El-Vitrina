@@ -1,1 +1,102 @@
-<p>store-edit works!</p>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4">Edit Your Store</h2>
+
+          <form [formGroup]="storeForm" (ngSubmit)="onSubmit()">
+            <!-- Store Name -->
+            <mat-form-field appearance="outline" class="w-100 mb-3">
+              <mat-label>Store Name</mat-label>
+              <input matInput formControlName="storeName" placeholder="Enter store name">
+              <mat-error *ngIf="storeForm.get('storeName')?.hasError('required')">
+                Store name is required
+              </mat-error>
+              <mat-error *ngIf="storeForm.get('storeName')?.hasError('maxlength')">
+                Store name must be less than 100 characters
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Description -->
+            <mat-form-field appearance="outline" class="w-100 mb-3">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="4" 
+                        placeholder="Enter store description"></textarea>
+              <mat-error *ngIf="storeForm.get('description')?.hasError('maxlength')">
+                Description must be less than 1500 characters
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Category -->
+            <mat-form-field appearance="outline" class="w-100 mb-3">
+              <mat-label>Category</mat-label>
+              <mat-select formControlName="category">
+                <mat-option *ngFor="let category of categories" [value]="category">
+                  {{category}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="storeForm.get('category')?.hasError('required')">
+                Category is required
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Map Location -->
+            <div class="map-container mb-4">
+              <label class="form-label">Store Location</label>
+              <div id="map" class="map-frame"></div>
+              <div class="coordinates-display mt-2">
+                <small class="text-muted">
+                  Store Address: {{storeForm.get('address')?.value}}
+                </small>
+              </div>
+            </div>
+
+            <!-- Store Profile Image -->
+            <div class="form-group mb-4">
+              <label>Store Logo</label>
+              <input type="file" (change)="onFileSelected($event, 'image')" accept="image/*" class="form-control">
+              <div class="image-preview mt-2" *ngIf="imagePreviewUrl">
+                <img [src]="imagePreviewUrl" alt="Store Logo Preview" class="img-thumbnail" (error)="handleImageError($event)">
+              </div>
+            </div>
+            
+            <!-- Cover Image -->
+            <div class="form-group mb-4">
+              <label>Cover Image</label>
+              <input type="file" (change)="onFileSelected($event, 'coverImage')" accept="image/*" class="form-control">
+              <div class="image-preview mt-2" *ngIf="coverImagePreviewUrl">
+                <img [src]="coverImagePreviewUrl" alt="Cover Image Preview" class="img-thumbnail" (error)="handleImageError($event)">
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div class="mb-3">
+              <mat-checkbox formControlName="status" color="primary">
+                Active Store
+              </mat-checkbox>
+            </div>
+
+            <!-- Featured -->
+            <div class="mb-4">
+              <mat-checkbox formControlName="featured" color="primary">
+                Featured Store
+              </mat-checkbox>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="d-flex gap-2 justify-content-end">
+              <button mat-button type="button" (click)="resetForm()" [disabled]="isLoading">
+                Reset
+              </button>
+              <button mat-raised-button color="primary" type="submit" [disabled]="!storeForm.valid || isLoading">
+                <span *ngIf="!isLoading">Update Store</span>
+                <mat-spinner diameter="24" *ngIf="isLoading"></mat-spinner>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

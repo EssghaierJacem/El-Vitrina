@@ -14,6 +14,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,15 +39,19 @@ public class ChatController {
     }
 
     @GetMapping("/{senderId}/{receiverId}")
-    public List<Message> getConversation(@PathVariable Long senderId, @PathVariable Long receiverId) {
-        return messageService.getConversation(senderId, receiverId);
+    public List<MessageResponseDTO> getConversation(@PathVariable Long senderId, @PathVariable Long receiverId) {
+        return messageService.getConversation(senderId, receiverId)
+                .stream()
+                .map(MessageResponseDTO::new)
+                .toList();
     }
-/*
-    @PostMapping("/store")
-    public MessageResponseDTO storeMessage(@RequestBody MessageDTO messageDTO) {
-        return messageService.sendMessage(messageDTO);
-    }
-*/
+
+    /*
+        @PostMapping("/store")
+        public MessageResponseDTO storeMessage(@RequestBody MessageDTO messageDTO) {
+            return messageService.sendMessage(messageDTO);
+        }
+    */
     @PostMapping("/mark-as-read")
     public void markAsRead(@RequestBody List<Long> messageIds) {
         List<Message> updatedMessages = messageService.markMessagesAsRead(messageIds);
@@ -68,5 +73,15 @@ public class ChatController {
     @GetMapping("/last/{userId1}/{userId2}")
     public Message getLastMessage(@PathVariable Long userId1, @PathVariable Long userId2) {
         return messageService.getLastMessageBetween(userId1, userId2);
+    }
+
+    @GetMapping("/unread/{userId}")
+    public Map<Long, Long> getUnreadCountPerSender(@PathVariable Long userId) {
+        return messageService.countUnreadMessagesPerSender(userId);
+    }
+
+    @GetMapping("/last-all/{userId}")
+    public Map<Long, MessageResponseDTO> getLastMessagesForAllFriends(@PathVariable Long userId) {
+        return messageService.getLastMessagesForAllFriends(userId);
     }
 }

@@ -1,4 +1,3 @@
-// payment.component.ts
 import { Component } from '@angular/core';
 import { CustomOrder } from 'src/app/core/models/Panier/CustomOrder';
 import { PaymentService } from 'src/app/core/services/Panier/PaymentService';

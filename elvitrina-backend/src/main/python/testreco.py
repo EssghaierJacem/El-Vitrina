@@ -1,6 +1,6 @@
 import requests
 
-url = "http://localhost:8081/recommend"
+url = "http://localhost:8080/recommend"
 
 # Simuler une requête avec user_id=1
 payload = {

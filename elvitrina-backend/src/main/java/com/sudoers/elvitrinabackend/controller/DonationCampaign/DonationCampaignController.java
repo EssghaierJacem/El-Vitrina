@@ -32,6 +32,7 @@ public class DonationCampaignController {
     public ResponseEntity<DonationCampaignResponseDTO> createCampaign(@RequestBody DonationCampaignRequestDTO requestDTO) {
         DonationCampaignResponseDTO savedCampaign = donationCampaignService.save(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCampaign);
+
     }
 
     @GetMapping

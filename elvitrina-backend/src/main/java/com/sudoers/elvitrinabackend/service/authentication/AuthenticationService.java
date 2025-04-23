@@ -101,4 +101,21 @@ public class AuthenticationService {
 
         return false;
     }
+
+    public AuthenticationResponse faceLogin(String emailOrUsername) {
+        var user = userRepository.findByEmail(emailOrUsername)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (!user.isStatus()) {
+            throw new BadCredentialsException("Email not verified. Please check your inbox.");
+        }
+
+        var jwtToken = jwtService.generateToken(user);
+
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .message("Face login successful")
+                .build();
+    }
+
 }

@@ -1,0 +1,77 @@
+<form [formGroup]="eventForm">
+    <div class="card">
+      <!-- Step 1: Basic Event Information -->
+      <div *ngIf="step === 1">
+        <h2 class="singup">Create Event - Step 1</h2>
+        <div class="inputBox">
+          <input type="text" formControlName="title" required>
+          <span>Title</span>
+        </div>
+        <div class="inputBox">
+          <input type="text" formControlName="description" required>
+          <span>Description</span>
+        </div>
+        <div class="inputBox">
+          <input type="date" formControlName="startDateTime" required>
+          <span>Date</span>
+        </div>
+        <div class="inputBox">
+          <input type="number" formControlName="ticketPrice" required min="0" step="0.01">
+          <span>Ticket Price</span>
+        </div>
+        <div class="inputBox">
+          <select formControlName="eventType" required>
+            <option value="" disabled selected>Select Type</option>
+            <option *ngFor="let type of eventTypes" [value]="type">
+              {{ type === 'FREE_LIVE' ? 'FREE_LIVE' : 'PAID_WORKSHOP' }}
+            </option>
+          </select>
+          <span>Event Type</span>
+        </div>
+        <div class="inputBox">
+          <select formControlName="eventMode" required>
+            <option value="" disabled selected>Select Mode</option>
+            <option *ngFor="let mode of eventModes" [value]="mode">
+              {{ mode === 'SINGLE_SESSION' ? 'SINGLE_SESSION' : 'MULTI_SESSION' }}
+            </option>
+          </select>
+          <span>Event Mode</span>
+        </div>
+        <div class="inputBox">
+          <input type="number" formControlName="maxParticipants" required min="1">
+          <span>Max Participants</span>
+        </div>
+        <button class="enter" type="button" (click)="nextStep()">Next</button>
+      </div>
+  
+      <!-- Step 2: Session Information -->
+      <div *ngIf="step === 2">
+        <h2 class="singup">Create Event - Step 2</h2>
+        <div formArrayName="sessions">
+          <div *ngFor="let control of sessions.controls; let i = index" class="session-container">
+            <ng-container [formGroupName]="i">
+              <h3>Session {{ i + 1 }}</h3>
+              <div class="inputBox">
+                <input type="text" formControlName="sessionTitle" required>
+                <span>Session Title</span>
+              </div>
+              <div class="inputBox">
+                <input type="date" formControlName="startTime" required>
+                <span>Start Time</span>
+              </div>
+              <div class="inputBox">
+                <input type="date" formControlName="endTime" required>
+                <span>End Time</span>
+              </div>
+              <button class="remove-btn" type="button" (click)="removeSession(i)">Remove</button>
+            </ng-container>
+          </div>
+        </div>
+        <button class="add-btn" type="button" (click)="addSession()">Add Session</button>
+        <div class="button-group">
+          <button class="back-btn" type="button" (click)="previousStep()">Back</button>
+          <button class="enter" type="button" (click)="submitEvent()">Submit</button>
+        </div>
+      </div>
+    </div>
+  </form>

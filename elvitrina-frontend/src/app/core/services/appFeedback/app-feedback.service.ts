@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AppFeedback } from '../../models/appFeedback/app-feedback.model';
+import { Page } from '../../models/page.model';
 
 @Injectable({
   providedIn: 'root'
@@ -35,5 +36,10 @@ export class AppFeedbackService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getPaginatedFeedbacks(page: number, size: number, searchTerm: string): Observable<Page<AppFeedback>> {
+    const params = { page: page.toString(), size: size.toString(), searchTerm };
+    return this.http.get<Page<AppFeedback>>(`${this.apiUrl}`, { params }); // Updated endpoint
   }
 }

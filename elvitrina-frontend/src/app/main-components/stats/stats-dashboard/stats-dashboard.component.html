@@ -1,0 +1,26 @@
+<mat-card class="cardWithShadow">
+    <div class="d-flex justify-content-between align-items-center m-b-16">
+      <div class="d-flex align-items-center">
+        <button mat-icon-button color="primary" [routerLink]="['../']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <mat-card-title>Posts Statistics </mat-card-title>
+      </div>
+    </div>
+
+  <mat-card-content>
+    <div class="switch-buttons" style="margin-bottom: 1rem;">
+      <button mat-raised-button color="primary" (click)="loadUserStats()" [disabled]="currentView === 'user'">
+        Users
+      </button>
+      <button mat-raised-button color="accent" (click)="loadDateStats()" [disabled]="currentView === 'date'">
+        Dates
+      </button>
+    </div>
+
+    <div class="chart-container" style="position: relative; height: 400px;">
+      <canvas #postsChart></canvas>
+    </div>
+  </mat-card-content>
+</mat-card>
+ 

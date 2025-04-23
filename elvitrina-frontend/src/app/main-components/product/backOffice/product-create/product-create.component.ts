@@ -44,6 +44,11 @@ export class ProductCreateComponent implements OnInit {
   
   categories: ProductCategoryType[] = Object.values(ProductCategoryType);
   statusOptions = Object.values(ProductStatus);
+  tags: string[] = []; // Add a tags property to manage product tags
+
+  uploadedFiles: File[] = []; // Now store selected image files here
+  uploadedImagesPreview: string[] = []; // for preview
+
 
   constructor(
     private fb: FormBuilder,
@@ -71,14 +76,11 @@ export class ProductCreateComponent implements OnInit {
       discountPercentage: [0, [Validators.min(0), Validators.max(100)]],
       freeShipping: [false],
       isBestseller: [false],
-      images: [''],
       storeId: ['', Validators.required]
     });
 
-    // Disable discount percentage by default
     this.productForm.get('discountPercentage')?.disable();
 
-    // Enable/disable discount percentage based on hasDiscount checkbox
     this.productForm.get('hasDiscount')?.valueChanges.subscribe(hasDiscount => {
       const discountControl = this.productForm.get('discountPercentage');
       if (hasDiscount) {
@@ -110,45 +112,49 @@ export class ProductCreateComponent implements OnInit {
   onSubmit(): void {
     if (this.productForm.valid && !this.loading) {
       this.loading = true;
-      
-      const productData = this.productForm.value;
-      
-      // Convert comma-separated image URLs to array
-      if (productData.images) {
-        productData.images = productData.images.split(',').map((url: string) => url.trim()).filter((url: string) => url);
+  
+      const productData = { ...this.productForm.value };
+  
+      // Clean up images field
+      if (Array.isArray(productData.images)) {
+        productData.images = productData.images.map((url: string) => url.trim()).filter((url: string) => url);
       } else {
-        productData.images = [];
+        productData.images = productData.images ? productData.images.split(',').map((url: string) => url.trim()).filter((url: string) => url) : [];
       }
-
-      // Ensure category is a valid ProductCategoryType
+  
+      // Validate category
       if (!Object.values(ProductCategoryType).includes(productData.category)) {
-        this.snackBar.open('Invalid product category', 'Close', {
-          duration: 5000
-        });
+        this.snackBar.open('Invalid product category', 'Close', { duration: 5000 });
         this.loading = false;
         return;
       }
-
-      this.productService.create(productData).subscribe({
+  
+      // Validate mandatory fields
+      if (!productData.productName || !productData.description || !productData.category || !productData.storeId) {
+        this.snackBar.open('Please fill in all required fields', 'Close', { duration: 5000 });
+        this.loading = false;
+        return;
+      }
+  
+      // Now submit
+      this.productService.create(productData, this.uploadedFiles).subscribe({
         next: (response) => {
           console.log('Product created successfully:', response);
-          this.snackBar.open('Product created successfully', 'Close', {
-            duration: 3000
-          });
+          this.snackBar.open('Product created successfully', 'Close', { duration: 3000 });
           this.router.navigate(['/dashboard/products']);
         },
         error: (error) => {
           console.error('Error creating product:', error);
-          this.snackBar.open(error.message || 'Error creating product', 'Close', {
-            duration: 5000
-          });
+          this.snackBar.open(error.message || 'Error creating product', 'Close', { duration: 5000 });
           this.loading = false;
         },
         complete: () => {
           this.loading = false;
         }
       });
+  
     } else {
+      // Mark invalid fields as touched
       Object.keys(this.productForm.controls).forEach(key => {
         const control = this.productForm.get(key);
         if (control?.errors) {
@@ -158,20 +164,18 @@ export class ProductCreateComponent implements OnInit {
       });
     }
   }
+  
+  
 
   resetForm(): void {
     this.productForm.reset({
       price: 0,
       stockQuantity: 0,
       status: 'ACTIVE',
-      hasDiscount: false,
-      images: ''
+      hasDiscount: false
     });
-    
-    this.snackBar.open('Form has been cleared', 'Close', {
-      duration: 3000
-    });
-    
+    this.uploadedFiles = [];
+    this.snackBar.open('Form has been cleared', 'Close', { duration: 3000 });
     this.router.navigate(['/dashboard/products']);
   }
 
@@ -180,4 +184,49 @@ export class ProductCreateComponent implements OnInit {
       word.charAt(0) + word.slice(1).toLowerCase()
     ).join(' ');
   }
+
+  addTag(tag: string): void {
+    if (tag && !this.tags.includes(tag)) {
+      this.tags.push(tag);
+    }
+  }
+
+  removeTag(tag: string): void {
+    const index = this.tags.indexOf(tag);
+    if (index >= 0) {
+      this.tags.splice(index, 1);
+    }
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.uploadedFiles = Array.from(input.files); // Store selected files
+    }
+  }
+
+  onImagesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.uploadedImagesPreview = [];
+      this.uploadedFiles = [];
+  
+      const files = Array.from(input.files);
+  
+      files.forEach(file => {
+        this.uploadedFiles.push(file); // store the real file
+  
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          const result = e.target?.result as string;
+          if (result) {
+            this.uploadedImagesPreview.push(result); // store preview
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  }
+  
+  
 }

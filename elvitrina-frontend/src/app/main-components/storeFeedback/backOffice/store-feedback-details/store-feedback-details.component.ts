@@ -31,17 +31,21 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./store-feedback-details.component.scss']
 })
 export class StoreFeedbackDetailsComponent implements OnInit {
-  feedback: StoreFeedback | null = null;
+  feedback: any;
   isLoading = true;
   feedbackId: number | null = null;
   error: string | null = null;
 
+  public router: Router;
+
   constructor(
     private storeFeedbackService: StoreFeedbackService,
     private snackBar: MatSnackBar,
-    private router: Router,
+    router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    this.router = router;
+  }
 
   ngOnInit(): void {
     this.feedbackId = Number(this.route.snapshot.paramMap.get('id'));

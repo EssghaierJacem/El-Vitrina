@@ -15,5 +15,6 @@ export interface User {
     password?: string;
     isActive?: boolean;
     role?: 'ADMIN' | 'USER' | 'SELLER' | 'INVESTOR'; 
+
   }
   

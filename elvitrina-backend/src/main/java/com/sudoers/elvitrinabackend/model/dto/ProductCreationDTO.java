@@ -11,27 +11,21 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductCreationDTO {
-    @NotBlank
-    @Size(max = 100)
     private String productName;
-
-    @Size(max = 500)
     private String description;
-
-    @PositiveOrZero
     private double price;
-
-    @PositiveOrZero
     private int stockQuantity;
-
     private ProductCategoryType category;
     private boolean hasDiscount;
-    private List<@URL String> images;
+    private double discountPercentage;
+    private List<String> images;
     private Long storeId;
+    private Set<String> tags;
 }

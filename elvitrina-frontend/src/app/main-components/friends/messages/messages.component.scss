@@ -681,4 +681,19 @@
   .empty-state .empty-illustration i {
     font-size: 36px;
   }
+  .ghost-suggestion .ghost {
+    color: #999;
+    font-style: italic;
+  }
+  .suggestion-box {
+    margin-top: 5px;
+    background: #f4f4f4;
+    padding: 8px;
+    border-left: 4px solid #4caf50;
+    border-radius: 4px;
+  }
+  .suggestion-box p {
+    font-style: italic;
+    color: #333;
+  }
 }

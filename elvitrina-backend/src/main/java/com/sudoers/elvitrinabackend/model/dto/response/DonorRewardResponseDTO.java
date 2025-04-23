@@ -12,13 +12,14 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DonorRewardResponseDTO {
-    private Long id;
+    private Long rewardId;
     private String title;
     private String description;
     private BigDecimal minimumDonationAmount;
     private Integer availableQuantity;
     private Integer claimedQuantity;
     private String imageUrl;
+    private Integer redemptionCode;
     private Long campaignId;
     private String campaignTitle;
     private Boolean isAvailable;

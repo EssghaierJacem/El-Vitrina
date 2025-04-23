@@ -26,8 +26,9 @@ public class Gift {
     private String description;
 
     private String imageUrl;
-
+    private  Long discount;
     private String giftCode;
+    private LocalDateTime expirationDate;
 
     private Boolean isRedeemed;
     private Boolean isshared;
@@ -53,13 +54,7 @@ public class Gift {
     @JoinColumn(name = "donation_id", unique = true)
     private Donation donation;
 
-    @PrePersist
-    public void generateGiftCode() {
-        if (this.giftCode == null) {
-            this.giftCode = UUID.randomUUID().toString();
-        }
-        this.isRedeemed = false;
-    }
+
 
 }
 

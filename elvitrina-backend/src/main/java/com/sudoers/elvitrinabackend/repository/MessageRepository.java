@@ -24,4 +24,11 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             "ORDER BY m.sentAt DESC LIMIT 1")
     Message findLastMessageBetweenUsers(@Param("user1") Long user1Id,
                                         @Param("user2") Long user2Id);
+
+    @Query("SELECT m.sender.id, COUNT(m) FROM Message m WHERE m.receiver.id = :userId AND m.read = false GROUP BY m.sender.id")
+    List<Object[]> countUnreadPerSender(@Param("userId") Long userId);
+
+    @Query("SELECT m FROM Message m WHERE m.sender.id = :userId OR m.receiver.id = :userId ORDER BY m.sentAt DESC")
+    List<Message> findLastMessagesForUser(@Param("userId") Long userId);
+
 }

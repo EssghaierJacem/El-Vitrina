@@ -1,0 +1,23 @@
+.star-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  
+    mat-icon {
+      color: rgba(0, 0, 0, 0.24);
+      
+      &.filled {
+        color: #FFD700;
+      }
+  
+      &.half {
+        color: #FFD700;
+      }
+    }
+  
+    .rating-value {
+      margin-left: 4px;
+      font-size: 0.9em;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }

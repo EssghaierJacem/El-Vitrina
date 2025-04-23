@@ -5,4 +5,6 @@ public enum RoleType {
     USER,
     SELLER,
     INVESTOR
+
+
 }

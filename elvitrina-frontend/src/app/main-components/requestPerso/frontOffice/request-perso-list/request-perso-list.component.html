@@ -1,0 +1,100 @@
+<!-- Filter buttons -->
+<div class="filter-buttons" style="margin: 20px 0; text-align: center;">
+  <button mat-raised-button 
+          [class.active-filter]="filter === 'all'"
+          (click)="applyFilter('all')">
+    <mat-icon>list_alt</mat-icon> 
+    <span class="button-text">All Requests</span>
+    <span class="count-badge">{{allRequestsCount}}</span>
+  </button>
+  
+  <button mat-raised-button 
+          [class.active-filter]="filter === 'mine'"
+          (click)="applyFilter('mine')">
+    <mat-icon>person</mat-icon>
+    <span class="button-text">My Requests</span>
+    <span class="count-badge">{{mineRequestsCount}}</span>
+  </button>
+  
+  <button mat-raised-button 
+          [class.active-filter]="filter === 'others'"
+          (click)="applyFilter('others')">
+    <mat-icon>people</mat-icon>
+    <span class="button-text">Others' Requests</span>
+    <span class="count-badge">{{othersRequestsCount}}</span>
+  </button>
+</div>
+<!-- Optional reset button (only shows if some requests are hidden)
+<button mat-raised-button color="accent" (click)="resetView()" 
+        *ngIf="allrequests.length < originalRequests.length"
+        style="margin: 20px;">
+  <mat-icon>refresh</mat-icon> Show All Requests
+</button>
+ -->
+<!-- Request cards -->
+<div class="card-container" *ngFor="let request of allrequests" [attr.data-id]="request.id">
+  <mat-card>
+    <!-- Delete button (only for request owner) 
+    <button *ngIf="userId === request.user?.id" mat-icon-button class="delete-button" 
+            (click)="removeRequestFromView(request.id)">  -->
+            <button  mat-icon-button class="delete-button" 
+            (click)="removeRequestFromView(request.id)">
+      <mat-icon>close</mat-icon>
+    </button>
+    
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image">
+        <img [src]="request.user?.image || '/assets/images/RequestPerso/default-avatar.png'" 
+             class="user-image" 
+             onerror="this.src='/assets/images/RequestPerso/default-avatar.png'"/>
+      </div>
+      <mat-card-title>{{request.title}}</mat-card-title>
+      <mat-card-subtitle>
+        Requested by: {{request.user.name}} | Posted On: {{request.date | date: 'short'}} for: {{request.deliveryTime | date: 'short'}}
+      </mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-grid-list cols="5">
+      <mat-grid-tile [colspan]="2" [rowspan]="1">
+        <img mat-card-image 
+             [src]="request.image || '/assets/images/RequestPerso/Default.png'" 
+             alt="Card Image" 
+             class="request-image"
+             onerror="this.src='/assets/images/RequestPerso/Default.png'"/>
+      </mat-grid-tile>
+      <mat-grid-tile [colspan]="3" [rowspan]="1">
+        {{request.description.length > 600 ? request.description.substring(0, 600) + '...' : request.description}}
+      </mat-grid-tile>
+    </mat-grid-list>
+    
+    <hr>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" style="margin-left: 5px;">
+        {{request.viewCount}} <mat-icon>visibility</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" style="margin-left: 5px;" 
+              [routerLink]="['/requestperso/viewRequestPerso', request.id]">
+        View Request
+      </button>
+      <button *ngIf="userId === request.user?.id" mat-raised-button color="accent" [routerLink]="['/requestperso/edit', request.id]">
+  <mat-icon>edit</mat-icon> Edit
+</button>
+
+
+<!-- Add this new button in your mat-card-actions section -->
+<mat-card-actions>
+  <!-- Your existing buttons... -->
+  
+  <button *ngIf="userId === request.user?.id" 
+  mat-raised-button 
+  color="warn"
+
+  (click)="confirmDelete(request.id)">
+<mat-icon>delete_forever</mat-icon>
+Delete
+</button>
+</mat-card-actions>
+
+    </mat-card-actions>
+  </mat-card>
+</div>

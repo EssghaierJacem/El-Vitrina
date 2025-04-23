@@ -29,4 +29,11 @@ public class Message {
     private String content;
 
     private LocalDateTime sentAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (sentAt == null) {
+            sentAt = LocalDateTime.now();
+        }
+    }
 }
