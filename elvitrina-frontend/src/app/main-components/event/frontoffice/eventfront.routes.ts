@@ -4,6 +4,7 @@ import { Routes } from '@angular/router';
 import { EventListComponent } from './event/event-list/event-list.component';
 import { EventDetailsComponent } from './event/event-details/event-details.component';
 import { EventRegisterComponent } from './event/event-register/event-register.component';
+import { EventCreateComponent } from './event/event-create/event-create.component';
 
 export const EVENT_FRONT_ROUTES: Routes = [
   {
@@ -21,7 +22,6 @@ export const EVENT_FRONT_ROUTES: Routes = [
           ]
         }
       },
-      { path: 'auth-callback', component: EventDetailsComponent },
       {
         path: ':id',
         component: EventDetailsComponent,
@@ -35,8 +35,8 @@ export const EVENT_FRONT_ROUTES: Routes = [
         }
       },
       {
-        path: ':id/register',
-        component: EventRegisterComponent,
+        path: ':id/create',
+        component: EventCreateComponent,
         data: {
           title: 'Register for Event',
           breadcrumb: [

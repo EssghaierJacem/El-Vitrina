@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { VirtualEvent, VirtualEventRequest } from '../../models/event/virtual-event.model';
 import { environment } from '../../../../environments/environment';
+import { EventSessionRequestDTO } from '../../models/event/event-session.model';
 
 @Injectable({
   providedIn: 'root',
@@ -33,15 +34,11 @@ export class VirtualEventService {
   }
 
   
-  joinEvent(eventId: number, tickets: number): Observable<void> {
-    // Mock implementation; replace with actual API call
-    
-    return new Observable(observer => {
-      setTimeout(() => {
-        console.log(`Joined event with ID: ${eventId}, Tickets: ${tickets}`);
-        observer.next();
-        observer.complete();
-      }, 1000);
-    });
+  getEventByStoreId(id:number): Observable<VirtualEvent[]> {
+    return this.http.get<VirtualEvent[]>(`${this.apiUrl}/store/${id}`);
   }
+
+
+
+
 }

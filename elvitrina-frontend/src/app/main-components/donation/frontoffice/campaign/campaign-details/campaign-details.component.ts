@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { DonationCampaign } from 'src/app/core/models/donation/donation-campaign.model';
 import { DonationCampaignService } from 'src/app/core/services/donation/donation-campaign.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -17,8 +17,8 @@ import { GiftRequestDTO } from 'src/app/core/models/donation/gift.model';
   styleUrls: ['./campaign-details.component.scss']
 })
 export class CampaignDetailsComponent implements OnInit {
-  campaigns: DonationCampaign;
-  storeId = 1;
+  @Input() campaigns: DonationCampaign;
+  @Input() storeId : number;
   campaignId: number;
   showCoupon = false;
 selectedReward: DonorReward | null = null;
@@ -26,18 +26,8 @@ selectedReward: DonorReward | null = null;
   ) {}
   
   ngOnInit(): void {
-    console.log("hi");
-    this.donationCampaignService.getCampaignsByStore(this.storeId).subscribe({
-      next: (data) => {
-        console.log('data:', data);
-        this.campaigns = data[0];
-        this.campaignId = +this.campaigns.id;
-        console.log('campaigns:', this.campaignId);
-      },
-      error: (err) => {
-        console.error('Error fetching campaigns:', err);
-      }
-    });
+    this.campaignId = +this.campaigns.id;
+
   }
   
   calculateDaysToGo(endDate?: string): number {

@@ -47,6 +47,12 @@
       <button mat-button [class.active]="activeTab === 'analytics'" (click)="setActiveTab(2)">
         Feedback Analytics
       </button>
+      <button mat-button [class.active]="activeTab === 'event'" (click)="setActiveTab(3)">
+        Vertuel Event
+      </button>
+      <button mat-button [class.active]="activeTab === 'donation'" (click)="setActiveTab(4)">
+        Donation Campaign
+      </button>
     </div>
 
     <!-- Right Search -->
@@ -345,6 +351,25 @@
             <p>Loading analytics...</p>
           </div>
         </div>
+
+        <div *ngSwitchCase="'event'" class="reviews-section">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h2 style="margin: 0;">Vertuel Event</h2>
+            <button mat-raised-button color="primary" (click)="openCreateEventDialog()">
+              Create a Vertuel Event
+            </button>
+          </div>
+          <app-event-store [events]="events"></app-event-store>
+          </div>
+
+
+          <div *ngSwitchCase="'donation'" class="analytics-section">
+            <h2>
+              Donation Campaign
+            </h2>
+            <app-campaign-details [campaigns]="campaigns"></app-campaign-details>
+
+            </div>
       </div>
     </div>
   </div>

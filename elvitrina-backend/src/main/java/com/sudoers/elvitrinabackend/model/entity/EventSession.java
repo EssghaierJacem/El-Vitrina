@@ -20,6 +20,7 @@ public class EventSession {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String sessionTitle;
+    private String streamUrl;
 
 
     @CreationTimestamp
