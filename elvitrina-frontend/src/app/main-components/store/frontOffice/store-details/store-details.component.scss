@@ -1,5 +1,19 @@
 @import '../../../../../assets/scss/variables';
 
+// Color palette variables based on the image
+$navy-dark: #1e2a3a;
+$navy-medium: #2b4462;
+$navy-light: #3d5a80;
+$blue-medium: #4d6d98;
+$slate-blue: #6e8cad;
+$light-blue: #98b1c7;
+$sky-blue: #bdd0e3;
+$pale-blue: #dee9f3;
+$accent-purple: #6f42c1;
+
+// Font family
+$font-family: 'Poppins', 'Segoe UI', Roboto, sans-serif;
+
 // Store Cover Banner
 .store-cover-banner {
   width: 100%;
@@ -8,6 +22,7 @@
   position: relative;
   margin-bottom: 2rem;
   background-color: #f5f5f5;
+  border-radius: 12px;
   
   .cover-image {
     width: 100%;
@@ -22,14 +37,18 @@
   }
 }
 
+// Store Header
 .store-header {
   position: relative;
   margin-bottom: 2rem;
 
   .store-cover {
-    height: 200px;
+    height: 240px;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: 12px;
+    background-color: $pale-blue;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 
     img {
       width: 100%;
@@ -48,8 +67,9 @@
       height: 120px;
       border-radius: 50%;
       overflow: hidden;
-      border: 4px solid white;
+      border: 3px solid white;
       background-color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
       img {
         width: 100%;
@@ -60,28 +80,65 @@
 
     .store-details {
       padding-left: 2rem;
-      padding-top: 2rem;
+      padding-top: 1rem;
       flex: 1;
+      margin-top: 1rem;
 
       h1 {
         margin: 0;
-        font-size: 1.8rem;
-        color: #333;
+        font-size: 2.2rem;
+        font-weight: 600;
+        color: $navy-dark;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-family: $font-family;
+        
+        &:after {
+          content: '';
+          display: block;
+          width: 60px;
+          height: 2px;
+          background-color: $blue-medium;
+          margin-top: 8px;
+        }
       }
 
       .store-description {
-        margin-top: 0.5rem;
+        margin-top: 1rem;
         font-size: 1rem;
-        color: #555;
+        color: $navy-medium;
         max-width: 800px;
+        line-height: 1.6;
+        font-family: $font-family;
+        font-weight: 300;
       }
 
       .store-actions {
-        margin-top: 1rem;
+        margin-top: 1.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
 
         button {
-          margin-right: 1rem;
-          margin-bottom: 0.5rem;
+          border: 1px solid $blue-medium;
+          color: $navy-medium;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 500;
+          border-radius: 8px;
+          transition: all 0.3s ease;
+          font-family: $font-family;
+          
+          &:hover {
+            background-color: $blue-medium;
+            color: white;
+            box-shadow: 0 4px 12px rgba(77, 109, 152, 0.2);
+            transform: translateY(-2px);
+          }
+          
+          mat-icon {
+            margin-right: 4px;
+          }
         }
       }
     }
@@ -97,6 +154,7 @@
     mat-form-field {
       width: 100%;
       max-width: 500px;
+      font-family: $font-family;
     }
 
     .category-filters {
@@ -106,6 +164,9 @@
       flex-wrap: wrap;
 
       button {
+        border-radius: 8px;
+        font-family: $font-family;
+        
         &.active {
           background-color: rgba(0, 0, 0, 0.04);
         }
@@ -122,20 +183,33 @@
     .product-card {
       display: flex;
       flex-direction: column;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+      border: none;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
 
       img {
         height: 200px;
         object-fit: cover;
+        border-radius: 12px 12px 0 0;
       }
 
       mat-card-content {
         flex: 1;
         padding: 1rem;
+        font-family: $font-family;
 
         h3 {
           margin: 0 0 0.5rem;
           font-size: 1.1rem;
           font-weight: 500;
+          font-family: $font-family;
         }
 
         .price {
@@ -143,18 +217,59 @@
           font-weight: 500;
           color: #1976d2;
           margin: 0.5rem 0;
+          font-family: $font-family;
         }
 
         .stock {
           color: rgba(0, 0, 0, 0.6);
           margin: 0;
+          font-family: $font-family;
+          font-weight: 300;
         }
       }
 
       mat-card-actions {
+        padding: 0.5rem 1rem 1rem;
         display: flex;
         justify-content: space-between;
-        padding: 0.5rem 1rem;
+        gap: 10px;
+        
+        button {
+          flex: 1;
+          border-radius: 8px;
+          font-family: $font-family;
+          font-size: 0.9rem;
+          padding: 4px 8px;
+          line-height: 36px;
+          border: 1px solid $blue-medium;
+          color: $navy-medium;
+          transition: all 0.3s ease;
+          
+          mat-icon {
+            margin-right: 4px;
+            font-size: 18px;
+            vertical-align: middle;
+          }
+          
+          &:hover {
+            background-color: $blue-medium;
+            color: white;
+            box-shadow: 0 4px 12px rgba(77, 109, 152, 0.2);
+            transform: translateY(-2px);
+          }
+          
+          &:disabled {
+            opacity: 0.6;
+            border-color: $slate-blue;
+            
+            &:hover {
+              background-color: transparent;
+              color: $navy-medium;
+              transform: none;
+              box-shadow: none;
+            }
+          }
+        }
       }
     }
   }
@@ -165,12 +280,31 @@
   justify-content: center;
   align-items: center;
   min-height: 200px;
+  
+  mat-spinner {
+    ::ng-deep circle {
+      stroke: $blue-medium;
+    }
+  }
 }
 
 .error-message {
-  text-align: center;
-  color: #f44336;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 2rem;
+  background-color: rgba(244, 67, 54, 0.1);
+  border-radius: 12px;
+  margin: 2rem 0;
+  
+  p {
+    color: #F44336;
+    font-family: $font-family;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-align: center;
+  }
 }
 
 .reviews-placeholder {
@@ -181,14 +315,14 @@
 
 // Store Navigation
 .store-navigation {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid rgba(30, 42, 58, 0.1);
   margin-bottom: 2rem;
 
   .nav-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
+    max-width: 1440px;
     margin: 0 auto;
     padding: 0 2rem;
 
@@ -201,17 +335,22 @@
         border-radius: 0;
         position: relative;
         font-weight: 500;
+        color: $navy-medium;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: $font-family;
         
         .count {
           margin-left: 0.5rem;
-          background-color: #f0f0f0;
+          background-color: $pale-blue;
           padding: 0.2rem 0.5rem;
           border-radius: 12px;
           font-size: 0.8rem;
+          color: $navy-dark;
         }
 
         &.active {
-          color: #1976d2;
+          color: $navy-dark;
           font-weight: 600;
 
           &::after {
@@ -220,8 +359,8 @@
             bottom: 0;
             left: 10%;
             width: 80%;
-            height: 3px;
-            background-color: #1976d2;
+            height: 2px;
+            background-color: $blue-medium;
           }
         }
       }
@@ -229,43 +368,57 @@
 
     .search-bar {
       flex: 1;
-      max-width: 500px;
+      max-width: 400px;
 
       mat-form-field {
         width: 100%;
         font-size: 0.9rem;
+        font-family: $font-family;
+        
+        ::ng-deep .mat-form-field-outline {
+          color: $navy-light;
+        }
+        
+        ::ng-deep .mat-form-field-label {
+          color: $navy-medium;
+        }
       }
     }
   }
 }
 
-.filter-section {
+// Filter Section
+.filters-section {
   margin-bottom: 2rem;
+  
+  mat-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: none;
+  }
 
-  .filter-container {
+  .filters-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-    .filter-header {
+    h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: $navy-dark;
+      font-family: $font-family;
+      font-weight: 500;
+    }
+
+    .sort-dropdown {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-
-      h2 {
-        margin: 0;
-        font-size: 1.5rem;
-        color: #333;
-      }
-
-      .sort-dropdown {
-        display: flex;
-        align-items: center;
-
-        .sort-label {
-          margin-right: 0.5rem;
-          color: #666;
-        }
+      
+      mat-form-field {
+        font-family: $font-family;
       }
     }
   }
@@ -450,10 +603,49 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 
     h2 {
       margin: 0;
       font-size: 1.5rem;
+      font-weight: 600;
+      color: $navy-dark;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: $font-family;
+      
+      &:after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 2px;
+        background-color: $blue-medium;
+        margin-top: 8px;
+      }
+    }
+    
+    .review-controls {
+      display: flex;
+      gap: 1rem;
+      
+      button {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+        border: 1px solid $blue-medium;
+        color: $navy-medium;
+        border-radius: 8px;
+        font-family: $font-family;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background-color: $blue-medium;
+          color: white;
+          box-shadow: 0 4px 12px rgba(77, 109, 152, 0.2);
+        }
+      }
     }
   }
 
@@ -465,9 +657,19 @@
 
     .review-card {
       position: relative;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+      
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
       
       mat-card-header {
         margin-bottom: 1rem;
+        font-family: $font-family;
         
         .reviewer-avatar {
           width: 40px;
@@ -476,7 +678,8 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          background-color: #f5f5f5;
+          background-color: $pale-blue;
+          border-radius: 50%;
           
           img {
             width: 100%;
@@ -488,8 +691,14 @@
             font-size: 32px;
             width: 32px;
             height: 32px;
-            color: #999;
+            color: $navy-medium;
           }
+        }
+        
+        mat-card-title {
+          color: $navy-dark;
+          font-weight: 600;
+          font-family: $font-family;
         }
         
         .rating {
@@ -503,15 +712,17 @@
             height: 1.2rem;
             
             &.filled {
-              color: #ffc107;
+              color: #FFC107;
             }
           }
         }
         
         .review-date {
           margin-left: 0.5rem;
-          color: #777;
+          color: $slate-blue;
           font-size: 0.85rem;
+          font-family: $font-family;
+          font-weight: 300;
         }
       }
       
@@ -519,61 +730,81 @@
         position: absolute;
         top: 1rem;
         right: 1rem;
-        padding: 0.3rem 0.6rem;
-        border-radius: 16px;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
         display: flex;
         align-items: center;
         font-size: 0.85rem;
         font-weight: 500;
+        font-family: $font-family;
         
         mat-icon {
           margin-right: 0.3rem;
-          font-size: 1rem;
-          width: 1rem;
-          height: 1rem;
+          font-size: 1.1rem;
+          width: 1.1rem;
+          height: 1.1rem;
         }
         
-        &.sentiment-positive {
-          background-color: #e8f5e9;
-          color: #2e7d32;
+        .ai-badge {
+          background-color: blue;
+          color: white;
+          font-size: 9px;
+          border-radius: 20px;
+          padding: 2px 6px;
+          margin-left: 6px;
+          font-weight: bold;
+          display: inline-block;
+        }
+        
+        &.sentiment-positive,
+        &.sentiment-very-positive {
+          background-color: rgba(46, 125, 50, 0.1);
+          color: #fff;
         }
         
         &.sentiment-neutral {
-          background-color: #e3f2fd;
-          color: #1976d2;
+          background-color: rgba(77, 109, 152, 0.1);
+          color: $navy-dark;
         }
         
-        &.sentiment-negative {
-          background-color: #ffebee;
-          color: #c62828;
+        &.sentiment-negative,
+        &.sentiment-very-negative {
+          background-color: rgba(198, 40, 40, 0.1);
+          color: #fff;
         }
       }
       
       mat-card-content {
+        font-family: $font-family;
+        
         .review-comment, .review-summary {
           font-size: 1rem;
-          color: #333;
+          color: $navy-medium;
           line-height: 1.5;
           margin-bottom: 1rem;
+          font-family: $font-family;
+          font-weight: 300;
         }
         
         .review-summary {
           position: relative;
           padding: 1rem;
-          background-color: #f9f9f9;
-          border-left: 4px solid #1976d2;
+          background-color: rgba(222, 233, 243, 0.5);
+          border-left: 3px solid $blue-medium;
+          border-radius: 8px;
           font-style: italic;
           
           .summary-badge {
             position: absolute;
-            top: 0.3rem;
-            right: 0.3rem;
+            top: 0.5rem;
+            right: 0.5rem;
             font-size: 0.75rem;
-            padding: 0.2rem 0.4rem;
-            background-color: #1976d2;
+            padding: 0.2rem 0.5rem;
+            background-color: $blue-medium;
             color: white;
-            border-radius: 4px;
+            border-radius: 20px;
             font-style: normal;
+            font-family: $font-family;
           }
         }
         
@@ -583,30 +814,67 @@
           mat-chip-set {
             display: flex;
             flex-wrap: wrap;
+            
+            mat-chip {
+              background-color: rgba(222, 233, 243, 0.5);
+              color: $navy-dark;
+              border-radius: 20px;
+              font-size: 0.8rem;
+              font-weight: 500;
+              letter-spacing: 0.5px;
+              text-transform: uppercase;
+              font-family: $font-family;
+            }
           }
         }
       }
     }
   }
   
-  .no-reviews, .loading-reviews {
+  .no-reviews, .loading-reviews, .error-reviews {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 200px;
     text-align: center;
-    color: #777;
+    color: $navy-medium;
+    font-family: $font-family;
     
     p {
       margin-top: 1rem;
+      font-weight: 300;
     }
+    
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: $navy-medium;
+    }
+    
+    button {
+      margin-top: 1rem;
+      border: 1px solid $blue-medium;
+      color: $navy-medium;
+      border-radius: 8px;
+      font-family: $font-family;
+      
+      &:hover {
+        background-color: $blue-medium;
+        color: white;
+      }
+    }
+  }
+  
+  .error-reviews mat-icon {
+    color: #e32b2b;
   }
   
   .create-feedback-section {
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid #eee;
+    border-top: 1px solid rgba(30, 42, 58, 0.05);
   }
 }
 
@@ -617,6 +885,20 @@
   h2 {
     margin: 0 0 1.5rem;
     font-size: 1.5rem;
+    font-weight: 600;
+    color: $navy-dark;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: $font-family;
+    
+    &:after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 2px;
+      background-color: $blue-medium;
+      margin-top: 8px;
+    }
   }
   
   .analytics-overview {
@@ -626,32 +908,137 @@
     
     .analytics-card {
       height: 100%;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+      
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
+      
+      mat-card-header {
+        padding: 1rem 1rem 0;
+        
+        mat-card-title {
+          color: $navy-dark;
+          font-weight: 600;
+          font-size: 1.25rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-family: $font-family;
+          
+          .card-title-with-badge {
+            display: flex;
+            align-items: center;
+            
+            .ai-badge {
+              background-color: rgb(8, 48, 180);
+              color: white;
+              font-size: 10px;
+              border-radius: 20px;
+              padding: 2px 6px;
+              margin-left: 8px;
+              font-weight: bold;
+            }
+          }
+        }
+        
+        mat-card-subtitle {
+          color: $slate-blue;
+          font-family: $font-family;
+          font-weight: 300;
+        }
+      }
       
       .analytics-stats {
         display: flex;
         justify-content: space-around;
-        margin: 1rem 0;
+        margin: 2rem 0;
         
         .stat-item {
           text-align: center;
           
           .stat-value {
-            font-size: 2rem;
-            font-weight: 500;
-            color: #1976d2;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: $navy-dark;
+            line-height: 1;
+            font-family: $font-family;
           }
           
           .stat-label {
             font-size: 0.9rem;
-            color: #777;
-            margin-top: 0.3rem;
+            color: $slate-blue;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: $font-family;
+            font-weight: 300;
           }
         }
       }
       
-      .chart-container {
-        height: 300px;
-        width: 100%;
+      .sentiment-bars {
+        .sentiment-bar-item {
+          margin-bottom: 1rem;
+          display: flex;
+          align-items: center;
+          
+          .sentiment-label {
+            min-width: 120px;
+            font-weight: 600;
+            color: $navy-dark;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            font-family: $font-family;
+          }
+          
+          .sentiment-bar {
+            height: 24px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 10px;
+            color: white;
+            font-weight: 500;
+            transition: width 0.5s ease-in-out;
+            min-width: 40px;
+            font-size: 0.9rem;
+            font-family: $font-family;
+          }
+          
+          .sentiment-percentage {
+            min-width: 40px;
+            margin-left: 10px;
+            font-weight: 500;
+            color: $navy-dark;
+            font-family: $font-family;
+          }
+          
+          .sentiment-very-positive {
+            background-color: #2e7d32;
+          }
+          
+          .sentiment-positive {
+            background-color: #4caf50;
+          }
+          
+          .sentiment-neutral {
+            background-color: $blue-medium;
+          }
+          
+          .sentiment-negative {
+            background-color: #f44336;
+          }
+          
+          .sentiment-very-negative {
+            background-color: #b71c1c;
+          }
+        }
       }
     }
   }
@@ -663,10 +1050,12 @@
     justify-content: center;
     min-height: 200px;
     text-align: center;
-    color: #777;
+    color: $navy-medium;
+    font-family: $font-family;
     
     p {
       margin-top: 1rem;
+      font-weight: 300;
     }
   }
 }
@@ -683,16 +1072,41 @@
 }
 
 @media (max-width: 992px) {
-  .store-navigation {
-    .nav-container {
-      flex-direction: column;
-      height: auto;
-      padding: 1rem;
-      gap: 1rem;
-
-      .search-bar {
-        width: 100%;
+  .store-header .store-info {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    
+    .store-avatar {
+      margin-bottom: 1rem;
+    }
+    
+    .store-details {
+      padding-left: 0;
+      padding-top: 1rem;
+      
+      h1:after {
+        margin-left: auto;
+        margin-right: auto;
       }
+      
+      .store-actions {
+        justify-content: center;
+      }
+    }
+  }
+  
+  .store-navigation .nav-container {
+    flex-direction: column;
+    padding: 1rem;
+    
+    .nav-buttons {
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    
+    .search-bar {
+      max-width: 100%;
     }
   }
 
@@ -1004,5 +1418,452 @@
         }
       }
     }
+  }
+}
+
+// Review controls styling
+.reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  
+  .review-controls {
+    display: flex;
+    gap: 10px;
+    
+    @media (max-width: 768px) {
+      margin-top: 10px;
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+}
+
+// Sentiment badge styling 
+.sentiment-badge {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 16px;
+  margin-left: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: white;
+  
+  mat-icon {
+    margin-right: 5px;
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+  
+  .ai-badge {
+    background-color: #2196f3;
+    color: white;
+    font-size: 9px;
+    border-radius: 4px;
+    padding: 2px 4px;
+    margin-left: 6px;
+    font-weight: bold;
+    display: inline-block;
+  }
+}
+
+// Regular sentiment colors (3 categories)
+.sentiment-positive {
+  background: linear-gradient(to right, #66bb6a, #43a047);
+  color: white;
+}
+
+.sentiment-neutral {
+  background: linear-gradient(to right, #64b5f6, #42a5f5);
+  color: white;
+}
+
+.sentiment-negative {
+  background: linear-gradient(to right, #ef5350, #e53935);
+  color: white;
+}
+
+// Detailed sentiment colors (5 categories) - Update with more modern gradient colors
+.sentiment-very-positive {
+  background: linear-gradient(to right, #43a047, #2e7d32);
+  color: white;
+}
+
+.sentiment-very-negative {
+  background: linear-gradient(to right, #e53935, #c62828);
+  color: white;
+}
+
+// AI badge for analytics
+.advanced-sentiment-card {
+  border-left: 3px solid #2196f3;
+  
+  .card-title-with-badge {
+    display: flex;
+    align-items: center;
+    
+    .ai-badge {
+      background-color: #2196f3;
+      color: white;
+      font-size: 10px;
+      border-radius: 4px;
+      padding: 2px 6px;
+      margin-left: 8px;
+      font-weight: bold;
+    }
+  }
+}
+
+// Enhanced sentiment bars
+.sentiment-bars {
+  .sentiment-bar-item {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    
+    .sentiment-label {
+      min-width: 120px;
+      font-weight: 500;
+    }
+    
+    .sentiment-bar {
+      height: 24px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 10px;
+      color: white;
+      font-weight: 500;
+      transition: width 0.5s ease-in-out;
+      min-width: 40px;
+      
+      &.sentiment-very-positive {
+        background-color: #2e7d32;
+      }
+      
+      &.sentiment-positive {
+        background-color: #4caf50;
+      }
+      
+      &.sentiment-neutral {
+        background-color: #9e9e9e;
+      }
+      
+      &.sentiment-negative {
+        background-color: #f44336;
+      }
+      
+      &.sentiment-very-negative {
+        background-color: #b71c1c;
+      }
+    }
+    
+    .sentiment-percentage {
+      min-width: 40px;
+      margin-left: 10px;
+      font-weight: 500;
+      color: #666;
+    }
+  }
+}
+
+// Review summary badge
+.summary-badge {
+  background-color: #ff9800;
+  color: white;
+  font-size: 9px;
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin-left: 6px;
+  font-weight: bold;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.error-reviews {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: #f44336;
+  background-color: #ffebee;
+  border-radius: 4px;
+  margin: 20px 0;
+
+  mat-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    margin-bottom: 16px;
+  }
+
+  p {
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+}
+
+// Improved type bars
+.type-bars {
+  width: 100%;
+  
+  .type-bar-item {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    
+    .type-label {
+      min-width: 120px;
+      font-weight: 500;
+      margin-right: 12px;
+      color: #333;
+    }
+    
+    .type-bar-wrapper {
+      flex: 1;
+      background-color: #f5f5f5;
+      border-radius: 12px;
+      height: 24px;
+      overflow: hidden;
+      margin-right: 12px;
+    }
+    
+    .type-bar {
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 10px;
+      color: white;
+      font-weight: 500;
+      transition: width 0.5s ease-in-out;
+      border-radius: 12px;
+      min-width: 40px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .type-sentiment-label {
+      min-width: 100px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+  }
+}
+
+.product-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .product-badges {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 2;
+  }
+
+  .bestseller-badge {
+    background-color: rgba(255, 193, 7, 0.9);
+    color: #333;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    font-family: $font-family;
+
+    mat-icon {
+      font-size: 16px;
+      height: 16px;
+      width: 16px;
+      margin-right: 4px;
+    }
+  }
+
+  .discount-badge {
+    background-color: rgba(233, 30, 99, 0.9);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    font-family: $font-family;
+  }
+
+  .favorite-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
+    background-color: white;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    mat-icon {
+      transition: color 0.2s ease;
+    }
+  }
+}
+
+.product-category {
+  color: $slate-blue;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  font-family: $font-family;
+  font-weight: 500;
+}
+
+.product-name {
+  font-size: 1.1rem;
+  color: $navy-dark;
+  margin-bottom: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-family: $font-family;
+
+  &:hover {
+    color: $blue-medium;
+  }
+}
+
+.product-price {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+
+  .current-price {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $navy-dark;
+    font-family: $font-family;
+  }
+
+  .original-price {
+    text-decoration: line-through;
+    color: $slate-blue;
+    margin-left: 8px;
+    font-size: 0.9rem;
+    font-family: $font-family;
+    font-weight: 300;
+  }
+
+  &.has-discount .current-price {
+    color: #E91E63;
+  }
+}
+
+.product-stock {
+  font-size: 0.85rem;
+  color: #00C853;
+  font-family: $font-family;
+  font-weight: 500;
+  margin: 8px 0;
+
+  &.out-of-stock {
+    color: #F44336;
+  }
+}
+
+.shipping-badge {
+  display: flex;
+  align-items: center;
+  color: $navy-medium;
+  font-size: 0.85rem;
+  margin-top: 8px;
+  font-family: $font-family;
+
+  mat-icon {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+    margin-right: 4px;
+    color: $navy-medium;
+  }
+}
+
+// For all buttons in the app
+button[mat-button], button[mat-stroked-button], button[mat-raised-button] {
+  font-family: $font-family;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// For all inputs and form fields
+::ng-deep .mat-form-field {
+  font-family: $font-family;
+  
+  .mat-form-field-wrapper {
+    padding-bottom: 1rem;
+  }
+  
+  .mat-form-field-outline {
+    border-radius: 8px;
+  }
+  
+  .mat-form-field-label {
+    font-family: $font-family;
+    font-weight: 400;
+  }
+  
+  input, textarea, select {
+    font-family: $font-family;
+  }
+}
+
+// For all cards in the app
+mat-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  }
+  
+  mat-card-title, mat-card-subtitle, mat-card-content {
+    font-family: $font-family;
   }
 }

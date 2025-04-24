@@ -15,15 +15,15 @@
       <h1>{{store.storeName}}</h1>
       <p class="store-description">{{store.description}}</p>
       <div class="store-actions">
-        <button mat-raised-button color="primary" (click)="followStore()">
+        <button mat-stroked-button (click)="followStore()">
           <mat-icon>favorite</mat-icon>
           Follow Store
         </button>
-        <button mat-raised-button color="accent" (click)="contactSeller()">
+        <button mat-stroked-button (click)="contactSeller()">
           <mat-icon>message</mat-icon>
           Contact Seller
         </button>
-        <button mat-raised-button color="primary">
+        <button mat-stroked-button>
           Request a customization
         </button>
       </div>
@@ -52,8 +52,8 @@
     <!-- Right Search -->
     <div class="search-bar" *ngIf="activeTab === 'products'">
       <mat-form-field appearance="outline">
-        <mat-label>Search among {{store?.productCount || 0}} products</mat-label>
-        <input matInput [value]="searchQuery" (input)="searchQuery = $any($event.target).value; searchProducts()" placeholder="Search products...">
+        <mat-label>Search products</mat-label>
+        <input matInput [value]="searchQuery" (input)="searchQuery = $any($event.target).value; searchProducts()" placeholder="Search by name...">
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
     </div>
@@ -61,24 +61,25 @@
 </div>
 
 <!-- Filter Section -->
-<div class="filter-section" *ngIf="activeTab === 'products'">
-  <div class="filter-container">
-    <div class="filter-header">
-      <h2>Featured Products</h2>
-      <div class="sort-dropdown">
-        <span class="sort-label">Sort:</span>
-        <button mat-button [matMenuTriggerFor]="sortMenu">
-          {{getCurrentSortLabel()}}
-          <mat-icon>arrow_drop_down</mat-icon>
-        </button>
-        <mat-menu #sortMenu="matMenu">
-          <button mat-menu-item *ngFor="let option of sortOptions" (click)="setSort(option.value)">
-            {{option.label}}
-          </button>
-        </mat-menu>
+<div class="filters-section" *ngIf="activeTab === 'products'">
+  <mat-card>
+    <mat-card-content>
+      <div class="filters-container">
+        <h2>{{store?.productCount || 0}} Products</h2>
+        
+        <div class="sort-dropdown">
+          <mat-form-field appearance="outline">
+            <mat-label>Sort By</mat-label>
+            <mat-select [(ngModel)]="selectedSort">
+              <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+                {{ option.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
-    </div>
-  </div>
+    </mat-card-content>
+  </mat-card>
 </div>
 
 <!-- Main Content Area -->
@@ -89,64 +90,74 @@
       <div [ngSwitch]="activeTab">
         <!-- Products Tab -->
         <div *ngSwitchCase="'products'" class="products-grid">
-          <mat-card *ngFor="let product of filteredProducts" class="product-card">
-            <div class="product-image-container">
-              <!-- Bestseller Badge -->
-              <div class="bestseller-badge" *ngIf="product.isBestseller">
-                <span>Bestseller</span>
+          <mat-card class="product-card" *ngFor="let product of filteredProducts">
+            <!-- Product Image -->
+            <div class="product-image">
+              <img [src]="getProductImageUrl(product)" 
+                   [alt]="product.productName"
+                   (error)="handleImageError($event, 'product')">
+              
+              <!-- Badges -->
+              <div class="product-badges">
+                <span class="bestseller-badge" *ngIf="product.isBestseller">
+                  <mat-icon>star</mat-icon> Bestseller
+                </span>
+                <span class="discount-badge" *ngIf="product.hasDiscount">
+                  -{{product.discountPercentage}}%
+                </span>
               </div>
-              <!-- Discount Badge -->
-              <div class="discount-badge" *ngIf="product.hasDiscount">
-                -{{product.discountPercentage}}%
-              </div>
-              <img mat-card-image
-                [src]="getProductImageUrl(product)"
-                [alt]="product.productName"
-                (error)="handleImageError($event, 'product')"
-                class="product-image">       
+
+              <!-- Favorite Button -->
+              <button mat-icon-button class="favorite-button" (click)="toggleFavorite(product)">
+                <mat-icon color="warn" *ngIf="product.isFavorite">favorite</mat-icon>
+                <mat-icon *ngIf="!product.isFavorite">favorite_border</mat-icon>
+              </button>
             </div>
+
             <mat-card-content>
-              <h3 class="product-name">{{product?.productName}}</h3>
-              <div class="price-container">
+              <!-- Product Category -->
+              <div class="product-category">{{ formatProductCategory(product.category) }}</div>
+
+              <!-- Product Name -->
+              <h3 class="product-name" [routerLink]="['/products', product.productId]">
+                {{ product.productName }}
+              </h3>
+
+              <!-- Price -->
+              <div class="product-price" [class.has-discount]="product.hasDiscount">
                 <ng-container *ngIf="product.hasDiscount; else regularPrice">
-                  <span class="discounted-price">{{calculateDiscountedPrice(product) | currency}}</span>
+                  <span class="current-price">{{calculateDiscountedPrice(product) | currency}}</span>
                   <span class="original-price">{{product.price | currency}}</span>
                 </ng-container>
                 <ng-template #regularPrice>
-                  <span class="regular-price">{{product.price | currency}}</span>
+                  <span class="current-price">{{product.price | currency}}</span>
                 </ng-template>
               </div>
-              <p class="stock" [class.low-stock]="product.stockQuantity < 10">
-                <ng-container *ngIf="product.stockQuantity > 0; else outOfStock">
-                  In Stock: {{product.stockQuantity}}
-                </ng-container>
-                <ng-template #outOfStock>
-                  <span class="out-of-stock">Out of Stock</span>
-                </ng-template>
-              </p>
-              <!-- Features -->
-              <div class="product-features" *ngIf="product.freeShipping || product.isBestseller">
-                <span class="feature" *ngIf="product.freeShipping">
-                  <mat-icon>local_shipping</mat-icon> Free Shipping
-                </span>
-                <span class="feature" *ngIf="product.isBestseller">
-                  <mat-icon>star</mat-icon> Bestseller
-                </span>
+
+              <!-- Stock Status -->
+              <div class="product-stock" [class.out-of-stock]="product.stockQuantity === 0">
+                {{ product.stockQuantity === 0 ? 'Out of Stock' : 
+                   product.stockQuantity < 10 ? 'Low Stock' : 'In Stock' }}
+              </div>
+
+              <!-- Free Shipping Badge -->
+              <div class="shipping-badge" *ngIf="product.freeShipping">
+                <mat-icon>local_shipping</mat-icon>
+                Free Shipping
               </div>
             </mat-card-content>
+
             <mat-card-actions>
-              <div class="action-buttons">
-                <button mat-stroked-button color="primary" [routerLink]="['/products', product.productId]">
-                  <mat-icon>info</mat-icon>
-                  Details
-                </button>
-                <button mat-icon-button color="warn" (click)="toggleFavorite(product)" [class.favorite]="product.isFavorite">
-                  <mat-icon>{{product.isFavorite ? 'favorite' : 'favorite_border'}}</mat-icon>
-                </button>
-                <button mat-icon-button color="primary" (click)="addToCart(product)" [disabled]="product.stockQuantity === 0">
-                  <mat-icon>shopping_cart</mat-icon>
-                </button>
-              </div>
+              <button mat-stroked-button class="details-button" [routerLink]="['/products', product.productId]">
+                <mat-icon>visibility</mat-icon>
+                Details
+              </button>
+              <button mat-stroked-button class="cart-button"
+                      (click)="addToCart(product)"
+                      [disabled]="product.stockQuantity === 0">
+                <mat-icon>shopping_cart</mat-icon>
+                Add to Cart
+              </button>
             </mat-card-actions>
           </mat-card>
         </div>
@@ -155,9 +166,14 @@
         <div *ngSwitchCase="'reviews'" class="reviews-section">
           <div class="reviews-header">
             <h2>Customer Reviews</h2>
-            <button mat-raised-button color="primary" (click)="toggleSummaries()">
-              {{ showSummaries ? 'Show Full Reviews' : 'Show Summarized Reviews' }}
-            </button>
+            <div class="review-controls">
+              <button mat-stroked-button (click)="toggleSummaries()">
+                {{ showSummaries ? 'Show Full Reviews' : 'Show Summarized Reviews' }}
+              </button>
+              <button mat-stroked-button (click)="toggleSentimentDisplay()">
+                {{ showMultilingualSentiment ? 'Show Basic Sentiment' : 'Show Detailed Sentiment' }}
+              </button>
+            </div>
           </div>
           
           <!-- Analyzed Feedback List -->
@@ -177,14 +193,27 @@
                   <span class="review-date">{{ feedback.createdAt | date }}</span>
                 </mat-card-subtitle>
                 
-                <!-- Sentiment Badge -->
-                <div class="sentiment-badge" *ngIf="feedback.sentimentScore !== undefined" 
-                     [ngClass]="getSentimentClass(feedback.sentimentScore)" 
-                     matTooltip="Sentiment Score: {{feedback.sentimentScore | number:'1.1-1'}}">
-                  <mat-icon>{{ getSentimentIcon(feedback.sentimentScore) }}</mat-icon>
-                  {{ feedback.sentimentScore >= 0.25 ? 'Positive' : 
-                     feedback.sentimentScore <= -0.25 ? 'Negative' : 'Neutral' }}
-                </div>
+                <!-- Sentiment Badge - Toggle between basic and detailed -->
+                <ng-container *ngIf="!showMultilingualSentiment">
+                  <div class="sentiment-badge" *ngIf="feedback.sentimentScore !== undefined" 
+                      [ngClass]="getSentimentClass(feedback.sentimentScore)" 
+                      matTooltip="Sentiment Score: {{feedback.sentimentScore | number:'1.1-1'}}">
+                    <mat-icon>{{ getSentimentIcon(feedback.sentimentScore) }}</mat-icon>
+                    {{ feedback.sentimentScore >= 0.25 ? 'Positive' : 
+                      feedback.sentimentScore <= -0.25 ? 'Negative' : 'Neutral' }}
+                  </div>
+                </ng-container>
+                
+                <!-- Detailed Multilingual Sentiment Badge -->
+                <ng-container *ngIf="showMultilingualSentiment">
+                  <div class="sentiment-badge" 
+                      [ngClass]="getDetailedSentimentClass(feedback)" 
+                      matTooltip="AI-detected sentiment {{ feedback.multilingualConfidence ? '(' + (feedback.multilingualConfidence | percent) + ')' : '' }}">
+                    <mat-icon>{{ getDetailedSentimentIcon(feedback) }}</mat-icon>
+                    {{ feedback.multilingualSentiment || (feedback.sentimentScore !== undefined ? (feedback.sentimentScore >= 0.25 ? 'Positive' : feedback.sentimentScore <= -0.25 ? 'Negative' : 'Neutral') : 'Neutral') }}
+                    <span class="ai-badge" *ngIf="feedback.multilingualSentiment">AI</span>
+                  </div>
+                </ng-container>
               </mat-card-header>
               
               <mat-card-content>
@@ -200,7 +229,7 @@
                 <div class="feedback-metadata">
                   <mat-chip-set>
                     <mat-chip>{{ feedback.storeFeedbackType }}</mat-chip>
-                    <mat-chip [color]="feedback.wouldRecommend ? 'primary' : 'warn'" selected>
+                    <mat-chip>
                       {{ feedback.wouldRecommend ? 'Recommends' : 'Does Not Recommend' }}
                     </mat-chip>
                   </mat-chip-set>
@@ -216,6 +245,14 @@
           <div *ngIf="loadingFeedback" class="loading-reviews">
             <mat-spinner diameter="40"></mat-spinner>
             <p>Loading reviews...</p>
+          </div>
+          
+          <div *ngIf="error && !loadingFeedback" class="error-reviews">
+            <mat-icon>error</mat-icon>
+            <p>{{ error }}</p>
+            <button mat-stroked-button (click)="store?.storeId && loadAnalyzedFeedback(store.storeId)">
+              Try Again
+            </button>
           </div>
           
           <!-- Create Feedback Form -->
@@ -247,7 +284,37 @@
               </mat-card-content>
             </mat-card>
             
-            <!-- Sentiment Distribution Chart (Static Version) -->
+            <!-- Multilingual Sentiment Analysis Card -->
+            <mat-card class="analytics-card" *ngIf="detailedSentimentChartData.length > 0">
+              <mat-card-header>
+                <mat-card-title>
+                  <div class="card-title-with-badge">
+                    Sentiment Analysis
+                    <span class="ai-badge">AI</span>
+                  </div>
+                </mat-card-title>
+                <mat-card-subtitle>AI-powered sentiment analysis in multiple languages</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="chart-container static-chart">
+                  <div class="sentiment-bars">
+                    <div *ngFor="let item of detailedSentimentChartData" class="sentiment-bar-item">
+                      <div class="sentiment-label">{{ item.name }}</div>
+                      <div class="sentiment-bar" 
+                          [ngClass]="'sentiment-' + item.name.toLowerCase().replace(' ', '-')"
+                          [style.width.%]="calculateDetailedSentimentBarWidth(item.value)">
+                        <span class="sentiment-value">{{ item.value }}</span>
+                      </div>
+                      <div class="sentiment-percentage" *ngIf="multilingualSentimentAnalytics?.sentimentPercentages">
+                        {{ getSentimentPercentage(item.name) }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            
+            <!-- Legacy Sentiment Distribution Chart -->
             <mat-card class="analytics-card" *ngIf="sentimentChartData.length > 0">
               <mat-card-header>
                 <mat-card-title>Sentiment Distribution</mat-card-title>
@@ -261,31 +328,6 @@
                           [ngClass]="'sentiment-' + item.name.toLowerCase()"
                           [style.width.%]="item.value / (feedbackAnalytics.totalFeedbacks || 1) * 100">
                         <span class="sentiment-value">{{ item.value }}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </mat-card-content>
-            </mat-card>
-            
-            <!-- Feedback Type Sentiment Chart (Static Version) -->
-            <mat-card class="analytics-card" *ngIf="feedbackTypeChartData.length > 0">
-              <mat-card-header>
-                <mat-card-title>Sentiment by Feedback Type</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="chart-container static-chart">
-                  <div class="type-bars">
-                    <div *ngFor="let item of feedbackTypeChartData" class="type-bar-item">
-                      <div class="type-label">{{ item.name }}</div>
-                      <div class="type-bar" 
-                          [ngClass]="{ 
-                            'positive': item.value > 0.25, 
-                            'neutral': item.value >= -0.25 && item.value <= 0.25, 
-                            'negative': item.value < -0.25 
-                          }"
-                          [style.width.%]="calculateBarWidth(item.value, feedbackAnalytics.totalFeedbacks)">
-                        <span class="type-value">{{ item.value | number:'1.1-1' }}</span>
                       </div>
                     </div>
                   </div>
