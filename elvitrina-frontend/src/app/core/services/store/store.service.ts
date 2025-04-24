@@ -6,10 +6,11 @@ import { Store, StoreReqDto } from '../../models/store/store.model';
 import { StoreCategoryType } from '../../models/store/store-category-type.enum';
 import { StoreStatsDTO } from '../../models/store/Store-stats.dto';
 import { Page } from '../../models/page.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class StoreService {
-  private apiUrl = 'http://localhost:8080/api/stores';
+  private apiUrl = `${environment.apiUrl}/stores`;
 
   constructor(private http: HttpClient) {}
 
@@ -89,7 +90,7 @@ export class StoreService {
   }
 
   getStoreStats(storeId: number): Observable<StoreStatsDTO> {
-    return this.http.get<StoreStatsDTO>(`${this.apiUrl}/stores/${storeId}/stats`);
+    return this.http.get<StoreStatsDTO>(`${this.apiUrl}/${storeId}/stats`);
   }
 
   getPaginatedStores(page: number, size: number): Observable<Page<Store>> {

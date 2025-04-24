@@ -4,12 +4,15 @@ import com.sudoers.elvitrinabackend.model.dto.ReviewAnalysisDTO;
 import com.sudoers.elvitrinabackend.model.dto.StoreFeedbackDTO;
 import com.sudoers.elvitrinabackend.service.ReviewAnalysis.ReviewAnalysisService;
 import com.sudoers.elvitrinabackend.service.feedback.storeFeedback.IStoreFeedbackService;
+import com.sudoers.elvitrinabackend.service.sentiment.MultilingualSentimentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -21,6 +24,9 @@ public class ReviewAnalysisController {
     
     @Autowired
     private IStoreFeedbackService storeFeedbackService;
+    
+    @Autowired
+    private MultilingualSentimentService multilingualSentimentService;
 
     /**
      * Analyze sentiment of a given text
@@ -31,6 +37,11 @@ public class ReviewAnalysisController {
     public ResponseEntity<ReviewAnalysisDTO> analyzeSentiment(
             @RequestBody ReviewAnalysisDTO.SentimentRequestDTO request) {
         
+        // Use the MultilingualSentimentService directly for better results
+        MultilingualSentimentService.SentimentResult mlResult = 
+                multilingualSentimentService.analyzeSentiment(request.getText());
+        
+        // Also get the compatible result from ReviewAnalysisService for consistency
         ReviewAnalysisService.SentimentResult result = 
                 reviewAnalysisService.analyzeSentiment(request.getText());
         
@@ -38,6 +49,12 @@ public class ReviewAnalysisController {
         response.setOriginalText(request.getText());
         response.setSentimentScore(result.getScore());
         response.setSentimentMagnitude(result.getMagnitude());
+        
+        // Add multilingual sentiment information
+        Map<String, Object> additionalInfo = new HashMap<>();
+        additionalInfo.put("multilingualSentiment", mlResult.getSentiment());
+        additionalInfo.put("confidence", mlResult.getConfidence());
+        response.setAdditionalInfo(additionalInfo);
         
         return ResponseEntity.ok(response);
     }
@@ -52,16 +69,17 @@ public class ReviewAnalysisController {
             @RequestBody ReviewAnalysisDTO.SummarizeRequestDTO request) {
         
         List<String> summaries = reviewAnalysisService.summarizeReviews(request.getReviews());
+        
         ReviewAnalysisDTO.SummarizeResponseDTO response = 
                 new ReviewAnalysisDTO.SummarizeResponseDTO(summaries);
-        
+                
         return ResponseEntity.ok(response);
     }
     
     /**
-     * Get analyzed reviews for a specific store
-     * @param storeId The store ID
-     * @return List of analyzed reviews including sentiment and summaries
+     * Get analyzed reviews for a store
+     * @param storeId The store ID to get reviews for
+     * @return The analyzed reviews
      */
     @GetMapping("/store/{storeId}")
     public ResponseEntity<ReviewAnalysisDTO.ReviewAnalysisBatchDTO> getAnalyzedReviewsForStore(
@@ -78,7 +96,11 @@ public class ReviewAnalysisController {
                 continue;
             }
             
-            // Analyze sentiment
+            // Use MultilingualSentimentService for better analysis
+            MultilingualSentimentService.SentimentResult mlResult = 
+                    multilingualSentimentService.analyzeSentiment(comment);
+                    
+            // Get sentiment score for compatibility
             ReviewAnalysisService.SentimentResult sentimentResult = 
                     reviewAnalysisService.analyzeSentiment(comment);
             
@@ -91,6 +113,12 @@ public class ReviewAnalysisController {
             analysis.setSummarizedText(summarized);
             analysis.setSentimentScore(sentimentResult.getScore());
             analysis.setSentimentMagnitude(sentimentResult.getMagnitude());
+            
+            // Add multilingual sentiment info
+            Map<String, Object> additionalInfo = new HashMap<>();
+            additionalInfo.put("multilingualSentiment", mlResult.getSentiment());
+            additionalInfo.put("confidence", mlResult.getConfidence());
+            analysis.setAdditionalInfo(additionalInfo);
             
             analyzedReviews.add(analysis);
         }

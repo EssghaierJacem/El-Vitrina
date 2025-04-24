@@ -8,6 +8,20 @@ export interface SentimentDistribution {
   Positive: number;
   Neutral: number;
   Negative: number;
+  'Very Positive'?: number;
+  'Very Negative'?: number;
+}
+
+export interface MultilingualSentimentDistribution {
+  'Very Positive': number;
+  'Positive': number;
+  'Neutral': number;
+  'Negative': number;
+  'Very Negative': number;
+}
+
+export interface FeedbackTypeMultilingualSentiment {
+  [type: string]: MultilingualSentimentDistribution;
 }
 
 export interface FeedbackAnalytics {
@@ -15,13 +29,28 @@ export interface FeedbackAnalytics {
   totalFeedbacks: number;
   sentimentDistribution: SentimentDistribution;
   sentimentByFeedbackType: Record<string, number>;
+  recentFeedbacks?: StoreFeedback[];
+}
+
+export interface MultilingualSentimentAnalytics {
+  totalFeedbacks: number;
+  sentimentCounts: MultilingualSentimentDistribution;
+  sentimentPercentages: Record<string, number>;
+  feedbackTypeSentiment: Record<string, Record<string, number>>;
+}
+
+export interface SentimentAnalysisResult {
+  text: string;
+  sentiment: string;
+  confidence: number;
+  sentimentScore: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class StoreFeedbackAnalysisService {
-  private readonly API_URL = `${environment.apiUrl}/api`;
+  private readonly API_URL = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
@@ -35,7 +64,7 @@ export class StoreFeedbackAnalysisService {
   }
 
   /**
-   * Get sentiment distribution for a store's feedback
+   * Get sentiment distribution for a store's feedback (legacy)
    * @param storeId Store ID
    * @returns Observable with sentiment distribution
    */
@@ -53,7 +82,25 @@ export class StoreFeedbackAnalysisService {
   }
 
   /**
-   * Analyze sentiment of a specific text
+   * Get multilingual sentiment distribution for a store
+   * @param storeId Store ID
+   * @returns Observable with multilingual sentiment analytics
+   */
+  getMultilingualSentimentAnalytics(storeId: number): Observable<MultilingualSentimentAnalytics> {
+    return this.http.get<MultilingualSentimentAnalytics>(`${this.API_URL}/store-feedbacks/store/${storeId}/multilingual-sentiment`);
+  }
+
+  /**
+   * Analyze sentiment of a specific text using multilingual analyzer
+   * @param text Text to analyze
+   * @returns Observable with sentiment analysis result
+   */
+  analyzeMultilingualSentiment(text: string): Observable<SentimentAnalysisResult> {
+    return this.http.post<SentimentAnalysisResult>(`${this.API_URL}/store-feedbacks/analyze-text`, { text });
+  }
+
+  /**
+   * Analyze sentiment of a specific text (legacy)
    * @param text Text to analyze
    * @returns Observable with sentiment analysis
    */

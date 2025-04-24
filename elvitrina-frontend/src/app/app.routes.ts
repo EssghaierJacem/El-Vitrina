@@ -7,12 +7,21 @@ import { NotFoundComponent } from './layouts/not-found/not-found.component';
 import { OauthSuccessComponent } from './main-components/user/oauth-success/oauth-success.component';
 import { RequestPersoCreateComponent } from './main-components/requestPerso/frontOffice/request-perso-create/request-perso-create.component';
 import { chartRoutes } from './main-components/chart-ines/chart/charts-routes';
+import { HomeComponent } from './layouts/frontoffice/home/home.component';
 
 export const routes: Routes = [   
   {  
     path: '',
     component: FrontComponent,
     children: [
+      {
+        path: '',
+        component: HomeComponent 
+      },
+      {
+        path: 'home',
+        redirectTo: '', pathMatch: 'full' 
+      },
       {
         path: 'offers',
         loadChildren: () =>

@@ -33,4 +33,17 @@ export class AppBlogCardsComponent implements OnInit {
             }
         });        
     }
+    
+    getImageUrlFromFilename(filename?: string): string {
+        if (!filename) {
+          return 'assets/images/products/no-image.jpg';
+        }
+      
+        if (filename.startsWith('http://') || filename.startsWith('https://')) {
+          return filename;
+        }
+      
+        const cleaned = filename.replace(/^\/+/, '');
+        return `http://localhost:8080/api/products/products/images/${cleaned}`;
+      }
 }
