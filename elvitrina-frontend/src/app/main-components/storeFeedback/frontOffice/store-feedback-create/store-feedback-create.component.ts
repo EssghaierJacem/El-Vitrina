@@ -19,6 +19,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { finalize } from 'rxjs/operators';
 import { MatSliderModule } from '@angular/material/slider';
+import { StarRatingComponent } from '../star-rating/star-rating.component';
 
 @Component({
   selector: 'app-store-feedback-create',
@@ -38,7 +39,8 @@ import { MatSliderModule } from '@angular/material/slider';
     MatTooltipModule,
     MatDividerModule,
     MatIconModule,
-    MatSliderModule
+    MatSliderModule,
+    StarRatingComponent
   ]
 })
 export class StoreFeedbackCreateComponent implements OnInit {
@@ -105,15 +107,20 @@ export class StoreFeedbackCreateComponent implements OnInit {
       .pipe(finalize(() => this.isSubmitting = false))
       .subscribe({
         next: () => {
-          this.snackBar.open('Thank you! Your feedback has been submitted successfully.', 'Close', { 
+          this.snackBar.open('Thank you! Your feedback has been submitted.', 'Close', { 
             duration: 4000,
             panelClass: 'success-snackbar'
           });
-          this.router.navigate(['/store-details', this.storeId]);
+          
+          // Reset the form instead of navigating away
+          this.resetForm();
+          
+          // Emit an event to notify parent component
+          window.dispatchEvent(new CustomEvent('feedback-submitted', { detail: { storeId: this.storeId } }));
         },
         error: (error) => {
           console.error('Error submitting feedback:', error);
-          this.snackBar.open('Unable to submit feedback. Please try again later.', 'Close', { 
+          this.snackBar.open('Unable to submit feedback. Please try again.', 'Close', { 
             duration: 4000,
             panelClass: 'error-snackbar'
           });

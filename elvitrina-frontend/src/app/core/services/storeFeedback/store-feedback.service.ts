@@ -11,7 +11,7 @@ import { Page } from '../../models/page.model';
 
 @Injectable({ providedIn: 'root' })
 export class StoreFeedbackService {
-  private apiUrl = 'http://localhost:8080/api/store-feedbacks';
+  private apiUrl = `${environment.apiUrl}/store-feedbacks`;
 
   constructor(private http: HttpClient) {}
 

@@ -9,12 +9,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatChipsModule } from '@angular/material/chips';
 import { RouterModule } from '@angular/router';
 import { ProductService } from '../../../../core/services/product/product.service';
 import { Product } from '../../../../core/models/product/product.model';
 import { ProductCategoryType } from '../../../../core/models/product/product-category-type.enum';
 import { MatDialog } from '@angular/material/dialog';
 import { FavoriteService } from '../../../../core/services/product/favorite.service';
+import { environment } from '../../../../../environments/environment';
+
+interface SortOption {
+  value: string;
+  label: string;
+}
 
 @Component({
   selector: 'app-product-list',
@@ -30,6 +37,7 @@ import { FavoriteService } from '../../../../core/services/product/favorite.serv
     MatSelectModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    MatChipsModule,
     RouterModule
   ],
   templateUrl: './product-list.component.html',
@@ -45,11 +53,20 @@ export class ProductListComponent implements OnInit {
   // Filters
   searchQuery = '';
   selectedCategory: ProductCategoryType | null = null;
-  sortBy: 'newest' | 'price' | 'name' = 'newest';
+  sortBy: string = 'newest';
   showDiscounted = false;
   showInStock = false;
 
-  readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
+  // Sort options
+  sortOptions: SortOption[] = [
+    { value: 'newest', label: 'Newest First' },
+    { value: 'price', label: 'Price: Low to High' },
+    { value: 'priceDesc', label: 'Price: High to Low' },
+    { value: 'name', label: 'Name: A to Z' },
+    { value: 'nameDesc', label: 'Name: Z to A' }
+  ];
+
+  readonly IMAGE_BASE_URL = environment.apiUrl + '/products/products/images/';
 
   constructor(
     public productService: ProductService,
@@ -65,6 +82,7 @@ export class ProductListComponent implements OnInit {
   loadProducts(): void {
     this.loading = true;
     this.error = null;
+    this.resetFilters();
 
     this.productService.getAll().subscribe({
       next: (products) => {
@@ -88,6 +106,14 @@ export class ProductListComponent implements OnInit {
     });
   }
 
+  resetFilters(): void {
+    this.searchQuery = '';
+    this.selectedCategory = null;
+    this.sortBy = 'newest';
+    this.showDiscounted = false;
+    this.showInStock = false;
+  }
+
   getFinalPrice(product: Product): number {
     return this.productService.calculateFinalPrice(product);
   }
@@ -100,6 +126,28 @@ export class ProductListComponent implements OnInit {
     return this.productService.calculateDiscountPercentage(product);
   }
 
+  // Get the rating of a product
+  getProductRating(product: Product): number {
+    if (product.store?.averageRating) {
+      return product.store.averageRating;
+    }
+    return 0;
+  }
+
+  // Get the review count of a product
+  getProductReviewCount(product: Product): number {
+    if (product.store?.reviewCount) {
+      return product.store.reviewCount;
+    }
+    return 0;
+  }
+
+  // Get an array of stars (1 = filled star, 0 = empty star)
+  getStarArray(product: Product): number[] {
+    const rating = this.getProductRating(product);
+    return Array(5).fill(0).map((_, index) => index < Math.round(rating) ? 1 : 0);
+  }
+
   applyFilters(): void {
     let filtered = [...this.products];
 
@@ -108,7 +156,8 @@ export class ProductListComponent implements OnInit {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(product =>
         product.productName.toLowerCase().includes(query) ||
-        product.description?.toLowerCase().includes(query)
+        product.description?.toLowerCase().includes(query) ||
+        (product.tags && product.tags.some(tag => tag.toLowerCase().includes(query)))
       );
     }
 
@@ -131,9 +180,15 @@ export class ProductListComponent implements OnInit {
     filtered.sort((a, b) => {
       switch (this.sortBy) {
         case 'price':
-          return a.price - b.price;
+          return (a.hasDiscount ? this.getFinalPrice(a) : a.price) - 
+                 (b.hasDiscount ? this.getFinalPrice(b) : b.price);
+        case 'priceDesc':
+          return (b.hasDiscount ? this.getFinalPrice(b) : b.price) - 
+                 (a.hasDiscount ? this.getFinalPrice(a) : a.price);
         case 'name':
           return a.productName.localeCompare(b.productName);
+        case 'nameDesc':
+          return b.productName.localeCompare(a.productName);
         case 'newest':
         default:
           return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
@@ -144,14 +199,33 @@ export class ProductListComponent implements OnInit {
   }
 
   toggleFavorite(product: Product): void {
-    product.isFavorite = !product.isFavorite;
+    // Toggle favorite using the service
+    this.favoriteService.toggleFavorite(product.productId);
+    
+    // Update the local UI state
+    product.isFavorite = this.favoriteService.isFavorite(product.productId);
+    
+    // Show notification
+    const message = product.isFavorite ? 'Added to favorites' : 'Removed from favorites';
+    
+    const snackBarRef = this.snackBar.open(message, product.isFavorite ? 'View Favorites' : 'Close', { 
+      duration: 3000 
+    });
+    
+    // Add an action if the product was added to favorites
     if (product.isFavorite) {
-      this.favoriteService.toggleFavorite(product.productId);
-      this.snackBar.open('Added to favorites', 'Close', { duration: 2000 });
-    } else {
-      this.favoriteService.removeFavorite(product.productId);
-      this.snackBar.open('Removed from favorites', 'Close', { duration: 2000 });
+      snackBarRef.onAction().subscribe(() => {
+        // Navigate to favorites page (implement if available)
+        console.log('Navigate to favorites');
+      });
     }
+  }
+
+  addToCart(product: Product): void {
+    // TODO: Implement cart functionality
+    this.snackBar.open('Product added to cart', 'Close', { 
+      duration: 3000 
+    });
   }
 
   updateFavorites(): void {
@@ -178,6 +252,11 @@ export class ProductListComponent implements OnInit {
     // If it's already a full URL, return it as is
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       return imageUrl;
+    }
+    
+    // If it's a relative path starting with '/', handle it properly
+    if (imageUrl.startsWith('/')) {
+      return `${environment.apiUrl}${imageUrl}`;
     }
     
     // Otherwise, append it to the API URL

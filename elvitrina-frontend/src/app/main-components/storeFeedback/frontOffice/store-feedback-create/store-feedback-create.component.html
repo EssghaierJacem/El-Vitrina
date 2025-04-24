@@ -1,17 +1,26 @@
+<!-- HTML -->
 <div class="feedback-container">
-    <mat-card class="feedback-card">
-      <mat-card-header>
-        <mat-card-title>
-          <h2>Share Your Feedback</h2>
-        </mat-card-title>
-        <mat-card-subtitle>Your opinion helps us improve our services</mat-card-subtitle>
-      </mat-card-header>
-  
-      <mat-divider></mat-divider>
-      
-      <mat-card-content>
-        <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" class="feedback-form">
-          <!-- Feedback Type -->
+  <mat-card class="feedback-card">
+    <mat-card-header>
+      <div class="header-content">
+        <div class="header-icon">
+          <mat-icon>rate_review</mat-icon>
+        </div>
+        <div class="header-text">
+          <mat-card-title>
+            <h2>Share Your Feedback</h2>
+          </mat-card-title>
+          <mat-card-subtitle>Your opinion helps improve our services</mat-card-subtitle>
+        </div>
+      </div>
+    </mat-card-header>
+    
+    <mat-divider></mat-divider>
+    
+    <mat-card-content>
+      <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" class="feedback-form">
+        <!-- Feedback Type -->
+        <div class="form-section">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>What aspect are you reviewing?</mat-label>
             <mat-select formControlName="storeFeedbackType" required>
@@ -23,74 +32,89 @@
               {{ getErrorMessage('storeFeedbackType') }}
             </mat-error>
           </mat-form-field>
-  
-          <!-- Rating -->
-          <div class="rating-section">
-            <mat-label class="rating-label">Your Rating</mat-label>
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-select formControlName="rating" required>
-                <mat-option *ngFor="let rate of [1, 2, 3, 4, 5]" [value]="rate">
-                  <div class="rating-option">
-                    <span>{{ rate }}</span>
-                    <span class="star-rating">
-                      <mat-icon *ngFor="let i of [1, 2, 3, 4, 5]" 
-                        [class.filled]="i <= rate">
-                        star
-                      </mat-icon>
-                    </span>
-                  </div>
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="isFieldInvalid('rating')">
-                {{ getErrorMessage('rating') }}
-              </mat-error>
-            </mat-form-field>
+        </div>
+
+        <!-- Rating -->
+        <div class="form-section rating-section">
+          <div class="rating-header">
+            <span class="section-label">Your Rating</span>
+            <div class="rating-display" *ngIf="feedbackForm.get('rating')?.value">
+              <app-star-rating [rating]="feedbackForm.get('rating')?.value" [starSize]="'medium'"></app-star-rating>
+            </div>
           </div>
-  
-          <!-- Comment -->
+          
+          <mat-slider
+            class="rating-slider"
+            [min]="1"
+            [max]="5"
+            [step]="1"
+            [discrete]="true"
+            [showTickMarks]="true">
+            <input matSliderThumb formControlName="rating">
+          </mat-slider>
+          
+          <div class="rating-labels">
+            <span>POOR</span>
+            <span>EXCELLENT</span>
+          </div>
+          
+          <mat-error *ngIf="isFieldInvalid('rating')" class="rating-error">
+            {{ getErrorMessage('rating') }}
+          </mat-error>
+        </div>
+
+        <!-- Comment -->
+        <div class="form-section">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Your Feedback</mat-label>
-            <textarea 
-              matInput 
-              formControlName="comment" 
-              rows="4" 
-              required 
+            <textarea
+              matInput
+              formControlName="comment"
+              rows="4"
+              required
               placeholder="Please share your experience with us..."
+              [maxlength]="500"
             ></textarea>
-            <mat-hint align="end">{{ getRemainingCharacters() }} characters remaining</mat-hint>
+            <mat-hint align="end" [class.low-chars]="getRemainingCharacters() < 50">
+              {{ getRemainingCharacters() }} characters remaining
+            </mat-hint>
             <mat-error *ngIf="isFieldInvalid('comment')">
               {{ getErrorMessage('comment') }}
             </mat-error>
           </mat-form-field>
-  
-          <!-- Would Recommend -->
-          <div class="recommendation-section">
-            <mat-checkbox formControlName="wouldRecommend" color="primary">
-              I would recommend this store to others
-            </mat-checkbox>
-          </div>
-        </form>
-      </mat-card-content>
-  
-      <mat-divider></mat-divider>
-  
-      <mat-card-actions class="card-actions">
-        <button 
-          mat-button 
-          type="button" 
-          (click)="resetForm()" 
-          [disabled]="isSubmitting"
-          matTooltip="Clear all form fields">
-          RESET
-        </button>
-        <button 
-          mat-raised-button 
-          color="primary" 
-          (click)="onSubmit()" 
-          [disabled]="isSubmitting">
-          <mat-spinner *ngIf="isSubmitting" diameter="20" class="spinner"></mat-spinner>
-          <span>SUBMIT FEEDBACK</span>
-        </button>
-      </mat-card-actions>
-    </mat-card>
-  </div>
+        </div>
+
+        <!-- Would Recommend -->
+        <div class="form-section recommendation-section">
+          <mat-checkbox formControlName="wouldRecommend" color="primary" class="recommendation-checkbox">
+            <span class="recommendation-text">I WOULD RECOMMEND THIS STORE</span>
+          </mat-checkbox>
+        </div>
+      </form>
+    </mat-card-content>
+    
+    <mat-divider></mat-divider>
+    
+    <mat-card-actions class="card-actions">
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="resetForm()"
+        [disabled]="isSubmitting"
+        matTooltip="Clear all form fields"
+        class="reset-button">
+        <mat-icon>refresh</mat-icon>
+        RESET
+      </button>
+      <button
+        mat-stroked-button
+        (click)="onSubmit()"
+        [disabled]="isSubmitting"
+        class="submit-button">
+        <mat-spinner *ngIf="isSubmitting" diameter="20" class="spinner"></mat-spinner>
+        <span>SUBMIT FEEDBACK</span>
+        <mat-icon *ngIf="!isSubmitting">send</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

@@ -7,7 +7,7 @@
           <!-- Search -->
           <mat-form-field appearance="outline" class="search-field">
             <mat-label>Search products</mat-label>
-            <input matInput [(ngModel)]="searchQuery" (keyup)="applyFilters()" placeholder="Search by name or description">
+            <input matInput [(ngModel)]="searchQuery" (keyup)="applyFilters()" placeholder="Search by name, description, or tags">
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
 
@@ -15,9 +15,9 @@
           <mat-form-field appearance="outline">
             <mat-label>Sort by</mat-label>
             <mat-select [(ngModel)]="sortBy" (selectionChange)="applyFilters()">
-              <mat-option value="newest">Newest First</mat-option>
-              <mat-option value="price">Price: Low to High</mat-option>
-              <mat-option value="name">Name: A to Z</mat-option>
+              <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+                {{ option.label }}
+              </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -50,6 +50,15 @@
     </mat-card>
   </div>
 
+  <!-- Results Count -->
+  <div class="results-count">
+    <span>{{ filteredProducts.length }} products</span>
+    <button mat-button (click)="loadProducts()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+
   <!-- Products Grid -->
   <div class="products-grid" *ngIf="!loading && !error">
     <mat-card class="product-card" *ngFor="let product of filteredProducts">
@@ -71,9 +80,8 @@
 
         <!-- Favorite Button -->
         <button mat-icon-button class="favorite-button" (click)="toggleFavorite(product)">
-          <mat-icon [color]="product.isFavorite ? 'warn' : ''">
-            {{ product.isFavorite ? 'favorite' : 'favorite_border' }}
-          </mat-icon>
+          <mat-icon color="warn" *ngIf="product.isFavorite">favorite</mat-icon>
+          <mat-icon *ngIf="!product.isFavorite">favorite_border</mat-icon>
         </button>
       </div>
 
@@ -86,14 +94,24 @@
           {{ product.productName }}
         </h3>
 
+        <!-- Rating (if available) -->
+        <div class="product-rating" *ngIf="getProductRating(product) > 0">
+          <div class="stars">
+            <mat-icon *ngFor="let star of getStarArray(product)">
+              {{ star ? 'star' : 'star_border' }}
+            </mat-icon>
+          </div>
+          <span class="rating-count" *ngIf="getProductReviewCount(product) > 0">
+            ({{ getProductReviewCount(product) }})
+          </span>
+        </div>
+
         <!-- Price -->
         <div class="product-price" [class.has-discount]="product.hasDiscount">
           <span class="current-price">{{ getFinalPrice(product) | currency:'EUR' }}</span>
-          <ng-container *ngIf="product.hasDiscount">
-            <span class="original-price" *ngIf="getOriginalPrice(product)">
-              {{ getOriginalPrice(product) | currency:'EUR' }}
-            </span>
-          </ng-container>
+          <span class="original-price" *ngIf="product.hasDiscount && getOriginalPrice(product)">
+            {{ getOriginalPrice(product) | currency:'EUR' }}
+          </span>
         </div>
 
         <!-- Stock Status -->
@@ -110,12 +128,13 @@
       </mat-card-content>
 
       <mat-card-actions>
-        <button mat-stroked-button color="primary" [routerLink]="['/products', product.productId]">
+        <button mat-stroked-button class="details-button" [routerLink]="['/products', product.productId]">
           <mat-icon>visibility</mat-icon>
           Details
         </button>
-        <button mat-raised-button color="primary" 
-                [disabled]="product.stockQuantity === 0">
+        <button mat-stroked-button class="cart-button"
+                [disabled]="product.stockQuantity === 0"
+                (click)="addToCart(product)">
           <mat-icon>shopping_cart</mat-icon>
           Add to Cart
         </button>
