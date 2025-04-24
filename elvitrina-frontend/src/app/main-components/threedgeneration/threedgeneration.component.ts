@@ -70,48 +70,77 @@ export class ThreedgenerationComponent implements AfterViewInit, OnDestroy {
     this.clearCurrentModel();
   
     const requestBody = {
-      model: "claude-3.7-sonnet-reasoning-gemma3-12b",
+      model: "qwen2.5-7b-instruct-1m",
       messages: [
         {
           role: "system",
-          content: `You are a specialized 3D model generator API that outputs only valid Three.js JSON models.
+          content: `You are a strict JSON generator for Three.js models. Follow these rules exactly:
 
-CRITICAL REQUIREMENTS:
-1. Return ONLY valid JSON with no additional text
-2. Do not include backticks, markdown formatting, or explanations
-3. JSON must be properly formatted for THREE.ObjectLoader().parse()
-4. Start with { and end with }
-5. Include proper metadata with version 4.5
-6. Use standard Three.js geometry types (BoxGeometry, CylinderGeometry, SphereGeometry, etc.)
-7. Include appropriate materials with realistic colors and properties
-8. Ensure all parts have position, rotation, and scale values
-9. Add castShadow and receiveShadow to all meshes
-
-EXAMPLE STRUCTURE:
-{
-  "metadata": {
-    "version": 4.5,
-    "type": "Object"
-  },
-  "geometries": [...],
-  "materials": [...],
-  "object": {
-    "uuid": "...",
-    "type": "Group",
-    "children": [...]
-  }
-}`
+          1. OUTPUT FORMAT:
+             - Only pure JSON directly parsable by THREE.ObjectLoader().parse()
+             - No markdown, no code blocks, no explanations
+             - Must start with { and end with }
+          
+          2. STRUCTURE REQUIREMENTS:
+             - Must include valid metadata with version 4.5
+             - Must have geometries, materials, and object sections
+             - All objects must include: position, rotation, scale
+             - All meshes must have: castShadow: true and receiveShadow: true
+          
+          3. MODELING RULES (REALISTIC & LOGICAL):
+             - Use only standard Three.js geometries (Box, Sphere, Cylinder, Plane, Cone, Torus, etc.)
+             - Dimensions must be realistic and proportional (use meters as units)
+             - Center the model around [0, 0, 0] for better balance and display
+             - All positions must be spatially logical and consistent (e.g., no floating elements unless they should fly)
+             - Group related elements (e.g. table with legs, chair with seat and back)
+             - For furniture or architectural items, align elements correctly (e.g., legs under surface, backrests behind seat)
+             - Use basic architectural logic (e.g., chairs don’t float, lights hang from ceilings, etc.)
+          
+          4. VISUAL:
+             - Use varied, appropriate materials with hex colors (like wood, metal, fabric tones)
+             - Include shadows and natural lighting settings
+             - Avoid overlapping or intersecting meshes
+          
+          5. OUTPUT MUST BE STRICTLY:
+             - Only valid JSON
+             - No extra comments or explanations
+             - No code block wrappers
+             - Just the JSON object from { to }
+          
+          EXAMPLE OUTPUT:
+          {
+            "metadata": { "version": 4.5, "type": "Object" },
+            "geometries": [{ "uuid": "box-geom", "type": "BoxGeometry", "width": 1, "height": 1, "depth": 1 }],
+            "materials": [{ "uuid": "box-mat", "type": "MeshStandardMaterial", "color": 16711680 }],
+            "object": {
+              "uuid": "main", "type": "Group", "children": [
+                {
+                  "uuid": "box-1",
+                  "type": "Mesh",
+                  "geometry": "box-geom",
+                  "material": "box-mat",
+                  "position": [0, 0.5, 0],
+                  "rotation": [0, 0, 0],
+                  "scale": [1, 1, 1],
+                  "castShadow": true,
+                  "receiveShadow": true
+                }
+              ]
+            }
+          }`
+          
         },
         {
           role: "user",
-          content: `Generate a detailed Three.js-compatible 3D model of: ${description}
+          content: `Generate a detailed Three.js model of exactly: ${description}
 
-Make it realistic with proper proportions and component relationships.`
+Output must be pure JSON that can be directly parsed by THREE.ObjectLoader() with no additional text or formatting.`
         }
       ],
       temperature: 0.2, // Lower temperature for more consistent JSON output
       max_tokens: 4000, // Increased token limit for complex models
-      top_p: 0.95      // Slightly constrains token selection for better structure
+      top_p: 0.95 ,     // Slightly constrains token selection for better structure
+     
     };
   
     this.http.post(this.apiUrl, requestBody).subscribe({
@@ -128,9 +157,9 @@ Make it realistic with proper proportions and component relationships.`
       let jsonString = content;
       
       // Handle cases where the response includes markdown code blocks
-      if (jsonString.includes('```json')) {
-        const startIndex = jsonString.indexOf('```json') + 7;
-        const endIndex = jsonString.lastIndexOf('```');
+      if (jsonString.includes('json')) {
+        const startIndex = jsonString.indexOf('json') + 7;
+        const endIndex = jsonString.lastIndexOf('');
         if (endIndex > startIndex) {
           jsonString = jsonString.substring(startIndex, endIndex).trim();
         }
@@ -183,6 +212,7 @@ Make it realistic with proper proportions and component relationships.`
       new THREE.PlaneGeometry(20, 20),
       new THREE.MeshStandardMaterial({ color: 0xdddddd })
     );
+    floor.position.y = -3;
     floor.rotation.x = -Math.PI / 2;
     this.scene.add(floor);
   }

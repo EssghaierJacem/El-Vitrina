@@ -1,7 +1,7 @@
 <div #sceneContainer class="scene-container">
   <div class="controls-overlay">
     <div class="generation-controls">
-      <input #modelInput placeholder="Enter model description (e.g. 'modern sofa')">
+      <textarea #modelInput placeholder="Enter model description (e.g. 'modern sofa')" rows="4" cols="50"></textarea>
       <button (click)="generateModel(modelInput.value)" [disabled]="isLoading">
         {{ isLoading ? 'Generating...' : 'Generate 3D Model' }}
       </button>
