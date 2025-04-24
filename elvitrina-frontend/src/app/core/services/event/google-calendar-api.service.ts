@@ -236,13 +236,12 @@ export class GoogleApiService {
       switchMap(() => {
         const params: any = {
           calendarId,
-          // Consider whether you need a time limit - remove timeMin if you want ALL historical events
-          // timeMin: new Date().toISOString(), 
-          timeMin: new Date(new Date().getFullYear(), 0, 1).toISOString(), // From beginning of current year
+          timeMin: new Date(new Date().getFullYear(), 0, 1).toISOString(), 
           showDeleted: false,
           singleEvents: true,
           maxResults: maxResults,
-          orderBy: 'startTime'
+          orderBy: 'startTime',
+          conferenceDataVersion: 1 
         };
         
         if (pageToken) {
@@ -276,10 +275,9 @@ export class GoogleApiService {
     );
   }
 
-  createMeetingEvent(summary: string, description: string, start: Date, end: Date, attendees: any[] = [], addMeet: boolean = true): Observable<any> {
+  createMeetingEvent(summary: string,  start: Date, end: Date, addMeet: boolean = true): Observable<any> {
     const event = {
       summary,
-      description,
       start: {
         dateTime: start.toISOString(),
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -288,7 +286,6 @@ export class GoogleApiService {
         dateTime: end.toISOString(),
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
       },
-      attendees,
       conferenceData: addMeet
         ? {
             createRequest: {
@@ -302,7 +299,7 @@ export class GoogleApiService {
       switchMap(() => from(gapi.client.calendar.events.insert({
         calendarId: 'primary',
         resource: event,
-        conferenceDataVersion: 1
+        conferenceDataVersion: addMeet ? 1 : 0
       }))),
       catchError(error => throwError(() => error))
     );

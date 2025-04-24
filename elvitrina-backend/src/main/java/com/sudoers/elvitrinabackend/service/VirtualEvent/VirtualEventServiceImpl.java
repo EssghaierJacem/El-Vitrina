@@ -62,6 +62,18 @@ public class VirtualEventServiceImpl implements VirtualEventService {
     }
 
     @Override
+    public List<VirtualEventResponseDTO> getEventByStoreId(Long storeId) {
+        List<VirtualEvent> events = virtualEventRepository.findByStore_StoreId(storeId);
+        if (events.isEmpty()) {
+            throw new ResourceNotFoundException("No events found for store with id: " + storeId);
+        }
+        return events.stream()
+                .map(virtualEventMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
     public List<VirtualEventResponseDTO> getAllEvents() {
         return virtualEventRepository.findAll().stream()
                 .map(virtualEventMapper::toResponseDTO)

@@ -26,6 +26,9 @@ import { GoogleCalendarService } from 'src/app/core/services/event/google-calend
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { EventJoinDialogComponent } from '../event-join/event-join.component';
 import { EventParticipantRequest } from 'src/app/core/models/event/event-participant.model';
+import { TokenService } from 'src/app/core/services/user/TokenService';
+import { EventDetailsDialogComponent } from './event-details-dialog.conponent';
+import { EventClickArg } from '@fullcalendar/core';
 
 @Component({
   selector: 'app-event-details',
@@ -51,7 +54,9 @@ import { EventParticipantRequest } from 'src/app/core/models/event/event-partici
     MatSnackBarModule,
     MatChipsModule,
     MatDialogModule,
-    EventJoinDialogComponent
+    EventJoinDialogComponent,
+    EventDetailsDialogComponent
+
   ],
   standalone: true,
   styleUrls: ['./event-details.component.scss']
@@ -62,7 +67,8 @@ export class EventDetailsComponent implements OnInit {
   calendarEvents: any[] = [];
   googleCalendarEvents: any[] = [];
   showCalendar = false;
-  role = 'user'; // You might want to inject this from an auth service
+  userId = this.authService.getUserId();
+  role = this.authService.getRole();
   displayedCalendarEvents: any[] = [];
   googleEventsLoaded = false;
 
@@ -73,49 +79,20 @@ export class EventDetailsComponent implements OnInit {
 
     private googleCalendar: GoogleCalendarService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+        private authService: TokenService,
+    
 
   ) {}
+   
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (id) {
-      this.loading = true;
-      this.virtualEventService.getEventById(id).subscribe({
-        next: (data) => {
-          this.event = data;
-          console.log('Event data:', this.event);
-          
-          console.log('Event data:', this.event.sessions[0]);
-          
-          // Format sessions for calendar integration
-          this.calendarEvents = this.event.sessions.map(session => ({
-            title: session.sessionTitle,
-            start: new Date(session.startTime).toISOString(),
-            end: new Date(session.endTime).toISOString()
-          }));
-
-          // Set initial displayed events
-          
-          // If user is a seller, load Google Calendar events
-          if (this.role === 'seller') {
-            console.log('User is a seller, loading Google Calendar events');
-            
-            this.loadGoogleCalendarEvents();
-          } else {
-            console.log('User is not a seller, loading local events only');
-            this.displayedCalendarEvents = [...this.calendarEvents];
-            this.loading = false;
-            console.log('Local events loaded:', this.displayedCalendarEvents);
-            
-          }
-        },
-        error: (err) => {
-          this.loading = false;
-          this.snackBar.open('Failed to load event details', 'Close', { duration: 3000 });
-        }
-      });
-    }
+    this.loadtData(id);
+  }
+  hasUserJoined(): boolean {
+    if (!this.event?.participants || !this.userId) return false;
+    return this.event.participants.some((p: any) => p.userId === this.userId);
   }
 
   async loadGoogleCalendarEvents() {
@@ -130,12 +107,13 @@ export class EventDetailsComponent implements OnInit {
           title: item.summary,
           start: item.start.dateTime || item.start.date,
           end: item.end.dateTime || item.end.date,
+          
           source: 'google'
         }));
         
         // Combine Google events with the current event sessions
      
-        if (this.role === 'seller') {
+        if (this.role === 'SELLER') {
           console.log('User is a seller, loading Google Calendar events');
           
           this.displayedCalendarEvents = [
@@ -182,8 +160,13 @@ export class EventDetailsComponent implements OnInit {
       console.log('Dialog closed with result:', result);
       if (result?.tickets) {
         this.loading = true;
+        if (this.userId === null) {
+          this.snackBar.open('You must be logged in to join the event.', 'Close', { duration: 3000 });
+          this.loading = false;
+          return;
+        }
         const requestdto: EventParticipantRequest ={
-          userId: 1, // Replace with actual user ID from auth service
+          userId: this.userId, // userId is guaranteed to be a number here
           eventId: this.event.eventId,
           ticketCount: result.tickets,
         }
@@ -191,6 +174,7 @@ export class EventDetailsComponent implements OnInit {
           next: () => {
             this.snackBar.open(`Joined with ${result.tickets} ticket(s)`, 'Close', { duration: 3000 });
             this.loading = false;
+            this.loadtData(this.event.eventId); // Reload event data to reflect changes
           },
           error: () => {
             this.snackBar.open('Failed to join event', 'Close', { duration: 3000 });
@@ -222,4 +206,72 @@ export class EventDetailsComponent implements OnInit {
   getTimelineLineClass(status: string) {
     return status === 'done' ? 'timeline-connector-done' : 'timeline-connector-upcoming';
   }
+
+  loadtData(id: number) {
+    if (id) {
+      this.loading = true;
+      this.virtualEventService.getEventById(id).subscribe({
+        next: (data) => {
+          this.event = data;
+          console.log('Event data:', this.event);
+          
+          console.log('Event data:', this.event.sessions[0]);
+          
+          // Format sessions for calendar integration
+          this.calendarEvents = this.event.sessions.map(session => ({
+            title: session.sessionTitle,
+            start: new Date(session.startTime).toISOString(),
+            end: new Date(session.endTime).toISOString(),
+            streamUrl: session.streamUrl,
+          }));
+  
+          // Set initial displayed events
+          
+          // If user is a seller, load Google Calendar events
+          if (this.role === 'SELLER') {
+            console.log('User is a seller, loading Google Calendar events');
+            
+            this.loadGoogleCalendarEvents();
+          } else {
+            console.log('User is not a seller, loading local events only');
+            this.displayedCalendarEvents = [...this.calendarEvents];
+            this.loading = false;
+            console.log('Local events loaded:', this.displayedCalendarEvents);
+            
+          }
+        },
+        error: (err) => {
+          this.loading = false;
+          this.snackBar.open('Failed to load event details', 'Close', { duration: 3000 });
+        }
+      });
+    }
+  }
+
+  handleEventClick() {
+  
+
+    
+    // Open dialog with position data
+    const dialogRef = this.dialog.open(EventDetailsDialogComponent, {
+      data: {
+        title:"",
+        start: "",
+        end: "",
+        hangoutLink: "",
+        position: { top: 100, left: 100 },
+      },
+      width: '400px',
+      maxWidth: '90vw',
+      backdropClass:'backdrop-bg-orange',
+      panelClass: 'event-details-dialog',
+      // No position settings here, we'll set it in the component
+    });
+    
+    // Remove highlight when dialog closes
+    
+  }
+  
 }
+
+

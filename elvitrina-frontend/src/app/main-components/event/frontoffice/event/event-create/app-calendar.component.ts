@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,12 +16,12 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { GoogleApiService } from 'src/app/core/services/event/google-calendar-api.service';
 import { GoogleCalendarService } from 'src/app/core/services/event/google-calendar.service';
-import { EventDialogComponent } from './event-dialog.component';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { EventDetailsDialogComponent } from './event-details-dialog.conponent';
 import { Observable } from 'rxjs';
 import { EventSaissionService } from 'src/app/core/services/event/event-saission.service';
 import { EventSessionRequestDTO } from 'src/app/core/models/event/event-session.model';
+import { EventDialogComponent } from './event-dialog.component';
 
 @Component({
   selector: 'app-calendar',
@@ -48,7 +48,7 @@ import { EventSessionRequestDTO } from 'src/app/core/models/event/event-session.
 export class CalendarComponent implements OnInit, OnChanges {
   @Input() calendarEvents: any[] = [];
   @Input() role: string = 'USER'; 
-  @Input() eventId: number = 0;
+  @Output() sessionCreated = new EventEmitter<any>();
   isSignedIn = false;
   events: any[] = [];
   calendarOptions: CalendarOptions = {
@@ -266,8 +266,8 @@ handleEventClick(arg: EventClickArg) {
 }
 
 
-  handleDateClick(info: any) {
-    if( this.role === 'SELLER'){
+handleDateClick(info: any) {
+  if(this.role === 'SELLER'){
     const dialogRef = this.dialog.open(EventDialogComponent, {
       data: { date: info.dateStr },
       width: '400px'
@@ -275,14 +275,48 @@ handleEventClick(arg: EventClickArg) {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log("createing meet");
+        console.log("creating meet");
         console.log(result);
         
-        this.createMeeting(result);
-        // this.reloadEvents();
+        this.createMeeting(result).then(response => {
+          // Emit the created session data to the parent component
+          this.sessionCreated.emit({
+            title: result.summary,
+            startDateTime: result.start,
+            endDateTime: result.end,
+            hangoutLink: response?.result?.hangoutLink || null
+          });
+        });
       }
     });
-  }}
+  }
+}
+
+// Update createMeeting to return a Promise
+createMeeting(eventData: any): Promise<any> {
+  this.loading = true;
+  return this.googleCalendarService.addMeetingEvent(
+    eventData.summary,
+    eventData.start,
+    eventData.end,
+    eventData.addMeet
+  ).then(response => {
+    console.log('Meeting created successfully:', response);
+    this.reloadEvents();
+    this.loading = false;
+    this.cdr.detectChanges();
+    return response; // Return the response
+  }).catch(error => {
+    console.log('Error creating meeting:', error);
+    this.error = 'Failed to create meeting';
+    this.loading = false;
+    this.cdr.detectChanges();
+    throw error; // Re-throw the error
+  });
+}
+
+
+
   async reloadEvents() {
     try {
       // Clear existing events first
@@ -317,39 +351,31 @@ handleEventClick(arg: EventClickArg) {
       // Handle error (show toast, etc.)
     }
   }
-  createMeeting(eventData: any): void {
-    this.loading = true;
-    this.googleCalendarService.addMeetingEvent(
-      eventData.summary,
-      eventData.start,
-      eventData.end,
-      eventData.addMeet
-    ).then(response => {
-      console.log('Meeting created successfully:', response);
-      const event: EventSessionRequestDTO={
-        virtualEventId:this.eventId, 
-        sessionTitle: response.result.summary,
-  startTime: response.result.start.dateTime,
-  endTime: response.result.end.dateTime,
-  streamUrl: response.result.hangoutLink,
-      }
-      console.log('Event session data:', event);
-      this.eventSaissionService.createEventSession(event).subscribe();
+  // createMeeting(eventData: any): void {
+  //   this.loading = true;
+  //   this.googleCalendarService.addMeetingEvent(
+  //     eventData.summary,
+  //     eventData.start,
+  //     eventData.end,
+  //     eventData.addMeet
+  //   ).then(response => {
+  //     console.log('Meeting created successfully:', response);
     
-      this.reloadEvents();
-      this.loading = false;
-      this.cdr.detectChanges();
+    
+  //     this.reloadEvents();
+  //     this.loading = false;
+  //     this.cdr.detectChanges();
 
-      // this.snackBar.open('Event created successfully', 'Close', { duration: 3000 });
-    }).catch(error => {
-      console.log('Error creating meeting:', error);
+  //     // this.snackBar.open('Event created successfully', 'Close', { duration: 3000 });
+  //   }).catch(error => {
+  //     console.log('Error creating meeting:', error);
       
-      this.error = 'Failed to create meeting';
-      // this.snackBar.open(this.error, 'Close', { duration: 3000 });
-      this.loading = false;
-      this.cdr.detectChanges();
-    });
-  }
+  //     this.error = 'Failed to create meeting';
+  //     // this.snackBar.open(this.error, 'Close', { duration: 3000 });
+  //     this.loading = false;
+  //     this.cdr.detectChanges();
+  //   });
+  // }
 
   addEventToCalendar(event: any): void {
     if (!this.isSignedIn) {

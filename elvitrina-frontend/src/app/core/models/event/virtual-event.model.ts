@@ -1,5 +1,5 @@
 import { EventParticipant, EventParticipantEvent } from '../event/event-participant.model';
-import { EventSession, EventSessionRequestDTO } from '../event/event-session.model';
+import { EventSession, EventSessionEventRequestDTO, EventSessionRequestDTO } from '../event/event-session.model';
 import { EventTicket } from "../event/event-ticket.model";
 import { Store } from '../store/store.model';
 import { User } from "../user/user.model";
@@ -34,7 +34,7 @@ export interface VirtualEventRequest {
   eventType: EventType;
   eventMode: EventMode;
   maxParticipants: number;
-  sessions: EventSessionRequestDTO[];
+  sessions: EventSessionEventRequestDTO[];
   storeId: number; 
   userId: number; 
 }

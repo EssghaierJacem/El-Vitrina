@@ -31,6 +31,9 @@ public class VirtualEventController {
 
     @PostMapping
     public ResponseEntity<VirtualEventResponseDTO> createEvent(@RequestBody VirtualEventRequestDTO requestDTO) {
+        System.out.println("hhhhhhhhhhhhhhhhhhhhh");
+        System.out.println(requestDTO
+        );
         return ResponseEntity.status(HttpStatus.CREATED).body(virtualEventService.createEvent(requestDTO));
     }
 
@@ -55,7 +58,10 @@ public class VirtualEventController {
     public ResponseEntity<VirtualEventResponseDTO> getEventById(@PathVariable Long id) {
         return ResponseEntity.ok(virtualEventService.getEventById(id));
     }
-
+    @GetMapping("/store/{id}")
+    public ResponseEntity<List<VirtualEventResponseDTO>> getEventByStoreId(@PathVariable Long id) {
+        return ResponseEntity.ok(virtualEventService.getEventByStoreId(id));
+    }
     @PutMapping("/{id}")
     @Operation(summary = "Update an event", description = "Updates an existing virtual event.")
     @ApiResponses({

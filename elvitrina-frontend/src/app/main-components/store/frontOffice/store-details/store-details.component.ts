@@ -30,6 +30,12 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StoreFeedbackType } from '../../../../core/models/storeFeedback/store-feedback-type.enum';
 import { StoreFeedback, getSentimentCategory } from '../../../../core/models/storeFeedback/store-feedback.model';
+import { VirtualEventService } from 'src/app/core/services/event/virtual-event.service';
+import { VirtualEvent } from 'src/app/core/models/event/virtual-event.model';
+import { EventStoreComponent } from 'src/app/main-components/event/frontoffice/event/event-store/event-store.component';
+import { DonationCampaignService } from 'src/app/core/services/donation/donation-campaign.service';
+import { DonationCampaign } from 'src/app/core/models/donation/donation-campaign.model';
+import { CampaignDetailsComponent } from 'src/app/main-components/donation/frontoffice/campaign/campaign-details/campaign-details.component';
 
 interface SortOption {
   value: string;
@@ -57,7 +63,9 @@ interface SortOption {
     MatTooltipModule,
     RouterModule,
     StoreFeedbackListComponent,
-    StoreFeedbackCreateComponent
+    StoreFeedbackCreateComponent,
+    EventStoreComponent, 
+    CampaignDetailsComponent,
   ],
   templateUrl: './store-details.component.html',
   styleUrls: ['./store-details.component.scss']
@@ -67,12 +75,13 @@ export class StoreDetailsComponent implements OnInit {
   products: Product[] = [];
   loading = true;
   error: string | null = null;
-  activeTab: 'products' | 'reviews' | 'analytics' = 'products';
+  activeTab: 'products' | 'reviews' | 'analytics' | 'donation'| 'event'= 'products';
   searchQuery = '';
   categories: ProductCategoryType[] = Object.values(ProductCategoryType);
   selectedCategory: ProductCategoryType | null = null;
   filteredProducts: Product[] = [];
-
+  events: VirtualEvent[] = [];
+  campaigns: DonationCampaign;
   // Make Math available in the template
   Math = Math;
   
@@ -116,11 +125,13 @@ export class StoreDetailsComponent implements OnInit {
 
   constructor(
     private storeService: StoreService,
+    private virtualEventService: VirtualEventService,
     private productService: ProductService,
     private storeFeedbackService: StoreFeedbackService,
     private storeFeedbackAnalysisService: StoreFeedbackAnalysisService,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
+    private donationCampaignService: DonationCampaignService,
     private authService: AuthService,
     private fb: FormBuilder,
     private router: Router,
@@ -159,6 +170,9 @@ export class StoreDetailsComponent implements OnInit {
         this.loadProducts(storeId);
         this.loadStoreStats(storeId);
         this.loadAnalyzedFeedback(storeId);
+        
+        this.loadVertuelEvents(storeId); 
+        this.loadDonationCampaigns(storeId); // Load donation campaigns if needed
       },
       error: (error: Error) => {
         console.error('Error loading store:', error);
@@ -166,6 +180,31 @@ export class StoreDetailsComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+  loadDonationCampaigns(storeId: number) {
+    this.donationCampaignService.getCampaignsByStore(storeId).subscribe({
+      next: (data) => {
+        this.campaigns = data[0];
+       console.log('Donation campaigns:', this.campaigns);
+       
+      },
+      error: (err) => {
+        console.error('Error fetching campaigns:', err);
+      }
+    });
+  }
+  loadVertuelEvents(storeId: number) {
+    this.virtualEventService.getEventByStoreId(storeId).subscribe({
+      next: (events) => {
+        this.events = events;
+        console.log('Virtual events:', this.events);
+        
+      } ,
+      error: (error: Error) => {        
+        console.error('Error loading virtual events:', error);
+        this.error = 'Error loading virtual events';
+      }
+    }); 
   }
 
   loadProducts(storeId: number): void {
@@ -320,8 +359,10 @@ export class StoreDetailsComponent implements OnInit {
   }
 
   setActiveTab(index: number): void {
-    this.activeTab = index === 0 ? 'products' : index === 1 ? 'reviews' : 'analytics';
+    const tabs = ['products', 'reviews', 'analytics', 'event', 'donation'];
+    this.activeTab = (tabs[index] as typeof this.activeTab) || 'products'; 
   }
+  
 
   searchProducts(): void {
     this.filterProducts();
@@ -508,4 +549,11 @@ export class StoreDetailsComponent implements OnInit {
   
     return this.IMAGE_PRODUCT_BASE_URL + imageUrl;
   }
+
+
+  openCreateEventDialog(): void {
+    this.router.navigate(['/events', this.store.storeId, 'create']);
+
+
+}
 }

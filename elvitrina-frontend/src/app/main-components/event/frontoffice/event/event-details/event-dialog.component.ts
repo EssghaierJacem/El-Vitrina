@@ -21,13 +21,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
             <input matInput id="title" formControlName="title" required>
           </mat-form-field>
         </div>
-        <div class="form-field-container">
-          <label for="description" class="form-label">Description</label>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Description</mat-label>
-            <textarea matInput id="description" formControlName="description" rows="3"></textarea>
-          </mat-form-field>
-        </div>
         <mat-checkbox formControlName="addMeet" color="primary">Add Google Meet</mat-checkbox>
       </form>
     </mat-dialog-content>
@@ -140,7 +133,6 @@ export class EventDialogComponent {
     const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1-hour duration
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
-      description: [''],
       addMeet: [true]
     });
   }
@@ -151,7 +143,6 @@ export class EventDialogComponent {
     const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
     const eventData = {
       summary: formValue.title,
-      description: formValue.description,
       start: startDate,
       end: endDate,
       addMeet: formValue.addMeet
