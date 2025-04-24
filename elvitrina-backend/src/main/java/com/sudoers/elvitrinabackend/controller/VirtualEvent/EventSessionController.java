@@ -24,6 +24,7 @@ public class EventSessionController {
     @PostMapping
     public ResponseEntity<EventSessionResponseDTO> addSessionToEvent(
             @RequestBody EventSessionRequestDTO requestDTO) {
+        System.out.println(requestDTO);
         return new ResponseEntity<>(eventSessionService.addSessionToEvent(requestDTO), HttpStatus.CREATED);
     }
 

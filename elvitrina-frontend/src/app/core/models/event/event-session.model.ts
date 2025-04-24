@@ -7,11 +7,22 @@ export interface EventSession {
   createdAt: Date;
   updatedAt: Date;
   virtualEvent: VirtualEvent;
+  streamUrl: string;
+
 }
 
 
 export interface EventSessionRequestDTO {
+  virtualEventId: number;
   startTime: string;
   endTime: string;
   sessionTitle: string;
+  streamUrl: string;
+}
+
+export interface EventSessionEventRequestDTO {
+  startTime: string;
+  endTime: string;
+  sessionTitle: string;
+  streamUrl: string;
 }

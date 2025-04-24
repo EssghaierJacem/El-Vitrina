@@ -192,16 +192,19 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
       .join(' ');
   }
 
-  getProductImageUrl(imageFilename: string): string {
-    if (!imageFilename) {
-      return 'assets/images/default-product.png'; 
+  getProductImageUrl(product: Product): string {
+    const imagePath = product?.mainImage || product?.images?.[0];
+  
+    if (!imagePath) {
+      return 'assets/images/products/no-image.jpg';
     }
   
-    if (imageFilename.startsWith('http')) {
-      return imageFilename; 
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
     }
   
-    return this.IMAGE_BASE_URL + imageFilename; 
+    const fileName = imagePath.replace(/^\/+/, '');
+    return `http://localhost:8080/api/products/products/images/${fileName}`;
   }
 
   getDisplayPrice(product: Product) {

@@ -9,6 +9,7 @@ import com.sudoers.elvitrinabackend.repository.StoreFeedBackRepository;
 import com.sudoers.elvitrinabackend.repository.StoreRepository;
 import com.sudoers.elvitrinabackend.repository.UserRepository;
 import com.sudoers.elvitrinabackend.service.ReviewAnalysis.ReviewAnalysisService;
+import com.sudoers.elvitrinabackend.service.sentiment.MultilingualSentimentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,9 @@ public class StoreFeedbackService implements IStoreFeedbackService {
     
     @Autowired
     private ReviewAnalysisService reviewAnalysisService;
+    
+    @Autowired
+    private MultilingualSentimentService multilingualSentimentService;
 
     @Override
     public StoreFeedbackDTO saveStoreFeedback(StoreFeedbackDTO storeFeedbackDTO) {
@@ -60,8 +64,35 @@ public class StoreFeedbackService implements IStoreFeedbackService {
         storeFeedback.setUser(user); // null is acceptable if your entity allows it
         storeFeedback.setCreatedAt(LocalDateTime.now());
 
+        // Analyze sentiment before saving if comment is not empty
+        if (storeFeedback.getComment() != null && !storeFeedback.getComment().isEmpty()) {
+            // Use the improved Multilingual sentiment service as the primary sentiment analyzer
+            MultilingualSentimentService.SentimentResult multilingualSentiment = 
+                    multilingualSentimentService.analyzeSentiment(storeFeedback.getComment());
+            
+            storeFeedbackDTO.setMultilingualSentiment(multilingualSentiment.getSentiment());
+            storeFeedbackDTO.setMultilingualConfidence(multilingualSentiment.getConfidence());
+            
+            // Convert to a compatible sentiment score and magnitude
+            storeFeedbackDTO.setSentimentScore(multilingualSentiment.getSentimentScore());
+            storeFeedbackDTO.setSentimentMagnitude(multilingualSentiment.getConfidence());
+            
+            // Generate summary using ReviewAnalysisService
+            String summary = reviewAnalysisService.summarizeReview(storeFeedback.getComment());
+            storeFeedbackDTO.setSummarizedComment(summary);
+        }
+
         StoreFeedback savedFeedback = storeFeedbackRepository.save(storeFeedback);
-        return convertToDTO(savedFeedback);
+        StoreFeedbackDTO result = convertToDTO(savedFeedback);
+        
+        // Transfer sentiment data from request DTO to response DTO
+        result.setSentimentScore(storeFeedbackDTO.getSentimentScore());
+        result.setSentimentMagnitude(storeFeedbackDTO.getSentimentMagnitude());
+        result.setMultilingualSentiment(storeFeedbackDTO.getMultilingualSentiment());
+        result.setMultilingualConfidence(storeFeedbackDTO.getMultilingualConfidence());
+        result.setSummarizedComment(storeFeedbackDTO.getSummarizedComment());
+        
+        return result;
     }
 
 
@@ -183,11 +214,15 @@ public class StoreFeedbackService implements IStoreFeedbackService {
         // Perform analysis for each feedback
         for (StoreFeedbackDTO feedback : feedbacks) {
             if (feedback.getComment() != null && !feedback.getComment().isEmpty()) {
-                // Analyze sentiment
-                ReviewAnalysisService.SentimentResult sentiment = 
-                        reviewAnalysisService.analyzeSentiment(feedback.getComment());
-                feedback.setSentimentScore(sentiment.getScore());
-                feedback.setSentimentMagnitude(sentiment.getMagnitude());
+                // Use the MultilingualSentimentService as the primary sentiment analyzer
+                MultilingualSentimentService.SentimentResult multilingualSentiment = 
+                        multilingualSentimentService.analyzeSentiment(feedback.getComment());
+                feedback.setMultilingualSentiment(multilingualSentiment.getSentiment());
+                feedback.setMultilingualConfidence(multilingualSentiment.getConfidence());
+                
+                // Set the legacy sentiment fields based on the multilingual result for compatibility
+                feedback.setSentimentScore(multilingualSentiment.getSentimentScore());
+                feedback.setSentimentMagnitude(multilingualSentiment.getConfidence());
                 
                 // Generate summary
                 String summary = reviewAnalysisService.summarizeReview(feedback.getComment());
@@ -204,12 +239,14 @@ public class StoreFeedbackService implements IStoreFeedbackService {
         List<StoreFeedbackDTO> analyzedFeedbacks = getAnalyzedFeedbacksByStoreId(storeId);
         
         Map<String, Long> distribution = new HashMap<>();
+        distribution.put("Very Positive", 0L);
         distribution.put("Positive", 0L);
         distribution.put("Neutral", 0L);
         distribution.put("Negative", 0L);
+        distribution.put("Very Negative", 0L);
         
         for (StoreFeedbackDTO feedback : analyzedFeedbacks) {
-            String sentiment = feedback.getSentimentCategory();
+            String sentiment = feedback.getDetailedSentimentCategory();
             distribution.put(sentiment, distribution.getOrDefault(sentiment, 0L) + 1);
         }
         

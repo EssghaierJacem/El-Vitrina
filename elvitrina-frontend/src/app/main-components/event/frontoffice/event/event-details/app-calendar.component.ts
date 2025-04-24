@@ -20,6 +20,8 @@ import { EventDialogComponent } from './event-dialog.component';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { EventDetailsDialogComponent } from './event-details-dialog.conponent';
 import { Observable } from 'rxjs';
+import { EventSaissionService } from 'src/app/core/services/event/event-saission.service';
+import { EventSessionRequestDTO } from 'src/app/core/models/event/event-session.model';
 
 @Component({
   selector: 'app-calendar',
@@ -40,11 +42,13 @@ import { Observable } from 'rxjs';
     MatDialogModule,
     EventDetailsDialogComponent,
     EventDialogComponent,
+
   ]
 })
 export class CalendarComponent implements OnInit, OnChanges {
   @Input() calendarEvents: any[] = [];
-  @Input() role: string = 'user'; 
+  @Input() role: string = 'USER'; 
+  @Input() eventId: number = 0;
   isSignedIn = false;
   events: any[] = [];
   calendarOptions: CalendarOptions = {
@@ -78,7 +82,8 @@ export class CalendarComponent implements OnInit, OnChanges {
     private googleCalendarService: GoogleCalendarService,
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private eventSaissionService: EventSaissionService,
   ) {}
 
   ngOnInit(): void {
@@ -157,7 +162,7 @@ export class CalendarComponent implements OnInit, OnChanges {
       title: event.title,
       start: event.start,
       end: event.end,
-      extendedProps: { description: '', hangoutLink: '' }
+      extendedProps: { description: '', hangoutLink: event.streamUrl },
     }));
     
     this.calendarOptions.events = [
@@ -204,33 +209,65 @@ export class CalendarComponent implements OnInit, OnChanges {
 
 
 
-  handleEventClick(arg: EventClickArg) {
-    const event = arg.event;
-    console.log('Event clicked:', event);
+  // handleEventClick(arg: EventClickArg) {
+  //   const event = arg.event;
+  //   console.log('Event clicked:', event);
   
-    const dialogRef = this.dialog.open(EventDetailsDialogComponent, {
-      data: {
-        title: event.title,
-        description: event.extendedProps['description'] || 'No description',
-        start: event.start,
-        end: event.end,
-        hangoutLink: event.extendedProps['hangoutLink']
-      },
-      width: '400px'
-    });
+  //   const dialogRef = this.dialog.open(EventDetailsDialogComponent, {
+  //     data: {
+  //       title: event.title,
+  //       start: event.start,
+  //       end: event.end,
+  //       hangoutLink: event.extendedProps['hangoutLink']
+  //     },
+  //     width: '400px'
+  //   });
   
-    // Update data dynamically if needed
-    setTimeout(() => {
-      dialogRef.componentInstance.data.description = 'Updated description';
-      dialogRef.componentInstance.data.title = 'Updated title';
-    }, 2000);
-  }
+  //   // Update data dynamically if needed
+  //   setTimeout(() => {
+  //     dialogRef.componentInstance.data.title = 'Updated title';
+  //   }, 2000);
+  // }
 
+// Update this method in your CalendarComponent class
+handleEventClick(arg: EventClickArg) {
+  const event = arg.event;
+  console.log('Event clicked:', event);
 
+  // Get the position of the clicked event for dialog positioning
+  const eventEl = arg.el;
+  const rect = eventEl.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  
+  // Add visual feedback for clicked event
+  eventEl.classList.add('event-clicked');
+  
+  // Open dialog with position data
+  const dialogRef = this.dialog.open(EventDetailsDialogComponent, {
+    data: {
+      title: event.title,
+      start: event.start,
+      end: event.end,
+      hangoutLink: event.extendedProps['hangoutLink'],
+      position: { x: centerX, y: centerY }
+    },
+    width: '400px',
+    maxWidth: '90vw',
+    backdropClass:'backdrop-bg-orange',
+    panelClass: 'event-details-dialog',
+    // No position settings here, we'll set it in the component
+  });
+  
+  // Remove highlight when dialog closes
+  dialogRef.afterClosed().subscribe(() => {
+    eventEl.classList.remove('event-clicked');
+  });
+}
 
 
   handleDateClick(info: any) {
-    if( this.role === 'seller'){
+    if( this.role === 'SELLER'){
     const dialogRef = this.dialog.open(EventDialogComponent, {
       data: { date: info.dateStr },
       width: '400px'
@@ -239,8 +276,10 @@ export class CalendarComponent implements OnInit, OnChanges {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         console.log("createing meet");
+        console.log(result);
+        
         this.createMeeting(result);
-        this.reloadEvents();
+        // this.reloadEvents();
       }
     });
   }}
@@ -261,7 +300,7 @@ export class CalendarComponent implements OnInit, OnChanges {
           end: item.end?.dateTime || item.end?.date,
           extendedProps: {
             description: item.description || '',
-            hangoutLink: item.hangoutLink || ''
+            hangoutLink: item.hangoutLink 
           },
           source: 'google'
         }));
@@ -282,18 +321,29 @@ export class CalendarComponent implements OnInit, OnChanges {
     this.loading = true;
     this.googleCalendarService.addMeetingEvent(
       eventData.summary,
-      eventData.description,
       eventData.start,
       eventData.end,
-      eventData.attendees,
       eventData.addMeet
     ).then(response => {
+      console.log('Meeting created successfully:', response);
+      const event: EventSessionRequestDTO={
+        virtualEventId:this.eventId, 
+        sessionTitle: response.result.summary,
+  startTime: response.result.start.dateTime,
+  endTime: response.result.end.dateTime,
+  streamUrl: response.result.hangoutLink,
+      }
+      console.log('Event session data:', event);
+      this.eventSaissionService.createEventSession(event).subscribe();
+    
       this.reloadEvents();
       this.loading = false;
       this.cdr.detectChanges();
 
       // this.snackBar.open('Event created successfully', 'Close', { duration: 3000 });
     }).catch(error => {
+      console.log('Error creating meeting:', error);
+      
       this.error = 'Failed to create meeting';
       // this.snackBar.open(this.error, 'Close', { duration: 3000 });
       this.loading = false;

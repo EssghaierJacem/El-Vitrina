@@ -42,8 +42,8 @@ public class VirtualEventMapper {
             List<EventSession> sessions = dto.getSessions().stream()
                     .map(sessionDTO -> {
                         EventSession session = new EventSession();
-                        session.setStartTime(sessionDTO.getStartTime());
-                        session.setEndTime(sessionDTO.getEndTime());
+                        session.setStartTime(sessionDTO.getStartTime().toLocalDateTime());
+                        session.setEndTime(sessionDTO.getEndTime().toLocalDateTime());
                         session.setSessionTitle(sessionDTO.getSessionTitle());
                         session.setVirtualEvent(event); // Bidirectional relationship
                         return session;
@@ -81,6 +81,7 @@ public class VirtualEventMapper {
                     sessionDTO.setStartTime(session.getStartTime());
                     sessionDTO.setEndTime(session.getEndTime());
                     sessionDTO.setSessionTitle(session.getSessionTitle());
+                    sessionDTO.setStreamUrl(session.getStreamUrl());
                     return sessionDTO;
                 })
                 .collect(Collectors.toList()) : Collections.emptyList());
@@ -111,8 +112,8 @@ public class VirtualEventMapper {
             List<EventSession> sessions = dto.getSessions().stream()
                     .map(sessionDTO -> {
                         EventSession session = new EventSession();
-                        session.setStartTime(sessionDTO.getStartTime());
-                        session.setEndTime(sessionDTO.getEndTime());
+                        session.setStartTime(sessionDTO.getStartTime().toLocalDateTime());
+                        session.setEndTime(sessionDTO.getEndTime().toLocalDateTime());
                         session.setSessionTitle(sessionDTO.getSessionTitle());
                         session.setVirtualEvent(event);
                         return session;

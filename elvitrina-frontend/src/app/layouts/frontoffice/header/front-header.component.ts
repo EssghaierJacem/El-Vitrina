@@ -69,11 +69,10 @@ export class FrontHeaderComponent implements OnInit {
       this.role = user?.role || '';
       console.log(user);
 
-      // Always fetch products for search, regardless of login
       this.productService.getAll().subscribe((products) => {
-        console.log('Fetched products:', products); // Debug line
+        console.log('Fetched products:', products); 
         this.products = products;
-        this.applySearchFilters(); // Initial population
+        this.applySearchFilters(); 
       });
 
       if (this.userId) {

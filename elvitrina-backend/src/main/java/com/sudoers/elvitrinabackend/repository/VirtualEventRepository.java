@@ -17,6 +17,7 @@ public interface VirtualEventRepository extends JpaRepository<VirtualEvent, Long
 
 
     List<VirtualEvent> findByEventTypeAndEventMode(EventType eventType, EventMode eventMode);
+    List<VirtualEvent> findByStore_StoreId(Long id);
     List<VirtualEvent> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String title, String description);
     List<VirtualEvent> findByEventDateAfterOrSessionsStartTimeAfter(LocalDateTime eventDate, LocalDateTime sessionStartTime);
 }

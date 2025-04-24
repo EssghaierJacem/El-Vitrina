@@ -24,10 +24,10 @@ export class GoogleCalendarService {
     }
   }
 
-  async addMeetingEvent(summary: string, description: string, start: Date, end: Date, attendees: any[] = [], addMeet: boolean = true): Promise<any> {
+  async addMeetingEvent(summary: string, start: Date, end: Date, addMeet: boolean = true): Promise<any> {
     try {
       const response = await this.googleApiService.createMeetingEvent(
-        summary, description, start, end, attendees, addMeet
+        summary, start, end, addMeet
       ).toPromise();
       return response;
     } catch (error) {

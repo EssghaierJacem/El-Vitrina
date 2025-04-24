@@ -12,6 +12,8 @@ import java.util.List;
 public interface VirtualEventService {
     VirtualEventResponseDTO createEvent(VirtualEventRequestDTO requestDTO);
     VirtualEventResponseDTO getEventById(Long id);
+    List<VirtualEventResponseDTO>  getEventByStoreId(Long id);
+
     List<VirtualEventResponseDTO> getAllEvents();
     Page<VirtualEventResponseDTO> getEventsPaginated(Pageable pageable);
     VirtualEventResponseDTO updateEvent(Long id, VirtualEventRequestDTO requestDTO);
