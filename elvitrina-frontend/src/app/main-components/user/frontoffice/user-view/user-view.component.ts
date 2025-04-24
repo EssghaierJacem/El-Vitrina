@@ -13,6 +13,12 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { StoreService } from 'src/app/core/services/store/store.service';
+import { Store } from 'src/app/core/models/store/store.model';
+import { TokenService } from 'src/app/core/services/user/TokenService';
+import { RouterModule } from '@angular/router';
+import { Product } from 'src/app/core/models/product/product.model';
+import { ProductService } from 'src/app/core/services/product/product.service';
 
 @Component({
   selector: 'app-user-view',
@@ -29,22 +35,35 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatChipsModule,
     MatBadgeModule,
     MatProgressSpinnerModule,
-    MatExpansionModule
+    MatExpansionModule,
+    RouterModule,
   ]
 })
 export class UserViewComponent implements OnInit {
   userId!: number;
   user?: User;
   isLoading = true;
+  stores: Store[] = [];
+  loggedInUserId: number | null = null;
+  productsByStore: { [storeId: number]: Product[] } = {};
+
+
 
   readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
 
-  constructor(private route: ActivatedRoute, private userService: UserService) {}
+  constructor(private route: ActivatedRoute,
+              private userService: UserService,
+              private storeService: StoreService,
+              private tokenService: TokenService,
+              private productService: ProductService,
+            ) {}
 
   ngOnInit(): void {
     this.userId = Number(this.route.snapshot.paramMap.get('id'));
     if (this.userId) {
+      this.loggedInUserId = this.tokenService.getUserId();
       this.loadUserData();
+      this.loadUserStores();
     }
   }
 
@@ -73,4 +92,76 @@ export class UserViewComponent implements OnInit {
       }
     });
   }
+
+  deleteStore(storeId: number): void {
+    if (confirm('Are you sure you want to delete this store?')) {
+      this.storeService.delete(storeId).subscribe({
+        next: () => {
+          this.stores = this.stores.filter(s => s.storeId !== storeId);
+        },
+        error: (err) => console.error('Failed to delete store', err)
+      });
+    }
+  }
+
+  isLoggedIn(): boolean {
+    return this.tokenService.getToken() !== null;
+  }
+
+  isStoreOwner(storeUserId: number): boolean {
+    return this.loggedInUserId !== null && this.loggedInUserId === storeUserId;
+  }
+
+  loadUserStores(): void {
+    this.storeService.getAll().subscribe({
+      next: (data) => {
+        this.stores = data.filter(store => store.userId === this.userId);
+        this.stores.forEach(store => this.loadProductsForStore(store.storeId));
+      },
+      error: (err) => {
+        console.error('Failed to load stores', err);
+      }
+    });
+  }
+
+  
+  loadProductsForStore(storeId: number): void {
+    this.productService.getAllByStoreId(storeId).subscribe({
+      next: (products) => {
+        this.productsByStore[storeId] = products;
+      },
+      error: (err) => {
+        console.error(`Failed to load products for store ${storeId}`, err);
+      }
+    });
+  }
+
+  deleteProduct(storeId: number, productId: number): void {
+    if (confirm('Are you sure you want to delete this product?')) {
+      this.productService.delete(productId).subscribe({
+        next: () => {
+          this.productsByStore[storeId] = this.productsByStore[storeId]
+            .filter(p => p.productId !== productId);
+        },
+        error: (err) => {
+          console.error(`Failed to delete product ${productId}`, err);
+        }
+      });
+    }
+  }
+
+  getTotalProducts(): number {
+    let total = 0;
+    
+    if (this.stores && this.productsByStore) {
+      Object.values(this.productsByStore).forEach(products => {
+        if (products) {
+          total += products.length;
+        }
+      });
+    }
+    
+    return total;
+  }
+  
 }

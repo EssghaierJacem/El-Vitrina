@@ -504,7 +504,7 @@
           <li class="nav-item">
 
             <!-- Toggle -->
-            <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#sidebarHome">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" routerLink="/home">
               Home
             </a>
 
@@ -650,7 +650,7 @@
           <li class="nav-item">
 
             <!-- Toggle -->
-            <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#sidebarShop">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" routerlink="/stores">
               Shop
             </a>
 
@@ -660,12 +660,12 @@
                 <div class="col-12 py-3">
 
                   <!-- Heading -->
-                  <h6 class="mb-5">Shop</h6>
+                  <h6 class="mb-5" >Shop</h6>
 
                   <!-- Links -->
                   <ul class="list-styled fs-lg">
                     <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Default</a>
+                      <a class="list-styled-link" routerlink="/stores">Default</a>
                     </li>
                     <li class="list-styled-item">
                       <a class="list-styled-link" href="#">Topbar</a>
@@ -835,21 +835,9 @@
           <li class="nav-item">
 
             <!-- Toggle -->
-            <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#sidebarBlog">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" routerLink="/blog">
               Blog
             </a>
-
-            <!-- Collapse -->
-            <div class="collapse" id="sidebarBlog" data-bs-parent="#sidebarNav">
-              <ul class="list-styled fs-lg py-3 mb-0">
-                <li class="list-styled-item">
-                  <a class="list-styled-link" href="#">Blog</a>
-                </li>
-                <li class="list-styled-item">
-                  <a class="list-styled-link" href="#">Blog Post</a>
-                </li>
-              </ul>
-            </div>
 
           </li>
           <li class="nav-item">
@@ -1330,12 +1318,6 @@
             <li class="nav-item">
               <a class="nav-link" href="/offers">Offers</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/" fragment="contact-section">Contact</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/offers">Offers</a>
-            </li>
           </ul>
 
           <!-- Nav -->
@@ -1387,7 +1369,7 @@
             <li class="nav-item dropdown">
 
               <!-- Toggle -->
-              <a class="nav-link" data-bs-toggle="dropdown" href="#">Home</a>
+              <a class="nav-link" data-bs-toggle="dropdown" routerLink="/home">Home</a>
 
             </li>
             <li class="nav-item dropdown position-static">
@@ -1437,7 +1419,7 @@
                               <!-- Links -->
                               <ul class="list-styled mb-6 mb-md-0 fs-sm">
                                 <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">All Clothing</a>
+                                  <a class="list-styled-link" routerlink="/products">All Products</a>
                                 </li>
                                 <li class="list-styled-item">
                                   <a class="list-styled-link" href="#">Blouses & Shirts</a>
@@ -1598,7 +1580,7 @@
             <li class="nav-item dropdown">
 
               <!-- Toggle -->
-              <a class="nav-link" data-bs-toggle="dropdown" href="#">Shop</a>
+              <button class="nav-link" data-bs-toggle="dropdown" href="/stores">Shop</button>
 
               <!-- Menu -->
               <div class="dropdown-menu" style="min-width: 650px;">
@@ -1766,85 +1748,18 @@
               </div>
 
             </li>
-            <li class="nav-item dropdown">
 
-              <!-- Toggle -->
-              <a class="nav-link" data-bs-toggle="dropdown" href="#">Pages</a>
-
-              <!-- Menu -->
-              <div class="dropdown-menu">
-                <div class="card card-lg">
-                  <div class="card-body">
-                    <ul class="list-styled fs-sm">
-                      <li class="list-styled-item">
-                        <a class="list-styled-link" href="#">About</a>
-                      </li>
-                      <li class="list-styled-item">
-                        <a class="list-styled-link" href="#">Contact Us</a>
-                      </li>
-                      <li class="list-styled-item">
-                        <a class="list-styled-link" href="#">Store Locator</a>
-                      </li>
-                      <li class="list-styled-item">
-                        <a class="list-styled-link" href="#">FAQ</a>
-                      </li>
-                      <li class="list-styled-item">
-                        <a class="list-styled-link" href="#">Coming Soon</a>
-                      </li>
-                      <li class="list-styled-item">
-                        <a class="list-styled-link" href="#">404</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-            </li>
-            <li class="nav-item dropdown">
-
-              <!-- Toggle -->
-              <a class="nav-link" data-bs-toggle="dropdown" href="#" (click)="trackInterest('blog')">Blog</a>
-
-              <!-- Menu -->
-              <div class="dropdown-menu">
-                <div class="card card-lg">
-                  <div class="card-body">
-                    <ul class="list-styled fs-sm">
-                      <li class="list-styled-item">
-                        <a class="list-styled-link" href="#">Blog</a>
-                      </li>
-                      <li class="list-styled-item">
-                        <a class="list-styled-link" href="#">Blog Post</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link" *ngIf="isLoggedIn" data-bs-toggle="dropdown" href="/users">Hello, {{ firstName || ' Guest' }}</a>
-              <div class="dropdown-menu" *ngIf="isLoggedIn()">
-                <div class="card card-lg">
-                  <div class="card-body">
-                    <ul class="list-styled fs-sm">
-                      <li class="list-styled-item">
-                        <a class="list-styled-link" *ngIf="isLoggedIn()" href="/users">Connect +</a>
-                      </li>
-                      <li class="list-styled-item">
-                        <a class="list-styled-link" *ngIf="isLoggedIn()" href="/friends/friend-requests">My Friends</a>
-                      </li>
-                      <li class="list-styled-item">
-                        <a class="list-styled-link" *ngIf="isLoggedIn()" href="/friends/messages">Messages</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </li>
-
+              <!-- Blog -->
+              <a class="nav-link" data-bs-toggle="dropdown" routerLink="/blog" (click)="trackInterest('blog')">Blog</a>
 
             <li class="nav-item dropdown">
+
+            <li class="nav-item dropdown">
+
+                <!-- Formation -->
+                <a class="nav-link" data-bs-toggle="dropdown" routerLink="/formation" (click)="trackInterest('cooking')">Formation</a>
+  
+              <li class="nav-item dropdown">
     
               <!-- Toggle -->
               <a class="nav-link" data-bs-toggle="dropdown" href="#">Request</a>
@@ -1906,6 +1821,15 @@
                     <li class="list-styled-item" *ngIf="isLoggedIn()">
                       <a class="list-styled-link" href="#" [routerLink]="['/users', userId, 'profile']">Update Profile</a>
                     </li>
+                    <li class="list-styled-item">
+                      <a class="list-styled-link" *ngIf="isLoggedIn()" href="/users">Connect +</a>
+                    </li>
+                    <li class="list-styled-item">
+                      <a class="list-styled-link" *ngIf="isLoggedIn()" href="/friends/friend-requests">My Friends</a>
+                    </li>
+                    <li class="list-styled-item">
+                      <a class="list-styled-link" *ngIf="isLoggedIn()" href="/friends/messages">Messages</a>
+                    </li>
                     <li class="list-styled-item" *ngIf="isLoggedIn()">
                       <a class="list-styled-link" href="#" (click)="logout()">Logout</a>
                     </li>
@@ -1928,15 +1852,15 @@
               </a>
             </li>
             <li class="nav-item ms-lg-n4">
+              <a mat-button (click)="openFeedbackDialog()" class="nav-link">
+                <i class="fa-regular fa-message"></i>
+              </a>
+            </li>
+            <li class="nav-item ms-lg-n4">
               <a class="nav-link" data-bs-toggle="offcanvas" href="#modalShoppingCart">
                 <span data-cart-items="2">
                   <i class="fe fe-shopping-cart"></i>
                 </span>
-              </a>
-            </li>
-            <li class="nav-item ms-lg-n4">
-              <a mat-button (click)="openFeedbackDialog()" class="nav-link">
-                <i class="fa-regular fa-message"></i>
               </a>
             </li>
           </ul>
