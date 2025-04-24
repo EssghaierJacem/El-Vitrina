@@ -1,0 +1,17 @@
+<div class="calendar-container">
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+
+  <div *ngIf="!isSignedIn && !loading" class="auth-message">
+    <button mat-raised-button color="primary" (click)="signIn()">
+      <mat-icon>login</mat-icon> Sign in with Google
+    </button>
+  </div>
+
+  <div *ngIf="isSignedIn" class="calendar-content">
+    <div class="calendar-wrapper">
+      <full-calendar [options]="calendarOptions"></full-calendar>
+    </div>
+  </div>
+
+  <mat-spinner *ngIf="loading" diameter="50"></mat-spinner>
+</div>

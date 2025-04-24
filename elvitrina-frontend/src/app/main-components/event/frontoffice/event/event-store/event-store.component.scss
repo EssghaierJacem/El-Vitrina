@@ -1,0 +1,354 @@
+@import '../../../../../../assets/scss/variables';
+
+:host {
+  display: block;
+  font-family: $font-family;
+}
+
+.events-container {
+  max-width: $boxedWidth;
+  margin: $card-spacer auto;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.event-card {
+  width: 100%;
+  max-width: 500px;
+  border-radius: $border-radius;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: $light;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .event-image {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  .badges-container {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    z-index: 10;
+  }
+
+  .badge {
+    background-color: $white;
+    border-radius: 50px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: $text-color;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .cooking-badge {
+    .cooking-icon {
+      color: $accent;
+      font-size: 16px;
+      margin-right: 6px;
+    }
+  }
+
+  .date-badge {
+    display: flex;
+    align-items: center;
+
+    .date-icon {
+      color: $warning;
+      font-size: 16px;
+      margin-right: 6px;
+    }
+  }
+
+  .participants-badge {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    background-color: $white;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+
+    .count {
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1;
+      color: $success;
+    }
+
+    .total {
+      font-size: 10px;
+      color: #000;
+    }
+  }
+
+  .price-badge {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    background-color: $white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+
+    .amount {
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1;
+      color: #000;
+    }
+
+    .currency {
+      font-size: 12px;
+      color: #000;
+    }
+  }
+
+  .event-content {
+    padding: 16px;
+    background-color: $white;
+  }
+
+  .event-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: $text-color;
+    margin: 0 0 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .event-location {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+
+    .location-icon {
+      background-color: $light-secondary;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 12px;
+      color: $primary;
+    }
+
+    .location-text {
+      font-size: 0.9rem;
+      color: #000;
+
+      .city {
+        color: rgba(0, 0, 0, 0.6);
+        display: block;
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  .join-button {
+    background-color: $primary;
+    color: $white;
+    border-radius: 50px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+
+    .heart-icon {
+      color: $warning;
+      margin-right: 8px;
+      font-size: 16px;
+    }
+
+    &:hover {
+      background-color: var(--mat-sys-primary);
+      filter: brightness(0.9); // Makes it darker
+  }
+    &:disabled {
+      background-color: $light-secondary;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.loading-container,
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  background: $light;
+  border-radius: $border-radius;
+  color: #000;
+  font-size: 1rem;
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: $error;
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .events-container {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .event-card {
+    max-width: 100%;
+    border-radius: $border-radius;
+
+    .event-image {
+      height: 150px;
+    }
+
+    .badges-container {
+      top: 8px;
+      left: 8px;
+      gap: 6px;
+    }
+
+    .badge {
+      padding: 4px 8px;
+      font-size: 12px;
+
+      .cooking-icon,
+      .date-icon {
+        font-size: 14px;
+        margin-right: 4px;
+      }
+    }
+
+    .participants-badge {
+      right: 8px;
+      top: 8px;
+      width: 40px;
+      height: 40px;
+
+      .count {
+        font-size: 16px;
+      }
+
+      .total {
+        font-size: 8px;
+      }
+    }
+
+    .price-badge {
+      right: 8px;
+      bottom: 8px;
+      width: 50px;
+      height: 50px;
+
+      .amount {
+        font-size: 16px;
+      }
+
+      .currency {
+        font-size: 10px;
+      }
+    }
+
+    .event-title {
+      font-size: 1.2rem;
+    }
+
+    .event-location {
+      .location-icon {
+        width: 28px;
+        height: 28px;
+      }
+
+
+      .location-text {
+        font-size: 0.85rem;
+
+        .city {
+          font-size: 0.8rem;
+        }
+      }
+    }
+
+    .join-button {
+      padding: 6px 12px;
+      font-size: 12px;
+
+      .heart-icon {
+        font-size: 14px;
+        margin-right: 6px;
+      }
+    }
+  }
+
+  .events-container {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .event-card {
+    .event-image {
+      height: 120px;
+    }
+
+    .event-title {
+      font-size: 1rem;
+    }
+
+    .event-content {
+      padding: 12px;
+    }
+  }
+
+  .events-container {
+    grid-template-columns: 1fr;
+    padding: 8px;
+  }
+}

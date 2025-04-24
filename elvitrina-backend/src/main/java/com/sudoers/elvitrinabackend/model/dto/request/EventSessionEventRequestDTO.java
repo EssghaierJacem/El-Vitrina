@@ -1,13 +1,12 @@
 package com.sudoers.elvitrinabackend.model.dto.request;
 
-import lombok.Data;
+        import lombok.Data;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+        import java.time.LocalDateTime;
+        import java.time.OffsetDateTime;
 
 @Data
-public class EventSessionRequestDTO {
-    private Long virtualEventId;
+public class EventSessionEventRequestDTO {
     private OffsetDateTime startTime;
     private OffsetDateTime endTime;
     private String sessionTitle;

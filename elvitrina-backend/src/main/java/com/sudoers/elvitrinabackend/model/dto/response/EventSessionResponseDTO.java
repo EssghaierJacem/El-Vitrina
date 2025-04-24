@@ -11,7 +11,5 @@ public class EventSessionResponseDTO {
     private LocalDateTime endTime;
     private String sessionTitle;
     private Long virtualEventId;
-    private boolean isCompleted;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String streamUrl;
 }

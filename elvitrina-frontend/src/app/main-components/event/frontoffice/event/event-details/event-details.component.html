@@ -17,10 +17,20 @@
           <span><mat-icon>live_tv</mat-icon> {{ event.eventType }} / {{ event.eventMode }}</span>
         </div>
       </mat-card-content>
+      
+  
+ 
+      <!-- In your event-details.component.html, inside the mat-card-actions -->
       <mat-card-actions>
-        <button mat-raised-button class="join-button" (click)="joinEvent()">
-          <mat-icon>login</mat-icon> Join Event
-        </button>
+        <ng-container *ngIf="!hasUserJoined(); else alreadyJoined">
+         
+        </ng-container>
+        <ng-template #alreadyJoined>
+          <span style="display: flex; align-items: center; color: green;">
+            <mat-icon>check_circle</mat-icon>
+            <span style="margin-left: 8px;">You have joined this event</span>
+          </span>
+        </ng-template>
       </mat-card-actions>
     </mat-card>
   </section>
@@ -36,7 +46,7 @@
           <mat-spinner diameter="30"></mat-spinner>
           <span>Loading Google Calendar events...</span>
         </div>
-        <app-calendar [calendarEvents]="displayedCalendarEvents" [role]="role"></app-calendar>
+        <app-calendar [calendarEvents]="displayedCalendarEvents" [role]="role" [eventId]="event.eventId"></app-calendar>
       </mat-card-content>
     </mat-card>
   </section>

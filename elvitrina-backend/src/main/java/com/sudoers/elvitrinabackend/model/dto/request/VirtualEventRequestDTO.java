@@ -20,7 +20,7 @@ public class VirtualEventRequestDTO {
     private EventType eventType;
     private EventMode eventMode;
     private Integer maxParticipants;
-    private List<EventSessionRequestDTO> sessions;
+    private List<EventSessionEventRequestDTO> sessions;
     private Long storeId;
     private Long userId;
 }

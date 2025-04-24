@@ -1,54 +1,62 @@
-/* Campaign Styles */
+@import '../../../../../../assets/scss/variables';
+
+// Campaign Container
 .campaign-container {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
   background-color: white;
-  border-radius: 15px;
+  border-radius: 8px;
   overflow: hidden;
   display: flex;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  border: 1px solid #1ABC9C;
-  padding: 30px 30px 0 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  padding: 2rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 1rem;
+  }
 
   h1 {
-    font-size: 42px;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: #212121;
-
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+    
     .green-text {
-      color: #1ABC9C;
+      color: #1976d2; // Updated to store's primary blue
     }
   }
 
   .description {
-    color: #616161;
+    color: #555;
     line-height: 1.6;
-    margin-bottom: 30px;
-    font-size: 15px;
+    margin-bottom: 2rem;
+    font-size: 1rem;
   }
 
   .progress-section {
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
 
     .amount {
-      color: #1ABC9C;
-      font-weight: bold;
-      font-size: 20px;
-      margin-bottom: 8px;
+      color: #1976d2; // Updated to store's primary blue
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
     }
 
     .progress-bar {
       width: 100%;
-      height: 12px;
-      background-color: #e0e0e0;
-      border-radius: 20px;
+      height: 10px;
+      background-color: #f5f5f5; // Updated to store's light gray
+      border-radius: 5px;
       overflow: hidden;
 
       .progress {
         height: 100%;
-        background-color: #1ABC9C;
-        border-radius: 20px;
+        background-color: #1976d2; // Updated to store's primary blue
+        border-radius: 5px;
+        transition: width 0.3s ease;
       }
     }
   }
@@ -56,25 +64,26 @@
   .stats-container {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
+    gap: 1rem;
 
     .stat-box {
       border: 1px solid #e0e0e0;
-      border-radius: 10px;
-      padding: 20px;
+      border-radius: 8px;
+      padding: 1.5rem;
       text-align: center;
-      width: 30%;
+      flex: 1;
 
       .stat-number {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 5px;
-        color: #212121;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        color: #333;
       }
 
       .stat-label {
-        color: #757575;
-        font-size: 14px;
+        color: #777;
+        font-size: 0.9rem;
       }
     }
   }
@@ -82,23 +91,22 @@
   .action-buttons {
     display: flex;
     align-items: center;
-    margin-top: 90px;
-    gap: 15px;
+    gap: 1rem;
     justify-content: flex-end;
 
     .contribute-btn {
-      background-color: #FF6F61;
+      background-color: #1976d2; // Updated to store's primary blue
       color: white;
       border: none;
-      padding: 12px 25px;
-      border-radius: 5px;
-      font-weight: bold;
-      font-size: 16px;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 1rem;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s ease;
 
       &:hover {
-        background-color: #1ABC9C;
+        background-color: #1565c0; // Darker blue for hover
       }
 
       &:disabled {
@@ -108,33 +116,35 @@
     }
 
     .more-info {
-      color: #212121;
+      color: #333;
       text-decoration: none;
       font-weight: 500;
       cursor: pointer;
       background: none;
       border: none;
-      padding: 12px 25px;
+      padding: 0.75rem 1.5rem;
 
       &:hover {
+        color: #1976d2; // Updated to store's primary blue
         text-decoration: underline;
       }
     }
   }
 }
 
-/* Coupon Styles */
+// Coupon Styles
 .coupon {
   width: 400px;
   height: 200px;
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
-  margin: auto;
-  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
+  margin: 2rem auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
   display: flex;
   align-items: stretch;
   position: relative;
   text-transform: uppercase;
+  background-color: #fff;
 
   &::before,
   &::after {
@@ -148,12 +158,12 @@
 
   &::before {
     left: 0;
-    background-image: radial-gradient(circle at 0 50%, transparent 25px, gold 26px);
+    background-image: radial-gradient(circle at 0 50%, transparent 25px, #ffd700 26px); // Updated to store's gold
   }
 
   &::after {
     right: 0;
-    background-image: radial-gradient(circle at 100% 50%, transparent 25px, gold 26px);
+    background-image: radial-gradient(circle at 100% 50%, transparent 25px, #ffd700 26px); // Updated to store's gold
   }
 
   > div {
@@ -165,34 +175,39 @@
   .left {
     width: 20%;
     border-right: 2px dashed rgba(0, 0, 0, 0.13);
+    background-color: #f5f5f5; // Updated to store's light gray
 
     div {
       transform: rotate(-90deg);
       white-space: nowrap;
-      font-weight: bold;
+      font-weight: 600;
+      color: #333;
     }
   }
 
   .center {
     flex-grow: 1;
     text-align: center;
+    background-color: #fff;
 
     h2 {
-      background: #000;
-      color: gold;
-      padding: 0 10px;
-      font-size: 2.15rem;
+      background: #1976d2; // Updated to store's primary blue
+      color: #ffd700; // Updated to store's gold
+      padding: 0.5rem 1rem;
+      font-size: 1.8rem;
       white-space: nowrap;
     }
 
     h3 {
-      font-size: 2.15rem;
+      font-size: 1.8rem;
+      color: #333;
     }
 
     small {
-      font-size: 0.625rem;
+      font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 2px;
+      color: #777;
     }
   }
 
@@ -205,19 +220,33 @@
       font-size: 2.5rem;
       font-weight: 400;
       transform: rotate(-90deg);
+      color: #333;
     }
   }
 
   @media screen and (max-width: 500px) {
     display: grid;
     grid-template-columns: 1fr;
+    height: auto;
+    padding: 1rem;
 
-    .left div {
-      transform: rotate(0deg);
+    .left {
+      width: 100%;
+      border-right: none;
+      border-bottom: 2px dashed rgba(0, 0, 0, 0.13);
+
+      div {
+        transform: rotate(0deg);
+      }
     }
 
-    .right div {
-      transform: rotate(0deg);
+    .right {
+      width: 100%;
+      background-image: none;
+
+      div {
+        transform: rotate(0deg);
+      }
     }
   }
 }
