@@ -30,7 +30,6 @@ import { StoreFeedbackAnalysisService, FeedbackAnalytics, MultilingualSentimentA
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StoreFeedbackType } from '../../../../core/models/storeFeedback/store-feedback-type.enum';
-import { StoreFeedback, getSentimentCategory } from '../../../../core/models/storeFeedback/store-feedback.model';
 import { VirtualEventService } from 'src/app/core/services/event/virtual-event.service';
 import { VirtualEvent } from 'src/app/core/models/event/virtual-event.model';
 import { EventStoreComponent } from 'src/app/main-components/event/frontoffice/event/event-store/event-store.component';

@@ -32,6 +32,7 @@ import { EventJoinDialogComponent } from '../event-join/event-join.component';
 import { EventParticipantRequest } from 'src/app/core/models/event/event-participant.model';
 import { TokenService } from 'src/app/core/services/user/TokenService';
 import { EventDetailsDialogComponent } from './event-details-dialog.conponent';
+import { AiContentService } from 'src/app/core/models/event/aiservice.service';
 
 enum EventType {
   FREE_LIVE = 'FREE_LIVE',
@@ -103,6 +104,7 @@ export class EventCreateComponent implements OnInit {
     private eventParticipantService: EventParticipantService,
     private googleCalendar: GoogleCalendarService,
     private snackBar: MatSnackBar,
+    private aiContentService :  AiContentService ,
     private dialog: MatDialog,
     private authService: TokenService,
     private fb: FormBuilder,
@@ -299,8 +301,39 @@ export class EventCreateComponent implements OnInit {
     }
   }
   
-  onGenerateAIImage(): void {
-  
+  onGenerateAIContent(): void {
+    this.loading = true;
+
+    const prompt = 'Generate details for a cooking event, including title, description, start date and time, and end date and time.';
+    
+    this.aiContentService.generateEventContent(prompt).subscribe({
+      next: (response : any) => {
+        // Update form controls with AI-generated content
+        this.eventForm.patchValue({
+          title: response.title,
+          description: response.description,
+          startDateTime: response.startDateTime ? new Date(response.startDateTime) : null
+          // Note: endDateTime is not in the form but could be emitted to calendar
+        });
+
+        // Optionally emit session details to calendar
+        // if (response.startDateTime && response.endDateTime) {
+        //   this.sessionCreated.emit({
+        //     title: response.title,
+        //     start: new Date(response.startDateTime),
+        //     end: new Date(response.endDateTime)
+        //   });
+        // }
+
+        this.snackBar.open('Event details updated with AI content!', 'Close', { duration: 3000 });
+        this.loading = false;
+      },
+      error: (error :any) => {
+        console.error('Error generating AI content:', error);
+        this.snackBar.open('Failed to generate AI content. Using fallback data.', 'Close', { duration: 3000 });
+        this.loading = false;
+      }
+    });
   }
   
 }
