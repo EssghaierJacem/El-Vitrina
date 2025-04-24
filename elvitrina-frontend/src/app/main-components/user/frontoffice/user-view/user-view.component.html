@@ -1,24 +1,25 @@
 <div class="profile-container">
+  <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-container">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Loading user profile...</p>
   </div>
 
+  <!-- User Profile Content -->
   <div *ngIf="!isLoading && user" class="user-profile">
+    <!-- Profile Header -->
     <mat-card class="profile-header">
-      <div class="profile-banner">
-        <!-- Background image will be applied via CSS -->
-      </div>
+      <div class="profile-banner" [ngStyle]="{'background-image': 'url(https://img.pikbest.com/backgrounds/20190403/literary-romantic-aesthetic-jewelry-banner_1827573.jpg!bw700)'}"></div>
       <div class="profile-main">
         <div class="profile-avatar" [ngClass]="{'active-user': user.status}">
-          <img *ngIf="user.image" [src]="getUserImage()" alt="User image">
+          <img *ngIf="user.image" [src]="getUserImage()" alt="User profile image">
           <div *ngIf="!user.image" class="avatar-placeholder">
             {{ user.firstname?.charAt(0) }}{{ user.lastname?.charAt(0) }}
           </div>
           <mat-icon *ngIf="user.status" class="status-badge" color="accent">check_circle</mat-icon>
         </div>
         <div class="profile-info">
-          <h1>{{ user.firstname }} {{ user.lastname }}</h1>
+          <h1 class="user-name">{{ user.firstname }} {{ user.lastname }}</h1>
           <div class="user-meta">
             <mat-chip-set>
               <mat-chip color="primary">{{ user.role }}</mat-chip>
@@ -27,13 +28,28 @@
               </mat-chip>
             </mat-chip-set>
             <div class="points-badge" matBadge="{{ user.points }}" matBadgeOverlap="false" matBadgeColor="accent">
-              <mat-icon>stars</mat-icon> Points
+              <mat-icon>stars</mat-icon> <span>Points</span>
+            </div>
+          </div>
+          <div class="profile-stats">
+            <div class="stat-item">
+              <span class="stat-value">{{ stores?.length || 0 }}</span>
+              <span class="stat-label">Stores</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ getTotalProducts() }}</span>
+              <span class="stat-label">Products</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ user.registrationDate | date:'MMM yyyy' }}</span>
+              <span class="stat-label">Member Since</span>
             </div>
           </div>
         </div>
       </div>
     </mat-card>
 
+    <!-- Contact Information -->
     <mat-card class="contact-details">
       <mat-card-header>
         <mat-card-title>Contact Information</mat-card-title>
@@ -46,23 +62,30 @@
         <mat-divider></mat-divider>
         <div class="contact-item">
           <mat-icon>phone</mat-icon>
-          <span>{{ user.phone }}</span>
+          <span>{{ user.phone || 'Not provided' }}</span>
         </div>
         <mat-divider></mat-divider>
         <div class="contact-item">
           <mat-icon>home</mat-icon>
-          <span>{{ user.address }}</span>
+          <span>{{ user.address || 'Not provided' }}</span>
         </div>
       </mat-card-content>
     </mat-card>
 
+    <!-- Action Buttons -->
     <div class="action-buttons">
-      <button mat-stroked-button color="accent">
+      <button mat-stroked-button color="accent" class="action-btn">
         <mat-icon>message</mat-icon> Message
+      </button>
+      <button *ngIf="isLoggedIn() && user?.id !== undefined && !isStoreOwner(user.id!)" mat-stroked-button color="primary" class="action-btn">
+        <mat-icon>person_add</mat-icon> Follow
+      </button>
+      <button mat-stroked-button color="basic" class="action-btn share-btn">
+        <mat-icon>share</mat-icon> Share
       </button>
     </div>
 
-    <!-- New Expandable Sections -->
+    <!-- Expandable Sections -->
     <mat-accordion multi="true" class="expandable-sections">
       <!-- Feedbacks Section -->
       <mat-expansion-panel>
@@ -71,9 +94,7 @@
             <mat-icon>rate_review</mat-icon>
             <span>Feedbacks</span>
           </mat-panel-title>
-          <mat-panel-description>
-            User feedback and reviews
-          </mat-panel-description>
+          <mat-panel-description>User feedback and reviews</mat-panel-description>
         </mat-expansion-panel-header>
         <div class="empty-section">
           <mat-icon>sentiment_neutral</mat-icon>
@@ -88,9 +109,7 @@
             <mat-icon>article</mat-icon>
             <span>Blog Posts</span>
           </mat-panel-title>
-          <mat-panel-description>
-            Published articles and posts
-          </mat-panel-description>
+          <mat-panel-description>Published articles and posts</mat-panel-description>
         </mat-expansion-panel-header>
         <div class="empty-section">
           <mat-icon>note_add</mat-icon>
@@ -105,9 +124,7 @@
             <mat-icon>comment</mat-icon>
             <span>Comments</span>
           </mat-panel-title>
-          <mat-panel-description>
-            User comments and interactions
-          </mat-panel-description>
+          <mat-panel-description>User comments and interactions</mat-panel-description>
         </mat-expansion-panel-header>
         <div class="empty-section">
           <mat-icon>chat_bubble_outline</mat-icon>
@@ -116,21 +133,135 @@
       </mat-expansion-panel>
 
       <!-- Stores Section -->
-      <mat-expansion-panel>
+      <mat-expansion-panel expanded>
         <mat-expansion-panel-header>
           <mat-panel-title>
             <mat-icon>store</mat-icon>
             <span>Stores</span>
           </mat-panel-title>
-          <mat-panel-description>
-            User's stores and shops
-          </mat-panel-description>
+          <mat-panel-description><span class="badge">{{ stores?.length || 0 }}</span></mat-panel-description>
         </mat-expansion-panel-header>
-        <div class="empty-section">
+
+        <div *ngIf="stores.length === 0" class="empty-section">
           <mat-icon>store_mall_directory</mat-icon>
-          <p>Nothing to display as of now</p>
+          <p>No stores created yet</p>
+          <button *ngIf="user?.id !== undefined && isStoreOwner(user.id!)" mat-stroked-button color="primary" routerLink="/stores/create">
+            <mat-icon>add_circle</mat-icon> Create Store
+          </button>
+        </div>
+
+        <div class="stores-grid">
+          <mat-card *ngFor="let store of stores" class="store-card">
+            <div class="store-image" [ngStyle]="{'background-image': store.image ? 'url(' + store.image + ')' : 'url(/assets/images/default-store.jpg)'}"></div>
+            <mat-card-content>
+              <h3>{{ store.storeName }}</h3>
+              <p class="store-category">{{ store.categoryDisplayName || store.category }}</p>
+              <p class="store-description">
+                {{ store.description ? (store.description | slice:0:100) : '' }}
+                {{ store.description && store.description.length > 100 ? '...' : '' }}
+              </p>
+              <div class="store-meta">
+                <span class="meta-item">
+                  <mat-icon>inventory_2</mat-icon> {{ productsByStore[store.storeId]?.length || 0 }} Products
+                </span>
+                <span class="meta-item">
+                  <mat-icon>star</mat-icon> {{ store.averageRating || 0 }}
+                </span>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button color="primary" [routerLink]="['/stores', store.storeId]">
+                <mat-icon>visibility</mat-icon> View
+              </button>
+              <ng-container *ngIf="user?.id !== undefined && isStoreOwner(store.userId)">
+                <button mat-button color="accent" [routerLink]="['/stores/edit', store.storeId]">
+                  <mat-icon>edit</mat-icon> Edit
+                </button>
+                <button mat-button color="warn" (click)="deleteStore(store.storeId)">
+                  <mat-icon>delete</mat-icon> Delete
+                </button>
+              </ng-container>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+
+        <div *ngIf="user?.id !== undefined && isStoreOwner(user.id!)" class="add-new-section">
+          <button mat-stroked-button color="primary" routerLink="/stores/create">
+            <mat-icon>add_circle</mat-icon> Add New Store
+          </button>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Products Section -->
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>inventory_2</mat-icon>
+            <span>Products</span>
+          </mat-panel-title>
+          <mat-panel-description><span class="badge">{{ getTotalProducts() }}</span></mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <div *ngFor="let store of stores" class="store-products-section">
+          <div class="store-header">
+            <h3>{{ store.storeName }}</h3>
+            <button *ngIf="user?.id !== undefined && isStoreOwner(store.userId)" mat-stroked-button color="primary" [routerLink]="['/products/create']">
+              <mat-icon>add_circle</mat-icon> Add Product
+            </button>
+          </div>
+
+          <div *ngIf="!productsByStore[store.storeId]?.length" class="empty-section">
+            <mat-icon>inventory_2</mat-icon>
+            <p>No products available for this store</p>
+          </div>
+
+          <div *ngIf="productsByStore[store.storeId]?.length" class="products-grid">
+            <mat-card *ngFor="let product of productsByStore[store.storeId]" class="product-card">
+              <div class="product-image" [ngStyle]="{'background-image': product.mainImage ? 'url(' + product.mainImage + ')' : 'url(/assets/images/default-product.jpg)'}">
+                <div *ngIf="product.hasDiscount" class="discount-badge">-{{ product.discountPercentage }}%</div>
+                <div *ngIf="product.isBestseller" class="bestseller-badge">Bestseller</div>
+              </div>
+              <mat-card-content>
+                <h4>{{ product.productName }}</h4>
+                <div class="product-category">{{ product.category }}</div>
+                <p class="product-description">
+                  {{ product.description ? (product.description | slice:0:50) : '' }}
+                  {{ product.description && product.description.length > 50 ? '...' : '' }}
+                </p>
+                <div class="product-price">
+                  <span *ngIf="product.hasDiscount" class="original-price">${{ product.originalPrice?.toFixed(2) }}</span>
+                  <span class="current-price">${{ product.price?.toFixed(2) }}</span>
+                  <span *ngIf="product.freeShipping" class="free-shipping">Free Shipping</span>
+                </div>
+                <div *ngIf="product.tags?.length" class="product-tags">
+                  <span *ngFor="let tag of product.tags" class="tag">{{ tag }}</span>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-button color="primary" [routerLink]="['/products', product.productId]">
+                  <mat-icon>visibility</mat-icon> View
+                </button>
+                <ng-container *ngIf="user?.id !== undefined && isStoreOwner(store.userId)">
+                  <button mat-button color="accent" [routerLink]="['/products/edit', product.productId]">
+                    <mat-icon>edit</mat-icon> Edit
+                  </button>
+                  <button mat-button color="warn" (click)="deleteProduct(store.storeId, product.productId)">
+                    <mat-icon>delete</mat-icon> Delete
+                  </button>
+                </ng-container>
+              </mat-card-actions>
+            </mat-card>
+          </div>
         </div>
       </mat-expansion-panel>
     </mat-accordion>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && !user" class="error-container">
+    <mat-icon>error</mat-icon>
+    <h2>User not found</h2>
+    <p>The requested user profile could not be found.</p>
+    <button mat-stroked-button color="primary" routerLink="/home">Back to Home</button>
   </div>
 </div>

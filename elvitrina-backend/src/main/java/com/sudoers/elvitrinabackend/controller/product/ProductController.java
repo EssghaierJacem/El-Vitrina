@@ -353,4 +353,5 @@ public class ProductController {
             throw new RuntimeException("Failed to save image: " + e.getMessage());
         }
     }
+
 }
