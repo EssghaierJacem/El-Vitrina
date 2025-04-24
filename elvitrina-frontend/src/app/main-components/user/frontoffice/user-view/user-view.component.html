@@ -152,7 +152,7 @@
 
         <div class="stores-grid">
           <mat-card *ngFor="let store of stores" class="store-card">
-            <div class="store-image" [ngStyle]="{'background-image': store.image ? 'url(' + store.image + ')' : 'url(/assets/images/default-store.jpg)'}"></div>
+            <div class="store-image" [ngStyle]="{'background-image': 'url(' + getStoreImageUrl(store.image) + ')'}"></div>
             <mat-card-content>
               <h3>{{ store.storeName }}</h3>
               <p class="store-category">{{ store.categoryDisplayName || store.category }}</p>
@@ -174,7 +174,7 @@
                 <mat-icon>visibility</mat-icon> View
               </button>
               <ng-container *ngIf="user?.id !== undefined && isStoreOwner(store.userId)">
-                <button mat-button color="accent" [routerLink]="['/stores/edit', store.storeId]">
+                <button mat-button color="accent" [routerLink]="['/stores', store.storeId, 'edit']">
                   <mat-icon>edit</mat-icon> Edit
                 </button>
                 <button mat-button color="warn" (click)="deleteStore(store.storeId)">
@@ -217,7 +217,7 @@
 
           <div *ngIf="productsByStore[store.storeId]?.length" class="products-grid">
             <mat-card *ngFor="let product of productsByStore[store.storeId]" class="product-card">
-              <div class="product-image" [ngStyle]="{'background-image': product.mainImage ? 'url(' + product.mainImage + ')' : 'url(/assets/images/default-product.jpg)'}">
+              <div class="product-image" [ngStyle]="{'background-image': 'url(' + getImageUrlFromFilename(product.mainImage) + ')'}">
                 <div *ngIf="product.hasDiscount" class="discount-badge">-{{ product.discountPercentage }}%</div>
                 <div *ngIf="product.isBestseller" class="bestseller-badge">Bestseller</div>
               </div>

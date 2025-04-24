@@ -24,7 +24,7 @@
         <mat-card class="product-card" *ngFor="let product of products">
           <!-- Product Image -->
           <div class="product-image" (click)="viewProductDetails(product.productId)">
-            <img [src]="product.images?.[0] || 'assets/images/products/no-image.jpg'" 
+            <img [src]="getProductImageUrl(product)" 
                  [alt]="product.productName"
                  (error)="handleImageError($event)">
           </div>

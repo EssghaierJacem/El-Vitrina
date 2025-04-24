@@ -3,7 +3,7 @@
         <div class="col-sm-6 col-lg-3">
             <mat-card class="cardWithShadow productcard overflow-hidden">
                 <a routerLink="/widgets/cards">
-                    <img [src]="productcard.imageUrl" alt="Product Image" class="w-100" mat-card-image />
+                    <img [src]="getImageUrlFromFilename(productcard.imageUrl)" alt="Product Image" class="w-100" mat-card-image />
                 </a>
                 <mat-card-content class="p-b-24 p-t-12 position-relative">
                     <button mat-mini-fab class="icon-30 cart-btn bg-primary text-white d-block" matTooltip="Add to Cart">

@@ -101,7 +101,7 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
   }
 
   IMAGE_BASE_URL = `${environment.apiUrl}/stores/store/images/`;
-  readonly IMAGE_PRODUCT_BASE_URL = `${environment.apiUrl}/products/products/images/`;  
+  readonly IMAGE_PRODUCT_BASE_URL = 'http://localhost:8080/api/products/products/images/';
   
   // Sorting options
   sortOptions: SortOption[] = [
@@ -749,25 +749,20 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
   }
 
   getProductImageUrl(product: Product): string {
-    if (!product || !product.images || product.images.length === 0) {
+    const imagePath = product?.mainImage || product?.images?.[0];
+  
+    if (!imagePath) {
       return 'assets/images/products/no-image.jpg';
     }
-    
-    const imageUrl = product.images[0];
-    
-    // If it's already a full URL, return it as is
-    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-      return imageUrl;
+  
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
     }
-    
-    // If it's a relative path starting with '/', append it to the API URL
-    if (imageUrl.startsWith('/')) {
-      return `${environment.apiUrl}${imageUrl}`;
-    }
-    
-    // Otherwise, append it to the API URL
-    return `${this.IMAGE_PRODUCT_BASE_URL}${imageUrl}`;
+  
+    const fileName = imagePath.replace(/^\/+/, '');
+    return `http://localhost:8080/api/products/products/images/${fileName}`;
   }
+  
 
   // Calculate width for detailed sentiment bars safely
   calculateDetailedSentimentBarWidth(value: number): number {
