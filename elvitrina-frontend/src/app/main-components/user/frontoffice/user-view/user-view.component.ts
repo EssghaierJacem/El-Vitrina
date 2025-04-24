@@ -163,5 +163,31 @@ export class UserViewComponent implements OnInit {
     
     return total;
   }
+
+  getImageUrlFromFilename(filename?: string): string {
+    if (!filename) {
+      return 'assets/images/products/no-image.jpg';
+    }
   
+    if (filename.startsWith('http://') || filename.startsWith('https://')) {
+      return filename;
+    }
+  
+    const cleaned = filename.replace(/^\/+/, '');
+    return `http://localhost:8080/api/products/products/images/${cleaned}`;
+  }
+
+  getStoreImageUrl(imagePath?: string): string {
+    if (!imagePath) {
+      return 'assets/images/default-store.jpg';
+    }
+  
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+  
+    const cleaned = imagePath.replace(/^\/+/, '');
+    return `http://localhost:8080/api/stores/store/images/${cleaned}`;
+  }
+
 }

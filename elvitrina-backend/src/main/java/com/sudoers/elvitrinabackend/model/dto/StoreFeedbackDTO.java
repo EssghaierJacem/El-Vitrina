@@ -27,10 +27,22 @@ public class StoreFeedbackDTO {
     private boolean wouldRecommend;
     private StoreFeedbackType storeFeedbackType;
     
-    // Helper method to get sentiment category based on score
+    // New fields for multilingual sentiment analysis
+    private String multilingualSentiment;
+    private float multilingualConfidence;
+    
+    // Helper method to get sentiment category based on score (legacy method)
     public String getSentimentCategory() {
         if (sentimentScore >= 0.25) return "Positive";
         else if (sentimentScore <= -0.25) return "Negative";
         else return "Neutral";
+    }
+    
+    // Helper method to get detailed sentiment category from multilingual analysis
+    public String getDetailedSentimentCategory() {
+        if (multilingualSentiment != null && !multilingualSentiment.isEmpty()) {
+            return multilingualSentiment;
+        }
+        return getSentimentCategory();
     }
 }

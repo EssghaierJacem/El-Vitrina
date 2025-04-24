@@ -151,6 +151,21 @@ export class ProductFavComponent implements OnInit, OnDestroy {
     return this.productService.calculateDiscountPercentage(product);
   }
 
+  getProductImageUrl(product: Product): string {
+    const imagePath = product?.mainImage || product?.images?.[0];
+  
+    if (!imagePath) {
+      return 'assets/images/products/no-image.jpg';
+    }
+  
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+  
+    const fileName = imagePath.replace(/^\/+/, '');
+    return `http://localhost:8080/api/products/products/images/${fileName}`;
+  }
+  
   private cleanupFavorites(existingIds: Set<number>): void {
     // First get all existing products from backend to use for cleanup
     this.productService.getAll().pipe(

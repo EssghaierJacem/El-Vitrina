@@ -15,8 +15,12 @@ export const routes: Routes = [
     component: FrontComponent,
     children: [
       {
+        path: '',
+        component: HomeComponent 
+      },
+      {
         path: 'home',
-        component: HomeComponent
+        redirectTo: '', pathMatch: 'full' 
       },
       {
         path: 'offers',

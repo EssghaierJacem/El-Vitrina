@@ -23,15 +23,12 @@ export const navItems: NavItem[] = [
     route: '/dashboard/store-feedback',
   },
   {
-    navCap: 'Store',
+    navCap: 'Store and Products',
   },
   {
     displayName: 'Store',
-    iconName: 'shopping-cart',
+    iconName: 'building-store',
     route: '/dashboard/stores',
-  },
-  {
-    navCap: 'Products',
   },
   {
     displayName: 'Product',
@@ -39,13 +36,18 @@ export const navItems: NavItem[] = [
     route: '/dashboard/products',
   },
   {
-    navCap: 'Charts',
-  },
-  {
     displayName: 'Analytics Dashboard',
     iconName: 'chart-bar',
     route: '/dashboard/charts',
   },
+  // {
+  //   navCap: 'Charts',
+  // },
+  // {
+  //   displayName: 'Analytics Dashboard',
+  //   iconName: 'chart-bar',
+  //   route: '/dashboard/charts',
+  // },
   // {
   //   displayName: 'Analytical',
   //   iconName: 'aperture',
@@ -66,7 +68,7 @@ export const navItems: NavItem[] = [
   },
   {
     displayName: 'Offers',
-    iconName: 'point',
+    iconName: 'info-circle',
     route: '/dashboard/offers',
   },
   {
@@ -79,7 +81,7 @@ export const navItems: NavItem[] = [
           },
           {
         displayName: 'Statistiques Overview',
-        iconName: 'stat',
+        iconName: 'presentation',
         route: 'dashboard/custom-order/Stat',
           },
           {
@@ -87,52 +89,36 @@ export const navItems: NavItem[] = [
         iconName: 'list',
         route: 'dashboard/payment/list',
            },
-  {
-    navCap: ' Quiz ',
+    {
+      navCap: ' Quiz ',
+    },
+    {
+    displayName: 'Quiz List',
+    iconName: 'list',
+    route: 'dashboard/quiz/list',
   },
   {
-  displayName: 'Quiz List',
-  iconName: 'list',
-  route: 'dashboard/quiz/list',
-},
-{
-  displayName: 'Create Quiz',
-  iconName: 'plus-circle',
-  route: 'dashboard/quiz/create',
-},
-
-
-  {
-    navCap: 'RequestPerso',
-  },
-  {
-    displayName: 'request',
-    iconName: 'page',
-    route: '/dashboard/RequestPerso/listrequest',
-  },
-  {
-    displayName: 'propsalPerso',
-    iconName: 'point',
-    route: '/dashboard/RequestPerso/listproposal',
+    displayName: 'Create Quiz',
+    iconName: 'copy-plus',
+    route: 'dashboard/quiz/create',
   },
 
   {
-    displayName: 'Ads',
-    iconName: 'point',
-    route: '/dashboard/AdAdmin/admin/ads',
+    navCap: 'Blog & Formation',
   },
-
   {
-    displayName: 'Stats',
-    iconName: 'point',
-    route: '/dashboard/RequestPerso/stats',
-  }, 
+    displayName: 'Blog',
+    iconName: 'blockquote',
+    route: '/dashboard/blogPosts',
+  },
   {
-    displayName: 'moderation',
-    iconName: 'point',
-    route: '/dashboard/RequestPerso/moderation',
-  }, 
-
+    displayName: 'Formation',
+    iconName: 'books',
+    route: '/dashboard/formations',
+  },
+  {
+    navCap: 'Donations and Events',
+  },
   {
     displayName: "Donations",
     iconName: "heart",
@@ -153,199 +139,232 @@ export const navItems: NavItem[] = [
   },
 
   {
-    navCap: 'Ui Components',
+    navCap: 'RequestPerso',
   },
   {
-    displayName: 'Badge',
-    iconName: 'archive',
-    route: 'dashboard/ui-components/badge',
+    displayName: 'Request',
+    iconName: 'point',
+    route: '/dashboard/RequestPerso/listrequest',
   },
   {
-    displayName: 'Chips',
-    iconName: 'info-circle',
-    route: 'dashboard/ui-components/chips',
-  },
-  {
-    displayName: 'Lists',
-    iconName: 'list-details',
-    route: 'dashboard/ui-components/lists',
-  },
-  {
-    displayName: 'Menu',
-    iconName: 'file-text',
-    route: 'dashboard/ui-components/menu',
-  },
-  {
-    displayName: 'Tooltips',
-    iconName: 'file-text-ai',
-    route: 'dashboard/ui-components/tooltips',
-  },
-  {
-    displayName: 'Forms',
-    iconName: 'clipboard-text',
-    route: 'dashboard/ui-components/forms',
-  },
-  {
-    displayName: 'Tables',
-    iconName: 'table',
-    route: 'dashboard/ui-components/tables',
+    displayName: 'PropsalPerso',
+    iconName: 'point',
+    route: '/dashboard/RequestPerso/listproposal',
   },
 
   {
-    navCap: 'Pages',
+    displayName: 'Ads',
+    iconName: 'point',
+    route: '/dashboard/AdAdmin/admin/ads',
   },
 
   {
-    displayName: 'Roll Base Access',
-    iconName: 'lock-access',
-    route: 'https://modernize-angular-main.netlify.app/apps/permission',
-    external: true,
-    chip: true,
-    chipClass: 'bg-secondary text-white',
-    chipContent: 'PRO',
-  },
+    displayName: 'Stats',
+    iconName: 'point',
+    route: '/dashboard/RequestPerso/stats',
+  }, 
   {
-    displayName: 'Treeview',
-    iconName: 'git-merge',
-    route: 'https://modernize-angular-main.netlify.app/theme-pages/treeview',
-    external: true,
-    chip: true,
-    chipClass: 'bg-secondary text-white',
-    chipContent: 'PRO',
-  },
+    displayName: 'Moderation',
+    iconName: 'point',
+    route: '/dashboard/RequestPerso/moderation',
+  }, 
 
-  {
-    navCap: 'Extra',
-  },
 
-  {
-    displayName: 'Icons',
-    iconName: 'mood-smile',
-    route: 'dashboard/extra/icons',
-  },
-  {
-    displayName: 'Sample Page',
-    iconName: 'brand-dribbble',
-    route: 'dashboard/extra/sample-page',
-  },
 
-  {
-    navCap: 'Auth',
-  },
-  {
-    displayName: 'Login',
-    iconName: 'login',
-    route: '/authentication',
-    children: [
-      {
-        displayName: 'Login',
-        iconName: 'point',
-        route: '/authentication/login',
-      },
-      {
-        displayName: 'Side Login',
-        iconName: 'point',
-        external: true,
-        chip: true,
-        chipClass: 'bg-secondary text-white',
-        chipContent: 'PRO',
-        route: 'https://modernize-angular-main.netlify.app/authentication/login',
-      },
-    ],
-  },
-  {
-    displayName: 'Register',
-    iconName: 'user-plus',
-    route: '/authentication',
-    children: [
-      {
-        displayName: 'Register',
-        iconName: 'point',
-        route: '/authentication/register',
-      },
-      {
-        displayName: 'Side Register',
-        iconName: 'point',
-        external: true,
-        chip: true,
-        chipClass: 'bg-secondary text-white',
-        chipContent: 'PRO',
-        route: 'https://modernize-angular-main.netlify.app/authentication/side-register',
-      },
-    ],
-  },
-  {
-    displayName: 'Forgot Pwd',
-    iconName: 'rotate',
-    chip: true,
-    chipClass: 'bg-secondary text-white',
-    chipContent: 'PRO',
-    route: '/authentication',
-    children: [
-      {
-        displayName: 'Side Forgot Pwd',
-        iconName: 'point',
-        external: true,
-        chip: true,
-        chipClass: 'bg-secondary text-white',
-        chipContent: 'PRO',
-        route: 'https://modernize-angular-main.netlify.app/authentication/side-forgot-pwd',
-      },
-      {
-        displayName: 'Boxed Forgot Pwd',
-        iconName: 'point',
-        external: true,
-        chip: true,
-        chipClass: 'bg-secondary text-white',
-        chipContent: 'PRO',
-        route: 'https://modernize-angular-main.netlify.app/authentication/boxed-forgot-pwd',
-      },
-    ],
-  },
-  {
-    displayName: 'Two Steps',
-    iconName: 'zoom-code',
-    chip: true,
-    chipClass: 'bg-secondary text-white',
-    chipContent: 'PRO',
-    route: '/authentication',
-    children: [
-      {
-        displayName: 'Side Two Steps',
-        iconName: 'point',
-        external: true,
-        chip: true,
-        chipClass: 'bg-secondary text-white',
-        chipContent: 'PRO',
-        route: 'https://modernize-angular-main.netlify.app/authentication/side-two-steps',
-      },
-      {
-        displayName: 'Boxed Two Steps',
-        iconName: 'point',
-        external: true,
-        chip: true,
-        chipClass: 'bg-secondary text-white',
-        chipContent: 'PRO',
-        route: 'https://modernize-angular-main.netlify.app/authentication/boxed-two-steps',
-      },
-    ],
-  },
-  {
-    displayName: 'Error',
-    iconName: 'alert-circle',
-    route: 'https://modernize-angular-main.netlify.app//authentication/error',
-    external: true,
-    chip: true,
-    chipClass: 'bg-secondary text-white',
-    chipContent: 'PRO',
-  },
-  {
-    displayName: 'Maintenance',
-    iconName: 'settings',
-    route: 'https://modernize-angular-main.netlify.app//authentication/maintenance',
-    external: true,
-    chip: true,
-    chipClass: 'bg-secondary text-white',
-    chipContent: 'PRO',
-  },
+  // {
+  //   navCap: 'Ui Components',
+  // },
+  // {
+  //   displayName: 'Badge',
+  //   iconName: 'archive',
+  //   route: 'dashboard/ui-components/badge',
+  // },
+  // {
+  //   displayName: 'Chips',
+  //   iconName: 'info-circle',
+  //   route: 'dashboard/ui-components/chips',
+  // },
+  // {
+  //   displayName: 'Lists',
+  //   iconName: 'list-details',
+  //   route: 'dashboard/ui-components/lists',
+  // },
+  // {
+  //   displayName: 'Menu',
+  //   iconName: 'file-text',
+  //   route: 'dashboard/ui-components/menu',
+  // },
+  // {
+  //   displayName: 'Tooltips',
+  //   iconName: 'file-text-ai',
+  //   route: 'dashboard/ui-components/tooltips',
+  // },
+  // {
+  //   displayName: 'Forms',
+  //   iconName: 'clipboard-text',
+  //   route: 'dashboard/ui-components/forms',
+  // },
+  // {
+  //   displayName: 'Tables',
+  //   iconName: 'table',
+  //   route: 'dashboard/ui-components/tables',
+  // },
+
+  // {
+  //   navCap: 'Pages',
+  // },
+
+  // {
+  //   displayName: 'Roll Base Access',
+  //   iconName: 'lock-access',
+  //   route: 'https://modernize-angular-main.netlify.app/apps/permission',
+  //   external: true,
+  //   chip: true,
+  //   chipClass: 'bg-secondary text-white',
+  //   chipContent: 'PRO',
+  // },
+  // {
+  //   displayName: 'Treeview',
+  //   iconName: 'git-merge',
+  //   route: 'https://modernize-angular-main.netlify.app/theme-pages/treeview',
+  //   external: true,
+  //   chip: true,
+  //   chipClass: 'bg-secondary text-white',
+  //   chipContent: 'PRO',
+  // },
+
+  // {
+  //   navCap: 'Extra',
+  // },
+
+  // {
+  //   displayName: 'Icons',
+  //   iconName: 'mood-smile',
+  //   route: 'dashboard/extra/icons',
+  // },
+  // {
+  //   displayName: 'Sample Page',
+  //   iconName: 'brand-dribbble',
+  //   route: 'dashboard/extra/sample-page',
+  // },
+
+  // {
+  //   navCap: 'Auth',
+  // },
+  // {
+  //   displayName: 'Login',
+  //   iconName: 'login',
+  //   route: '/authentication',
+  //   children: [
+  //     {
+  //       displayName: 'Login',
+  //       iconName: 'point',
+  //       route: '/authentication/login',
+  //     },
+  //     {
+  //       displayName: 'Side Login',
+  //       iconName: 'point',
+  //       external: true,
+  //       chip: true,
+  //       chipClass: 'bg-secondary text-white',
+  //       chipContent: 'PRO',
+  //       route: 'https://modernize-angular-main.netlify.app/authentication/login',
+  //     },
+  //   ],
+  // },
+  // {
+  //   displayName: 'Register',
+  //   iconName: 'user-plus',
+  //   route: '/authentication',
+  //   children: [
+  //     {
+  //       displayName: 'Register',
+  //       iconName: 'point',
+  //       route: '/authentication/register',
+  //     },
+  //     {
+  //       displayName: 'Side Register',
+  //       iconName: 'point',
+  //       external: true,
+  //       chip: true,
+  //       chipClass: 'bg-secondary text-white',
+  //       chipContent: 'PRO',
+  //       route: 'https://modernize-angular-main.netlify.app/authentication/side-register',
+  //     },
+  //   ],
+  // },
+  // {
+  //   displayName: 'Forgot Pwd',
+  //   iconName: 'rotate',
+  //   chip: true,
+  //   chipClass: 'bg-secondary text-white',
+  //   chipContent: 'PRO',
+  //   route: '/authentication',
+  //   children: [
+  //     {
+  //       displayName: 'Side Forgot Pwd',
+  //       iconName: 'point',
+  //       external: true,
+  //       chip: true,
+  //       chipClass: 'bg-secondary text-white',
+  //       chipContent: 'PRO',
+  //       route: 'https://modernize-angular-main.netlify.app/authentication/side-forgot-pwd',
+  //     },
+  //     {
+  //       displayName: 'Boxed Forgot Pwd',
+  //       iconName: 'point',
+  //       external: true,
+  //       chip: true,
+  //       chipClass: 'bg-secondary text-white',
+  //       chipContent: 'PRO',
+  //       route: 'https://modernize-angular-main.netlify.app/authentication/boxed-forgot-pwd',
+  //     },
+  //   ],
+  // },
+  // {
+  //   displayName: 'Two Steps',
+  //   iconName: 'zoom-code',
+  //   chip: true,
+  //   chipClass: 'bg-secondary text-white',
+  //   chipContent: 'PRO',
+  //   route: '/authentication',
+  //   children: [
+  //     {
+  //       displayName: 'Side Two Steps',
+  //       iconName: 'point',
+  //       external: true,
+  //       chip: true,
+  //       chipClass: 'bg-secondary text-white',
+  //       chipContent: 'PRO',
+  //       route: 'https://modernize-angular-main.netlify.app/authentication/side-two-steps',
+  //     },
+  //     {
+  //       displayName: 'Boxed Two Steps',
+  //       iconName: 'point',
+  //       external: true,
+  //       chip: true,
+  //       chipClass: 'bg-secondary text-white',
+  //       chipContent: 'PRO',
+  //       route: 'https://modernize-angular-main.netlify.app/authentication/boxed-two-steps',
+  //     },
+  //   ],
+  // },
+  // {
+  //   displayName: 'Error',
+  //   iconName: 'alert-circle',
+  //   route: 'https://modernize-angular-main.netlify.app//authentication/error',
+  //   external: true,
+  //   chip: true,
+  //   chipClass: 'bg-secondary text-white',
+  //   chipContent: 'PRO',
+  // },
+  // {
+  //   displayName: 'Maintenance',
+  //   iconName: 'settings',
+  //   route: 'https://modernize-angular-main.netlify.app//authentication/maintenance',
+  //   external: true,
+  //   chip: true,
+  //   chipClass: 'bg-secondary text-white',
+  //   chipContent: 'PRO',
+  // },
 ];
