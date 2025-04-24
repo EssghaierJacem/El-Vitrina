@@ -191,7 +191,7 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
         this.loadStoreStats(storeId);
         this.loadAnalyzedFeedback(storeId);
         
-        this.loadVertuelEvents(storeId); 
+        this.loadVirtualEvents(storeId); 
         this.loadDonationCampaigns(storeId); // Load donation campaigns if needed
       },
       error: (error: Error) => {
@@ -213,7 +213,7 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
       }
     });
   }
-  loadVertuelEvents(storeId: number) {
+  loadVirtualEvents(storeId: number) {
     this.virtualEventService.getEventByStoreId(storeId).subscribe({
       next: (events) => {
         this.events = events;
