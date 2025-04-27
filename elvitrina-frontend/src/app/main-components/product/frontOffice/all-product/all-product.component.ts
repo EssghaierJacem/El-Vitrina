@@ -49,6 +49,7 @@ export class AllProductComponent implements OnInit {
   error: string | null = null;
   selectedCategory: ProductCategoryType | null = null;
   categoryDescription: string = '';
+  categoryBackgroundImage: string = 'assets/images/products/h/h7.jpeg';
 
   // Filters
   searchQuery = '';
@@ -69,6 +70,25 @@ export class AllProductComponent implements OnInit {
   favoriteProductIds = new Set<number>();
   readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
 
+  // Category background images
+  categoryImages: { [key in ProductCategoryType]?: string } = {
+    HANDMADE_JEWELRY: 'assets/images/products/j/j1.jpeg',
+    POTTERY_CERAMICS: 'assets/images/products/h/h3.jpeg',
+    TEXTILES_FABRICS: 'assets/images/products/w/w.jpeg',
+    ART_PAINTINGS: 'assets/images/products/p/p4.jpeg',
+    HOME_DECOR: 'assets/images/products/h/h1.jpeg',
+    CLOTHING_ACCESSORIES: 'assets/images/products/b/b14.png',
+    ECO_FRIENDLY: 'assets/images/products/eco/6.png',
+    LOCAL_FOODS: 'assets/images/products/f/f3.jpeg',
+    HEALTH_WELLNESS: 'assets/images/products/eco/3.jpeg',
+    BOOKS_STATIONERY: 'assets/images/products/book.jpeg',
+    TOYS_GAMES: 'assets/images/products/wood2.jpeg',
+    VINTAGE_ANTIQUES: 'assets/images/products/v/3.jpeg',
+    DIGITAL_PRODUCTS: 'assets/images/products/d1.jpeg',
+    CRAFTS_DIY: 'assets/images/products/diy.jpeg',
+    PET_SUPPLIES: 'assets/images/products/pet2.jpeg'
+  };
+
   constructor(
     public productService: ProductService,
     private snackBar: MatSnackBar,
@@ -78,6 +98,16 @@ export class AllProductComponent implements OnInit {
   ngOnInit(): void {
     this.loadProducts();
     this.loadFavoritesFromLocalStorage();
+    
+    // Add Font Awesome stylesheet if not already present
+    if (!document.getElementById('font-awesome-css')) {
+      const link = document.createElement('link');
+      link.id = 'font-awesome-css';
+      link.rel = 'stylesheet';
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+      document.head.appendChild(link);
+    }
+
     this.tagSearchQuery.valueChanges.subscribe(() => {
       this.applyFilters();
     });
@@ -101,6 +131,7 @@ export class AllProductComponent implements OnInit {
         this.applyFilters();
         this.loading = false;
         this.updateCategoryDescription();
+        this.updateCategoryBackgroundImage();
       },
       error: (error) => {
         console.error('Error loading products:', error);
@@ -108,6 +139,16 @@ export class AllProductComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  formatCategoryName(category: string): string {
+    if (!category) return '';
+    // Replace underscores with spaces and convert to title case
+    return category
+      .replace(/_/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+      .join(' ');
   }
 
   loadFavoritesFromLocalStorage(): void {
@@ -120,6 +161,14 @@ export class AllProductComponent implements OnInit {
       this.categoryDescription = this.getCategoryDescription(this.selectedCategory);
     } else {
       this.categoryDescription = 'Discover our complete collection of quality products';
+    }
+  }
+
+  updateCategoryBackgroundImage(): void {
+    if (this.selectedCategory && this.categoryImages[this.selectedCategory]) {
+      this.categoryBackgroundImage = this.categoryImages[this.selectedCategory] || 'assets/images/categories/all-products.jpg';
+    } else {
+      this.categoryBackgroundImage = 'assets/images/categories/all-products.jpg';
     }
   }
 
@@ -145,6 +194,9 @@ export class AllProductComponent implements OnInit {
   }
 
   applyFilters(): void {
+    console.log('Applying filters with category:', this.selectedCategory);
+    console.log('Sort by:', this.selectedSort);
+    
     let filtered = [...this.products];
 
     // Search filter (includes both product name/description and tags)
@@ -218,7 +270,9 @@ export class AllProductComponent implements OnInit {
   }
 
   onCategoryChange(): void {
+    console.log('Category changed to:', this.selectedCategory);
     this.updateCategoryDescription();
+    this.updateCategoryBackgroundImage();
     this.applyFilters();
   }
 

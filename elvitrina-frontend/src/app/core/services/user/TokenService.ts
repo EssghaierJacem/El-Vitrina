@@ -7,6 +7,7 @@ export interface DecodedToken {
   lastname?: string;
   email?: string;
   role?: string;
+  image?: string;
   [key: string]: any;
 }
 
@@ -56,5 +57,9 @@ export class TokenService {
 
   getRole(): string {
     return this.getDecodedToken()?.role || '';
+  }
+
+  getUserImage(): string | null {
+    return this.getDecodedToken()?.image ?? null;
   }
 }

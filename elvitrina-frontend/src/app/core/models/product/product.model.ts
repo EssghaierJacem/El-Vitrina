@@ -9,15 +9,15 @@ name: any;
   productId: number;
   productName: string;
   description?: string;
-  price: number;
-  originalPrice?: number;
-  discountPercentage?: number;
+  price: number; // price after discount
+  originalPrice?: number; // original price
+  discountPercentage?: number; // discount percentage
   stockQuantity: number;
   category: ProductCategoryType;
   createdAt?: string;
   updatedAt?: string;
   hasDiscount: boolean;
-  status: ProductStatus;
+  status?: ProductStatus;
   images: string[];
   storeId: number;
   mainImage: string;

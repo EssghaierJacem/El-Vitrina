@@ -385,7 +385,7 @@
             <label class="visually-hidden" for="modalSearchCategories">Categories:</label>
             <select class="form-select" id="modalSearchCategories" [(ngModel)]="selectedCategory" name="category">
               <option value="" selected>All Categories</option>
-              <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+              <option *ngFor="let category of categories" [value]="category">{{ formatCategoryName(category) }}</option>
             </select>
           </div>
           <div class="input-group input-group-merge">
@@ -420,7 +420,7 @@
         </div>
 
         <!-- Button -->
-        <a class="btn btn-link px-0 text-reset" routerLink="/all-products">
+        <a class="btn btn-link px-0 text-reset" routerLink="/products">
           View All <i class="fe fe-arrow-right ms-2"></i>
         </a>
       </div>
@@ -654,152 +654,6 @@
               Shop
             </a>
 
-            <!-- Collapse -->
-            <div class="collapse" id="sidebarShop" data-bs-parent="#sidebarNav">
-              <div class="row">
-                <div class="col-12 py-3">
-
-                  <!-- Heading -->
-                  <h6 class="mb-5" >Shop</h6>
-
-                  <!-- Links -->
-                  <ul class="list-styled fs-lg">
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" routerlink="/stores">Default</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Topbar</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Collapse</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Simple</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Masonry</a>
-                    </li>
-                  </ul>
-
-                </div>
-                <div class="col-12 py-3">
-
-                  <!-- Heading -->
-                  <h6 class="mb-5">Product</h6>
-
-                  <!-- Links -->
-                  <ul class="list-styled fs-lg">
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Default</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Images Left</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Image Grid</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Image Slider</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Images Stacked</a>
-                    </li>
-                  </ul>
-
-                </div>
-                <div class="col-12 py-3">
-
-                  <!-- Heading -->
-                  <h6 class="mb-5">Support</h6>
-
-                  <!-- Links -->
-                  <ul class="list-styled fs-lg">
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Shopping Cart</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Checkout</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Order Completed</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Shipping & Returns</a>
-                    </li>
-                  </ul>
-
-                </div>
-                <div class="col-12 py-3">
-
-                  <!-- Heading -->
-                  <h6 class="mb-5">Account</h6>
-
-                  <!-- Links -->
-                  <ul class="list-styled fs-lg">
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Order</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Orders</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#" (click)="wishlistClick(); $event.preventDefault()">Wishlist</a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" href="#">Personal Info</a>
-                    </li>
-                  </ul>
-
-                </div>
-                <div class="col-12 py-3">
-
-                  <!-- Heading -->
-                  <h6 class="mb-5">Modals</h6>
-
-                  <!-- Links -->
-                  <ul class="list-styled fs-lg">
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" data-bs-toggle="modal" href="#modalNewsletterHorizontal">
-                        Newsletter: Horizontal
-                      </a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" data-bs-toggle="modal" href="#modalNewsletterVertical">
-                        Newsletter: Vertical
-                      </a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" data-bs-toggle="modal" href="#modalProduct">
-                        Product
-                      </a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" data-bs-toggle="offcanvas" href="#modalSearch">
-                        Search
-                      </a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" data-bs-toggle="offcanvas" href="#modalShoppingCart">
-                        Shopping Cart
-                      </a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" data-bs-toggle="modal" href="#modalSizeChart">
-                        Size Chart
-                      </a>
-                    </li>
-                    <li class="list-styled-item">
-                      <a class="list-styled-link" data-bs-toggle="modal" href="#modalWaitList">
-                        Wait List
-                      </a>
-                    </li>
-                  </ul>
-
-                </div>
-              </div>
-            </div>
-
-          </li>
           <li class="nav-item">
 
             <!-- Toggle -->
@@ -881,7 +735,7 @@
 
         <!-- Footer -->
         <div class="fs-xxs text-gray-350">
-          © 2024 Jassa.
+          © 2025 sudoers.
         </div>
 
       </div>
@@ -1374,207 +1228,337 @@
             </li>
             <li class="nav-item dropdown position-static">
 
-              <!-- Toggle -->
-              <a class="nav-link" data-bs-toggle="dropdown" routerLink="/products">Catalog</a>
+    <!-- Toggle -->
+    <a class="nav-link" data-bs-toggle="dropdown" routerLink="/products">Catalog</a>
 
-              <!-- Menu -->
-              <div class="dropdown-menu w-100">
+    <!-- Menu -->
+    <div class="dropdown-menu w-100">
 
-                <!-- Tabs -->
-                <div class="mb-2 mb-lg-0 border-bottom-lg">
-                  <div class="container">
-                    <div class="row">
-                      <div class="col-12">
+      <!-- Tabs -->
+      <div class="mb-2 mb-lg-0 border-bottom-lg">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
 
-                        <!-- Nav -->
-                        <nav class="nav nav-tabs nav-overflow fs-xs border-bottom border-bottom-lg-0">
-                          <a class="nav-link text-uppercase active" data-bs-toggle="tab" href="#navTab">
-                            Women
-                          </a>
-                          <a class="nav-link text-uppercase" data-bs-toggle="tab" href="#navTab">
-                            Men
-                          </a>
-                          <a class="nav-link text-uppercase" data-bs-toggle="tab" href="#navTab">
-                            Kids
-                          </a>
-                        </nav>
+              <!-- Nav -->
+              <nav class="nav nav-tabs nav-overflow fs-xs border-bottom border-bottom-lg-0">
+                <a class="nav-link text-uppercase active" data-bs-toggle="tab" href="#handmadeTab">
+                  Handmade & Artisan
+                </a>
+                <a class="nav-link text-uppercase" data-bs-toggle="tab" href="#homeTab">
+                  Home & Lifestyle
+                </a>
+                <a class="nav-link text-uppercase" data-bs-toggle="tab" href="#consumablesTab">
+                  Consumables & Entertainment
+                </a>
+              </nav>
 
-                      </div>
-                    </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab content -->
+      <div class="card card-lg">
+        <div class="card-body">
+          <div class="tab-content">
+            <!-- Handmade & Artisan Tab -->
+            <div class="tab-pane fade show active" id="handmadeTab">
+              <div class="container">
+                <div class="row">
+                  <div class="col-6 col-md">
+                    <!-- Jewelry -->
+                    <div class="mb-5 fw-bold">Handmade Jewelry</div>
+                    <ul class="list-styled mb-6 mb-md-0 fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">All Jewelry</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Beaded Necklaces</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Silver Rings</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Artisan Earrings</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Gemstone Bracelets</a>
+                      </li>
+                    </ul>
                   </div>
-                </div>
-
-                <!-- Tab content -->
-                <div class="card card-lg">
-                  <div class="card-body">
-                    <div class="tab-content">
-                      <div class="tab-pane fade show active" id="navTab">
-                        <div class="container">
-                          <div class="row">
-                            <div class="col-6 col-md">
-
-                              <!-- Heading -->
-                              <div class="mb-5 fw-bold">Clothing</div>
-
-                              <!-- Links -->
-                              <ul class="list-styled mb-6 mb-md-0 fs-sm">
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" routerlink="/products">All Products</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Blouses & Shirts</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Coats & Jackets</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Dresses</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Hoodies & Sweats</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Denim</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Jeans</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Jumpers & Cardigans</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Leggings</a>
-                                </li>
-                              </ul>
-
-                            </div>
-                            <div class="col-6 col-md">
-
-                              <!-- Heading -->
-                              <div class="mb-5 fw-bold">Shoes & Boots</div>
-
-                              <!-- Links -->
-                              <ul class="list-styled mb-6 mb-md-0 fs-sm">
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">All Shoes & Boots</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Branded Shoes</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Boots</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Heels</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Trainers</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Sandals</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Shoes</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Wide Fit Shoes</a>
-                                </li>
-                              </ul>
-
-                            </div>
-                            <div class="col-6 col-md">
-
-                              <!-- Heading -->
-                              <div class="mb-5 fw-bold">Bags & Accessories</div>
-
-                              <!-- Links -->
-                              <ul class="list-styled mb-0 fs-sm">
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">All Bags & Accessories</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Accessories</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Bags & Purses</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Luggage</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Belts</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Hats</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Hair Accessories</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Jewellery</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Travel Accessories</a>
-                                </li>
-                              </ul>
-
-                            </div>
-                            <div class="col-6 col-md">
-
-                              <!-- Heading -->
-                              <div class="mb-5 fw-bold">Collections</div>
-
-                              <!-- Links -->
-                              <ul class="list-styled mb-0 fs-sm">
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">All Collections</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Occasionwear</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Going Out</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Workwear</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Holiday Shop</a>
-                                </li>
-                                <li class="list-styled-item">
-                                  <a class="list-styled-link" href="#">Jean Fit Guide</a>
-                                </li>
-                              </ul>
-
-                            </div>
-                            <div class="col-4 d-none d-lg-block">
-
-                              <!-- Card -->
-                              <div class="card">
-
-                                <!-- Image -->
-                                <img class="card-img" src="assets/images/products/product-110.jpg" alt="...">
-
-                                <!-- Overlay -->
-                                <div class="card-img-overlay bg-dark-0 bg-hover align-items-center">
-                                  <div class="text-center">
-                                    <a class="btn btn-white stretched-link" href="#">
-                                      Shop Sweaters <i class="fe fe-arrow-right ms-2"></i>
-                                    </a>
-                                  </div>
-                                </div>
-
-                              </div>
-
-                            </div>
-                          </div>
+                  
+                  <div class="col-6 col-md">
+                    <!-- Pottery -->
+                    <div class="mb-5 fw-bold">Pottery & Ceramics</div>
+                    <ul class="list-styled mb-6 mb-md-0 fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Dinnerware Sets</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Handcrafted Mugs</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Decorative Vases</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Sculptures</a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div class="col-6 col-md">
+                    <!-- Textiles -->
+                    <div class="mb-5 fw-bold">Textiles & Fabrics</div>
+                    <ul class="list-styled mb-0 fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Handwoven Scarves</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Embroidered Linens</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Batik Wall Hangings</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Quilted Blankets</a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div class="col-6 col-md">
+                    <!-- Art -->
+                    <div class="mb-5 fw-bold">Art & Paintings</div>
+                    <ul class="list-styled mb-0 fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Original Canvases</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Limited Prints</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Watercolors</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Abstract Art</a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div class="col-4 d-none d-lg-block">
+                    <!-- Promo Card -->
+                    <div class="card">
+                      <img class="card-img" src="assets/images/products/j/j4.jpeg" alt="Artisan Collection">
+                      <div class="card-img-overlay bg-dark-0 bg-hover align-items-center">
+                        <div class="text-center">
+                          <a class="btn btn-white stretched-link" href="#">
+                            View Collection <i class="fe fe-arrow-right ms-2"></i>
+                          </a>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-
               </div>
+            </div>
+            
+            <!-- Home & Lifestyle Tab -->
+            <div class="tab-pane fade" id="homeTab">
+              <div class="container">
+                <div class="row">
+                  <div class="col-6 col-md">
+                    <!-- Home Decor -->
+                    <div class="mb-5 fw-bold">Home Decor</div>
+                    <ul class="list-styled mb-6 mb-md-0 fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Wall Art</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Throw Pillows</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Candles & Holders</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Vases & Bowls</a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div class="col-6 col-md">
+                    <!-- Eco-Friendly -->
+                    <div class="mb-5 fw-bold">Eco-Friendly</div>
+                    <ul class="list-styled mb-6 mb-md-0 fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Bamboo Products</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Reusable Kits</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Organic Cotton</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Recycled Glass</a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div class="col-6 col-md">
+                    <!-- Health & Wellness -->
+                    <div class="mb-5 fw-bold">Health & Wellness</div>
+                    <ul class="list-styled mb-0 fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Aromatherapy</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Yoga Accessories</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Self-Care Kits</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Meditation Tools</a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div class="col-6 col-md">
+                    <!-- Pet Supplies -->
+                    <div class="mb-5 fw-bold">Pet Supplies</div>
+                    <ul class="list-styled mb-0 fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Organic Treats</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Handmade Toys</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Eco Beds</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Grooming Kits</a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div class="col-4 d-none d-lg-block">
+                    <!-- Promo Card -->
+                    <div class="card">
+                      <img class="card-img" src="assets/images/products/h/h3.jpeg" alt="Home Collection">
+                      <div class="card-img-overlay bg-dark-0 bg-hover align-items-center">
+                        <div class="text-center">
+                          <a class="btn btn-white stretched-link" href="#">
+                            New Arrivals <i class="fe fe-arrow-right ms-2"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Consumables & Entertainment Tab -->
+            <div class="tab-pane fade" id="consumablesTab">
+              <div class="container">
+                <div class="row">
+                  <div class="col-6 col-md">
+                    <!-- Local Foods -->
+                    <div class="mb-5 fw-bold">Local Foods</div>
+                    <ul class="list-styled mb-6 mb-md-0 fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Artisan Chocolates</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Small-Batch Jams</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Organic Honey</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Specialty Coffee</a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div class="col-6 col-md">
+                    <!-- Books & Stationery -->
+                    <div class="mb-5 fw-bold">Books & Stationery</div>
+                    <ul class="list-styled mb-6 mb-md-0 fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Indie Publications</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Handmade Journals</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Calligraphy Sets</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Art Pens</a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div class="col-6 col-md">
+                    <!-- Toys & Games -->
+                    <div class="mb-5 fw-bold">Toys & Games</div>
+                    <ul class="list-styled mb-0 fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Wooden Toys</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Educational Kits</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Puzzle Games</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Creative Sets</a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div class="col-6 col-md">
+                    <!-- Digital Products -->
+                    <div class="mb-5 fw-bold">Digital Products</div>
+                    <ul class="list-styled mb-0 fs-sm">
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Printable Art</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">E-Books</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Design Templates</a>
+                      </li>
+                      <li class="list-styled-item">
+                        <a class="list-styled-link" href="#">Guides & Tutorials</a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div class="col-4 d-none d-lg-block">
+                    <!-- Promo Card -->
+                    <div class="card">
+                      <img class="card-img" src="assets/images/products/f/f1.jpeg" alt="Food Collection">
+                      <div class="card-img-overlay bg-dark-0 bg-hover align-items-center">
+                        <div class="text-center">
+                          <a class="btn btn-white stretched-link" href="#">
+                            Seasonal Specials <i class="fe fe-arrow-right ms-2"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  
 
             </li>
             <li class="nav-item dropdown">
@@ -1590,24 +1574,21 @@
                       <div class="col">
 
                         <!-- Heading -->
-                        <div class="mb-5 fw-bold">Shop</div>
+                        <div class="mb-5 fw-bold">Stores</div>
 
                         <!-- Links -->
                         <ul class="list-styled mb-7 fs-sm">
                           <li class="list-styled-item">
-                            <a class="list-styled-link" href="#">Default</a>
+                            <a class="list-styled-link" routerLink="/stores">All Stores</a>
                           </li>
                           <li class="list-styled-item">
-                            <a class="list-styled-link" href="#">Topbar</a>
+                            <a class="list-styled-link" routerLink="/stores">Handmade & Artisan Goods</a>
                           </li>
                           <li class="list-styled-item">
-                            <a class="list-styled-link" href="#">Collapse</a>
+                            <a class="list-styled-link" routerLink="/stores">Home & Lifestyle</a>
                           </li>
                           <li class="list-styled-item">
-                            <a class="list-styled-link" href="#">Simple</a>
-                          </li>
-                          <li class="list-styled-item">
-                            <a class="list-styled-link" href="#">Masonry</a>
+                            <a class="list-styled-link" routerLink="/stores">Consumables & Entertainment</a>
                           </li>
                         </ul>
 
@@ -1667,7 +1648,7 @@
                             <a class="list-styled-link" href="#">Orders</a>
                           </li>
                           <li class="list-styled-item">
-                            <a href="#" class="nav-link" (click)="wishlistClick(); $event.preventDefault()"><i class="fe fe-heart"></i></a>
+                            <a href="#" class="list-styled-link" (click)="wishlistClick(); $event.preventDefault()">Favorites</a>
                           </li>
                           <li class="list-styled-item">
                             <a class="list-styled-link" href="#">Personal Info</a>

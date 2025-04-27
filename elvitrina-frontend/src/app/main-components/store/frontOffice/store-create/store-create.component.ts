@@ -13,6 +13,15 @@ import { StoreCategoryType } from '../../../../core/models/store/store-category-
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { TokenService } from 'src/app/core/services/user/TokenService';
 import * as L from 'leaflet';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
+
+// Interface for category display
+interface CategoryOption {
+  value: StoreCategoryType;
+  displayName: string;
+}
 
 @Component({
   selector: 'app-store-create',
@@ -25,7 +34,10 @@ import * as L from 'leaflet';
     MatSelectModule,
     MatButtonModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatStepperModule,
+    MatIconModule,
+    MatDividerModule
   ],
   templateUrl: './store-create.component.html',
   styleUrls: ['./store-create.component.scss']
@@ -35,10 +47,13 @@ export class StoreCreateComponent implements OnInit, AfterViewInit {
   storeForm: FormGroup;
   loading = false;
   categories = Object.values(StoreCategoryType);
+  categoryOptions: CategoryOption[] = [];
   canCreateStore: boolean = false;
 
   imagePreviewUrl: string | null = null;
   coverImagePreviewUrl: string | null = null;
+  uploadedFile: File | null = null;
+  uploadedCoverFile: File | null = null;
 
   private map: L.Map | undefined;
   private marker: L.Marker | undefined;
@@ -55,7 +70,45 @@ export class StoreCreateComponent implements OnInit, AfterViewInit {
     private router: Router,
     private snackBar: MatSnackBar
   ) {
+    this.initCategoryOptions();
     this.initForm();
+  }
+
+  private initCategoryOptions(): void {
+    this.categoryOptions = this.categories.map(category => ({
+      value: category,
+      displayName: this.getStoreCategoryDisplayName(category)
+    })).sort((a, b) => a.displayName.localeCompare(b.displayName));
+  }
+
+  getStoreCategoryDisplayName(category: StoreCategoryType | string): string {
+    switch (category) {
+      case StoreCategoryType.HANDMADE_JEWELRY: return 'Handmade Jewelry';
+      case StoreCategoryType.POTTERY_CERAMICS: return 'Pottery & Ceramics';
+      case StoreCategoryType.TEXTILES_FABRICS: return 'Textiles & Fabrics';
+      case StoreCategoryType.ART_PAINTINGS: return 'Art & Paintings';
+      case StoreCategoryType.HOME_DECOR: return 'Home Decor';
+      case StoreCategoryType.CLOTHING_ACCESSORIES: return 'Clothing & Accessories';
+      case StoreCategoryType.ECO_FRIENDLY: return 'Eco-Friendly Products';
+      case StoreCategoryType.LOCAL_FOODS: return 'Local Foods & Beverages';
+      case StoreCategoryType.HEALTH_WELLNESS: return 'Health & Wellness';
+      case StoreCategoryType.BOOKS_STATIONERY: return 'Books & Stationery';
+      case StoreCategoryType.TOYS_GAMES: return 'Toys & Games';
+      case StoreCategoryType.VINTAGE_ANTIQUES: return 'Vintage & Antiques';
+      case StoreCategoryType.DIGITAL_PRODUCTS: return 'Digital Products';
+      case StoreCategoryType.CRAFTS_DIY: return 'Crafts & DIY Kits';
+      case StoreCategoryType.PET_SUPPLIES: return 'Pet Supplies';
+      default: 
+        // Format unrecognized enum values
+        if (typeof category === 'string') {
+          return category
+            .replace(/_/g, ' ')
+            .split(' ')
+            .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+            .join(' ');
+        }
+        return String(category);
+    }
   }
 
   private initForm(): void {
@@ -146,12 +199,44 @@ export class StoreCreateComponent implements OnInit, AfterViewInit {
       reader.onload = (e: any) => {
         if (field === 'image') {
           this.imagePreviewUrl = e.target.result;
+          this.uploadedFile = file;
         } else if (field === 'coverImage') {
           this.coverImagePreviewUrl = e.target.result;
+          this.uploadedCoverFile = file;
         }
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  clearImage(field: 'image' | 'coverImage'): void {
+    if (field === 'image') {
+      this.imagePreviewUrl = null;
+      this.uploadedFile = null;
+    } else if (field === 'coverImage') {
+      this.coverImagePreviewUrl = null;
+      this.uploadedCoverFile = null;
+    }
+    this.storeForm.patchValue({ [field]: null });
+    this.storeForm.get(field)?.updateValueAndValidity();
+  }
+
+  resetForm(): void {
+    this.storeForm.reset({
+      latitude: this.selectedLocation.lat,
+      longitude: this.selectedLocation.lng,
+      address: this.formatCoordinatesAsAddress(this.selectedLocation.lat, this.selectedLocation.lng),
+    });
+    this.imagePreviewUrl = null;
+    this.coverImagePreviewUrl = null;
+    this.uploadedFile = null;
+    this.uploadedCoverFile = null;
+    
+    if (this.map && this.marker) {
+      this.updateMarkerPosition(this.selectedLocation.lat, this.selectedLocation.lng);
+    }
+
+    this.snackBar.open('Form has been cleared', 'Close', { duration: 3000 });
   }
 
   onSubmit(): void {

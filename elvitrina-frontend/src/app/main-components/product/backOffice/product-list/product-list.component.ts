@@ -48,7 +48,7 @@ export class ProductListComponent implements OnInit {
   dataSource: MatTableDataSource<Product>;
   products: Product[] = [];
   isLoading = true;
-  displayedColumns = ['productId', 'productName', 'price', 'stockQuantity', 'category', 'status', 'actions'];
+  displayedColumns = ['productId', 'productName', 'price', 'stockQuantity', 'category', 'actions'];
   searchText = '';
   categories: ProductCategoryType[] = Object.values(ProductCategoryType);
   pageIndex = 0;
@@ -85,6 +85,7 @@ export class ProductListComponent implements OnInit {
     this.isLoading = true;
     this.productService.getAll().subscribe({
       next: (data) => {
+        console.log('Products loaded:', data); // Debugging log
         this.products = data;
         this.dataSource.data = data;
         this.isLoading = false;
@@ -103,6 +104,7 @@ export class ProductListComponent implements OnInit {
     this.isLoading = true;
     this.productService.getPaginatedProducts(this.pageIndex, this.pageSize).subscribe({
       next: (response) => {
+        console.log('Paginated products loaded:', response.content); // Debugging log
         this.dataSource.data = response.content;
         this.totalProducts = response.totalElements;
         this.isLoading = false;
@@ -203,8 +205,9 @@ export class ProductListComponent implements OnInit {
   }
 
   getCategoryDisplayName(category: ProductCategoryType): string {
-    return category.split('_').map((word: string) => 
-      word.charAt(0) + word.slice(1).toLowerCase()
-    ).join(' ');
+    return category
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
   }
 }

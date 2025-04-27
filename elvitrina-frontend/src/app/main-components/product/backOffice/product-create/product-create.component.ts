@@ -96,6 +96,7 @@ export class ProductCreateComponent implements OnInit {
     this.loading = true;
     this.storeService.getAll().subscribe({
       next: (stores) => {
+        console.log('Stores loaded:', stores); // Debugging log
         this.stores = stores;
         this.loading = false;
       },

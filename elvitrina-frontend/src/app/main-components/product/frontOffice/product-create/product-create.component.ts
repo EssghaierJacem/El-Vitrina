@@ -28,6 +28,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ImageAnalysisService, ImageAnalysisResult } from '../../../../core/services/product/image-analysis.service';
 import { MatExpansionModule } from '@angular/material/expansion';
 
+// Interface for category display
+interface CategoryOption {
+  value: string;
+  displayName: string;
+}
+
 @Component({
   selector: 'app-product-create',
   standalone: true,
@@ -58,7 +64,8 @@ export class ProductCreateComponent implements OnInit {
   productForm: FormGroup;
   loading = false;
   analyzingImage = false;
-  categories = Object.values(ProductCategoryType);
+  // Replace categories array with categoryOptions
+  categoryOptions: CategoryOption[] = [];
   userStores: Store[] = [];
   role: string = '';
   canCreateProduct: boolean = false;
@@ -73,6 +80,11 @@ export class ProductCreateComponent implements OnInit {
   useAnalyzedCategory = true;
   useAnalyzedTags = true;
   useAnalyzedDescription = true;
+  
+  // Add getter for current category value
+  get currentCategory(): string {
+    return this.productForm?.get('category')?.value || 'none';
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -84,7 +96,13 @@ export class ProductCreateComponent implements OnInit {
     private snackBar: MatSnackBar,
     private router: Router
   ) {
+    // Initialize categories first
+    this.initCategoryOptions();
+    // Then initialize form
     this.initForm();
+    
+    // Log categories on initialization to verify they're loaded
+    console.log('Categories initialized in constructor:', this.categoryOptions);
   }
 
   ngOnInit(): void {
@@ -182,9 +200,12 @@ export class ProductCreateComponent implements OnInit {
         productData.images = productData.images ? productData.images.split(',').map((url: string) => url.trim()).filter((url: string) => url) : [];
       }
   
-      // Validate category
-      if (!Object.values(ProductCategoryType).includes(productData.category)) {
+      // Validate category using our categoryOptions
+      const categoryIsValid = this.categoryOptions.some(option => option.value === productData.category);
+      if (!categoryIsValid) {
         this.snackBar.open('Invalid product category', 'Close', { duration: 5000 });
+        console.error('Invalid category:', productData.category);
+        console.log('Available categories:', this.categoryOptions.map(c => c.value));
         this.loading = false;
         return;
       }
@@ -243,9 +264,12 @@ export class ProductCreateComponent implements OnInit {
     });
   }
 
-  getCategoryDisplayName(category: ProductCategoryType): string {
+  getCategoryDisplayName(category: string): string {
+    if (!category) return '';
+    
+    // Clean up the display name by replacing underscores with spaces and capitalizing each word
     return category.split('_').map(word => 
-      word.charAt(0) + word.slice(1).toLowerCase()
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
     ).join(' ');
   }
 
@@ -345,16 +369,18 @@ export class ProductCreateComponent implements OnInit {
       return;
     }
 
-    // Apply category - now the Python analyzer returns the exact enum value
+    // Apply category using our validator method
     if (this.useAnalyzedCategory && this.imageAnalysisResult.category) {
-      // The category should already be in the correct format (e.g., "HOME_DECOR")
-      // but we'll check if it's a valid enum value to be safe
-      const categoryValue = this.imageAnalysisResult.category;
+      const validCategoryValue = this.validateAnalysisCategory(this.imageAnalysisResult.category);
       
-      if (this.categories.includes(categoryValue as ProductCategoryType)) {
+      if (validCategoryValue) {
         this.productForm.patchValue({
-          category: categoryValue
+          category: validCategoryValue
         });
+        console.log('Applied valid category from AI analysis:', validCategoryValue);
+      } else {
+        console.warn('AI suggested an invalid category:', this.imageAnalysisResult.category);
+        this.snackBar.open('AI suggested category could not be matched to available options', 'Close', { duration: 3000 });
       }
     }
 
@@ -373,14 +399,72 @@ export class ProductCreateComponent implements OnInit {
     this.snackBar.open('Analysis results applied to the form', 'Close', { duration: 3000 });
   }
 
-  // Add this method to handle category display from analysis results
+  // Update this method to handle category display from analysis results
   getAnalysisCategoryDisplay(category: string): string {
-    try {
-      // Try to convert the string to enum value and get display name
-      return this.getCategoryDisplayName(category as unknown as ProductCategoryType);
-    } catch (error) {
-      // Fallback to just returning the category
-      return category;
+    // Try to find a matching category in our options
+    const foundCategory = this.categoryOptions.find(
+      option => option.value === category || 
+                option.displayName.toLowerCase() === category.toLowerCase()
+    );
+    
+    if (foundCategory) {
+      return foundCategory.displayName;
     }
+    
+    // If not found, just format the string nicely
+    return this.getCategoryDisplayName(category);
+  }
+
+  // Initialize category options with proper display names
+  private initCategoryOptions(): void {
+    // Create an array of category options with hardcoded values
+    const categories = [
+      { key: 'HANDMADE_JEWELRY', name: 'Handmade Jewelry' },
+      { key: 'POTTERY_CERAMICS', name: 'Pottery & Ceramics' },
+      { key: 'TEXTILES_FABRICS', name: 'Textiles & Fabrics' },
+      { key: 'ART_PAINTINGS', name: 'Art Paintings' },
+      { key: 'HOME_DECOR', name: 'Home Decor' },
+      { key: 'CLOTHING_ACCESSORIES', name: 'Clothing & Accessories' },
+      { key: 'ECO_FRIENDLY', name: 'Eco Friendly' },
+      { key: 'LOCAL_FOODS', name: 'Local Foods' },
+      { key: 'HEALTH_WELLNESS', name: 'Health & Wellness' },
+      { key: 'BOOKS_STATIONERY', name: 'Books & Stationery' },
+      { key: 'TOYS_GAMES', name: 'Toys & Games' },
+      { key: 'VINTAGE_ANTIQUES', name: 'Vintage & Antiques' },
+      { key: 'DIGITAL_PRODUCTS', name: 'Digital Products' },
+      { key: 'CRAFTS_DIY', name: 'Crafts & DIY' },
+      { key: 'PET_SUPPLIES', name: 'Pet Supplies' }
+    ];
+    
+    // Map to the expected interface format and sort
+    this.categoryOptions = categories.map(cat => ({
+      value: cat.key,
+      displayName: cat.name
+    })).sort((a, b) => a.displayName.localeCompare(b.displayName));
+    
+    console.log('Category options initialized:', this.categoryOptions);
+  }
+
+  // Add a method to map from analysis category to proper enum value
+  validateAnalysisCategory(analysisCategory: string): string | null {
+    // First normalize the analysis category (convert to uppercase and replace spaces with underscores)
+    const normalizedCategory = analysisCategory.toUpperCase().replace(/\s+/g, '_');
+    
+    // Check if it matches any of our category values directly
+    const found = this.categoryOptions.find(option => option.value === normalizedCategory);
+    if (found) {
+      return found.value;
+    }
+    
+    // If no direct match, try searching by display name
+    const foundByDisplay = this.categoryOptions.find(option => 
+      option.displayName.toUpperCase() === analysisCategory.toUpperCase()
+    );
+    if (foundByDisplay) {
+      return foundByDisplay.value;
+    }
+    
+    // If still no match, return null
+    return null;
   }
 }

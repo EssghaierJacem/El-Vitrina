@@ -3,9 +3,9 @@
     <nav class="breadcrumb-nav">
       <ul>
         <li><a [routerLink]="['/']">Home Page</a></li>
-        <li><a [routerLink]="['/categories']">Categories</a></li>
+        <li><a [routerLink]="['/products']">Categories</a></li>
         <li *ngIf="product && product.category">
-          <a [routerLink]="['/categories', product.category]">{{ formatCategoryName(product.category) }}</a>
+          <a [routerLink]="['/products/category', product.category]">{{ formatCategoryName(product.category) }}</a>
         </li>
         <li *ngIf="product">{{ product.productName }}</li>
       </ul>
@@ -87,8 +87,8 @@
           
           <!-- Price Section -->
           <div class="price-section">
-            <div class="price-display">
-              <span class="current-price" [class.has-discount]="product.hasDiscount">
+            <div class="price-display" [class.has-discount]="product.hasDiscount">
+              <span class="current-price" [style.color]="'#d01117'">
                 {{ getFinalPrice(product) | currency:'EUR' }}
               </span>
               <ng-container *ngIf="product.hasDiscount">
@@ -112,26 +112,17 @@
           </div>
   
           <!-- Inventory Status -->
-          @if (product.stockQuantity <= 5 && product.stockQuantity > 0) {
-            <div class="inventory-alert">
-              Only {{ product.stockQuantity }} left, currently in {{ inBaskets }} baskets
-            </div>
-          }
+          <div class="inventory-alert" *ngIf="product.stockQuantity <= 5 && product.stockQuantity > 0">
+            Only {{ product.stockQuantity }} left, currently in {{ inBaskets }} baskets
+          </div>
   
           <!-- Seller/Store Info -->
-          <div class="seller-info">
-            @if (product.store) {
-              <a [routerLink]="['/stores', product.storeId]" class="store-link">
-                {{ product.store.storeName }}
-              </a>
-              <div class="store-rating">
-                <mat-icon>star</mat-icon>
-                <mat-icon>star</mat-icon>
-                <mat-icon>star</mat-icon>
-                <mat-icon>star</mat-icon>
-                <mat-icon>star</mat-icon>
-              </div>
-            }
+          <div class="seller-info" *ngIf="product.store">
+            <a [routerLink]="['/stores', product.storeId]" class="store-link">
+              {{ product.store.storeName }}
+            </a>
+            <!-- Show featured badge only if store is featured -->
+            <mat-icon *ngIf="product.store.featured" class="featured-icon" matTooltip="Featured Store">verified</mat-icon>
           </div>
   
           <!-- Product Features -->

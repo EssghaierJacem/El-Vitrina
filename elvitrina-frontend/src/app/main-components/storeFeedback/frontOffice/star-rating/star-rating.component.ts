@@ -12,8 +12,12 @@ import { MatIconModule } from '@angular/material/icon';
 export class StarRatingComponent implements OnChanges {
   @Input() rating: number = 0;
   @Input() starSize: 'small' | 'medium' | 'large' = 'medium';
-  stars: { filled: boolean, half: boolean }[] = Array(5).fill({ filled: false, half: false });
-  showRating: boolean = true;
+  @Input() showRating: boolean = true;
+  stars: { filled: boolean, half: boolean }[] = Array(5).fill(0).map(() => ({ filled: false, half: false }));
+  
+  ngOnInit() {
+    this.updateStars();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['rating']) {

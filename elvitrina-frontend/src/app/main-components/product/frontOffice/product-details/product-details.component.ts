@@ -15,8 +15,11 @@ import { ProductStatus } from '../../../../core/models/product/product-status.en
 import { PriceDisplayComponent } from '../../../../shared/components/price-display/price-display.component';
 import { ProductRecommendationsComponent } from '../../../../shared/components/product-recommendations/product-recommendations.component';
 import { RecommendationType } from '../../../../core/models/ProductReommendation/product-recommendation.model';
-import { filter, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { filter, takeUntil, switchMap, tap } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { StoreService } from '../../../../core/services/store/store.service';
+import { Store } from '../../../../core/models/store/store.model';
+import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
 
 @Component({
   selector: 'app-product-details',
@@ -56,7 +59,9 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
     private router: Router,
     public productService: ProductService,
     private favoriteService: FavoriteService,
-    private snackBar: MatSnackBar
+    private storeService: StoreService,
+    private snackBar: MatSnackBar,
+    private customOrderService: CustomOrderService
   ) {
     // Subscribe to router events to detect when we navigate to the same component but with different params
     this.router.events.pipe(
@@ -101,16 +106,51 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
     // Reset UI state when loading a new product
     this.selectedImageIndex = 0;
 
-    this.productService.getById(id).subscribe({
-      next: (product) => {
-        this.product = product;
-        // Check if product is in favorites
-        this.isInWishlist = this.favoriteService.isFavorite(product.productId);
-        console.log(`Product ${product.productId} loaded, is favorite: ${this.isInWishlist}`);
+    this.productService.getById(id).pipe(
+      switchMap(product => {
+        // For this example, we'll ensure the price data is correctly set
+        // In this case, product.price should already be the discounted price (e.g., €94.05)
+        // and product.originalPrice should be the original price (e.g., €99.00)
         
+        // If we have a discount but no discount percentage, calculate it
+        if (product.hasDiscount && product.originalPrice && product.price && !product.discountPercentage) {
+          product.discountPercentage = Math.round(
+            ((product.originalPrice - product.price) / product.originalPrice) * 100
+          );
+        }
+        
+        // Debug to verify the price data
+        console.log('Product price info:', {
+          price: product.price, // Should be the discounted price (e.g., €94.05)
+          originalPrice: product.originalPrice, // Should be the original price (e.g., €99.00)
+          hasDiscount: product.hasDiscount,
+          discountPercentage: product.discountPercentage // Should be 5%
+        });
+        
+        this.product = product;
+        this.isInWishlist = this.favoriteService.isFavorite(product.productId);
+        
+        // If store data is not loaded with the product, fetch it
+        if (product.storeId && !product.store) {
+          console.log(`Fetching store data for storeId: ${product.storeId}`);
+          return this.storeService.getById(product.storeId).pipe(
+            tap(store => {
+              if (this.product) {
+                this.product.store = store;
+                console.log('Store data loaded:', store);
+              }
+            })
+          );
+        }
+        return of(product);
+      })
+    ).subscribe({
+      next: () => {
         // Add some mock data for UI elements
         this.inBaskets = Math.floor(Math.random() * 5) + 1;
         this.loading = false;
+        // Log the product with store data
+        console.log('Product with store data:', this.product);
         // Scroll to top of the page
         window.scrollTo(0, 0);
       },

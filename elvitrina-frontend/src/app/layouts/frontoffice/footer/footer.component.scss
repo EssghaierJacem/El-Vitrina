@@ -11,3 +11,38 @@
   p {
     color: white;
   }
+
+/* Make the email input transparent */
+.form-control {
+  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
+  color: white; /* Text color */
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.7); /* Lighter placeholder text */
+}
+
+/* Style the subscribe button with navy blue transparency */
+.btn-subscribe, 
+button[type="submit"] {
+  background-color: rgba(29, 53, 87, 0.6); /* Semi-transparent navy blue */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-subscribe:hover,
+button[type="submit"]:hover {
+  background-color: rgba(29, 53, 87, 0.8); /* Slightly darker on hover */
+}
+
+/* Remove the bottom separation line */
+.border-bottom {
+  border-bottom: none !important;
+}
+
+/* If you need to remove another specific separation line */
+.py-6 {
+  border-top: none !important;
+}

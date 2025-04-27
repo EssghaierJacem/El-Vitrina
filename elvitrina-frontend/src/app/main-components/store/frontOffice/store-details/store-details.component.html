@@ -1,386 +1,501 @@
-<!-- Store Header -->
-<div class="store-header" *ngIf="store">
-  <div class="store-cover">
-    <img [src]="getCoverImage(store)" 
-         [alt]="store.storeName"
-         (error)="handleImageError($event, 'store')">
-  </div>
-  <div class="store-info">
-    <div class="store-avatar">
-      <img [src]="getStoreImage(store)" 
-           [alt]="store.storeName"
-           (error)="handleImageError($event, 'store')">
+<div class="all-products-container">
+  <!-- Store Header -->
+  <div class="store-header" *ngIf="store">
+    <div class="store-cover" [ngStyle]="{'background-image': 'url(' + getCoverImage(store) + ')'}">
     </div>
-    <div class="store-details">
-      <h1>{{store.storeName}}</h1>
-      <p class="store-description">{{store.description}}</p>
-      <div class="store-actions">
-        <button mat-stroked-button (click)="followStore()">
-          <mat-icon>favorite</mat-icon>
-          Follow Store
-        </button>
-        <button mat-stroked-button (click)="contactSeller()">
-          <mat-icon>message</mat-icon>
-          Contact Seller
-        </button>
-        <button mat-stroked-button>
-          Request a customization
-        </button>
+    <div class="store-info">
+      <div class="store-avatar">
+        <img [src]="getStoreImage(store)" 
+             [alt]="store.storeName"
+             (error)="handleImageError($event, 'store')">
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- Store Navigation -->
-<div class="store-navigation">
-  <div class="nav-container">
-    <!-- Left Navigation -->
-    <div class="nav-buttons">
-      <button mat-button [class.active]="activeTab === 'products'" (click)="setActiveTab(0)">
-        Products
-        <span class="count">{{store?.productCount || 0}}</span>
-      </button>
-      <button mat-button [class.active]="activeTab === 'reviews'" (click)="setActiveTab(1)">
-        Reviews
-        <span class="count">{{store?.feedbackCount || 0}}</span>
-      </button>
-      <button mat-button [class.active]="activeTab === 'analytics'" (click)="setActiveTab(2)">
-        Feedback Analytics
-      </button>
-      <button mat-button [class.active]="activeTab === 'event'" (click)="setActiveTab(3)">
-        Vertuel Event
-      </button>
-      <button mat-button [class.active]="activeTab === 'donation'" (click)="setActiveTab(4)">
-        Donation Campaign
-      </button>
-    </div>
-
-    <!-- Right Search -->
-    <div class="search-bar" *ngIf="activeTab === 'products'">
-      <mat-form-field appearance="outline">
-        <mat-label>Search products</mat-label>
-        <input matInput [value]="searchQuery" (input)="searchQuery = $any($event.target).value; searchProducts()" placeholder="Search by name...">
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
-    </div>
-  </div>
-</div>
-
-<!-- Filter Section -->
-<div class="filters-section" *ngIf="activeTab === 'products'">
-  <mat-card>
-    <mat-card-content>
-      <div class="filters-container">
-        <h2>{{store?.productCount || 0}} Products</h2>
-        
-        <div class="sort-dropdown">
-          <mat-form-field appearance="outline">
-            <mat-label>Sort By</mat-label>
-            <mat-select [(ngModel)]="selectedSort">
-              <mat-option *ngFor="let option of sortOptions" [value]="option.value">
-                {{ option.label }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+      <div class="store-details">
+        <h1>{{store.storeName}}</h1>
+        <p class="store-description">{{store.description}}</p>
+        <div class="store-actions">
+          <button (click)="followStore()" class="action-btn follow-btn">
+            <i class="fas fa-heart"></i>
+            Follow Store
+          </button>
+          <button (click)="contactSeller()" class="action-btn contact-btn">
+            <i class="fas fa-envelope"></i>
+            Contact Seller
+          </button>
+          <button class="action-btn custom-btn">
+            <i class="fas fa-magic"></i>
+            Request Customization
+          </button>
         </div>
       </div>
-    </mat-card-content>
-  </mat-card>
-</div>
+    </div>
+  </div>
 
-<!-- Main Content Area -->
-<div class="main-content">
-  <div class="content-container">
-    <!-- Store Content -->
-    <div class="store-content" *ngIf="store">
-      <div [ngSwitch]="activeTab">
-        <!-- Products Tab -->
-        <div *ngSwitchCase="'products'" class="products-grid">
-          <mat-card class="product-card" *ngFor="let product of filteredProducts">
-            <!-- Product Image -->
-            <div class="product-image">
-              <img [src]="getProductImageUrl(product)" 
-                   [alt]="product.productName"
-                   (error)="handleImageError($event, 'product')">
-              
-              <!-- Badges -->
-              <div class="product-badges">
-                <span class="bestseller-badge" *ngIf="product.isBestseller">
-                  <mat-icon>star</mat-icon> Bestseller
-                </span>
-                <span class="discount-badge" *ngIf="product.hasDiscount">
-                  -{{product.discountPercentage}}%
-                </span>
-              </div>
+  <!-- Store Navigation -->
+  <div class="store-navigation">
+    <div class="nav-container">
+      <!-- Left Navigation -->
+      <div class="nav-buttons">
+        <button [class.active]="activeTab === 'products'" (click)="setActiveTab(0)">
+          Products
+          <span class="count">{{store?.productCount || 0}}</span>
+        </button>
+        <button [class.active]="activeTab === 'reviews'" (click)="setActiveTab(1)">
+          Reviews
+          <span class="count">{{store?.feedbackCount || 0}}</span>
+        </button>
+        <button [class.active]="activeTab === 'analytics'" (click)="setActiveTab(2)">
+          Feedback Analytics
+        </button>
+        <button [class.active]="activeTab === 'event'" (click)="setActiveTab(3)">
+          Virtual Event
+        </button>
+        <button [class.active]="activeTab === 'donation'" (click)="setActiveTab(4)">
+          Donation Campaign
+        </button>
+      </div>
 
-              <!-- Favorite Button -->
-              <button mat-icon-button class="favorite-button" (click)="toggleFavorite(product)">
-                <mat-icon color="warn" *ngIf="product.isFavorite">favorite</mat-icon>
-                <mat-icon *ngIf="!product.isFavorite">favorite_border</mat-icon>
-              </button>
+      <!-- Add Favorites Button -->
+      <div class="nav-actions">
+        <button class="favorites-button" (click)="viewAllFavorites()">
+          <i class="fas fa-heart"></i> My Favorites
+          <span class="count" *ngIf="favoriteCount > 0">{{favoriteCount}}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-container" *ngIf="activeTab === 'products'">
+    <input type="text" 
+           [(ngModel)]="searchQuery" 
+           (input)="searchProducts()" 
+           placeholder="Search products" 
+           class="search-input">
+    <i class="fas fa-search search-icon"></i>
+
+    <div class="filters-row">
+      <div class="filter-group">
+        <label>Category</label>
+        <div class="select-wrapper">
+          <select [(ngModel)]="selectedCategory" (ngModelChange)="selectCategory($event)">
+            <option [ngValue]="null">All Categories</option>
+            <option *ngFor="let category of categories" [value]="category">
+              {{ formatProductCategory(category) }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Sort by</label>
+        <div class="select-wrapper">
+          <select [(ngModel)]="selectedSort" (ngModelChange)="setSort($event)">
+            <option *ngFor="let option of sortOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Summary -->
+  <div class="results-summary" *ngIf="activeTab === 'products'">
+    <span>{{ filteredProducts.length }} PRODUCTS</span>
+    <button class="refresh-button" (click)="loadProducts(store?.storeId || 0)">
+      <i class="fas fa-sync-alt"></i> REFRESH
+    </button>
+  </div>
+
+  <!-- Main Content Area -->
+  <div [ngSwitch]="activeTab" *ngIf="store">
+    <!-- Products Tab -->
+    <div *ngSwitchCase="'products'" class="products-grid">
+      <div class="product-card" *ngFor="let product of filteredProducts">
+        <!-- Product Image -->
+        <div class="product-image">
+          <img [src]="getProductImageUrl(product)" 
+               [alt]="product.productName"
+               (error)="handleImageError($event, 'product')">
+          
+          <!-- Badges -->
+          <div class="product-badges">
+            <span class="discount-badge" *ngIf="product.hasDiscount">
+              -{{product.discountPercentage}}%
+            </span>
+          </div>
+          
+          <!-- Hover Actions -->
+          <div class="product-actions">
+            <button class="action-button view-button" [routerLink]="['/products', product.productId]">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="action-button cart-button" 
+                    (click)="addToCart(product)"
+                    [disabled]="product.stockQuantity === 0">
+              <i class="fas fa-shopping-cart"></i>
+            </button>
+            <button class="action-button wishlist-button" 
+                    (click)="toggleFavorite(product)" 
+                    [ngClass]="{'is-favorite': product.isFavorite}">
+              <i [class]="product.isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="product-info">
+          <!-- Favorite Badge -->
+          <div class="favorite-badge" *ngIf="product.isFavorite">
+            <i class="fas fa-heart"></i> Favorite
+          </div>
+          
+          <!-- Product Category -->
+          <div class="product-category">{{ formatProductCategory(product.category) }}</div>
+
+          <!-- Product Name -->
+          <h3 class="product-name" [routerLink]="['/products', product.productId]">
+            {{ product.productName }}
+          </h3>
+
+          <!-- Price -->
+          <div class="product-price" [class.has-discount]="product.hasDiscount">
+            <ng-container *ngIf="product.hasDiscount; else regularPrice">
+              <span class="current-price">{{calculateDiscountedPrice(product) | currency}}</span>
+              <span class="original-price">{{product.price | currency}}</span>
+            </ng-container>
+            <ng-template #regularPrice>
+              <span class="current-price">{{product.price | currency}}</span>
+            </ng-template>
+          </div>
+
+          <!-- Stock Status -->
+          <div class="product-stock" [class.out-of-stock]="product.stockQuantity === 0" *ngIf="product.stockQuantity === 0">
+            Out of Stock
+          </div>
+        </div>
+      </div>
+      
+      <!-- Empty State -->
+      <div *ngIf="filteredProducts.length === 0 && !loading" class="empty-state">
+        <i class="fas fa-search"></i>
+        <h3>No products found</h3>
+        <p>Try adjusting your search or filters</p>
+        <button (click)="loadProducts(store.storeId)">
+          Reset Filters
+        </button>
+      </div>
+    </div>
+    
+    <!-- Favorites Tab -->
+    <div *ngSwitchCase="'favorites'" class="favorites-section">
+      <div class="favorites-header">
+        <h2>My Favorite Products <span>({{getFavoriteProducts().length}})</span></h2>
+        <p *ngIf="getFavoriteProducts().length > 0">
+          Here are the products you've marked as favorites from {{store.storeName}}
+        </p>
+      </div>
+      
+      <div class="products-grid" *ngIf="getFavoriteProducts().length > 0">
+        <div class="product-card" *ngFor="let product of getFavoriteProducts()">
+          <!-- Product Image -->
+          <div class="product-image">
+            <img [src]="getProductImageUrl(product)" 
+                 [alt]="product.productName"
+                 (error)="handleImageError($event, 'product')">
+            
+            <!-- Badges -->
+            <div class="product-badges">
+              <span class="discount-badge" *ngIf="product.hasDiscount">
+                -{{product.discountPercentage}}%
+              </span>
+              <span class="favorite-badge-icon">
+                <i class="fas fa-heart"></i>
+              </span>
             </div>
-
-            <mat-card-content>
-              <!-- Product Category -->
-              <div class="product-category">{{ formatProductCategory(product.category) }}</div>
-
-              <!-- Product Name -->
-              <h3 class="product-name" [routerLink]="['/products', product.productId]">
-                {{ product.productName }}
-              </h3>
-
-              <!-- Price -->
-              <div class="product-price" [class.has-discount]="product.hasDiscount">
-                <ng-container *ngIf="product.hasDiscount; else regularPrice">
-                  <span class="current-price">{{calculateDiscountedPrice(product) | currency}}</span>
-                  <span class="original-price">{{product.price | currency}}</span>
-                </ng-container>
-                <ng-template #regularPrice>
-                  <span class="current-price">{{product.price | currency}}</span>
-                </ng-template>
-              </div>
-
-              <!-- Stock Status -->
-              <div class="product-stock" [class.out-of-stock]="product.stockQuantity === 0">
-                {{ product.stockQuantity === 0 ? 'Out of Stock' : 
-                   product.stockQuantity < 10 ? 'Low Stock' : 'In Stock' }}
-              </div>
-
-              <!-- Free Shipping Badge -->
-              <div class="shipping-badge" *ngIf="product.freeShipping">
-                <mat-icon>local_shipping</mat-icon>
-                Free Shipping
-              </div>
-            </mat-card-content>
-
-            <mat-card-actions>
-              <button mat-stroked-button class="details-button" [routerLink]="['/products', product.productId]">
-                <mat-icon>visibility</mat-icon>
-                Details
+            
+            <!-- Hover Actions -->
+            <div class="product-actions">
+              <button class="action-button view-button" [routerLink]="['/products', product.productId]">
+                <i class="fas fa-eye"></i>
               </button>
-              <button mat-stroked-button class="cart-button"
+              <button class="action-button cart-button" 
                       (click)="addToCart(product)"
                       [disabled]="product.stockQuantity === 0">
-                <mat-icon>shopping_cart</mat-icon>
-                Add to Cart
+                <i class="fas fa-shopping-cart"></i>
               </button>
-            </mat-card-actions>
-          </mat-card>
-        </div>
-        
-        <!-- Reviews Tab -->
-        <div *ngSwitchCase="'reviews'" class="reviews-section">
-          <div class="reviews-header">
-            <h2>Customer Reviews</h2>
-            <div class="review-controls">
-              <button mat-stroked-button (click)="toggleSummaries()">
-                {{ showSummaries ? 'Show Full Reviews' : 'Show Summarized Reviews' }}
-              </button>
-              <button mat-stroked-button (click)="toggleSentimentDisplay()">
-                {{ showMultilingualSentiment ? 'Show Basic Sentiment' : 'Show Detailed Sentiment' }}
+              <button class="action-button wishlist-button" 
+                      (click)="toggleFavorite(product)"
+                      [ngClass]="{'is-favorite': product.isFavorite}">
+                <i [class]="product.isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
               </button>
             </div>
           </div>
-          
-          <!-- Analyzed Feedback List -->
-          <div class="analyzed-reviews" *ngIf="analyzedFeedbacks.length > 0">
-            <mat-card class="review-card" *ngFor="let feedback of analyzedFeedbacks">
-              <mat-card-header>
-                <div mat-card-avatar class="reviewer-avatar">
-                  <img *ngIf="feedback.userImage" [src]="feedback.userImage" alt="User avatar">
-                  <mat-icon *ngIf="!feedback.userImage">account_circle</mat-icon>
-                </div>
-                <mat-card-title>{{ feedback.userName || 'Anonymous' }}</mat-card-title>
-                <mat-card-subtitle>
-                  <div class="rating">
-                    <mat-icon *ngFor="let star of [1, 2, 3, 4, 5]" 
-                              [class.filled]="star <= feedback.rating">star</mat-icon>
-                  </div>
-                  <span class="review-date">{{ feedback.createdAt | date }}</span>
-                </mat-card-subtitle>
-                
-                <!-- Sentiment Badge - Toggle between basic and detailed -->
-                <ng-container *ngIf="!showMultilingualSentiment">
-                  <div class="sentiment-badge" *ngIf="feedback.sentimentScore !== undefined" 
-                      [ngClass]="getSentimentClass(feedback.sentimentScore)" 
-                      matTooltip="Sentiment Score: {{feedback.sentimentScore | number:'1.1-1'}}">
-                    <mat-icon>{{ getSentimentIcon(feedback.sentimentScore) }}</mat-icon>
-                    {{ feedback.sentimentScore >= 0.25 ? 'Positive' : 
-                      feedback.sentimentScore <= -0.25 ? 'Negative' : 'Neutral' }}
-                  </div>
-                </ng-container>
-                
-                <!-- Detailed Multilingual Sentiment Badge -->
-                <ng-container *ngIf="showMultilingualSentiment">
-                  <div class="sentiment-badge" 
-                      [ngClass]="getDetailedSentimentClass(feedback)" 
-                      matTooltip="AI-detected sentiment {{ feedback.multilingualConfidence ? '(' + (feedback.multilingualConfidence | percent) + ')' : '' }}">
-                    <mat-icon>{{ getDetailedSentimentIcon(feedback) }}</mat-icon>
-                    {{ feedback.multilingualSentiment || (feedback.sentimentScore !== undefined ? (feedback.sentimentScore >= 0.25 ? 'Positive' : feedback.sentimentScore <= -0.25 ? 'Negative' : 'Neutral') : 'Neutral') }}
-                    <span class="ai-badge" *ngIf="feedback.multilingualSentiment">AI</span>
-                  </div>
-                </ng-container>
-              </mat-card-header>
-              
-              <mat-card-content>
-                <!-- Show either summarized or full review based on toggle -->
-                <p class="review-comment" *ngIf="!showSummaries || !feedback.summarizedComment">
-                  {{ feedback.comment }}
-                </p>
-                <p class="review-summary" *ngIf="showSummaries && feedback.summarizedComment">
-                  {{ feedback.summarizedComment }}
-                  <span class="summary-badge" matTooltip="AI-generated summary">Summary</span>
-                </p>
-                
-                <div class="feedback-metadata">
-                  <mat-chip-set>
-                    <mat-chip>{{ feedback.storeFeedbackType }}</mat-chip>
-                    <mat-chip>
-                      {{ feedback.wouldRecommend ? 'Recommends' : 'Does Not Recommend' }}
-                    </mat-chip>
-                  </mat-chip-set>
-                </div>
-              </mat-card-content>
-            </mat-card>
-          </div>
-          
-          <div *ngIf="analyzedFeedbacks.length === 0 && !loadingFeedback" class="no-reviews">
-            <p>No reviews yet. Be the first to leave a review!</p>
-          </div>
-          
-          <div *ngIf="loadingFeedback" class="loading-reviews">
-            <mat-spinner diameter="40"></mat-spinner>
-            <p>Loading reviews...</p>
-          </div>
-          
-          <div *ngIf="error && !loadingFeedback" class="error-reviews">
-            <mat-icon>error</mat-icon>
-            <p>{{ error }}</p>
-            <button mat-stroked-button (click)="store?.storeId && loadAnalyzedFeedback(store.storeId)">
-              Try Again
-            </button>
-          </div>
-          
-          <!-- Create Feedback Form -->
-          <div class="create-feedback-section">
-            <app-store-feedback-create [storeId]="store?.storeId ?? 0"></app-store-feedback-create>
-          </div>
-        </div>
-        
-        <!-- Analytics Tab -->
-        <div *ngSwitchCase="'analytics'" class="analytics-section">
-          <h2>Feedback Analytics</h2>
-          
-          <div class="analytics-overview" *ngIf="feedbackAnalytics">
-            <mat-card class="analytics-card">
-              <mat-card-header>
-                <mat-card-title>Overview</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="analytics-stats">
-                  <div class="stat-item">
-                    <div class="stat-value">{{ feedbackAnalytics.averageRating | number:'1.1-1' }}</div>
-                    <div class="stat-label">Average Rating</div>
-                  </div>
-                  <div class="stat-item">
-                    <div class="stat-value">{{ feedbackAnalytics.totalFeedbacks }}</div>
-                    <div class="stat-label">Total Reviews</div>
-                  </div>
-                </div>
-              </mat-card-content>
-            </mat-card>
-            
-            <!-- Multilingual Sentiment Analysis Card -->
-            <mat-card class="analytics-card" *ngIf="detailedSentimentChartData.length > 0">
-              <mat-card-header>
-                <mat-card-title>
-                  <div class="card-title-with-badge">
-                    Sentiment Analysis
-                    <span class="ai-badge">AI</span>
-                  </div>
-                </mat-card-title>
-                <mat-card-subtitle>AI-powered sentiment analysis in multiple languages</mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="chart-container static-chart">
-                  <div class="sentiment-bars">
-                    <div *ngFor="let item of detailedSentimentChartData" class="sentiment-bar-item">
-                      <div class="sentiment-label">{{ item.name }}</div>
-                      <div class="sentiment-bar" 
-                          [ngClass]="'sentiment-' + item.name.toLowerCase().replace(' ', '-')"
-                          [style.width.%]="calculateDetailedSentimentBarWidth(item.value)">
-                        <span class="sentiment-value">{{ item.value }}</span>
-                      </div>
-                      <div class="sentiment-percentage" *ngIf="multilingualSentimentAnalytics?.sentimentPercentages">
-                        {{ getSentimentPercentage(item.name) }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </mat-card-content>
-            </mat-card>
-            
-            <!-- Legacy Sentiment Distribution Chart -->
-            <mat-card class="analytics-card" *ngIf="sentimentChartData.length > 0">
-              <mat-card-header>
-                <mat-card-title>Sentiment Distribution</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="chart-container static-chart">
-                  <div class="sentiment-bars">
-                    <div *ngFor="let item of sentimentChartData" class="sentiment-bar-item">
-                      <div class="sentiment-label">{{ item.name }}</div>
-                      <div class="sentiment-bar" 
-                          [ngClass]="'sentiment-' + item.name.toLowerCase()"
-                          [style.width.%]="item.value / (feedbackAnalytics.totalFeedbacks || 1) * 100">
-                        <span class="sentiment-value">{{ item.value }}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </mat-card-content>
-            </mat-card>
-          </div>
-          
-          <div *ngIf="!feedbackAnalytics && !loadingFeedback" class="no-analytics">
-            <p>No analytics available. Store needs more reviews to generate analytics.</p>
-          </div>
-          
-          <div *ngIf="loadingFeedback" class="loading-analytics">
-            <mat-spinner diameter="40"></mat-spinner>
-            <p>Loading analytics...</p>
-          </div>
-        </div>
 
-        <div *ngSwitchCase="'event'" class="reviews-section">
-          <div style="display: flex; align-items: center; justify-content: space-between;">
-            <h2 style="margin: 0;">Vertuel Event</h2>
-            <button mat-raised-button color="primary" (click)="openCreateEventDialog()">
-              Create a Vertuel Event
-            </button>
-          </div>
-          <app-event-store [events]="events"></app-event-store>
-          </div>
+          <div class="product-info">
+            <!-- Product Category -->
+            <div class="product-category">{{ formatProductCategory(product.category) }}</div>
 
+            <!-- Product Name -->
+            <h3 class="product-name" [routerLink]="['/products', product.productId]">
+              {{ product.productName }}
+            </h3>
 
-          <div *ngSwitchCase="'donation'" class="analytics-section">
-            <h2>
-              Donation Campaign
-            </h2>
-            <app-campaign-details [campaigns]="campaigns"></app-campaign-details>
-
+            <!-- Price -->
+            <div class="product-price" [class.has-discount]="product.hasDiscount">
+              <ng-container *ngIf="product.hasDiscount; else regularPrice">
+                <span class="current-price">{{calculateDiscountedPrice(product) | currency}}</span>
+                <span class="original-price">{{product.price | currency}}</span>
+              </ng-container>
+              <ng-template #regularPrice>
+                <span class="current-price">{{product.price | currency}}</span>
+              </ng-template>
             </div>
+
+            <!-- Stock Status -->
+            <div class="product-stock" [class.out-of-stock]="product.stockQuantity === 0" *ngIf="product.stockQuantity === 0">
+              Out of Stock
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Empty State -->
+      <div *ngIf="getFavoriteProducts().length === 0" class="empty-state">
+        <i class="fas fa-heart-broken"></i>
+        <h3>No favorite products</h3>
+        <p>You haven't added any products from this store to your favorites yet</p>
+        <button (click)="setActiveTab(0)">
+          Browse Products
+        </button>
       </div>
     </div>
+    
+    <!-- Reviews Tab -->
+    <div *ngSwitchCase="'reviews'" class="reviews-section">
+      <!-- Reviews Header -->
+      <div class="reviews-header">
+        <h2>Customer Reviews <span>({{store?.feedbackCount || 0}})</span></h2>
+        <div class="review-controls">
+          <button (click)="toggleSummaries()" class="control-button">
+            {{ showSummaries ? 'Show Full Reviews' : 'Show Summarized Reviews' }}
+          </button>
+          <button (click)="toggleFeedbackDisplay()" class="control-button">
+            {{ showAllFeedbacks ? 'Show Less Reviews' : 'Show All Reviews' }}
+          </button>
+          <button (click)="toggleSentimentDisplay()" class="control-button">
+            {{ showMultilingualSentiment ? 'Show Basic Sentiment' : 'Show Detailed Sentiment' }}
+          </button>
+        </div>
+      </div>
+      
+      <!-- Create Feedback Form - Simplified -->
+      <div class="create-feedback-section">
+        <app-store-feedback-create [storeId]="store?.storeId ?? 0"></app-store-feedback-create>
+      </div>
+      
+      <!-- Analyzed Feedback List -->
+      <div class="reviews-list" *ngIf="analyzedFeedbacks.length > 0">
+        <div class="review-card" *ngFor="let feedback of getLimitedFeedbacks()">
+          <div class="review-header">
+            <div class="reviewer-avatar">
+              <img *ngIf="feedback.userImage" 
+                   [src]="getUserProfileImageUrl(feedback.userImage)" 
+                   [alt]="feedback.userName || 'User'"
+                   (error)="handleImageError($event, 'user')">
+              <i *ngIf="!feedback.userImage" class="fas fa-user-circle"></i>
+            </div>
+            <div class="reviewer-info">
+              <h3 class="reviewer-name">{{ feedback.userName || 'Anonymous' }}</h3>
+              <div class="review-meta">
+                <div class="rating">
+                  <app-star-rating [rating]="feedback.rating" starSize="small" [showRating]="false"></app-star-rating>
+                </div>
+                <span class="review-date">{{ feedback.createdAt | date }}</span>
+              </div>
+            </div>
+            
+            <!-- Sentiment Badge -->
+            <div class="sentiment-badge" 
+                 [ngClass]="showMultilingualSentiment ? 
+                            getDetailedSentimentClass(feedback) : 
+                            getSentimentClass(feedback.sentimentScore || 0)">
+              <i [class]="'fas ' + (showMultilingualSentiment ? 
+                                  getDetailedSentimentIconClass(feedback) : 
+                                  getSentimentIconClass(feedback.sentimentScore || 0))"></i>
+              <span>
+                {{ showMultilingualSentiment ? 
+                   (feedback.multilingualSentiment || 
+                    (feedback.sentimentScore !== undefined ? 
+                     (feedback.sentimentScore >= 0.25 ? 'Positive' : 
+                      feedback.sentimentScore <= -0.25 ? 'Negative' : 'Neutral') : 
+                     'Neutral')) : 
+                   ((feedback.sentimentScore || 0) >= 0.25 ? 'Positive' : 
+                    (feedback.sentimentScore || 0) <= -0.25 ? 'Negative' : 'Neutral') }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="review-content">
+            <!-- Show either summarized or full review based on toggle -->
+            <p class="review-comment" *ngIf="!showSummaries || !feedback.summarizedComment">
+              {{ feedback.comment }}
+            </p>
+            <p class="review-summary" *ngIf="showSummaries && feedback.summarizedComment">
+              {{ feedback.summarizedComment }}
+              <span class="summary-badge" title="AI-generated summary">Summary</span>
+            </p>
+            
+            <div class="feedback-metadata">
+              <div class="review-tags">
+                <span class="review-tag feedback-type-badge" [ngClass]="'type-' + feedback.storeFeedbackType">
+                  <i class="fas" [ngClass]="getFeedbackTypeIcon(feedback.storeFeedbackType)"></i>
+                    {{ getFeedbackTypeDisplayName(feedback.storeFeedbackType) }}
+                </span>
+                <span class="review-tag" [class.recommends]="feedback.wouldRecommend" [class.not-recommends]="!feedback.wouldRecommend">
+                  {{ feedback.wouldRecommend ? 'Recommends' : 'Does Not Recommend' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Show All Reviews Link (when there are more than the limit) -->
+      <div class="show-more-container" *ngIf="analyzedFeedbacks.length > feedbackLimit && !showAllFeedbacks">
+        <a class="show-more-link" (click)="toggleFeedbackDisplay()">
+          Show more reviews
+        </a>
+      </div>
+      
+      <div *ngIf="analyzedFeedbacks.length === 0 && !loadingFeedback" class="no-reviews">
+        <i class="fas fa-comments"></i>
+        <p>No reviews yet. Be the first to leave a review!</p>
+      </div>
+      
+      <div *ngIf="loadingFeedback" class="loading-reviews">
+        <div class="spinner"></div>
+        <p>Loading reviews...</p>
+      </div>
+      
+      <div *ngIf="error && !loadingFeedback" class="error-reviews">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>{{ error }}</p>
+        <button (click)="store?.storeId && loadAnalyzedFeedback(store.storeId)">
+          Try Again
+        </button>
+      </div>
+    </div>
+    
+    <!-- Analytics Tab -->
+    <div *ngSwitchCase="'analytics'" class="analytics-section">
+      <h2>Feedback Analytics</h2>
+      
+      <div class="analytics-overview" *ngIf="feedbackAnalytics">
+        <div class="analytics-card">
+          <div class="card-header">
+            <h3>Overview</h3>
+          </div>
+          <div class="card-content">
+            <div class="analytics-stats">
+              <div class="stat-item">
+                <div class="stat-value">{{ feedbackAnalytics.averageRating | number:'1.1-1' }}</div>
+                <div class="stat-label">Average Rating</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">{{ feedbackAnalytics.totalFeedbacks }}</div>
+                <div class="stat-label">Total Reviews</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Multilingual Sentiment Analysis Card -->
+        <div class="analytics-card" *ngIf="detailedSentimentChartData.length > 0">
+          <div class="card-header">
+            <h3>
+              Sentiment Analysis
+              <span class="ai-badge">AI</span>
+            </h3>
+            <p>AI-powered sentiment analysis in multiple languages</p>
+          </div>
+          <div class="card-content">
+            <div class="chart-container static-chart">
+              <div class="sentiment-bars">
+                <div *ngFor="let item of detailedSentimentChartData" class="sentiment-bar-item">
+                  <div class="sentiment-label">{{ item.name }}</div>
+                  <div class="sentiment-bar" 
+                      [ngClass]="'sentiment-' + item.name.toLowerCase().replace(' ', '-')"
+                      [style.width.%]="calculateDetailedSentimentBarWidth(item.value)">
+                    <span class="sentiment-value">{{ item.value }}</span>
+                  </div>
+                  <div class="sentiment-percentage" *ngIf="multilingualSentimentAnalytics?.sentimentPercentages">
+                    {{ getSentimentPercentage(item.name) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Legacy Sentiment Distribution Chart -->
+        <div class="analytics-card" *ngIf="sentimentChartData.length > 0">
+          <div class="card-header">
+            <h3>Sentiment Distribution</h3>
+          </div>
+          <div class="card-content">
+            <div class="chart-container static-chart">
+              <div class="sentiment-bars">
+                <div *ngFor="let item of sentimentChartData" class="sentiment-bar-item">
+                  <div class="sentiment-label">{{ item.name }}</div>
+                  <div class="sentiment-bar" 
+                      [ngClass]="'sentiment-' + item.name.toLowerCase()"
+                      [style.width.%]="item.value / (feedbackAnalytics.totalFeedbacks || 1) * 100">
+                    <span class="sentiment-value">{{ item.value }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="!feedbackAnalytics && !loadingFeedback" class="no-analytics">
+        <p>No analytics available. Store needs more reviews to generate analytics.</p>
+      </div>
+      
+      <div *ngIf="loadingFeedback" class="loading-analytics">
+        <div class="spinner"></div>
+        <p>Loading analytics...</p>
+      </div>
+    </div>
+
+    <div *ngSwitchCase="'event'" class="events-section">
+      <div class="section-header">
+        <h2>Virtual Events</h2>
+        <button class="create-button" (click)="openCreateEventDialog()">
+          <i class="fas fa-plus"></i> Create a Virtual Event
+        </button>
+      </div>
+      <app-event-store [events]="events"></app-event-store>
+    </div>
+
+    <div *ngSwitchCase="'donation'" class="donation-section">
+      <h2>Donation Campaign</h2>
+      <app-campaign-details [campaigns]="campaigns"></app-campaign-details>
+    </div>
   </div>
-</div>
 
-<!-- Loading Spinner -->
-<div class="loading-spinner" *ngIf="loading">
-  <mat-spinner></mat-spinner>
-</div>
+  <!-- Loading Spinner -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading store details...</p>
+  </div>
 
-<!-- Error Message -->
-<div class="error-message" *ngIf="error">
-  <p>{{error}}</p>
+  <!-- Error Message -->
+  <div class="error-state" *ngIf="error">
+    <i class="fas fa-exclamation-circle"></i>
+    <h3>Error</h3>
+    <p>{{error}}</p>
+    <button (click)="loadStore()">Try Again</button>
+  </div>
 </div>
