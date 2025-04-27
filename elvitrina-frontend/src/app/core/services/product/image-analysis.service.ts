@@ -13,7 +13,7 @@ export interface ImageAnalysisResult {
   providedIn: 'root'
 })
 export class ImageAnalysisService {
-  private apiUrl = 'http://localhost:8080/api/products';
+  private apiUrl = 'http://localhost:8081/api/products';
 
   constructor(private http: HttpClient) { }
 
@@ -23,7 +23,7 @@ export class ImageAnalysisService {
   analyzeImageFile(imageFile: File): Observable<ImageAnalysisResult> {
     const formData = new FormData();
     formData.append('image', imageFile);
-    
+
     return this.http.post<ImageAnalysisResult>(`${this.apiUrl}/analyze-image-file`, formData);
   }
 
@@ -42,27 +42,27 @@ export class ImageAnalysisService {
    * Apply analysis results to a product
    */
   applyImageAnalysis(
-    productId: number, 
+    productId: number,
     imageUrl: string,
-    options: { 
-      applyTags?: boolean, 
-      applyCategory?: boolean, 
-      applyDescription?: boolean 
+    options: {
+      applyTags?: boolean,
+      applyCategory?: boolean,
+      applyDescription?: boolean
     } = {}
   ): Observable<any> {
     const { applyTags = true, applyCategory = true, applyDescription = true } = options;
-    
+
     return this.http.post(
       `${this.apiUrl}/${productId}/apply-analysis`,
       null,
-      { 
-        params: { 
+      {
+        params: {
           imageUrl,
           applyTags: applyTags.toString(),
           applyCategory: applyCategory.toString(),
           applyDescription: applyDescription.toString()
-        } 
+        }
       }
     );
   }
-} 
+}

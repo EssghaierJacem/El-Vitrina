@@ -35,6 +35,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class AddToCartDialogComponent implements OnInit {
   productId: number = 0;
+  showSuccessMessage = false;
   order: CustomOrder = {
     productIds: [],
     quantity: 1,
@@ -137,18 +138,26 @@ else {
   }
 
   createOrder() {
-    // Calculer le total de la commande
+    this.showSuccessMessage = true;
+
+    // Calculate order total
     this.order.calculateTotal = this.order.quantity * this.order.price;
 
-    // Créer la commande via le service
+    // Create order via service
     this.orderService.createOrder(this.order).subscribe({
       next: () => {
-        this.router.navigate(['/orders']);
+        // Show success message for 3 seconds before redirecting
+        setTimeout(() => {
+          this.showSuccessMessage = false;
+          this.router.navigate(['/']);
+        }, 2000); // Reduced from 9000ms to 3000ms (3 seconds) - more user-friendly
       },
       error: err => {
-        console.error('Erreur:', err);
-        alert('Erreur lors de la création de la commande.');
+        console.error('Error:', err);
+        this.snackBar.open('Error creating order', 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
       }
     });
-  }
-}
+  }}

@@ -64,11 +64,11 @@ export class ThreedgenerationComponent implements AfterViewInit, OnDestroy {
       this.errorMessage = 'Please enter a valid description';
       return;
     }
-  
+
     this.isLoading = true;
     this.errorMessage = null;
     this.clearCurrentModel();
-  
+
     const requestBody = {
       model: "claude-3.7-sonnet-reasoning-gemma3-12b",
       messages: [
@@ -113,20 +113,20 @@ Make it realistic with proper proportions and component relationships.`
       max_tokens: 4000, // Increased token limit for complex models
       top_p: 0.95      // Slightly constrains token selection for better structure
     };
-  
+
     this.http.post(this.apiUrl, requestBody).subscribe({
       next: (response: any) => this.handleApiResponse(response),
       error: (error) => this.handleApiError(error)
     });
   }
-  
+
   private handleApiResponse(response: any): void {
     try {
       const content = response.choices?.[0]?.message?.content || '';
-      
+
       // Clean the content to extract only the JSON part
       let jsonString = content;
-      
+
       // Handle cases where the response includes markdown code blocks
       if (jsonString.includes('```json')) {
         const startIndex = jsonString.indexOf('```json') + 7;
@@ -135,17 +135,17 @@ Make it realistic with proper proportions and component relationships.`
           jsonString = jsonString.substring(startIndex, endIndex).trim();
         }
       }
-      
+
       // Remove everything before the first '{' and after the last '}'
       const jsonStart = jsonString.indexOf('{');
       const jsonEnd = jsonString.lastIndexOf('}') + 1;
-      
+
       if (jsonStart === -1 || jsonEnd === -1) {
         throw new Error('No valid JSON found in response');
       }
-      
+
       jsonString = jsonString.substring(jsonStart, jsonEnd);
-      
+
       // Parse the cleaned JSON string
       const parsed = JSON.parse(jsonString);
       this.loadModelFromJson(parsed);
@@ -157,7 +157,7 @@ Make it realistic with proper proportions and component relationships.`
       this.isLoading = false;
     }
   }
-  
+
   private loadModelFromJson(modelData: any): void {
     const loader = new ObjectLoader();
     const model = loader.parse(modelData);
@@ -335,16 +335,16 @@ Make it realistic with proper proportions and component relationships.`
         ]
       }
     };
-  
+
     try {
       // Try to load the couch model
       const loader = new ObjectLoader();
       const model = loader.parse(couchModel);
-  
+
       const box = new THREE.Box3().setFromObject(model);
       const center = box.getCenter(new THREE.Vector3());
       model.position.sub(center);
-  
+
       this.currentModel = model;
       this.scene.add(model);
       this.zoomToFit(box);
@@ -354,7 +354,7 @@ Make it realistic with proper proportions and component relationships.`
       const geometry = new THREE.SphereGeometry(1, 32, 32);
       const material = new THREE.MeshStandardMaterial({ color: 0x3498db });
       const mesh = new THREE.Mesh(geometry, material);
-  
+
       this.currentModel = mesh;
       this.scene.add(mesh);
       this.zoomToFit(new THREE.Box3().setFromObject(mesh));

@@ -1,0 +1,78 @@
+.order-details-card {
+  max-width: 600px;
+  margin: 32px auto;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+}
+
+.message-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #3f51b5; /* Material primary color */
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+mat-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 16px;
+}
+
+p {
+  font-size: 16px;
+  margin: 0;
+  color: #333;
+
+  strong {
+    color: #3f51b5;
+    margin-right: 8px;
+  }
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 14px;
+  color: #fff;
+  display: inline-block;
+  text-transform: capitalize;
+}
+
+.status-badge.pending {
+  background-color: #ffc107; // jaune
+}
+
+.status-badge.confirmed {
+  background-color: #4caf50; // vert
+}
+
+.status-badge.cancelled {
+  background-color: #f44336; // rouge
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+button {
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  padding: 8px 24px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
+button:hover {
+  background-color: #1976d2; /* darker accent */
+  color: #fff;
+}

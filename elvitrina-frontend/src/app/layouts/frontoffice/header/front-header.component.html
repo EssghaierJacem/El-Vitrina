@@ -446,7 +446,7 @@
 
       <!-- Header-->
       <div class="offcanvas-header lh-fixed fs-lg">
-        <strong class="mx-auto">Your Cart (2)</strong>
+        <strong class="mx-auto">My Cart </strong>
       </div>
 
       <app-shopping-cart ></app-shopping-cart>
@@ -455,10 +455,10 @@
       <div class="offcanvas-body">
         <a class="btn w-100 btn-dark" [routerLink]="'/payment/create'">Continue to Checkout</a>
 
-        <a class="btn w-100 btn-outline-dark mt-2" href="#">View Cart</a>
+      <!--  <a class="btn w-100 btn-outline-dark mt-2" [routerLink]="'/order/list'" >View Cart</a>-->
       </div>
 
-      <!-- Empty cart (remove `.d-none` to enable it) -->
+
       <div class="d-none">
 
         <!-- Close -->
@@ -1758,12 +1758,12 @@
 
                 <!-- Formation -->
                 <a class="nav-link" data-bs-toggle="dropdown" routerLink="/formation" (click)="trackInterest('cooking')">Formation</a>
-  
+
               <li class="nav-item dropdown">
-    
+
               <!-- Toggle -->
               <a class="nav-link" data-bs-toggle="dropdown" href="#">Request</a>
-    
+
               <!-- Menu -->
               <div class="dropdown-menu">
                 <div class="card card-lg">
@@ -1785,7 +1785,7 @@
                   </div>
                 </div>
               </div>
-    
+
             </li>
 
 

@@ -33,7 +33,7 @@ export class CustomOrderViewComponent implements OnInit  {
 
 
   constructor(private orderService: CustomOrderService,
-    private route: ActivatedRoute) {}
+    private route: ActivatedRoute,private router: Router) {}
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -65,8 +65,7 @@ export class CustomOrderViewComponent implements OnInit  {
   }
 
   nextOrder() {
-   // const nextId = this.order ? this.order.id + 1 : 1;
-    //this.router.navigate(['/orders', nextId]);
+    this.router.navigate(['/dashboard/custom-order/list']);
   }
 
   getStatusClass(status: string): string {

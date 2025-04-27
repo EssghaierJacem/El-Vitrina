@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = 'http://localhost:8081/api/auth';
 
   constructor(private http: HttpClient) {}
 
@@ -28,12 +28,12 @@ export class AuthService {
       params: { token, newPassword }
     });
   }
-  
+
   faceLogin(file: File): Observable<AuthResponse> {
     const formData = new FormData();
     formData.append('file', file);
-  
+
     return this.http.post<AuthResponse>(`${this.apiUrl}/face-login`, formData);
   }
-  
+
 }

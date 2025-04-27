@@ -75,6 +75,6 @@ export class PaymentViewComponent implements OnInit {
   }
 
   navigateToPayments() {
-    this.router.navigate(['dashboard/list/payment']);
+    this.router.navigate(['dashboard/payment/list']);
   }
 }
