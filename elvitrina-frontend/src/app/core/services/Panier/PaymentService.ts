@@ -58,5 +58,5 @@ export class PaymentService {
       return this.http.put<Payment>(`${this.apiUrl}/updateStatusToSuccess/${id}`, {});
     }
 
-
+  
 }

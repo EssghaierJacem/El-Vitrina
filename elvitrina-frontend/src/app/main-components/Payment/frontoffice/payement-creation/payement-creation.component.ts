@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms'; // Import necessary form modules
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
@@ -14,12 +14,14 @@ import { PaymentMethodType } from 'src/app/core/models/Panier/PaymentMethodType.
 import { PaymentStatusType } from 'src/app/core/models/Panier/PaymentStatusType.type';
 import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderService';
 import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
-import { CheckoutStepperComponent } from '../checkout-stepper/checkout-stepper.component';
-
 
 @Component({
   selector: 'app-payement-creation',
+  standalone: true,
   imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -28,33 +30,28 @@ import { CheckoutStepperComponent } from '../checkout-stepper/checkout-stepper.c
     MatNativeDateModule,
     RouterModule,
     MatSelectModule,
-    MatOptionModule,
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule
+    MatOptionModule
   ],
   templateUrl: './payement-creation.component.html',
-  styleUrl: './payement-creation.component.scss'
+  styleUrls: ['./payement-creation.component.scss']
 })
 export class PayementCreationComponent implements OnInit {
 
-  paymentForm!: FormGroup;
-
-  payment: any = {
-    amount: null,
+  payment = {
+    id: 0,
+    amount: 0,
+    transactionDate: new Date(),
     method: PaymentMethodType.CREDIT_CARD,
     paystatus: PaymentStatusType.PENDING,
-    transactionDate: null,
-    orderIds: []
+    orderIds: [] as number[],
   };
-
   calculateTotal: number = 0;
-  today: Date = new Date();
 
+  today: Date = new Date();
   @Input() stepper!: MatStepper;
   @Output() paymentCreated = new EventEmitter<boolean>();
   @Output() methodSelected = new EventEmitter<PaymentMethodType>();
-  @Input() selectedMethod: any;
+  @Input() selectedMethod: any; // Assurez-vous que cela correspond bien au type de la méthode de paiement
 
   paymentMethods = [
     { value: 'CREDITCARD', viewValue: 'Credit Card' },
@@ -76,42 +73,37 @@ export class PayementCreationComponent implements OnInit {
     private customOrderService: CustomOrderService,
     private paymentService: PaymentService,
     public router: Router,
-    private fb: FormBuilder
   ) {}
+  @Input() amount: number = 0;  // Receives the initial amount from parent
+  @Output() amountChange = new EventEmitter<number>();  // Emit the updated amount to parent
 
+
+  onAmountChange(newAmount: number) {
+    this.amountChange.emit(newAmount);  // Emit the updated amount to parent
+  }
   ngOnInit(): void {
-    // Initialize the form
-    this.paymentForm = this.fb.group({
-      amount: [{ value: this.payment.amount, disabled: true }],
-      method: [this.payment.method, Validators.required],
-      paystatus: [{ value: this.payment.paystatus, disabled: true }],
-      transactionDate: [{ value: this.today, disabled: true }],
-      orderIds: [this.payment.orderIds, Validators.required]
-    });
-
-    // Now set the value for orderIds if necessary
-    this.paymentForm.controls['orderIds'].setValue(this.payment.orderIds);
-    console.log('Form value for orderIds:', this.paymentForm.value.orderIds);
-
-    // Get available orders
     this.customOrderService.getAllOrders().subscribe((orders) => {
       this.availableOrders = orders;
-      console.log('Available Orders:', this.availableOrders);
     });
-
-    console.log('Payment Methods:', this.paymentMethods);
   }
 
-
   createPayment() {
-     console.log('Payment Form Value:', this.paymentForm.value);
-    // Update payment status before submission
-    this.payment.status = 'Success';
-
     console.log('Sending payment:', this.payment);
 
     this.paymentService.createPayment(this.payment).subscribe({
       error: (err) => console.error('Error creating payment:', err)
+    });
+
+    // Mise à jour du statut des commandes associées
+    this.payment.orderIds.forEach(orderId => {
+      this.customOrderService.updateOrderStatus2(orderId, 'Completed').subscribe({
+        next: () => {
+          console.log(`Order ${orderId} status updated to Completed.`);
+        },
+        error: (err) => {
+          console.error(`Error updating status for Order ${orderId}:`, err);
+        }
+      });
     });
 
     this.paymentCreated.emit(true);

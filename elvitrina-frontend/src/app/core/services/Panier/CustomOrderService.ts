@@ -53,5 +53,7 @@ export class CustomOrderService {
   removeProductFromOrder(orderId: number, productId: number): Observable<CustomOrder> {
     return this.http.delete<CustomOrder>(`${this.apiUrl}/${orderId}/removeProduct/${productId}`);
   }
-
+  updateOrderStatus2(orderId: number, status: string) {
+    return this.http.patch(`/api/orders/${orderId}/status`, { status });
+  }
 }
