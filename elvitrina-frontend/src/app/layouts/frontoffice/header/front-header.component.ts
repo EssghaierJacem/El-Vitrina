@@ -179,8 +179,17 @@ export class FrontHeaderComponent implements OnInit, AfterViewInit {
     }
   }
 
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
+
   getProductImage(product: Product): string {
-    return product.images && product.images.length > 0 ? product.images[0] : 'assets/images/default-product.jpg';
+    if (!product || !product.images || product.images.length === 0) {
+      return 'assets/images/products/no-image.jpg';
+    }
+    const imageUrl = product.images[0];
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    return this.IMAGE_BASE_URL + imageUrl;
   }
 
   wishlistClick(): void {
@@ -191,6 +200,11 @@ export class FrontHeaderComponent implements OnInit, AfterViewInit {
       console.error('Navigation error:', err);
     });
   }
+
+  goToProductDetail(product: Product): void {
+    this.router.navigate(['/product', product.productId]);
+  }
+
   trackInterest(topic: string): void {
     const existing = localStorage.getItem('interestedIn') || '';
     const keywords = new Set(existing.split(',').map(k => k.trim()).filter(k => k));

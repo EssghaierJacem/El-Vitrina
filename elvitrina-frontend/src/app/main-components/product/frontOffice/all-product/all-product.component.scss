@@ -235,10 +235,6 @@
       
       &:hover {
         transform: translateY(-5px);
-        
-        .product-actions {
-          opacity: 1;
-        }
       }
       
       .product-image {
@@ -274,29 +270,33 @@
         }
         
         .product-actions {
-          position: absolute;
-          bottom: 10px;
-          left: 0;
-          right: 0;
           display: flex;
           justify-content: center;
           gap: 10px;
-          opacity: 0;
+          margin-top: 10px;
+          opacity: 1;
           transition: opacity 0.3s ease;
           
           .action-button {
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background-color: white;
-            color: #000;
-            border: none;
+            background-color: #1976d2;
+            color: #fff;
+            border: 2px solid #1565c0;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
+            outline: 2px dashed #ff9800;
+            font-size: 20px;
+
+            i {
+              color: #fff !important;
+            }
+
             
             &:hover {
               background-color: #000;

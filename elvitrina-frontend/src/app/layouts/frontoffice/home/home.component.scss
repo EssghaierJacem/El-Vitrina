@@ -120,6 +120,7 @@ h4.text-white {
   object-fit: contain; /* Changed to 'contain' to show full image without cropping */
   background-color: #f8f9fa; /* Light background to make product stand out */
   padding: 10px; /* Add some padding around the image */
+  border: 2px dashed red !important; /* DEBUG: show image area */
 }
 
 .card-img-hover:hover .card-img-front {

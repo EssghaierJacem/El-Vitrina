@@ -186,6 +186,12 @@ export class ProductCreateComponent implements OnInit {
     ).join(' ');
   }
 
+  getStatusDisplayName(status: string): string {
+    return status.split('_').map(word =>
+      word.charAt(0) + word.slice(1).toLowerCase()
+    ).join(' ');
+  }
+
   addTag(tag: string): void {
     if (tag && !this.tags.includes(tag)) {
       this.tags.push(tag);

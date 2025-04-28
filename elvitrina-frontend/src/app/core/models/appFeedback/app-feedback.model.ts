@@ -6,4 +6,5 @@ export interface AppFeedback {
   createdAt: Date;
   appFeedbackType: AppFeedbackType;
   contactEmail?: string;
+  contactName?: string;
 }

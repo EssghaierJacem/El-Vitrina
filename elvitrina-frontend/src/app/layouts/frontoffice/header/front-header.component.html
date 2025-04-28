@@ -380,10 +380,10 @@
 
       <!-- Body: Form -->
       <div class="offcanvas-body">
-        <form (submit)="searchProducts(searchQuery.value)">
+        <form (submit)="applySearchFilters(); $event.preventDefault()">
           <div class="form-group">
             <label class="visually-hidden" for="modalSearchCategories">Categories:</label>
-            <select class="form-select" id="modalSearchCategories" [(ngModel)]="selectedCategory" name="category">
+            <select class="form-select" id="modalSearchCategories" [(ngModel)]="selectedCategory" name="category" (change)="applySearchFilters()">
               <option value="" selected>All Categories</option>
               <option *ngFor="let category of categories" [value]="category">{{ formatCategoryName(category) }}</option>
             </select>
@@ -400,12 +400,12 @@
       </div>
 
       <!-- Body: Results -->
-      <div class="offcanvas-body border-top fs-sm" *ngIf="products && products.length > 0">
+      <div class="offcanvas-body border-top fs-sm" *ngIf="searchResults && searchResults.length > 0">
         <!-- Heading -->
         <p>Search Results:</p>
 
         <!-- Items -->
-        <div *ngFor="let product of products" class="row align-items-center position-relative mb-5">
+        <div *ngFor="let product of searchResults" class="row align-items-center position-relative mb-5" (click)="goToProductDetail(product)" style="cursor:pointer;">
           <div class="col-4 col-md-3">
             <!-- Image -->
             <img class="img-fluid" [src]="getProductImage(product)" [alt]="product.productName">
@@ -413,7 +413,7 @@
           <div class="col position-static">
             <!-- Text -->
             <p class="mb-0 fw-bold">
-              <a class="stretched-link text-body" [routerLink]="['/product', product.productId]">{{ product.productName }}</a> <br>
+              {{ product.productName }} <br>
               <span class="text-muted">{{ product.price | currency }}</span>
             </p>
           </div>
@@ -426,7 +426,7 @@
       </div>
 
       <!-- Body: Empty -->
-      <div class="offcanvas-body" *ngIf="products && products.length === 0">
+      <div class="offcanvas-body" *ngIf="searchResults && searchResults.length === 0">
         <!-- Text -->
         <p class="mb-3 fs-sm text-center">
           Nothing matches your search

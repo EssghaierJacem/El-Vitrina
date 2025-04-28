@@ -19,17 +19,17 @@ export class HomeComponent implements OnInit {
   // Product category groupings
   readonly ARTISAN_CATEGORIES = [
     ProductCategoryType.HANDMADE_JEWELRY,
-    ProductCategoryType.POTTERY_CERAMICS,
     ProductCategoryType.TEXTILES_FABRICS,
-    ProductCategoryType.ART_PAINTINGS,
     ProductCategoryType.VINTAGE_ANTIQUES,
+    ProductCategoryType.CLOTHING_ACCESSORIES,
     ProductCategoryType.CRAFTS_DIY
   ];
 
   readonly HOME_LIFESTYLE_CATEGORIES = [
     ProductCategoryType.HOME_DECOR,
-    ProductCategoryType.CLOTHING_ACCESSORIES,
     ProductCategoryType.ECO_FRIENDLY,
+    ProductCategoryType.ART_PAINTINGS,
+    ProductCategoryType.POTTERY_CERAMICS,
     ProductCategoryType.HEALTH_WELLNESS,
     ProductCategoryType.PET_SUPPLIES
   ];
@@ -108,18 +108,14 @@ export class HomeComponent implements OnInit {
   }
 
   getProductImageUrl(product: Product): string {
-    const imagePath = product?.mainImage || product?.images?.[0];
-  
-    if (!imagePath) {
+    if (!product || !product.images || product.images.length === 0) {
       return 'assets/images/products/no-image.jpg';
     }
-  
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      return imagePath;
+    const imageUrl = product.images[0];
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
     }
-  
-    const fileName = imagePath.replace(/^\/+/, '');
-    return `${this.IMAGE_PRODUCT_BASE_URL}${fileName}`;
+    return this.IMAGE_PRODUCT_BASE_URL + imageUrl;
   }
 
   getFinalPrice(product: Product): number {

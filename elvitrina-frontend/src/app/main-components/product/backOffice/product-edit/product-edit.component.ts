@@ -203,6 +203,12 @@ export class ProductEditComponent implements OnInit {
     ).join(' ');
   }
 
+  getStatusDisplayName(status: string): string {
+    return status.split('_').map(word =>
+      word.charAt(0) + word.slice(1).toLowerCase()
+    ).join(' ');
+  }
+
   onImagesSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
