@@ -4,7 +4,6 @@ import { ToastrService } from 'ngx-toastr';
 import { RequestPerso } from 'src/app/core/models/requestPerso/requestPerso.model';
 import { AdminRequestPersoService } from 'src/app/core/services/requestPerso/request-perso-admin.service';
 import { RequestViewDialogComponent } from 'src/app/main-components/requestPerso/BackOffice/request-view-dialog/request-view-dialog.component';
-import { ProposalPerso } from 'src/app/core/models/proposalPerso/proposalPerso.model';  // Assuming a proposal model exists
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -17,8 +16,8 @@ import { CommonModule } from '@angular/common';
 export class RequestModerationComponent implements OnInit {
   requests: RequestPerso[] = [];
   filteredRequests: RequestPerso[] = [];
-  selectedRequests: Set<number> = new Set(); // Set to track selected requests
-  statusFilter: string = 'ALL'; // Default filter is 'All'
+  selectedRequests: Set<number> = new Set();
+  statusFilter: string = 'ALL';
 
   private adminRequestPersoService = inject(AdminRequestPersoService);
   private toastr = inject(ToastrService);
@@ -32,20 +31,18 @@ export class RequestModerationComponent implements OnInit {
     this.adminRequestPersoService.getAllRequestPerso().subscribe({
       next: (data) => {
         this.requests = data;
-        this.filteredRequests = data;  // Initially, display all requests
+        this.filteredRequests = data;
       },
       error: () => this.toastr.error('Erreur de chargement des demandes')
     });
   }
 
-  // Method to view request details, including proposals list
   viewRequest(request: RequestPerso): void {
     this.adminRequestPersoService.getProposalsForRequest(request.id!).subscribe({
       next: (proposals) => {
         if (proposals.length === 0) {
           this.toastr.warning('No proposals available for this request.');
         }
-        // Open the dialog with request and proposals list
         this.dialog.open(RequestViewDialogComponent, {
           width: '600px',
           data: { request, proposals }
@@ -55,10 +52,8 @@ export class RequestModerationComponent implements OnInit {
     });
   }
 
-  // Filter requests based on status
   filterRequests(event: any): void {
     this.statusFilter = event.target.value;
-
     if (this.statusFilter === 'ALL') {
       this.filteredRequests = this.requests;
     } else {
@@ -66,7 +61,6 @@ export class RequestModerationComponent implements OnInit {
     }
   }
 
-  // Change status of request (approve/reject)
   changeStatus(request: RequestPerso, newStatus: string): void {
     const confirmAction = confirm(`Are you sure you want to change the status to ${newStatus}?`);
     if (!confirmAction) return;
@@ -81,7 +75,6 @@ export class RequestModerationComponent implements OnInit {
     });
   }
 
-  // Delete request
   deleteRequest(id: number): void {
     const confirmDelete = confirm('Are you sure you want to delete this request?');
     if (!confirmDelete) return;
@@ -89,13 +82,14 @@ export class RequestModerationComponent implements OnInit {
     this.adminRequestPersoService.deleteRequestPerso(id).subscribe({
       next: () => {
         this.requests = this.requests.filter(r => r.id !== id);
+        this.filteredRequests = this.filteredRequests.filter(r => r.id !== id);
+        this.selectedRequests.delete(id);
         this.toastr.success('Demande supprimée');
       },
       error: () => this.toastr.error('Erreur de suppression')
     });
   }
 
-  // Toggle request selection
   toggleRequestSelection(requestId: number): void {
     if (this.selectedRequests.has(requestId)) {
       this.selectedRequests.delete(requestId);
@@ -104,7 +98,6 @@ export class RequestModerationComponent implements OnInit {
     }
   }
 
-  // Select or deselect all requests
   toggleSelectAll(event: any): void {
     if (event.target.checked) {
       this.filteredRequests.forEach(request => this.selectedRequests.add(request.id));
@@ -113,7 +106,6 @@ export class RequestModerationComponent implements OnInit {
     }
   }
 
-  // Perform bulk action (approve/reject)
   bulkAction(action: string): void {
     const confirmAction = confirm(`Are you sure you want to ${action} the selected requests?`);
     if (!confirmAction) return;
@@ -130,6 +122,6 @@ export class RequestModerationComponent implements OnInit {
       });
     });
 
-    this.toastr.success(`${action} requests successfully`);
+    this.toastr.success(`Requests ${action} successfully`);
   }
 }

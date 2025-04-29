@@ -1,12 +1,15 @@
 package com.sudoers.elvitrinabackend.controller.CustomOrder;
 
+import com.sudoers.elvitrinabackend.exception.ResourceNotFoundException;
 import com.sudoers.elvitrinabackend.model.dto.CustomOrderDTO;
+import com.sudoers.elvitrinabackend.model.enums.OrderStatusType;
 import com.sudoers.elvitrinabackend.service.customOrder.CustomOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -43,4 +46,20 @@ public class CustomOrderController {
         customOrderService.delete(id);
         return ResponseEntity.noContent().build();
     }
+    // Mettre à jour le statut d'une commande
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<CustomOrderDTO> updateOrderStatus2(@PathVariable Long id, @RequestBody Map<String, String> status) {
+        // Recherche de la commande par son ID
+        CustomOrderDTO order = customOrderService.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        // Mettre à jour le statut de la commande
+        order.setStatus(OrderStatusType.valueOf(status.get("status")));
+
+        // Sauvegarder la commande mise à jour
+        CustomOrderDTO updatedOrder = customOrderService.saveCustomOrder(order);
+
+        return ResponseEntity.ok(updatedOrder);
+    }
+
 }
