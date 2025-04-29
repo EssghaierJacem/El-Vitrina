@@ -45,6 +45,7 @@
               <mat-icon>delete</mat-icon>
               <span>Delete Post</span>
             </button>
+            
           </mat-menu>
         </div>
 
@@ -63,8 +64,9 @@
 
         <!-- Post actions (Like, Comment, Share) -->
         <div class="post-actions">
-          <button mat-button class="action-button">
-            <mat-icon>thumb_up</mat-icon> Like
+          <button mat-button (click)="toggleLike(post)" [color]="post.isLiked ? 'primary' : ''">
+            <mat-icon>thumb_up</mat-icon>
+            {{ post.reactionNumber }}
           </button>
           <button mat-button class="action-button" (click)="toggleCommentInput(post.id!)">
             <mat-icon>comment</mat-icon> Comment
@@ -74,75 +76,97 @@
           </button>
         </div>
 
-        <!-- Comments section -->
+        <!-- Remplacez la section des commentaires par ceci -->
 <div class="comments-section" *ngIf="comments[post.id!]?.length">
   <div class="comment-count">{{comments[post.id!]?.length}} commentaires</div>
 
   <div *ngFor="let comment of comments[post.id!]" class="comment-container">
     <div class="comment-avatar">
-      <mat-icon  class="avatar-icon">account_circle</mat-icon>
+      <mat-icon class="avatar-icon">account_circle</mat-icon>
     </div>
 
     <div class="comment-main-wrapper">
+      <!-- Mode édition -->
+      <div *ngIf="editingCommentId === comment.id" class="edit-comment-container">
+        <mat-form-field appearance="outline" class="full-width">
+          <textarea matInput 
+            [(ngModel)]="editedContent" 
+            placeholder="Edit your comment..."
+            rows="2"></textarea>
+        </mat-form-field>
+        <div class="edit-comment-actions">
+          <button mat-button (click)="cancelEditing()">Cancel</button>
+          <button mat-button color="primary" (click)="saveEditedComment(post.id!, comment)">Save</button>
+        </div>
+      </div>
 
-      <div *ngIf="!editMode || currentEditComment?.id !== comment.id" class="comment-box">
+      <!-- Mode visualisation -->
+      <div *ngIf="editingCommentId !== comment.id" class="comment-box">
         <div class="comment-header">
           <span class="comment-author">{{comment.user?.firstname}} {{comment.user?.lastname}}</span>
           <span class="comment-time">{{ comment.createdAt | date: 'MMM d, yyyy à h:mm a' }}</span>
         </div>
         <div class="comment-text">{{comment.content}}</div>
-      </div>
-    
-      <div *ngIf="editMode && currentEditComment?.id === comment.id" class="edit-box">
-        <textarea 
-          [(ngModel)]="editedContent"
-          class="edit-textarea"
-          placeholder="Modifier votre commentaire..."
-        ></textarea>
-        <div class="edit-actions">
-          <button mat-button (click)="saveComment()" color="primary">Enregistrer</button>
-          <button mat-button (click)="cancelEdit()">Annuler</button>
-        </div>
-      </div>
         
-        <!-- Menu des 3 points aligné à droite -->
-        <div class="comment-menu" *ngIf="comment.user?.id === userId">
-          <button mat-icon-button [matMenuTriggerFor]="commentMenu" class="menu-btn">
-            <mat-icon>more_horiz</mat-icon>
-          </button>
-          <mat-menu #commentMenu="matMenu">
-            <button mat-menu-item (click)="editComment(comment)">
-              <mat-icon>edit</mat-icon>
-              <span>Edit</span>
-            </button>
-            <button mat-menu-item  (click)="deleteComment(comment.id! , post.id!)">
-              <mat-icon>delete</mat-icon>
-              <span>Delete</span>
-            </button>
-          </mat-menu>
+        <!-- Translation Section -->
+        <div *ngIf="currentTranslatedCommentId === comment.id && translationResponse" class="translation-box">
+          <div class="translation-label">Translation:</div>
+          <div class="translation-text">{{translationResponse.translatedText}}</div>
         </div>
+        
+        <!-- Translate Link -->
+        <div class="comment-actions">
+          <button mat-button color="primary" class="translate-link" 
+                  (click)="handleTranslationClick(comment)">
+            {{currentTranslatedCommentId === comment.id && translationResponse ? 'Hide Translation' : 'Translate'}}
+          </button>
+        </div>
+      </div>
+      
+      <!-- Menu des 3 points -->
+      <div class="comment-menu" *ngIf="comment.user?.id === userId && editingCommentId !== comment.id">
+        <button mat-icon-button [matMenuTriggerFor]="commentMenu" class="menu-btn">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #commentMenu="matMenu">
+          <button mat-menu-item (click)="startEditingComment(comment)">
+            <mat-icon>edit</mat-icon>
+            <span>Edit</span>
+          </button>
+          <button mat-menu-item (click)="deleteComment(comment.id!, post.id!)">
+            <mat-icon>delete</mat-icon>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+      </div>
     </div>
   </div>
-</div>
- 
 
-        <!-- Add comment section -->
-        <div class="add-comment" *ngIf="showCommentInput[post.id!]">
-          <div class="comment-avatar">
-            <mat-icon class="avatar-icon">account_circle</mat-icon>
-          </div>
-          <div class="comment-input-container">
-            <mat-form-field appearance="outline" class="full-width">
-              <input matInput 
-                [(ngModel)]="commentInputs[post.id!]" 
-                placeholder="Write a comment..."
-                (keyup.enter)="addComment(post.id!)">
-            </mat-form-field>
-            <button mat-icon-button class="send-comment" (click)="addComment(post.id!)">
-              <mat-icon>send</mat-icon>
-            </button>
-          </div>
-        </div>
+</div>
+
+
+<!-- Add comment section -->
+<div class="add-comment" *ngIf="showCommentInput[post.id!]">
+  <div class="comment-avatar">
+    <mat-icon class="avatar-icon">account_circle</mat-icon>
+  </div>
+  <div class="comment-input-container">
+    <mat-form-field appearance="outline" class="full-width">
+      <input matInput 
+        [(ngModel)]="commentInputs[post.id!]" 
+        placeholder="Write a comment..."
+        (keyup.enter)="addComment(post.id!)">
+    </mat-form-field>
+    <button mat-icon-button class="send-comment" (click)="addComment(post.id!)">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+</div>
+
+
+
+
+
       </mat-card>
     </div>
   </div>

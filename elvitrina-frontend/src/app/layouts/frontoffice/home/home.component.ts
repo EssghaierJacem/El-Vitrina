@@ -16,9 +16,6 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
-
-  readonly IMAGE_BASE_URL = environment.apiUrl + '/products/products/images/';
-
   // Product category groupings
   readonly ARTISAN_CATEGORIES = [
     ProductCategoryType.HANDMADE_JEWELRY,
@@ -54,7 +51,7 @@ export class HomeComponent implements OnInit {
   activeCategory: string = 'artisan';
 
   // Image base URL from environment
-  readonly IMAGE_PRODUCT_BASE_URL = 'http://localhost:8080/api/products/products/images/';
+  // readonly IMAGE_PRODUCT_BASE_URL = 'http://localhost:8080/api/products/products/images/';
 
   constructor(
     private productService: ProductService,
@@ -110,19 +107,16 @@ export class HomeComponent implements OnInit {
     this.activeCategory = category;
   }
 
-  getProductImageUrl(product: Product): string {
-    const imagePath = product?.mainImage || product?.images?.[0];
-  
-    if (!imagePath) {
-      return 'assets/images/products/no-image.jpg';
+  getProductImageUrl(image: string | undefined): string {
+    if (!image) {
+      return 'assets/images/products/no-image.jpg'; 
     }
   
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      return imagePath;
+    if (image.startsWith('http')) {
+      return image; 
     }
   
-    const fileName = imagePath.replace(/^\/+/, '');
-    return `http://localhost:8080/api/products/products/images/${fileName}`;
+    return `http://localhost:8080/api/products/products/images/${image}`;
   }
 
   getFinalPrice(product: Product): number {

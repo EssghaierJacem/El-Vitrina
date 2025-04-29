@@ -217,7 +217,7 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
         this.loadStoreStats(storeId);
         this.loadAnalyzedFeedback(storeId);
         
-        this.loadVertuelEvents(storeId); 
+        this.loadVirtualEvents(storeId); 
         this.loadDonationCampaigns(storeId); // Load donation campaigns if needed
       },
       error: (error: Error) => {
@@ -239,7 +239,7 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
       }
     });
   }
-  loadVertuelEvents(storeId: number) {
+  loadVirtualEvents(storeId: number) {
     this.virtualEventService.getEventByStoreId(storeId).subscribe({
       next: (events) => {
         this.events = events;
@@ -1006,24 +1006,16 @@ getLimitedFeedbacks(): StoreFeedback[] {
 }
 
 // Get the proper URL for user profile images
-getUserProfileImageUrl(imagePath: string): string {
-  if (!imagePath) {
-    return '/assets/images/avatars/default-avatar.png';
+getUserProfileImageUrl(filename: string): string {
+
+  if (filename.startsWith('http://') || filename.startsWith('https://')) {
+    return filename;
   }
-  
-  // If it's already a full URL, return it as is
-  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-    return imagePath;
-  }
-  
-  // If it's a relative path starting with '/', append it to the API URL
-  if (imagePath.startsWith('/')) {
-    return `${environment.apiUrl}${imagePath}`;
-  }
-  
-  // Otherwise, assume it's a filename and prepend the base URL
-  return `${this.USER_IMAGE_BASE_URL}${imagePath}`;
+
+  const cleaned = filename.replace(/^\/+/, '');
+  return `http://localhost:8080/user-images/${cleaned}`;
 }
+
 
 // Helper method to get the feedback type display name
 getFeedbackTypeDisplayName(type: StoreFeedbackType): string {
