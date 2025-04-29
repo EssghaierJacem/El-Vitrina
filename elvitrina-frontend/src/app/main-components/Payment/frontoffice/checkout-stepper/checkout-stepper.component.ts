@@ -85,7 +85,7 @@ export class CheckoutStepperComponent implements OnInit {
     console.log('✅ CheckoutStepperComponent initialisé');
   }
 
-  totalAmount: number = 100;
+  totalAmount: number = 0;
 
   // Mettre à jour l'adresse avec celle sélectionnée sur la carte
   handleMapAddress(address: string): void {

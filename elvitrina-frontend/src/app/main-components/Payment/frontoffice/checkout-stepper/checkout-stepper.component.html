@@ -11,6 +11,7 @@
       *ngIf="selectedPaymentMethod"
       [stepper]="stepper"
       [selectedMethod]="selectedPaymentMethod"
+      (amountChange)="updateTotalAmount($event)"
       (paymentCreated)="onPaymentCreated($event)">
     </app-payement-creation>
 
@@ -81,7 +82,7 @@
     <mat-step [stepControl]="creditCardFormGroup">
       <form [formGroup]="creditCardFormGroup">
         <ng-template matStepLabel>Secure Payment</ng-template>
-        <app-payment></app-payment>
+        <app-payment [amountToPay]="totalAmount"></app-payment>
 
         <div class="step-actions">
           <button mat-button matStepperPrevious>Back</button>

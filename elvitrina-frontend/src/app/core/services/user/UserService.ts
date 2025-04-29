@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UserService {
-  private baseUrl = 'http://localhost:8081/users';
+  private baseUrl = 'http://localhost:8080/users';
 
   constructor(private http: HttpClient, private tokenService: TokenService) {}
 
@@ -48,7 +48,7 @@ export class UserService {
 
   changePassword(changePasswordData: { userId: number, currentPassword: string, newPassword: string }): Observable<string> {
     const { userId, currentPassword, newPassword } = changePasswordData;
-    return this.http.put(`http://localhost:8081/users/change-password/${userId}`, null, {
+    return this.http.put(`http://localhost:8080/users/change-password/${userId}`, null, {
       params: { currentPassword, newPassword },
       responseType: 'text'
     });

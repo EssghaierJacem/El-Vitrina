@@ -47,7 +47,7 @@ public class CustomOrderController {
         return ResponseEntity.noContent().build();
     }
     // Mettre à jour le statut d'une commande
-    @PutMapping("/{id}/status")
+    @PatchMapping("/{id}/status")
     public ResponseEntity<CustomOrderDTO> updateOrderStatus2(@PathVariable Long id, @RequestBody Map<String, String> status) {
         // Recherche de la commande par son ID
         CustomOrderDTO order = customOrderService.findById(id)

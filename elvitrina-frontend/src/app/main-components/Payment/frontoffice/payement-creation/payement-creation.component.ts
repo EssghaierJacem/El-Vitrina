@@ -36,6 +36,7 @@ import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
   styleUrls: ['./payement-creation.component.scss']
 })
 export class PayementCreationComponent implements OnInit {
+  today: Date = new Date();
 
   payment = {
     id: 0,
@@ -47,11 +48,12 @@ export class PayementCreationComponent implements OnInit {
   };
   calculateTotal: number = 0;
 
-  today: Date = new Date();
   @Input() stepper!: MatStepper;
   @Output() paymentCreated = new EventEmitter<boolean>();
   @Output() methodSelected = new EventEmitter<PaymentMethodType>();
   @Input() selectedMethod: PaymentMethodType;
+  @Input() amount: number = 0;
+  @Output() amountChange = new EventEmitter<number>();
 
   paymentMethods = [
     { value: 'CREDITCARD', viewValue: 'Credit Card' },
@@ -68,64 +70,55 @@ export class PayementCreationComponent implements OnInit {
   ];
 
   availableOrders: any[] = [];
-order: any;
 
   constructor(
     private customOrderService: CustomOrderService,
     private paymentService: PaymentService,
     public router: Router,
   ) {}
-  @Input() amount: number = 0;  // Receives the initial amount from parent
-  @Output() amountChange = new EventEmitter<number>();  // Emit the updated amount to parent
 
-
-  onAmountChange(newAmount: number) {
-    this.amountChange.emit(newAmount);  // Emit the updated amount to parent
-  }
   ngOnInit(): void {
     this.customOrderService.getAllOrders().subscribe((orders) => {
-    // ✅ Filtrer uniquement les commandes en statut PENDING
-    this.availableOrders = orders.filter(order => order.status === 'PENDING');
+      this.availableOrders = orders.filter(order => order.status === 'PENDING');
     });
   }
 
- // ✅ Met à jour le montant automatiquement à chaque sélection de commandes
- onOrdersSelectionChange() {
-  this.calculateTotal = this.availableOrders
-    .filter(order => this.payment.orderIds.includes(order.id))
-    .reduce((sum, order) => sum + (order.calculateTotal || 0), 0);
+  onAmountChange(newAmount: number) {
+    this.amountChange.emit(newAmount);
+  }
 
-  this.payment.amount = this.calculateTotal;  // Le champ devient readonly côté HTML
-  this.amountChange.emit(this.payment.amount);
-}
+  onOrdersSelectionChange() {
+    this.calculateTotal = this.availableOrders
+      .filter(order => this.payment.orderIds.includes(order.id))
+      .reduce((sum, order) => sum + (order.calculateTotal || 0), 0);
 
-// ✅ Créer le paiement et mettre à jour les statuts
-createPayment() {
-  this.payment.amount = this.calculateTotal;
-  this.payment.paystatus = PaymentStatusType.SUCCESS;  // 🔁 Mettez à jour le statut
+    this.payment.amount = this.calculateTotal;
+    this.amountChange.emit(this.payment.amount);
+  }
 
-  this.paymentService.createPayment(this.payment).subscribe({
-    next: () => {
-      // ✅ Mise à jour du statut des commandes à CONFIRMED
-      this.payment.orderIds.forEach(orderId => {
-        this.customOrderService.updateOrderStatus2(orderId, 'CONFIRMED').subscribe({
-          next: () => {
-            console.log(`Order ${orderId} status updated to CONFIRMED.`);
-          },
-          error: (err) => {
-            console.error(`Error updating status for Order ${orderId}:`, err);
-          }
+  createPayment() {
+    this.payment.amount = this.calculateTotal;
+    this.payment.paystatus = PaymentStatusType.SUCCESS;
+
+    this.paymentService.createPayment(this.payment).subscribe({
+      next: () => {
+        this.paymentService.setLastCreatedPayment(this.payment); // Save the current payment
+
+        this.payment.orderIds.forEach(orderId => {
+          this.customOrderService.updateOrderStatus2(orderId, 'CONFIRMED').subscribe({
+            next: () => console.log(`Order ${orderId} confirmed.`),
+            error: (err) => console.error(`Error updating order ${orderId}`, err)
+          });
         });
-      });
 
-      // 🔔 Événements / navigation
-      this.paymentCreated.emit(true);
-      this.methodSelected.emit(this.payment.method);
-      this.stepper.next();
-    },
-    error: (err) => {
-      console.error('Error creating payment:', err);
-    }
-  });
-}
+        this.paymentCreated.emit(true);
+        this.methodSelected.emit(this.payment.method);
+        this.amountChange.emit(this.payment.amount);
+        this.stepper.next();
+      },
+      error: (err) => {
+        console.error('Error creating payment:', err);
+      }
+    });
+  }
 }

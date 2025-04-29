@@ -7,6 +7,8 @@ import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.sudoers.elvitrinabackend.model.dto.PaymentDTO;
 import com.sudoers.elvitrinabackend.model.entity.Payment;
+import com.sudoers.elvitrinabackend.model.enums.PaymentStatusType;
+import com.sudoers.elvitrinabackend.repository.PaymentRepository;
 import com.sudoers.elvitrinabackend.service.payment.PaymentService;
 import com.sudoers.elvitrinabackend.service.payment.StripeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,10 +29,12 @@ public class paymentController {
 
     private final StripeService stripeService;
     private final PaymentService paymentService;
+    private final PaymentRepository paymentRepository;
 
-    public paymentController(PaymentService paymentService, StripeService stripeService) {
+    public paymentController(PaymentService paymentService, StripeService stripeService, PaymentRepository paymentRepository) {
         this.paymentService = paymentService;
         this.stripeService = stripeService;
+        this.paymentRepository = paymentRepository;
     }
 
     @PostMapping
@@ -79,7 +84,7 @@ public class paymentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
-
+/*
     @PostMapping("/create-checkout-session")
     public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody Map<String, Object> data) {
         try {
@@ -87,9 +92,10 @@ public class paymentController {
 
             Stripe.apiKey = "sk_test_51RCGti2LY1XqlaR4YJVjKUJlWlcmfV9i86Pbv4v7rtEpzRPJMSLDKlNV44jFB635oB6QcQaMBlS8KoKAntd2on1e00mo8aGBNG"; // ta clé secrète Stripe
 
+            Long paymentId = null;
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
-                    .setSuccessUrl("http://localhost:4200/payment/payment-success")
+                    .setSuccessUrl("http://localhost:4200/payment/payment-success?paymentId=" + paymentId)
                     .setCancelUrl("http://localhost:4200/cancel")
                     .addLineItem(
                             SessionCreateParams.LineItem.builder()
@@ -119,6 +125,58 @@ public class paymentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+*/
+    @PostMapping("/create-checkout-session")
+    public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody Map<String, Object> data) {
+        try {
+            int amount = (int) data.get("amount");
+
+            // 🔹 1. Créer un enregistrement Payment en base
+            Payment newPayment = new Payment();
+            newPayment.setAmount(amount);
+            newPayment.setPaystatus(PaymentStatusType.valueOf("PENDING"));
+            newPayment = paymentRepository.save(newPayment); // ou ton service
+
+            Long paymentId = newPayment.getId();
+
+            // 🔹 2. Créer la session Stripe
+            Stripe.apiKey = "sk_test_51RCGti2LY1XqlaR4YJVjKUJlWlcmfV9i86Pbv4v7rtEpzRPJMSLDKlNV44jFB635oB6QcQaMBlS8KoKAntd2on1e00mo8aGBNG"; // ta vraie clé
+
+            SessionCreateParams params = SessionCreateParams.builder()
+                    .setMode(SessionCreateParams.Mode.PAYMENT)
+                    .setSuccessUrl("http://localhost:4200/payment/payment-success?paymentId=" + paymentId)
+                    .setCancelUrl("http://localhost:4200/cancel")
+                    .addLineItem(
+                            SessionCreateParams.LineItem.builder()
+                                    .setQuantity(1L)
+                                    .setPriceData(
+                                            SessionCreateParams.LineItem.PriceData.builder()
+                                                    .setCurrency("eur")
+                                                    .setUnitAmount((long) amount * 100)
+                                                    .setProductData(
+                                                            SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                                                    .setName("Paiement")
+                                                                    .build()
+                                                    )
+                                                    .build()
+                                    )
+                                    .build()
+                    )
+                    .build();
+
+            Session session = Session.create(params);
+
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("url", session.getUrl());
+            responseData.put("paymentId", paymentId.toString()); // facultatif pour debug
+
+            return ResponseEntity.ok(responseData);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
     @PutMapping("/updateStatusToSuccess/{id}")
     public ResponseEntity<PaymentDTO> updateStatusToSuccess(@PathVariable Long id) {
