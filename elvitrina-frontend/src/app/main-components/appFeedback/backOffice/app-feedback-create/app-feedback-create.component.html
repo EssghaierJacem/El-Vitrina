@@ -16,9 +16,9 @@
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Feedback Type</mat-label>
         <mat-select formControlName="appFeedbackType" required>
-          @for (option of feedbackTypeOptions; track option.value) {
-            <mat-option [value]="option.value">{{ option.label }}</mat-option>
-          }
+          <mat-option *ngFor="let option of feedbackTypeOptions" [value]="option.value">
+            {{ option.label }}
+          </mat-option>
         </mat-select>
         <mat-error *ngIf="feedbackForm.get('appFeedbackType')?.hasError('required')">
           Feedback type is required
@@ -52,11 +52,8 @@
           Cancel
         </button>
         <button mat-raised-button color="primary" type="submit" [disabled]="feedbackForm.invalid || isSubmitting">
-          @if (isSubmitting) {
-            <mat-spinner diameter="20"></mat-spinner>
-          } @else {
-            Submit
-          }
+          <mat-spinner *ngIf="isSubmitting" diameter="20"></mat-spinner>
+          <span *ngIf="!isSubmitting">Submit</span>
         </button>
       </div>
     </form>

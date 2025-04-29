@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StoreFeedbackService } from 'src/app/core/services/storeFeedback/store-feedback.service';
 import { StoreFeedbackType, getStoreFeedbackTypeDisplayName } from 'src/app/core/models/storeFeedback/store-feedback-type.enum';
@@ -12,7 +12,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from 'src/app/core/services/auth/auth.service';
+import { TokenService } from 'src/app/core/services/user/TokenService';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
@@ -26,6 +26,7 @@ import { StarRatingComponent } from '../star-rating/star-rating.component';
   templateUrl: './store-feedback-create.component.html',
   styleUrls: ['./store-feedback-create.component.scss'],
   standalone: true,
+  encapsulation: ViewEncapsulation.None,
   imports: [
     CommonModule,
     MatCardModule,
@@ -48,31 +49,47 @@ export class StoreFeedbackCreateComponent implements OnInit {
   feedbackForm: FormGroup;
   isSubmitting = false;
   
-  feedbackTypeOptions = Object.values(StoreFeedbackType).map(type => ({
-    value: type,
-    label: getStoreFeedbackTypeDisplayName(type)
-  }));
+  // Simple hard-coded options for testing
+  feedbackTypeOptions = [
+    { value: 'DELIVERY', label: 'Delivery' },
+    { value: 'PRODUCT_QUALITY', label: 'Product Quality' },
+    { value: 'CUSTOMER_SERVICE', label: 'Customer Service' },
+    { value: 'PRICING', label: 'Pricing' },
+    { value: 'PACKAGING', label: 'Packaging' }
+  ];
 
   constructor(
     private fb: FormBuilder,
     private storeFeedbackService: StoreFeedbackService,
     private snackBar: MatSnackBar,
     private router: Router,
-    private authService: AuthService
+    private tokenService: TokenService
   ) {
+    // Initialize the form with default values
     this.feedbackForm = this.fb.group({
       storeId: [null, Validators.required],
-      storeFeedbackType: [StoreFeedbackType.PRODUCT_QUALITY, Validators.required],
+      storeFeedbackType: ['PRODUCT_QUALITY', Validators.required],
       rating: [3, [Validators.required, Validators.min(1), Validators.max(5)]],
       comment: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
       wouldRecommend: [true]
     });
+
+    console.log('Form created with values:', this.feedbackForm.value);
   }
 
   ngOnInit(): void {
+    console.log('Component initialized');
+    
     if (this.storeId) {
-      this.feedbackForm.patchValue({ storeId: this.storeId });
+      this.feedbackForm.patchValue({ 
+        storeId: this.storeId,
+      });
+      console.log('Set store ID:', this.storeId);
     }
+    
+    // Log form state for debugging
+    console.log('Form valid?', this.feedbackForm.valid);
+    console.log('Form values:', this.feedbackForm.value);
   }
 
   onSubmit(): void {
@@ -97,11 +114,37 @@ export class StoreFeedbackCreateComponent implements OnInit {
       return;
     }
 
+    // Check if token exists and get user ID
+    const token = this.tokenService.getToken();
+    if (!token) {
+      this.snackBar.open('Please log in to submit feedback', 'Close', {
+        duration: 3000,
+        panelClass: 'warning-snackbar'
+      });
+      return;
+    }
+
+    const userId = this.tokenService.getUserId();
+    if (!userId) {
+      this.snackBar.open('User authentication error', 'Close', {
+        duration: 3000,
+        panelClass: 'error-snackbar'
+      });
+      return;
+    }
+
     // Prevent multiple submissions
     if (this.isSubmitting) return;
     
     this.isSubmitting = true;
-    const feedbackData = this.feedbackForm.value;
+    const userImage = this.tokenService.getUserImage();
+    const feedbackData = {
+      ...this.feedbackForm.value,
+      userId: userId,
+      userImage: userImage,
+      userProfilePicture: userImage,
+      userName: this.tokenService.getFirstName()
+    };
 
     this.storeFeedbackService.create(feedbackData)
       .pipe(finalize(() => this.isSubmitting = false))
@@ -165,7 +208,29 @@ export class StoreFeedbackCreateComponent implements OnInit {
   }
 
   getRemainingCharacters(): number {
-    const comment = this.feedbackForm.get('comment')?.value || '';
-    return 500 - comment.length;
+    const maxLength = 500;
+    const currentLength = this.feedbackForm.get('comment')?.value?.length || 0;
+    return maxLength - currentLength;
+  }
+
+  getRatingText(rating: number): string {
+    switch(rating) {
+      case 1: return 'Poor';
+      case 2: return 'Fair';
+      case 3: return 'Good';
+      case 4: return 'Very Good';
+      case 5: return 'Excellent';
+      default: return 'Select Rating';
+    }
+  }
+
+  setRating(rating: number): void {
+    console.log('Setting rating to:', rating);
+    this.feedbackForm.get('rating')?.setValue(rating);
+    console.log('New rating value:', this.feedbackForm.get('rating')?.value);
+    // Mark the control as touched to trigger validation
+    this.feedbackForm.get('rating')?.markAsTouched();
+    // Update the form
+    this.feedbackForm.updateValueAndValidity();
   }
 }

@@ -121,7 +121,7 @@
           <mat-label>Status</mat-label>
           <mat-select formControlName="status" required>
             <mat-option *ngFor="let status of statusOptions" [value]="status">
-              {{ status }}
+              {{ getStatusDisplayName(status) }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="productForm.get('status')?.hasError('required')">

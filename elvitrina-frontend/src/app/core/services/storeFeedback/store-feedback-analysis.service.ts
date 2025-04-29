@@ -30,6 +30,7 @@ export interface FeedbackAnalytics {
   sentimentDistribution: SentimentDistribution;
   sentimentByFeedbackType: Record<string, number>;
   recentFeedbacks?: StoreFeedback[];
+  ratingDistribution: { [key: string]: number };
 }
 
 export interface MultilingualSentimentAnalytics {

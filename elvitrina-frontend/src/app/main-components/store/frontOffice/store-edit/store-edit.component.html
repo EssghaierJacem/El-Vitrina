@@ -29,17 +29,18 @@
             </mat-form-field>
 
             <!-- Category -->
-            <mat-form-field appearance="outline" class="w-100 mb-3">
-              <mat-label>Category</mat-label>
-              <mat-select formControlName="category">
-                <mat-option *ngFor="let category of categories" [value]="category">
-                  {{category}}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="storeForm.get('category')?.hasError('required')">
+            <div class="form-group mb-3">
+              <label for="categorySelect" class="form-label">Category</label>
+              <select id="categorySelect" class="form-select form-control" formControlName="category">
+                <option value="" disabled>Select a category</option>
+                <option *ngFor="let option of categoryOptions" [value]="option.value">
+                  {{option.displayName}}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="storeForm.get('category')?.invalid && storeForm.get('category')?.touched">
                 Category is required
-              </mat-error>
-            </mat-form-field>
+              </div>
+            </div>
 
             <!-- Map Location -->
             <div class="map-container mb-4">

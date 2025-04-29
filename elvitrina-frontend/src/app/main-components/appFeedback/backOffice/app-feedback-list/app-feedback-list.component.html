@@ -29,11 +29,6 @@
     } @else {
       <div class="table-responsive">
         <table mat-table [dataSource]="dataSource" matSort class="w-100">
-          <!-- ID Column -->
-          <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-14">ID</th>
-            <td mat-cell *matCellDef="let feedback">{{ feedback.id }}</td>
-          </ng-container>
 
           <!-- Type Column -->
           <ng-container matColumnDef="type">

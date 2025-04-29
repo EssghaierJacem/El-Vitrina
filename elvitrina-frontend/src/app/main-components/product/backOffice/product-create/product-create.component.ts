@@ -96,6 +96,7 @@ export class ProductCreateComponent implements OnInit {
     this.loading = true;
     this.storeService.getAll().subscribe({
       next: (stores) => {
+        console.log('Stores loaded:', stores); // Debugging log
         this.stores = stores;
         this.loading = false;
       },
@@ -181,6 +182,12 @@ export class ProductCreateComponent implements OnInit {
 
   getCategoryDisplayName(category: ProductCategoryType): string {
     return category.split('_').map(word => 
+      word.charAt(0) + word.slice(1).toLowerCase()
+    ).join(' ');
+  }
+
+  getStatusDisplayName(status: string): string {
+    return status.split('_').map(word =>
       word.charAt(0) + word.slice(1).toLowerCase()
     ).join(' ');
   }

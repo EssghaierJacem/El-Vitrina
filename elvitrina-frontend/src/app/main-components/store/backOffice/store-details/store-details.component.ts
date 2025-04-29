@@ -149,6 +149,16 @@ export class StoreDetailsComponent implements OnInit, AfterViewInit {
   
     return this.IMAGE_BASE_URL + store.image;
   }
+
+  getUserProfileImageUrl(filename: string): string {
+
+    if (filename.startsWith('http://') || filename.startsWith('https://')) {
+      return filename;
+    }
+  
+    const cleaned = filename.replace(/^\/+/, '');
+    return `http://localhost:8080/user-images/${cleaned}`;
+  }
   
   getCoverImage(store: Store): string {
     if (!store || !store.coverImage) {

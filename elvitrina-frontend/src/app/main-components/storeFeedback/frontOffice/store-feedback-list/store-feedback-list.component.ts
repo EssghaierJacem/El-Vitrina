@@ -14,6 +14,7 @@ import { StoreFeedbackType } from 'src/app/core/models/storeFeedback/store-feedb
 import { getStoreFeedbackTypeDisplayName } from 'src/app/core/models/storeFeedback/store-feedback-type.enum';
 import { StoreFeedbackCreateComponent } from '../../backOffice/store-feedback-create/store-feedback-create.component';
 import { MatMenuModule } from '@angular/material/menu';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-store-feedback-list',
@@ -39,6 +40,9 @@ export class StoreFeedbackListComponent implements OnInit {
   error: string | null = null;
   averageRating: number = 0;
   feedbackCount: number = 0;
+
+  // Base URL for user images
+  private readonly USER_IMAGE_BASE_URL = `${environment.apiUrl}/users/images/`;
 
   constructor(
     private storeFeedbackService: StoreFeedbackService,
@@ -71,7 +75,13 @@ export class StoreFeedbackListComponent implements OnInit {
     
     this.storeFeedbackService.getByStoreId(this.storeId).subscribe({
       next: (feedbacks) => {
-        this.feedbacks = feedbacks;
+        console.log('Received feedbacks:', feedbacks);
+        this.feedbacks = feedbacks.map(feedback => ({
+          ...feedback,
+          userName: feedback.userName || feedback.username || 'Anonymous',
+          userImage: feedback.userImage || feedback.userProfilePicture || null
+        }));
+        console.log('Processed feedbacks:', this.feedbacks);
         this.loading = false;
       },
       error: (error) => {
@@ -105,6 +115,23 @@ export class StoreFeedbackListComponent implements OnInit {
 
   getFeedbackTypeDisplayName(type: StoreFeedbackType): string {
     return getStoreFeedbackTypeDisplayName(type);
+  }
+
+  getFeedbackTypeIcon(type: StoreFeedbackType): string {
+    switch (type) {
+      case 'PRODUCT_QUALITY':
+        return 'fa-box';
+      case 'DELIVERY':
+        return 'fa-truck';
+      case 'CUSTOMER_SERVICE':
+        return 'fa-headset';
+      case 'PRICING':
+        return 'fa-tag';
+      case 'PACKAGING':
+        return 'fa-box-open';
+      default:
+        return 'fa-comment';
+    }
   }
 
   openFeedbackDialog(): void {
@@ -149,6 +176,41 @@ export class StoreFeedbackListComponent implements OnInit {
         // Default sorting (suggested)
         this.feedbacks.sort((a, b) => 
           new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime());
+    }
+  }
+
+  /**
+   * Get the full URL for a user profile image
+   * @param imagePath The image path from the user object
+   * @returns The complete URL to the user's profile image
+   */
+  getUserImageUrl(imagePath: string): string {
+    if (!imagePath) {
+      return 'assets/images/avatars/default-avatar.png';
+    }
+    
+    // If it's already a full URL, return it as is
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+    
+    // If it's a relative path starting with '/', append it to the API URL
+    if (imagePath.startsWith('/')) {
+      return `${environment.apiUrl}${imagePath}`;
+    }
+    
+    // Otherwise, assume it's a filename and prepend the base URL
+    return `${this.USER_IMAGE_BASE_URL}${imagePath}`;
+  }
+  
+  /**
+   * Handle errors when loading images
+   * @param event The error event
+   */
+  handleImageError(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    if (imgElement) {
+      imgElement.src = 'assets/images/avatars/default-avatar.png';
     }
   }
 }

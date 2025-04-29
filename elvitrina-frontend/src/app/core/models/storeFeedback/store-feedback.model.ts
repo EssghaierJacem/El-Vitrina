@@ -1,3 +1,4 @@
+import { StoreFeedbackAnalysisService } from "../../services/storeFeedback/store-feedback-analysis.service";
 import { Store } from "../store/store.model";
 import { StoreFeedbackType } from "./store-feedback-type.enum";
 
@@ -24,6 +25,7 @@ export interface StoreFeedback {
     wouldRecommend: boolean;
     createdAt?: string;
     updatedAt?: string;
+    tags?: string[];
 }
 
 // Helper function to determine sentiment category (Legacy method)

@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,12 +90,13 @@ public class VirtualEventServiceImpl implements VirtualEventService {
     @Override
     public List<VirtualEventResponseDTO> getEventByStoreId(Long storeId) {
         List<VirtualEvent> events = virtualEventRepository.findByStore_StoreId(storeId);
-        if (events.isEmpty()) {
-            throw new ResourceNotFoundException("No events found for store with id: " + storeId);
+        if(events.isEmpty()){
+             return new ArrayList<VirtualEventResponseDTO>();
+        }else{
+            return events.stream()
+                    .map(virtualEventMapper::toResponseDTO)
+                    .collect(Collectors.toList());
         }
-        return events.stream()
-                .map(virtualEventMapper::toResponseDTO)
-                .collect(Collectors.toList());
     }
 
 

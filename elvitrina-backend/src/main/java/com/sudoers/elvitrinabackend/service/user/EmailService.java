@@ -3,7 +3,10 @@ package com.sudoers.elvitrinabackend.service.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class EmailService {
@@ -17,6 +20,17 @@ public class EmailService {
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
+        javaMailSender.send(message);
+    }
+
+    // New method for sending HTML emails
+    public void sendHtmlEmail(String to, String subject, String htmlContent) throws MessagingException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setFrom("Jacemsghaier3@gmail.com");
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(htmlContent, true); // true = isHtml
         javaMailSender.send(message);
     }
 

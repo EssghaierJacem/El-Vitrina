@@ -1,182 +1,138 @@
 <div class="all-products-container">
-  <!-- Category Header -->
-  <div class="category-header">
-    <h1>{{ selectedCategory || 'All Products' }}</h1>
-    <p class="category-description">{{ categoryDescription }}</p>
+  <!-- Hero Banner -->
+  <div class="hero-banner" [ngStyle]="{'background-image': 'url(' + categoryBackgroundImage + ')'}">
+    <div class="hero-content">
+      <h1>{{ selectedCategory ? formatCategoryName(selectedCategory) : 'ALL PRODUCTS' }}</h1>
+      <p>{{ categoryDescription }}</p>
+    </div>
   </div>
 
   <!-- Filters Section -->
-  <div class="filters-section">
-    <mat-card>
-      <mat-card-content>
-        <div class="filters-top-row">
-          <!-- Search -->
-          <mat-form-field appearance="outline" class="search-field">
-            <mat-label>Search products</mat-label>
-            <input matInput [(ngModel)]="searchQuery" (keyup)="applyFilters()" placeholder="Search by name, description, or tags">
-            <mat-icon matSuffix>search</mat-icon>
-          </mat-form-field>
-
-          <!-- Sort By -->
-          <mat-form-field appearance="outline">
-            <mat-label>Sort by</mat-label>
-            <mat-select [(ngModel)]="selectedSort" (selectionChange)="applyFilters()">
-              <mat-option *ngFor="let option of sortOptions" [value]="option.value">
-                {{ option.label }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+  <div class="filters-container">
+    <div class="search-bar">
+      <input type="text" [(ngModel)]="searchQuery" (keyup)="applyFilters()" placeholder="Search products" class="search-input">
+      <button class="search-button" (click)="applyFilters()">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+    
+    <div class="filter-options">
+      <div class="filter-dropdown">
+        <label>Category</label>
+        <div class="dropdown-wrapper">
+          <select [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
+            <option [ngValue]="null">All Categories</option>
+            <option *ngFor="let category of categories" [ngValue]="category">
+              {{ formatCategoryName(category) }}
+            </option>
+          </select>
         </div>
-
-        <div class="filters-bottom-row">
-          <!-- Category Filter -->
-          <mat-form-field appearance="outline">
-            <mat-label>Category</mat-label>
-            <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onCategoryChange()">
-              <mat-option [value]="null">All Categories</mat-option>
-              <mat-option *ngFor="let category of categories" [value]="category">
-                {{ category }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <!-- Additional Filters -->
-          <div class="filter-chips">
-            <mat-chip-listbox multiple>
-              <mat-chip-option 
-                [selected]="showDiscounted" 
-                (selectionChange)="showDiscounted = $event.selected; applyFilters()">
-                <mat-icon>local_offer</mat-icon>
-                On Sale
-              </mat-chip-option>
-              <mat-chip-option 
-                [selected]="showInStock" 
-                (selectionChange)="showInStock = $event.selected; applyFilters()">
-                <mat-icon>inventory_2</mat-icon>
-                In Stock
-              </mat-chip-option>
-            </mat-chip-listbox>
-          </div>
+      </div>
+      
+      <div class="filter-dropdown">
+        <label>Sort by</label>
+        <div class="dropdown-wrapper">
+          <select [(ngModel)]="selectedSort" (change)="applyFilters()">
+            <option *ngFor="let option of sortOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
+      
+      <div class="filter-checkboxes">
+        <label class="checkbox-container">
+          <input type="checkbox" [(ngModel)]="showDiscounted" (change)="applyFilters()">
+          <span class="checkmark"></span>
+          ON SALE
+        </label>
+        
+        <label class="checkbox-container">
+          <input type="checkbox" [(ngModel)]="showInStock" (change)="applyFilters()">
+          <span class="checkmark"></span>
+          IN STOCK
+        </label>
+      </div>
+    </div>
   </div>
 
-  <!-- Results Count -->
-  <div class="results-count">
-    <span>{{ filteredProducts.length }} products</span>
-    <button mat-button (click)="loadProducts()">
-      <mat-icon>refresh</mat-icon>
-      Refresh
+  <!-- Results Summary -->
+  <div class="results-summary">
+    <span>{{ filteredProducts.length }} PRODUCTS</span>
+    <button class="refresh-button" (click)="loadProducts()">
+      <i class="fas fa-sync-alt"></i> REFRESH
     </button>
   </div>
 
   <!-- Products Grid -->
   <div class="products-grid" *ngIf="!loading && !error">
-    <mat-card class="product-card" *ngFor="let product of filteredProducts">
-      <!-- Product Image -->
+    <div class="product-card" *ngFor="let product of filteredProducts">
       <div class="product-image">
-        <img [src]="getProductImageUrl(product)" 
-             [alt]="product.productName"
-             (error)="handleImageError($event)">
+        <img [src]="getProductImageUrl(product)" [alt]="product.productName" (error)="handleImageError($event)">
         
         <!-- Badges -->
         <div class="product-badges">
-          <span class="bestseller-badge" *ngIf="product.isBestseller">
-            <mat-icon>star</mat-icon> Bestseller
-          </span>
           <span class="discount-badge" *ngIf="product.hasDiscount && product.discountPercentage">
             -{{ product.discountPercentage }}%
           </span>
         </div>
-
-        <!-- Favorite Button -->
-        <button mat-icon-button class="favorite-button" (click)="toggleFavorite(product)">
-          <mat-icon color="warn">{{ product.isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
-        </button>
+        <!-- Product Actions overlayed on the image -->
+        <div class="product-actions">
+          <button class="action-button view-button" [routerLink]="['/products', product.productId]">
+            <i class="fas fa-eye"></i>
+          </button>
+          <button class="action-button cart-button" 
+                  [routerLink]="['/products/addtocart', product.productId]"
+                  [disabled]="product.stockQuantity === 0">
+            <i class="fas fa-shopping-cart"></i>
+          </button>
+          <button class="action-button wishlist-button" [ngClass]="{'liked': product.isFavorite}" (click)="toggleFavorite(product)">
+            <i [ngClass]="product.isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
+          </button>
+        </div>
       </div>
 
-      <mat-card-content>
-        <!-- Product Category -->
-        <div class="product-category">{{ product.category }}</div>
-
+      <div class="product-info">
+        <!-- Category -->
+        <div class="product-category">{{ formatCategoryName(product.category) }}</div>
+        
         <!-- Product Name -->
         <h3 class="product-name" [routerLink]="['/products', product.productId]">
           {{ product.productName }}
         </h3>
-
-        <!-- Rating -->
-        <div class="product-rating" *ngIf="getProductRating(product) > 0">
-          <div class="stars">
-            <mat-icon *ngFor="let star of getStarArray(product)">
-              {{ star ? 'star' : 'star_border' }}
-            </mat-icon>
-          </div>
-          <span class="rating-count" *ngIf="getProductReviewCount(product) > 0">
-            ({{ getProductReviewCount(product) }})
-          </span>
-        </div>
-
+        
         <!-- Price -->
         <div class="product-price" [class.has-discount]="getDisplayPrice(product).hasDiscount">
-          <span class="current-price">{{ getDisplayPrice(product).finalPrice | currency:'EUR' }}</span>
+          <span class="current-price">{{ getDisplayPrice(product).finalPrice | currency:'TND' }}</span>
           <span class="original-price" *ngIf="getDisplayPrice(product).hasDiscount && getDisplayPrice(product).originalPrice">
-            {{ getDisplayPrice(product).originalPrice | currency:'EUR' }}
-          </span>
-          <span class="discount-badge" *ngIf="getDisplayPrice(product).hasDiscount">
-            -{{ getDisplayPrice(product).discountPercentage }}%
+            {{ getDisplayPrice(product).originalPrice | currency:'TND' }}
           </span>
         </div>
-
-        <!-- Stock Status -->
-        <div class="product-stock" [class.out-of-stock]="product.stockQuantity === 0">
-          {{ product.stockQuantity === 0 ? 'Out of Stock' : 
-             product.stockQuantity < 10 ? 'Low Stock' : 'In Stock' }}
-        </div>
-
-        <!-- Free Shipping Badge -->
-        <div class="shipping-badge" *ngIf="product.freeShipping">
-          <mat-icon>local_shipping</mat-icon>
-          Free Shipping
-        </div>
-      </mat-card-content>
-
-      <mat-card-actions>
-        <button mat-stroked-button color="primary" [routerLink]="['/products', product.productId]">
-          <mat-icon>visibility</mat-icon>
-          Details
-        </button>
-        <button mat-raised-button color="primary" 
-                [routerLink]="['/products/addtocart', product.productId]"
-                [disabled]="product.stockQuantity === 0">
-          <mat-icon>shopping_cart</mat-icon>
-          Add to Cart
-        </button>
-      </mat-card-actions>
-    </mat-card>
+      </div>
+    </div>
   </div>
 
   <!-- Empty State -->
   <div class="empty-state" *ngIf="!loading && !error && filteredProducts.length === 0">
-    <mat-icon>search_off</mat-icon>
+    <i class="fas fa-search"></i>
     <h3>No products found</h3>
     <p>Try adjusting your search or filters</p>
-    <button mat-raised-button color="primary" (click)="loadProducts()">
+    <button class="reset-button" (click)="loadProducts()">
       Reset Filters
     </button>
   </div>
 
   <!-- Loading State -->
   <div class="loading-state" *ngIf="loading">
-    <mat-spinner></mat-spinner>
+    <div class="spinner"></div>
     <p>Loading products...</p>
   </div>
 
   <!-- Error State -->
   <div class="error-state" *ngIf="error">
-    <mat-icon color="warn">error</mat-icon>
+    <i class="fas fa-exclamation-circle"></i>
     <h3>{{ error }}</h3>
-    <button mat-raised-button color="primary" (click)="loadProducts()">
+    <button class="retry-button" (click)="loadProducts()">
       Try Again
     </button>
   </div>
