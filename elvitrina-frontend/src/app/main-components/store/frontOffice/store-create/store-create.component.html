@@ -1,12 +1,19 @@
 <div class="container py-5">
   <div class="row justify-content-center">
-    <div class="col-12 col-md-8">
+    <div class="col-12 col-lg-10">
       <div class="card">
         <div class="card-body">
           <h2 class="card-title text-center mb-4">Create Your Store</h2>
 
           <form [formGroup]="storeForm" (ngSubmit)="onSubmit()">
-            <!-- Store Name -->
+            <!-- Stepper approach - horizontal on desktop, vertical on mobile -->
+            <mat-stepper [orientation]="'horizontal'" #stepper>
+              <!-- Step 1: Basic Information -->
+              <mat-step label="Basic Information">
+                <div class="form-section mb-4">
+                  <h3 class="section-title">Store Details</h3>
+                  <p class="hint-text">Provide essential information about your store</p>
+                  
             <mat-form-field appearance="outline" class="w-100 mb-3">
               <mat-label>Store Name</mat-label>
               <input matInput formControlName="storeName" placeholder="Enter store name">
@@ -18,7 +25,6 @@
               </mat-error>
             </mat-form-field>
 
-            <!-- Description -->
             <mat-form-field appearance="outline" class="w-100 mb-3">
               <mat-label>Description</mat-label>
               <textarea matInput formControlName="description" rows="4" 
@@ -28,58 +34,147 @@
               </mat-error>
             </mat-form-field>
 
-            <!-- Category -->
-            <mat-form-field appearance="outline" class="w-100 mb-3">
-              <mat-label>Category</mat-label>
-              <mat-select formControlName="category">
-                <mat-option *ngFor="let category of categories" [value]="category">
-                  {{category}}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="storeForm.get('category')?.hasError('required')">
+                  <div class="form-group mb-3">
+                    <label for="categorySelect" class="form-label">Category</label>
+                    <select id="categorySelect" class="form-select form-control" formControlName="category">
+                      <option value="" disabled>Select a category</option>
+                      <option *ngFor="let option of categoryOptions" [value]="option.value">
+                        {{option.displayName}}
+                      </option>
+                    </select>
+                    <div class="invalid-feedback" *ngIf="storeForm.get('category')?.invalid && storeForm.get('category')?.touched">
                 Category is required
-              </mat-error>
-            </mat-form-field>
+                    </div>
+                  </div>
+                </div>
 
-            <!-- Map Location -->
-            <div class="map-container mb-4">
-              <label class="form-label">Select Store Location</label>
-              <div id="map" class="map-frame"></div>
-              <div class="coordinates-display mt-2">
-                <small class="text-muted">
-                  Store Address: {{storeForm.get('address')?.value}}
-                </small>
+                <div class="stepper-nav d-flex justify-content-end mt-4">
+                  <button mat-button matStepperNext type="button" 
+                          [disabled]="!storeForm.get('storeName')?.valid || !storeForm.get('category')?.valid">
+                    Next <mat-icon>arrow_forward</mat-icon>
+                  </button>
+                </div>
+              </mat-step>
+
+              <!-- Step 2: Store Images -->
+              <mat-step label="Store Images">
+                <div class="form-section mb-4">
+                  <h3 class="section-title">Store Logo</h3>
+                  <p class="hint-text">Upload your store's logo. This will be displayed on your store page.</p>
+                  
+                  <div class="image-upload-container mb-4">
+                    <input type="file" (change)="onFileSelected($event, 'image')" accept="image/*" 
+                           class="file-input" #logoInput>
+                    
+                    <div class="text-center">
+                      <button type="button" mat-raised-button color="primary" (click)="logoInput.click()">
+                        <mat-icon>add_photo_alternate</mat-icon> Upload Logo
+                      </button>
+                    </div>
+                    
+                    <div class="image-preview mt-3" *ngIf="imagePreviewUrl">
+                      <div class="image-preview-container">
+                        <img [src]="imagePreviewUrl" alt="Store Logo Preview" class="preview-image" 
+                             (error)="handleImageError($event)">
+                        <div class="image-preview-overlay">
+                          <button mat-icon-button color="warn" type="button" (click)="clearImage('image')">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        </div>
+                      </div>
               </div>
             </div>
 
-            <!-- Store Profile Image URL -->
-            <div class="form-group mb-4">
-              <label>Upload Store Logo</label>
-              <input type="file" (change)="onFileSelected($event, 'image')" accept="image/*" class="form-control">
+                  <h3 class="section-title mt-4">Cover Image</h3>
+                  <p class="hint-text">Upload a cover image for your store. This will be displayed at the top of your store page.</p>
+                  
+                  <div class="image-upload-container mb-4">
+                    <input type="file" (change)="onFileSelected($event, 'coverImage')" accept="image/*" 
+                           class="file-input" #coverInput>
+                    
+                    <div class="text-center">
+                      <button type="button" mat-raised-button color="primary" (click)="coverInput.click()">
+                        <mat-icon>panorama</mat-icon> Upload Cover Image
+                      </button>
+                    </div>
             
-              <div class="image-preview mt-2" *ngIf="imagePreviewUrl">
-                <img [src]="imagePreviewUrl" alt="Store Logo Preview" class="img-thumbnail" (error)="handleImageError($event)">
+                    <div class="image-preview mt-3" *ngIf="coverImagePreviewUrl">
+                      <div class="image-preview-container wide-preview">
+                        <img [src]="coverImagePreviewUrl" alt="Cover Image Preview" class="preview-image"
+                             (error)="handleImageError($event)">
+                        <div class="image-preview-overlay">
+                          <button mat-icon-button color="warn" type="button" (click)="clearImage('coverImage')">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
               </div>
             </div>
             
-            <div class="form-group mb-4">
-              <label>Upload Cover Image</label>
-              <input type="file" (change)="onFileSelected($event, 'coverImage')" accept="image/*" class="form-control">
-            
-              <div class="image-preview mt-2" *ngIf="coverImagePreviewUrl">
-                <img [src]="coverImagePreviewUrl" alt="Cover Image Preview" class="img-thumbnail" (error)="handleImageError($event)">
-              </div>
-            </div>
-            
+                <div class="stepper-nav d-flex justify-content-between mt-4">
+                  <button mat-button matStepperPrevious type="button">
+                    <mat-icon>arrow_back</mat-icon> Back
+                  </button>
+                  <button mat-button matStepperNext type="button">
+                    Next <mat-icon>arrow_forward</mat-icon>
+                  </button>
+                </div>
+              </mat-step>
 
-            <!-- Submit Button -->
-            <div class="d-grid">
+              <!-- Step 3: Store Location -->
+              <mat-step label="Store Location">
+                <div class="form-section mb-4">
+                  <h3 class="section-title">Store Location</h3>
+                  <p class="hint-text">Select your store's location on the map. Click to place a marker or drag the marker to adjust.</p>
+                  
+                  <div class="map-container mb-3">
+                    <div id="map" class="map-frame"></div>
+                  </div>
+                  
+                  <div class="location-details">
+                    <div class="coordinates-display mb-3">
+                      <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Store Address</mat-label>
+                        <input matInput formControlName="address" readonly>
+                      </mat-form-field>
+                    </div>
+                    
+                    <div class="row">
+                      <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="w-100">
+                          <mat-label>Latitude</mat-label>
+                          <input matInput formControlName="latitude" readonly>
+                        </mat-form-field>
+                      </div>
+                      <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="w-100">
+                          <mat-label>Longitude</mat-label>
+                          <input matInput formControlName="longitude" readonly>
+                        </mat-form-field>
+                      </div>
+                    </div>
+              </div>
+            </div>
+            
+                <!-- Form Actions -->
+                <div class="form-actions d-flex justify-content-between">
+                  <div>
+                    <button mat-button matStepperPrevious type="button">
+                      <mat-icon>arrow_back</mat-icon> Back
+                    </button>
+                    <button mat-stroked-button type="button" (click)="resetForm()" [disabled]="loading" class="ms-2">
+                      <mat-icon>refresh</mat-icon> Clear Form
+                    </button>
+                  </div>
               <button mat-raised-button color="primary" type="submit" 
-                      [disabled]="!storeForm.valid || loading">
+                          [disabled]="!storeForm.valid || loading || !canCreateStore">
                 <span *ngIf="!loading">Create Store</span>
                 <mat-spinner diameter="24" *ngIf="loading"></mat-spinner>
               </button>
             </div>
+              </mat-step>
+            </mat-stepper>
           </form>
         </div>
       </div>

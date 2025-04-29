@@ -12,7 +12,8 @@ export class DonationCampaignService {
 
   constructor(private http: HttpClient) {}
 
-  createCampaign(campaign: DonationCampaignRequest): Observable<DonationCampaignRequest> {
+  createCampaign(campaign: DonationCampaignRequest): Observable<DonationCampaignRequest> { 
+    console.log('Creating campaign:', campaign);
     return this.http.post<DonationCampaignRequest>(this.apiUrl, campaign);
   }
 
@@ -42,6 +43,7 @@ export class DonationCampaignService {
   }
 
   updateCampaignStatus(id: number, statusRequest: CampaignStatusRequestDTO): Observable<DonationCampaign> {
+    console.log('Updating campaign status:', id, statusRequest);
     return this.http.patch<DonationCampaign>(`${this.apiUrl}/${id}/status`, statusRequest);
   }
   

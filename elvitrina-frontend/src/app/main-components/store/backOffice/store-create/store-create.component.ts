@@ -18,6 +18,12 @@ import { TokenService } from 'src/app/core/services/user/TokenService';
 import { Store, StoreReqDto } from 'src/app/core/models/store/store.model';
 import * as L from 'leaflet';
 
+// Interface for category display
+interface CategoryOption {
+  value: StoreCategoryType;
+  displayName: string;
+}
+
 @Component({
   selector: 'app-store-create',
   standalone: true,
@@ -52,10 +58,8 @@ export class StoreCreateComponent implements OnInit, AfterViewInit {
   imagePreview: string | undefined;
   coverImagePreview: string | undefined;
   
-  categoryOptions = Object.entries(StoreCategoryType).map(([value, key]) => ({
-    value: key,
-    displayName: this.getCategoryDisplayName(key)
-  }));
+  categories = Object.values(StoreCategoryType);
+  categoryOptions: CategoryOption[] = [];
 
   private map: L.Map | undefined;
   private marker: L.Marker | undefined;
@@ -72,6 +76,7 @@ export class StoreCreateComponent implements OnInit, AfterViewInit {
     private snackBar: MatSnackBar,
     private router: Router
   ) {
+    this.initCategoryOptions();
     this.initForm();
   }
 
@@ -123,24 +128,40 @@ export class StoreCreateComponent implements OnInit, AfterViewInit {
     return `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
   }
 
-  private getCategoryDisplayName(category: StoreCategoryType): string {
+  private initCategoryOptions(): void {
+    this.categoryOptions = this.categories.map(category => ({
+      value: category,
+      displayName: this.getStoreCategoryDisplayName(category)
+    })).sort((a, b) => a.displayName.localeCompare(b.displayName));
+  }
+
+  getStoreCategoryDisplayName(category: StoreCategoryType | string): string {
     switch (category) {
-      case StoreCategoryType.HANDMADE_JEWELRY: return 'Handmade Jewelry Store';
-      case StoreCategoryType.POTTERY_CERAMICS: return 'Pottery & Ceramics Store';
-      case StoreCategoryType.TEXTILES_FABRICS: return 'Textiles & Fabrics Store';
-      case StoreCategoryType.ART_PAINTINGS: return 'Art & Paintings Store';
-      case StoreCategoryType.HOME_DECOR: return 'Home Decor Store';
-      case StoreCategoryType.CLOTHING_ACCESSORIES: return 'Clothing & Accessories Store';
-      case StoreCategoryType.ECO_FRIENDLY: return 'Eco-Friendly Products Store';
-      case StoreCategoryType.LOCAL_FOODS: return 'Local Foods & Beverages Store';
-      case StoreCategoryType.HEALTH_WELLNESS: return 'Health & Wellness Store';
-      case StoreCategoryType.BOOKS_STATIONERY: return 'Books & Stationery Store';
-      case StoreCategoryType.TOYS_GAMES: return 'Toys & Games Store';
-      case StoreCategoryType.VINTAGE_ANTIQUES: return 'Vintage & Antiques Store';
-      case StoreCategoryType.DIGITAL_PRODUCTS: return 'Digital Products Store';
-      case StoreCategoryType.CRAFTS_DIY: return 'Crafts & DIY Kits Store';
-      case StoreCategoryType.PET_SUPPLIES: return 'Pet Supplies Store';
-      default: return category;
+      case StoreCategoryType.HANDMADE_JEWELRY: return 'Handmade Jewelry';
+      case StoreCategoryType.POTTERY_CERAMICS: return 'Pottery & Ceramics';
+      case StoreCategoryType.TEXTILES_FABRICS: return 'Textiles & Fabrics';
+      case StoreCategoryType.ART_PAINTINGS: return 'Art & Paintings';
+      case StoreCategoryType.HOME_DECOR: return 'Home Decor';
+      case StoreCategoryType.CLOTHING_ACCESSORIES: return 'Clothing & Accessories';
+      case StoreCategoryType.ECO_FRIENDLY: return 'Eco-Friendly Products';
+      case StoreCategoryType.LOCAL_FOODS: return 'Local Foods & Beverages';
+      case StoreCategoryType.HEALTH_WELLNESS: return 'Health & Wellness';
+      case StoreCategoryType.BOOKS_STATIONERY: return 'Books & Stationery';
+      case StoreCategoryType.TOYS_GAMES: return 'Toys & Games';
+      case StoreCategoryType.VINTAGE_ANTIQUES: return 'Vintage & Antiques';
+      case StoreCategoryType.DIGITAL_PRODUCTS: return 'Digital Products';
+      case StoreCategoryType.CRAFTS_DIY: return 'Crafts & DIY Kits';
+      case StoreCategoryType.PET_SUPPLIES: return 'Pet Supplies';
+      default: 
+        // Format unrecognized enum values
+        if (typeof category === 'string') {
+          return category
+            .replace(/_/g, ' ')
+            .split(' ')
+            .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+            .join(' ');
+        }
+        return String(category);
     }
   }
 

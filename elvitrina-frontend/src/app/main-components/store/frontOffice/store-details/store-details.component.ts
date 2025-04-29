@@ -25,11 +25,12 @@ import { environment } from '../../../../../environments/environment';
 import { StoreFeedbackListComponent } from '../../../../main-components/storeFeedback/frontOffice/store-feedback-list/store-feedback-list.component';
 import { StoreStatsDTO } from '../../../../core/models/store/Store-stats.dto';
 import { StoreFeedbackCreateComponent } from '../../../../main-components/storeFeedback/frontOffice/store-feedback-create/store-feedback-create.component';
+import { StarRatingComponent } from '../../../../main-components/storeFeedback/frontOffice/star-rating/star-rating.component';
 import { StoreFeedbackService } from '../../../../core/services/storeFeedback/store-feedback.service';
 import { StoreFeedbackAnalysisService, FeedbackAnalytics, MultilingualSentimentAnalytics } from '../../../../core/services/storeFeedback/store-feedback-analysis.service';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { StoreFeedbackType } from '../../../../core/models/storeFeedback/store-feedback-type.enum';
+import { StoreFeedbackType, getStoreFeedbackTypeDisplayName } from '../../../../core/models/storeFeedback/store-feedback-type.enum';
 import { VirtualEventService } from 'src/app/core/services/event/virtual-event.service';
 import { VirtualEvent } from 'src/app/core/models/event/virtual-event.model';
 import { EventStoreComponent } from 'src/app/main-components/event/frontoffice/event/event-store/event-store.component';
@@ -37,6 +38,10 @@ import { DonationCampaignService } from 'src/app/core/services/donation/donation
 import { DonationCampaign } from 'src/app/core/models/donation/donation-campaign.model';
 import { CampaignDetailsComponent } from 'src/app/main-components/donation/frontoffice/campaign/campaign-details/campaign-details.component';
 import { StoreFeedback, getSentimentCategory, getDetailedSentimentCategory, getSentimentScore } from '../../../../core/models/storeFeedback/store-feedback.model';
+import { Subject, takeUntil } from 'rxjs';
+import { TokenService } from 'src/app/core/services/user/TokenService';
+import { CampaignCreateComponent } from 'src/app/main-components/donation/frontoffice/campaign/campaign-create/campaign-create.component';
+import { MatDialog } from '@angular/material/dialog';
 
 interface SortOption {
   value: string;
@@ -68,6 +73,7 @@ interface SortOption {
     StoreFeedbackCreateComponent,
     EventStoreComponent, 
     CampaignDetailsComponent,
+    StarRatingComponent
   ],
   templateUrl: './store-details.component.html',
   styleUrls: ['./store-details.component.scss']
@@ -77,13 +83,15 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   loading = true;
   error: string | null = null;
-  activeTab: 'products' | 'reviews' | 'analytics' | 'donation'| 'event'= 'products';
+  activeTab: 'products' | 'reviews' | 'analytics' | 'donation' | 'event' | 'favorites' = 'products';
   searchQuery = '';
   categories: ProductCategoryType[] = Object.values(ProductCategoryType);
   selectedCategory: ProductCategoryType | null = null;
   filteredProducts: Product[] = [];
   events: VirtualEvent[] = [];
   campaigns: DonationCampaign;
+  role: string = this.authToken.getRole() || 'USER';
+
   // Make Math available in the template
   Math = Math;
   
@@ -92,6 +100,7 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
   feedbackAnalytics: FeedbackAnalytics | null = null;
   multilingualSentimentAnalytics: MultilingualSentimentAnalytics | null = null;
   loadingFeedback = false;
+  showInStock = false;
   
   // For charts
   sentimentChartData: any[] = [];
@@ -99,6 +108,8 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
   detailedSentimentChartData: any[] = [];
   showSummaries = true;
   showMultilingualSentiment = true;
+  showAllFeedbacks = false;
+  feedbackLimit = 5;
 
   // Helper methods for templates
   getAbsoluteValue(value: number): number {
@@ -111,6 +122,7 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
 
   IMAGE_BASE_URL = `${environment.apiUrl}/stores/store/images/`;
   readonly IMAGE_PRODUCT_BASE_URL = 'http://localhost:8080/api/products/products/images/';
+  readonly USER_IMAGE_BASE_URL = `${environment.apiUrl}/users/images/`;
   
   // Sorting options
   sortOptions: SortOption[] = [
@@ -122,13 +134,17 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
     { value: 'name_desc', label: 'Name: Z to A' }
   ];
   selectedSort = 'relevance';
-
   // Remove default image paths since we want to use direct URLs
   defaultStoreImage = '';
   defaultAvatarImage = '';
   defaultProductImage = '';
 
   feedbackForm: FormGroup;
+
+  // Add a subject for managing subscriptions
+  private destroy$ = new Subject<void>();
+  // Track favorite counts
+  favoriteCount = 0;
 
   constructor(
     private storeService: StoreService,
@@ -140,8 +156,10 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private donationCampaignService: DonationCampaignService,
     private authService: AuthService,
+    private authToken: TokenService,
     private fb: FormBuilder,
     private router: Router,
+    private dialog: MatDialog,
     private favoriteService: FavoriteService
   ) {
     this.feedbackForm = this.fb.group({
@@ -162,11 +180,25 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
         this.loadAnalyzedFeedback(this.store.storeId);
       }
     }) as EventListener);
+    
+    // Subscribe to favorite changes
+    this.favoriteService.favorites$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(favorites => {
+        this.favoriteCount = favorites.size;
+        // Update favorite status for all products if they're loaded
+        if (this.products.length > 0) {
+          this.updateProductFavoriteStatus();
+        }
+      });
   }
 
   ngOnDestroy(): void {
     // Clean up event listener
     window.removeEventListener('feedback-submitted', (() => {}) as EventListener);
+    // Complete the destroy subject
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getCurrentSortLabel(): string {
@@ -231,6 +263,7 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
     // Using the store's products array if available
     if (this.store?.products) {
       this.products = this.store.products;
+      this.updateProductFavoriteStatus();
       this.filteredProducts = this.products;
       if (this.store) {
         this.store.productCount = this.products.length;
@@ -243,6 +276,7 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
     this.productService.getAllByStoreId(storeId).subscribe({
       next: (products: Product[]) => {
         this.products = products;
+        this.updateProductFavoriteStatus();
         this.filteredProducts = products;
         if (this.store) {
           this.store.productCount = products.length;
@@ -276,8 +310,13 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
     // Get analyzed feedback with sentiment and summaries
     this.storeFeedbackAnalysisService.getAnalyzedFeedback(storeId).subscribe({
       next: (feedbacks: StoreFeedback[]) => {
-        this.analyzedFeedbacks = feedbacks;
-        console.log('Received analyzed feedbacks:', feedbacks.length, feedbacks);
+        console.log('Raw analyzed feedbacks:', feedbacks);
+        this.analyzedFeedbacks = feedbacks.map(feedback => ({
+          ...feedback,
+          userName: feedback.userName || feedback.username || 'Anonymous',
+          userImage: feedback.userImage || feedback.userProfilePicture || null
+        }));
+        console.log('Processed analyzed feedbacks:', this.analyzedFeedbacks);
         this.loadingFeedback = false;
         this.prepareChartData();
       },
@@ -571,6 +610,8 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
   }
   
   toggleSummaries(): void {
+    // This button now toggles between showing summarized comments vs full comments
+    // Not to be confused with toggleFeedbackDisplay which shows all vs limited feedbacks
     this.showSummaries = !this.showSummaries;
   }
   
@@ -602,10 +643,25 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
   }
 
   setActiveTab(index: number): void {
-    const tabs = ['products', 'reviews', 'analytics', 'event', 'donation'];
-    this.activeTab = (tabs[index] as typeof this.activeTab) || 'products'; 
+    const tabs = ['products', 'reviews', 'analytics', 'event', 'donation', 'favorites'];
+    this.activeTab = (tabs[index] as typeof this.activeTab) || 'products';     
   }
   
+  // Add this method to directly set favorites tab
+  showFavorites(): void {
+    this.activeTab = 'favorites';
+  }
+  
+  // Navigation to favorites page or tab
+  viewAllFavorites(): void {
+    // Set the active tab to favorites
+    this.showFavorites();
+  }
+  
+  // Get only favorite products
+  getFavoriteProducts(): Product[] {
+    return this.products.filter(product => product.isFavorite);
+  }
 
   searchProducts(): void {
     this.filterProducts();
@@ -665,6 +721,11 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
         (product.tags && product.tags.some(tag => tag.toLowerCase().includes(query)))
       );
     }
+
+    // Apply IN STOCK filter
+    if (this.showInStock) {
+      filtered = filtered.filter(product => product.stockQuantity && product.stockQuantity > 0);
+    }
     
     // Apply sorting
     filtered.sort((a, b) => {
@@ -711,12 +772,19 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
   }
 
   // Add method to handle image errors based on type
-  handleImageError(event: Event, type: 'store' | 'product' = 'product'): void {
+  handleImageError(event: Event, type: 'store' | 'product' | 'user' = 'product'): void {
     const imgElement = event.target as HTMLImageElement;
     if (imgElement) {
-      imgElement.src = type === 'store'
-        ? '/assets/images/stores/no-image.jpg'
-        : '/assets/images/products/no-image.jpg';
+      switch (type) {
+        case 'store':
+          imgElement.src = '/assets/images/stores/no-image.jpg';
+          break;
+        case 'user':
+          imgElement.src = '/assets/images/avatars/default-avatar.png';
+          break;
+        default:
+          imgElement.src = '/assets/images/products/no-image.jpg';
+      }
     }
   }
 
@@ -868,7 +936,152 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
 
   openCreateEventDialog(): void {
     this.router.navigate(['/events', this.store.storeId, 'create']);
+}
 
 
+  openCreateDonationDialog(): void {
+    const dialogRef = this.dialog.open(CampaignCreateComponent, {
+      width: '600px',
+      data: { storeId: this.store.storeId }, // Pass storeId to the dialog
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log('Dialog closed with success:', result);
+        // Handle post-dialog actions if needed
+      } else {
+        console.log('Dialog closed without success.');
+      }
+    });
+  }
+
+
+
+getSentimentIconClass(score: number | undefined): string {
+  // If score is undefined, return neutral icon
+  if (score === undefined) {
+    return 'fa-meh';
+  }
+  
+  if (score >= 0.25) {
+    return 'fa-smile';
+  } else if (score <= -0.25) {
+    return 'fa-frown';
+  } else {
+    return 'fa-meh';
+  }
+}
+
+getDetailedSentimentIconClass(feedback: StoreFeedback): string {
+  const sentiment = getDetailedSentimentCategory(feedback);
+  
+  switch (sentiment) {
+    case 'Very Positive':
+      return 'fa-laugh-beam';
+    case 'Positive':
+      return 'fa-smile';
+    case 'Negative':
+      return 'fa-frown';
+    case 'Very Negative':
+      return 'fa-angry';
+    default:
+      return 'fa-meh';
+  }
+}
+
+// Add these methods for the reviews summary section
+calculateRatingPercentage(rating: number): number {
+  if (!this.feedbackAnalytics || !this.feedbackAnalytics.totalFeedbacks || this.feedbackAnalytics.totalFeedbacks === 0) {
+    return 0;
+  }
+  
+  const count = this.getRatingCount(rating);
+  return (count / this.feedbackAnalytics.totalFeedbacks) * 100;
+}
+
+getRatingCount(rating: number): number {
+  if (!this.feedbackAnalytics || !this.feedbackAnalytics.ratingDistribution) {
+    return 0;
+  }
+  
+  // Find the count for the specific rating
+  return this.feedbackAnalytics.ratingDistribution[rating.toString()] || 0;
+}
+
+toggleFeedbackDisplay(): void {
+  // Log the current state for debugging
+  console.log('Before toggle - showAllFeedbacks:', this.showAllFeedbacks);
+  
+  // Toggle the showAllFeedbacks property
+  this.showAllFeedbacks = !this.showAllFeedbacks;
+  
+  // Log the new state to confirm it changed
+  console.log('After toggle - showAllFeedbacks:', this.showAllFeedbacks);
+}
+
+getLimitedFeedbacks(): StoreFeedback[] {
+  if (this.showAllFeedbacks) {
+    return this.analyzedFeedbacks;
+  }
+  return this.analyzedFeedbacks.slice(0, this.feedbackLimit);
+}
+
+// Get the proper URL for user profile images
+getUserProfileImageUrl(filename: string): string {
+
+  if (filename.startsWith('http://') || filename.startsWith('https://')) {
+    return filename;
+  }
+
+  const cleaned = filename.replace(/^\/+/, '');
+  return `http://localhost:8080/user-images/${cleaned}`;
+}
+
+
+// Helper method to get the feedback type display name
+getFeedbackTypeDisplayName(type: StoreFeedbackType): string {
+  return getStoreFeedbackTypeDisplayName(type);
+}
+
+// Helper method to get an appropriate icon for the feedback type
+getFeedbackTypeIcon(type: StoreFeedbackType): string {
+  switch (type) {
+    case StoreFeedbackType.PRODUCT_QUALITY:
+      return 'fa-box';
+    case StoreFeedbackType.DELIVERY:
+      return 'fa-truck';
+    case StoreFeedbackType.CUSTOMER_SERVICE:
+      return 'fa-headset';
+    case StoreFeedbackType.PRICING:
+      return 'fa-tag';
+    case StoreFeedbackType.PACKAGING:
+      return 'fa-box-open';
+    default:
+      return 'fa-comment';
+  }
+}
+
+// Add a method to update the favorite status of all products
+updateProductFavoriteStatus(): void {
+  this.products.forEach(product => {
+    product.isFavorite = this.favoriteService.isFavorite(product.productId);
+  });
+  // Also update filtered products
+  this.filteredProducts.forEach(product => {
+    product.isFavorite = this.favoriteService.isFavorite(product.productId);
+  });
+}
+
+// Helper method to get a comma separated list of favorite product names
+getFavoriteProductNames(limit: number = 3): string {
+  const favoriteProducts = this.products.filter(p => p.isFavorite);
+  if (favoriteProducts.length === 0) return 'No favorites';
+  
+  const names = favoriteProducts.slice(0, limit).map(p => p.productName);
+  const remaining = favoriteProducts.length > limit ? 
+    ` and ${favoriteProducts.length - limit} more` : '';
+  
+  return names.join(', ') + remaining;
 }
 }
+

@@ -13,11 +13,12 @@ export class EventListComponent implements OnInit {
   events: VirtualEvent[] = [];
   loading: boolean = true;
   error: string | null = null;
-
   constructor(private eventService: VirtualEventService ,     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.loading = false;
+
     this.fetchEvents();
   }
 
@@ -27,7 +28,7 @@ export class EventListComponent implements OnInit {
       next: (data: VirtualEvent[]) => {
         this.events = data;
         this.loading = false;
-        console.log(this.events);
+console.log("data of sttores events" ,data);
         
       },
       error: (err: any) => {
@@ -38,9 +39,7 @@ export class EventListComponent implements OnInit {
     });
   }
 
-  // Helper function to format date
   formatDate(date: Date): string {
-    console.log(date);
     const eventDate = new Date(date);
     return eventDate.toLocaleDateString('en-US', { 
       day: 'numeric', 
@@ -57,6 +56,13 @@ export class EventListComponent implements OnInit {
     if (!event.maxParticipants) return 0;
     const currentParticipants = event.participants?.length || 0;
     return Math.round((currentParticipants / event.maxParticipants) * 100);
+  }
+
+    
+  getImageUrl(filename: string): string {
+    
+    console.log(this.eventService.getImageUrl(filename));
+    return this.eventService.getImageUrl(filename);
   }
 }
 
@@ -75,5 +81,15 @@ export class EventListComponent implements OnInit {
 
 
 
-// 142694823722-vn9tr868ru9u2bscq9lfqvu2imo85hn6.apps.googleusercontent.com
-// AIzaSyBAVxZ3Cokmiib7sHq5ZsU5nTd-CjHfnW8
+
+
+
+
+
+
+
+
+
+
+
+

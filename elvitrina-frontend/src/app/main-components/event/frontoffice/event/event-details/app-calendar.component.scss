@@ -6,6 +6,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   font-family: 'Roboto', sans-serif;
+  position: relative;
 
   .error-message {
     background-color: #fef7f7;
@@ -52,6 +53,169 @@
     padding: 8px;
     background: #f8f9fa;
     border-radius: 6px;
+  }
+
+  .backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+  }
+
+  .event-details-container,
+  .event-dialog-container {
+    position: fixed !important;
+    top: var(--top, 20px);
+    left: var(--left, 20px);
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    padding: 24px;
+    min-width: 300px;
+    max-width: 400px;
+    z-index: 1000;
+    pointer-events: auto;
+    font-family: 'Roboto', sans-serif;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    transform-origin: top left;
+    transform: translate(0, 0);
+    will-change: transform, opacity;
+    &.opening {
+      opacity: 0;
+      transform: translateY(-10px) scale(0.95);
+    }
+
+    &.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .dialog-header {
+      display: flex; /* Enable Flexbox */
+      align-items: center; /* Center content vertically */
+      justify-content: space-between; /* Space between title and icons */
+      padding: 8px 16px;
+      border-bottom: 1px solid #ddd; /* Optional: Add a subtle divider */
+    }
+    
+    .dialog-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: #202124;
+      margin: 0;
+      flex-grow: 1; /* Ensure the title takes up available space */
+    }
+    
+    .icon-buttons {
+      display: flex;
+      gap: 8px; /* Add spacing between buttons */
+    }
+    
+    .icon-button {
+      color: #5f6368;
+      padding: 4px;
+      border-radius: 50%;
+    
+      &:hover {
+        background-color: #f1f3f4;
+      }
+    }
+    
+
+    .dialog-content {
+      display: flex;
+      flex-direction: column; /* Stack the paragraphs vertically */
+      gap: 8px;
+
+      .event-info {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .info-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-size: 14px;
+          color: #202124;
+
+          mat-icon {
+            color: #5f6368;
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+
+          .meet-link {
+            color: #1a73e8;
+            text-decoration: none;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+
+      .full-width {
+        width: 100%;
+      }
+
+      mat-checkbox {
+        margin: 8px 0;
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 16px;
+
+        button {
+          border-radius: 4px;
+          font-weight: 500;
+
+          &[mat-raised-button] {
+            background-color: #1a73e8;
+            color: #ffffff;
+
+            &:hover {
+              background-color: #1557b0;
+            }
+
+            &[disabled] {
+              background-color: #e8eaed;
+              color: #9aa0a6;
+            }
+          }
+        }
+      }
+
+      .time-date, .time-range {
+        display: flex; /* Ensure icon and text are on the same line */
+        align-items: center; /* Vertically center the content */
+        font-size: 14px; /* Adjust font size if needed */
+        color: #333; /* Default text color */
+      }
+      
+      .icon {
+        color: blue; /* Set icon color to blue */
+        margin-right: 8px; /* Add space between the icon and text */
+      }
+    }
+  }
+
+  ::ng-deep .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      border-radius: 4px;
+    }
+
+    .mat-mdc-form-field-error {
+      font-size: 12px;
+      color: #d93025;
+    }
   }
 
   ::ng-deep .fc {
@@ -102,6 +266,12 @@
         background-color: #1557b0;
         transform: translateY(-1px);
       }
+
+      &.event-clicked {
+        transform: scale(1.05);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+      }
     }
 
     .fc-daygrid-day {
@@ -133,51 +303,12 @@
       }
     }
 
-    ::ng-deep .fc {
-      .fc-toolbar {
-        flex-direction: column;
-        gap: 8px;
-
-        .fc-toolbar-chunk {
-          display: flex;
-          justify-content: center;
-        }
-      }
+    .event-details-container,
+    .event-dialog-container {
+      width: 90%;
+      min-width: 0;
+      top: var(--top, 10px);
+      left: var(--left, 5%);
     }
   }
 }
-// Add this to your app-calendar.component.scss file
-
-/* FullCalendar customizations */
-::ng-deep {
-  .fc-theme-standard {
-    
-    .fc-event {
-      border-radius: 4px;
-      padding: 2px 4px;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, z-index 0s;
-      
-      &:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-        z-index: 5;
-      }
-      
-      &.event-clicked {
-        transform: scale(1.05);
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-        z-index: 10;
-      }
-    }
-  }
-}
-
-// Custom dialog styles
-::ng-deep .event-details-dialog {
-  .mat-mdc-dialog-container {
-    overflow: hidden;
-    transform-origin: center !important;
-  }
-}
-

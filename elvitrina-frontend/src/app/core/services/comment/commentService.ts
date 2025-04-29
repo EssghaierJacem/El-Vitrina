@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Comment } from '../../models/comment/comment.model';
+import { HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,8 @@ export class CommentService {
   updateComment(id: number, comment: Comment): Observable<Comment> {
     return this.http.put<Comment>(`${this.apiUrl}/${id}/updatecomment`, comment);
   }
+
+  
 
   deleteComment(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}` + "/removecomment");

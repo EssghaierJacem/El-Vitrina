@@ -11,15 +11,15 @@ export enum StoreFeedbackType {
 export const getStoreFeedbackTypeDisplayName = (type: StoreFeedbackType): string => {
     switch (type) {
         case StoreFeedbackType.DELIVERY:
-            return 'Delivery';
+            return 'Shipping & Delivery';
         case StoreFeedbackType.PRODUCT_QUALITY:
             return 'Product Quality';
         case StoreFeedbackType.CUSTOMER_SERVICE:
             return 'Customer Service';
         case StoreFeedbackType.PRICING:
-            return 'Pricing';
+            return 'Pricing & Value';
         case StoreFeedbackType.PACKAGING:
-            return 'Packaging';
+            return 'Packaging & Presentation';
         default:
             return type;
     }

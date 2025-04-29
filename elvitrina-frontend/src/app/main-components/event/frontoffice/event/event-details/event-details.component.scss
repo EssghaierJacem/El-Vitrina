@@ -18,71 +18,139 @@ $accent: #ff4081;
 }
 
 .event-overview {
-  margin-bottom: 32px;
+  background-color: $background;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   .overview-card {
-    background: $background;
+    background-color: #fff;
+    padding: 16px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-    .event-title {
-      font-size: 1.75rem;
-      font-weight: 500;
-      color: $text-primary;
-      margin: 0 0 12px;
-    }
-
-    .event-description {
-      font-size: 1rem;
-      color: $text-secondary;
-      line-height: 1.5;
-      margin: 0 0 16px;
-    }
-
-    .event-meta {
+    .event-overview-content {
       display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 16px;
+      gap: 32px; // Space between text and image
+      align-items: flex-start; // Align items to the top
 
-      span {
-        display: flex;
-        align-items: center;
-        font-size: 0.9rem;
-        color: $text-secondary;
+      .event-text {
+        flex: 0 0 60%; // Takes 60% of the width
+        max-width: 60%;
+        color: $text-primary;
 
-        mat-icon {
-          margin-right: 6px;
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
+        .event-title {
+          font-size: 1.75rem;
+          margin: 0 0 12px;
           color: $primary;
+        }
+
+        .event-description {
+          font-size: 1rem;
+          margin: 0 0 24px;
+          color: $text-secondary;
+        }
+
+        .event-meta {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 16px;
+          margin-top: 16px;
+
+          span {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: $text-secondary;
+
+            mat-icon {
+              margin-right: 6px;
+              color: $accent;
+            }
+          }
+        }
+      }
+
+      .event-image {
+        flex: 0 0 35%; // Takes 40% of the width
+        max-width: 40%;
+        height: auto;
+        position: relative;
+
+        img {
+          width: 100%;
+          height: auto;
+          max-height: 300px;
+          object-fit: cover;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          border: 2px solid $primary;
         }
       }
     }
   }
-
-  .join-button {
-    background: linear-gradient(90deg, $primary 0%, lighten($primary, 20%) 100%);
-    color: #fff;
-    font-size: 0.9rem;
-    font-weight: 500;
-    padding: 10px 20px;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background 0.2s, transform 0.2s;
-
-    mat-icon {
-      margin-right: 8px;
-    }
-
-    &:hover {
-      background: linear-gradient(90deg, darken($primary, 10%) 0%, $primary 100%);
-      transform: translateY(-2px);
-    }
+  .editable-field {
+    position: relative;
+  }
+  .seat-booking-section {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+  }
+  
+  
+  .edit-icon {
+    cursor: pointer;
+    opacity: 0.6;
+    font-size: 18px;
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+  
+  .edit-icon:hover {
+    opacity: 1;
+    color: #3f51b5;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  .edit-image-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 255, 255, 0.7);
+  }
+  
+  .type-mode-edit {
+    display: flex;
+    gap: 10px;
   }
 }
+
+
+.join-event-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.join-event-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.join-event-button .button-icon {
+  margin-right: 8px;
+}
+
 
 .section-title {
   font-size: 1.25rem;
@@ -224,5 +292,26 @@ $accent: #ff4081;
     height: 40px;
     color: $error;
     margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .event-overview {
+    .overview-card {
+      .event-overview-content {
+        flex-direction: column;
+        
+        .event-text,
+        .event-image {
+          flex: 0 0 100%;
+          max-width: 100%;
+        }
+        
+        .event-image {
+          margin-top: 20px;
+          order: -1; // Optional: move image above text on mobile
+        }
+      }
+    }
   }
 }

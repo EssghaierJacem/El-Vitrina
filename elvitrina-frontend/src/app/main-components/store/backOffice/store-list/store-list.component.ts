@@ -48,7 +48,7 @@ export class StoreListComponent implements OnInit {
   dataSource: MatTableDataSource<Store>;
   stores: Store[] = [];
   isLoading = true;
-  displayedColumns = ['storeId', 'storeName', 'category', 'status', 'featured', 'actions'];
+  displayedColumns = ['storeName', 'category', 'status', 'featured', 'actions'];
   searchText = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

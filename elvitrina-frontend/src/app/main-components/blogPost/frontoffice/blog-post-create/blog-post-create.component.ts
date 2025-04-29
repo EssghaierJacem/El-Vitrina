@@ -18,6 +18,8 @@ import { BlogPostService } from 'src/app/core/services/blogPost/blogPostService'
 import { TokenService } from 'src/app/core/services/user/TokenService';
 import { SpeechRecognitionService } from 'src/app/core/services/blogPost/SpeechRecognitionService';
 
+import { ChangeDetectorRef } from '@angular/core';
+
 @Component({
   selector: 'app-blog-post-create',
   standalone: true,
@@ -58,7 +60,9 @@ export class BlogPostCreateComponent implements OnInit {
     private tokenService: TokenService,
     private snackBar: MatSnackBar,
     private router: Router ,
-    private speechRecognition: SpeechRecognitionService
+    private speechRecognition: SpeechRecognitionService, 
+    private cdr: ChangeDetectorRef 
+
 
   ) {
     this.initForm();
@@ -135,8 +139,9 @@ export class BlogPostCreateComponent implements OnInit {
             
             // Create preview
             const reader = new FileReader();
-            reader.onload = () => {
-              this.imagePreview = reader.result;
+              reader.onload = () => {
+                this.imagePreview = reader.result;
+                this.cdr.detectChanges(); 
             };
             reader.readAsDataURL(blob);
           }

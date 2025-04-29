@@ -234,4 +234,21 @@ public class GiftServiceImpl implements GiftService {
         // Save the updated gift
         giftRepository.save(gift);
     }
+
+
+    @Override
+    public List<GiftResponseDTO> getGiftsForUser(Long userId) {
+        // Validate user existence
+        if (!userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("User not found with ID: " + userId);
+        }
+
+        // Fetch gifts where the user is associated
+        List<Gift> gifts = giftRepository.findAllByUserId(userId); // Ensure the repository method exists
+
+        // Map entities to DTOs using GiftMapper
+        return gifts.stream()
+                .map(giftMapper::toDto) // Use the toDto method of GiftMapper
+                .collect(Collectors.toList());
+    }
 }

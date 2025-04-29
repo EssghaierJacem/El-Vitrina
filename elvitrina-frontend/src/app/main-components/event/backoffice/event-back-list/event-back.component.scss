@@ -1,0 +1,137 @@
+.cardWithShadow {
+  margin: 16px;
+  padding: 16px;
+  max-width: 1000px; /* Set maximum width for the card */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.m-b-16 {
+  margin-bottom: 16px;
+}
+
+.m-t-16 {
+  margin-top: 16px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  max-width: 100%; /* Ensure table doesn't exceed card width */
+}
+
+table {
+  width: 100%;
+  table-layout: auto; /* Allow columns to adjust based on content */
+}
+
+/* Column-specific widths */
+th[mat-header-cell],
+td[mat-cell] {
+  padding: 8px;
+  text-align: left;
+}
+
+/* Specific column widths */
+th[mat-header-cell][matColumnDef="id"],
+td[mat-cell][matColumnDef="id"] {
+  width: 80px;
+  min-width: 80px;
+}
+
+th[mat-header-cell][matColumnDef="title"],
+td[mat-cell][matColumnDef="title"] {
+  width: 200px;
+  min-width: 150px;
+}
+
+th[mat-header-cell][matColumnDef="description"],
+td[mat-cell][matColumnDef="description"] {
+  width: 300px;
+  min-width: 200px;
+  max-width: 300px; /* Limit description column width */
+}
+
+th[mat-header-cell][matColumnDef="maxParticipants"],
+td[mat-cell][matColumnDef="maxParticipants"] {
+  width: 120px;
+  min-width: 100px;
+}
+
+th[mat-header-cell][matColumnDef="startDateTime"],
+td[mat-cell][matColumnDef="startDateTime"] {
+  width: 120px;
+  min-width: 100px;
+}
+
+th[mat-header-cell][matColumnDef="actions"],
+td[mat-cell][matColumnDef="actions"] {
+  width: 80px;
+  min-width: 80px;
+}
+
+/* Truncate long text */
+td.truncate {
+  max-width: 0; /* Allows truncation within max-width */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Allow wrapping for description if preferred */
+td[mat-cell][matColumnDef="description"] {
+  /* Uncomment to allow wrapping instead of truncation */
+  /* white-space: normal; */
+  /* word-break: break-word; */
+}
+
+mat-chip {
+  margin: 4px;
+}
+
+mat-icon {
+  cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+mat-paginator {
+  margin-top: 16px;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  margin: 16px 0;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .cardWithShadow {
+    margin: 8px;
+    padding: 8px;
+  }
+
+  th[mat-header-cell],
+  td[mat-cell] {
+    padding: 4px;
+    font-size: 12px;
+  }
+
+  th[mat-header-cell][matColumnDef="description"],
+  td[mat-cell][matColumnDef="description"] {
+    max-width: 150px;
+  }
+}

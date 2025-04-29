@@ -51,17 +51,15 @@
                 </mat-error>
               </mat-form-field>
 
-              <mat-form-field appearance="outline" class="w-100 mb-3">
-                <mat-label>Category</mat-label>
-                <mat-select formControlName="category">
-                  <mat-option *ngFor="let category of categories" [value]="category">
-                    {{ getCategoryDisplayName(category) }}
-                  </mat-option>
-                </mat-select>
-                <mat-error *ngIf="productForm.get('category')?.hasError('required')">
-                  Category is required
-                </mat-error>
-              </mat-form-field>
+              <div class="form-group mb-3">
+                <label for="categorySelect" class="form-label">Category</label>
+                <select id="categorySelect" class="form-select form-control" formControlName="category">
+                  <option value="" disabled>Select a category</option>
+                  <option *ngFor="let option of categoryOptions" [value]="option.value">
+                    {{ option.displayName }}
+                  </option>
+                </select>
+              </div>
             </div>
 
             <!-- Pricing and Stock -->

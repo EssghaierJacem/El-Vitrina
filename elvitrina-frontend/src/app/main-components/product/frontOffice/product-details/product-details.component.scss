@@ -2,7 +2,6 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  font-family: "Graphik Webfont", -apple-system, "Helvetica Neue", "Droid Sans", Arial, sans-serif;
 }
 
 // Breadcrumb styling
@@ -159,7 +158,7 @@
   .inventory-alert {
     color: #d01117;
     font-weight: 500;
-    margin-bottom: 15px;
+    margin: 10px 0;
     font-size: 14px;
   }
   
@@ -168,31 +167,30 @@
     
     .price-display {
       display: flex;
-      align-items: baseline;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 5px;
       
       .current-price {
-        font-size: 28px;
-        font-weight: 500;
-        
-        &.has-discount {
-          color: #d01117;
-        }
+        font-size: 1.6rem;
+        font-weight: 600;
+        margin-right: 10px;
       }
       
       .original-price {
-        font-size: 16px;
-        color: #666;
+        font-size: 1.2rem;
         text-decoration: line-through;
-        margin-left: 10px;
+        color: #666;
+        margin-right: 10px;
       }
       
       .discount-badge {
-        background-color: #d01117;
-        color: white;
-        font-size: 12px;
+        background-color: #000;
+        color: #fff;
         padding: 2px 6px;
         border-radius: 3px;
-        margin-left: 10px;
+        font-size: 0.8rem;
+        font-weight: bold;
       }
     }
     
@@ -204,6 +202,23 @@
       a {
         color: #666;
         text-decoration: underline;
+      }
+
+      .store-link-info {
+        margin-top: 6px;
+        
+        .store-name-link {
+          color: #222;
+          text-decoration: none;
+          
+          &:hover {
+            text-decoration: underline;
+          }
+          
+          strong {
+            font-weight: 600;
+          }
+        }
       }
     }
   }
@@ -218,22 +233,24 @@
   .seller-info {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin: 10px 0 20px;
     
     .store-link {
       color: #222;
       text-decoration: none;
       font-weight: 500;
-      margin-right: 10px;
+      margin-right: 5px;
       
       &:hover {
         text-decoration: underline;
       }
     }
     
-    .store-rating {
-      display: flex;
-      color: #222;
+    .featured-icon {
+      color: #1976d2; // Material blue
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
     }
   }
   

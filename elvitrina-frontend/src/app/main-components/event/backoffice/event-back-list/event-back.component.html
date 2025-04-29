@@ -1,0 +1,85 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <!-- Search Input -->
+    <div class="m-b-16">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Search Events</mat-label>
+        <input matInput [(ngModel)]="searchText" (input)="applyFilter()" placeholder="Search by title..." />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="loading" class="d-flex justify-content-center m-t-16">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <!-- Error or Empty Message -->
+    <div *ngIf="!loading && error" class="error-message">
+      {{ error }}
+    </div>
+
+    <!-- Events Table -->
+    <div *ngIf="!loading && !error && dataSource.data.length > 0" class="table-responsive">
+      <table mat-table [dataSource]="dataSource" matSort class="w-100">
+        <!-- Event ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+          <td mat-cell *matCellDef="let event">{{ event.eventId }}</td>
+        </ng-container>
+
+        <!-- Event Title Column -->
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
+          <td mat-cell *matCellDef="let event">{{ event.title }}</td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Description</th>
+          <td mat-cell *matCellDef="let event" class="truncate">{{ event.description }}</td>
+        </ng-container>
+
+        <!-- Max Participants Column -->
+        <ng-container matColumnDef="maxParticipants">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Max Participants</th>
+          <td mat-cell *matCellDef="let event">{{ event.maxParticipants }}</td>
+        </ng-container>
+
+        <!-- Date Column -->
+        <ng-container matColumnDef="startDateTime">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+          <td mat-cell *matCellDef="let event">{{ formatDate(event.startDateTime) }}</td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let event">
+            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Menu options">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="goToEvent(event.eventId)">
+                <mat-icon>visibility</mat-icon>
+                <span>View Details</span>
+              </button>
+              <button mat-menu-item (click)="deleteEvent(event.eventId)">
+                <mat-icon>delete</mat-icon>
+                <span>Delete</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    <!-- No Events Message -->
+    <div *ngIf="!loading && !error && dataSource.data.length === 0" class="error-message">
+      No events found.
+    </div>
+  </mat-card-content>
+</mat-card>

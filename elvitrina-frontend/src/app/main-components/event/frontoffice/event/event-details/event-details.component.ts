@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -10,154 +10,253 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TablerIconsModule } from 'angular-tabler-icons';
-import { EventSession } from 'src/app/core/models/event/event-session.model';
-import { VirtualEvent } from 'src/app/core/models/event/virtual-event.model';
+import { VirtualEvent, VirtualEventEditRequest, EventType, EventMode } from 'src/app/core/models/event/virtual-event.model';
 import { VirtualEventService } from 'src/app/core/services/event/virtual-event.service';
 import { EventParticipantService } from 'src/app/core/services/event/event-participant.service';
-import { MaterialModule } from 'src/app/material.module';
-import { CalendarComponent } from './app-calendar.component';
 import { GoogleCalendarService } from 'src/app/core/services/event/google-calendar.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { EventJoinDialogComponent } from '../event-join/event-join.component';
 import { EventParticipantRequest } from 'src/app/core/models/event/event-participant.model';
 import { TokenService } from 'src/app/core/services/user/TokenService';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
+import { CalendarComponent } from './app-calendar.component';
+import { MaterialModule } from 'src/app/material.module';
+import { MatListModule } from '@angular/material/list';
 import { EventDetailsDialogComponent } from './event-details-dialog.conponent';
-import { EventClickArg } from '@fullcalendar/core';
+import { id } from '@swimlane/ngx-charts';
+import { SeatBookingComponent } from './seat-booking.component';
+import { EventAudioSummaryComponent } from './event-audio.component';
+
+interface EditMode {
+  title: boolean;
+  description: boolean;
+  startDateTime: boolean;
+  ticketPrice: boolean;
+  maxParticipants: boolean;
+  eventType: boolean;
+  eventMode: boolean;
+  eventImage: boolean;
+}
 
 @Component({
   selector: 'app-event-details',
   templateUrl: './event-details.component.html',
+  styleUrls: ['./event-details.component.scss'],
+  standalone: true,
   imports: [
-    CalendarComponent,
     CommonModule,
-    MatIconModule,
-    TablerIconsModule,
-    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
     RouterModule,
-    MatTableModule,
     MatButtonModule,
-    MatTooltipModule,
+    MatCardModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatMenuModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
-    MatCardModule,
-    MatMenuModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    MatSortModule,
     MatSnackBarModule,
-    MatChipsModule,
+    MatSortModule,
+    MatTableModule,
+    MatTooltipModule,
     MatDialogModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    TablerIconsModule,
+    MaterialModule,
+    MatListModule,
+    CalendarComponent,
     EventJoinDialogComponent,
-    EventDetailsDialogComponent
-
-  ],
-  standalone: true,
-  styleUrls: ['./event-details.component.scss']
+    EventDetailsDialogComponent,
+    SeatBookingComponent,
+    EventAudioSummaryComponent,
+]
 })
 export class EventDetailsComponent implements OnInit {
   event: VirtualEvent;
+  initEvent: VirtualEvent ;
+  editableEvent: VirtualEventEditRequest ;
+  eventId: number = 0;
   loading = true;
   calendarEvents: any[] = [];
   googleCalendarEvents: any[] = [];
   showCalendar = false;
-  userId = this.authService.getUserId();
-  role = this.authService.getRole();
+  userId: number | null = this.authService.getUserId();
+  role: string = this.authService.getRole() || 'USER';
   displayedCalendarEvents: any[] = [];
   googleEventsLoaded = false;
+  eventTypes = Object.values(EventType);
+  eventModes = Object.values(EventMode);
+  editMode: EditMode = {
+    title: false,
+    description: false,
+    startDateTime: false,
+    ticketPrice: false,
+    maxParticipants: false,
+    eventType: false,
+    eventMode: false,
+    eventImage: false,
+  };
 
   constructor(
     private route: ActivatedRoute,
     private virtualEventService: VirtualEventService,
-    private EventParticipantService: EventParticipantService,
-
+    private eventParticipantService: EventParticipantService,
     private googleCalendar: GoogleCalendarService,
     private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
-        private authService: TokenService,
-    
-
+    private authService: TokenService
   ) {}
-   
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.loadtData(id);
+    this.eventId = id;
+    this.loadData(id);
   }
-  hasUserJoined(): boolean {
-    if (!this.event?.participants || !this.userId) return false;
-    return this.event.participants.some((p: any) => p.userId === this.userId);
+
+  loadData(id: number) {
+    if (id) {
+      this.loading = true;
+      this.virtualEventService.getEventById(id).subscribe({
+        next: (data: VirtualEvent) => {
+          this.event = data;
+          this.initEvent = { ...data };
+          this.editableEvent = {
+            eventId: data.eventId,
+            title: data.title,
+            description: data.description,
+            startDateTime: data.startDateTime,
+            ticketPrice: data.ticketPrice,
+            eventType: data.eventType,
+            eventMode: data.eventMode,
+            maxParticipants: data.maxParticipants,
+          };
+          console.log('Event data:', this.event);
+
+          this.calendarEvents = this.event.sessions.map((session) => ({
+            sessionId: session.sessionId,
+            title: session.sessionTitle,
+            start: new Date(session.startTime).toISOString(),
+            end: new Date(session.endTime).toISOString(),
+            streamUrl: session.streamUrl,
+          }));
+
+          if (this.role === 'SELLER') {
+            console.log('User is a seller, loading Google Calendar events');
+            this.loadGoogleCalendarEvents();
+          } else {
+            console.log('User is not a seller, loading local events only');
+            this.displayedCalendarEvents = [...this.calendarEvents];
+            this.loading = false;
+            console.log('Local events loaded:', this.displayedCalendarEvents);
+          }
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.loading = false;
+          this.snackBar.open('Failed to load event details', 'Close', { duration: 3000 });
+        },
+      });
+    }
   }
 
   async loadGoogleCalendarEvents() {
     try {
       await this.googleCalendar.initClient();
-      
-      // Get events from Google Calendar
       const response = await this.googleCalendar.listEvents();
-      
-      if (response && response.result && response.result.items) {
-        this.googleCalendarEvents = response.result.items.map((item: { summary: any; start: { dateTime: any; date: any; }; end: { dateTime: any; date: any; }; }) => ({
+      if (response?.result?.items) {
+        this.googleCalendarEvents = response.result.items.map((item: any) => ({
+          id: item.id,
           title: item.summary,
-          start: item.start.dateTime || item.start.date,
-          end: item.end.dateTime || item.end.date,
-          
-          source: 'google'
+          start: item.start?.dateTime || item.start?.date,
+          end: item.end?.dateTime || item.end?.date,
+          source: 'google',
         }));
-        
-        // Combine Google events with the current event sessions
-     
         if (this.role === 'SELLER') {
-          console.log('User is a seller, loading Google Calendar events');
-          
-          this.displayedCalendarEvents = [
-            
-            ...this.googleCalendarEvents
-          ];
+          this.displayedCalendarEvents = [...this.googleCalendarEvents];
           console.log('Google Calendar events loaded:', this.displayedCalendarEvents);
-          
         }
       }
-      
       this.googleEventsLoaded = true;
     } catch (error) {
       console.error('Error loading Google Calendar events:', error);
       this.snackBar.open('Failed to load Google Calendar events', 'Close', { duration: 3000 });
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 
-  
+  setEventSession(): void {
+    this.displayedCalendarEvents = [];
+    this.virtualEventService.getEventById(this.eventId).subscribe({
+      next: (data: VirtualEvent) => {
+        this.event = data;
+        this.initEvent = { ...data };
+        this.editableEvent = {
+          eventId: data.eventId,
+          title: data.title,
+          description: data.description,
+          startDateTime: data.startDateTime,
+          ticketPrice: data.ticketPrice,
+          eventType: data.eventType,
+          eventMode: data.eventMode,
+          maxParticipants: data.maxParticipants,
+        };
+        this.calendarEvents = this.event.sessions.map((session) => ({
+          sessionId: session.sessionId,
+          title: session.sessionTitle,
+          start: new Date(session.startTime).toISOString(),
+          end: new Date(session.endTime).toISOString(),
+          streamUrl: session.streamUrl,
+        }));
+        this.displayedCalendarEvents = [...this.calendarEvents];
+        console.log('Displayed calendar events:', this.displayedCalendarEvents);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.loading = false;
+        this.snackBar.open('Failed to load event details', 'Close', { duration: 3000 });
+      },
+    });
+  }
+
+  hasUserJoined(): boolean {
+    if (!this.event?.participants || !this.userId) return false;
+    return this.event.participants.some((p) => p.userId === this.userId);
+  }
+
+  isUserRole(): boolean {
+    return this.role === 'USER';
+  }
+
   joinEvent(): void {
     if (!this.event) {
       console.error('No event data available');
       return;
     }
-  
-    console.log('Opening join dialog for event:', this.event.eventId);
-  
     const dialogRef = this.dialog.open(EventJoinDialogComponent, {
       width: '400px',
       data: {
         event: this.event,
         maxParticipants: this.event.maxParticipants,
-        currentParticipants: this.event.participants?.length || 0
-      }
+        currentParticipants: this.event.participants?.length || 0,
+      },
     });
-  
-    dialogRef.afterOpened().subscribe(() => {
-      console.log('Dialog opened successfully');
-    });
-  
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog closed with result:', result);
+    dialogRef.afterClosed().subscribe((result) => {
       if (result?.tickets) {
         this.loading = true;
         if (this.userId === null) {
@@ -165,21 +264,21 @@ export class EventDetailsComponent implements OnInit {
           this.loading = false;
           return;
         }
-        const requestdto: EventParticipantRequest ={
-          userId: this.userId, // userId is guaranteed to be a number here
+        const requestdto: EventParticipantRequest = {
+          userId: this.userId,
           eventId: this.event.eventId,
           ticketCount: result.tickets,
-        }
-        this.EventParticipantService.registerParticipant(requestdto).subscribe({
+        };
+        this.eventParticipantService.registerParticipant(requestdto).subscribe({
           next: () => {
             this.snackBar.open(`Joined with ${result.tickets} ticket(s)`, 'Close', { duration: 3000 });
             this.loading = false;
-            this.loadtData(this.event.eventId); // Reload event data to reflect changes
+            this.loadData(this.event.eventId);
           },
           error: () => {
             this.snackBar.open('Failed to join event', 'Close', { duration: 3000 });
             this.loading = false;
-          }
+          },
         });
       }
     });
@@ -189,89 +288,112 @@ export class EventDetailsComponent implements OnInit {
     this.showCalendar = !this.showCalendar;
   }
 
-  getSessionStatus(session: EventSession): 'done' | 'upcoming' {
+  getSessionStatus(session: any): 'done' | 'upcoming' {
     const now = new Date();
     const end = new Date(session.endTime);
     return now > end ? 'done' : 'upcoming';
   }
- 
+
   getTimelineCardClass(status: string) {
     return status === 'done' ? 'timeline-card-done' : 'timeline-card-upcoming';
   }
-  
+
   getTimelineDotClass(status: string) {
     return status === 'done' ? 'timeline-dot-done' : 'timeline-dot-upcoming';
   }
-  
+
   getTimelineLineClass(status: string) {
     return status === 'done' ? 'timeline-connector-done' : 'timeline-connector-upcoming';
   }
 
-  loadtData(id: number) {
-    if (id) {
-      this.loading = true;
-      this.virtualEventService.getEventById(id).subscribe({
-        next: (data) => {
-          this.event = data;
-          console.log('Event data:', this.event);
-          
-          console.log('Event data:', this.event.sessions[0]);
-          
-          // Format sessions for calendar integration
-          this.calendarEvents = this.event.sessions.map(session => ({
-            title: session.sessionTitle,
-            start: new Date(session.startTime).toISOString(),
-            end: new Date(session.endTime).toISOString(),
-            streamUrl: session.streamUrl,
-          }));
-  
-          // Set initial displayed events
-          
-          // If user is a seller, load Google Calendar events
-          if (this.role === 'SELLER') {
-            console.log('User is a seller, loading Google Calendar events');
-            
-            this.loadGoogleCalendarEvents();
-          } else {
-            console.log('User is not a seller, loading local events only');
-            this.displayedCalendarEvents = [...this.calendarEvents];
-            this.loading = false;
-            console.log('Local events loaded:', this.displayedCalendarEvents);
-            
-          }
-        },
-        error: (err) => {
-          this.loading = false;
-          this.snackBar.open('Failed to load event details', 'Close', { duration: 3000 });
-        }
-      });
+  getImageUrl(filename: string): string {
+    return this.virtualEventService.getImageUrl(filename);
+  }
+
+ 
+
+  resetEditableEvent() {
+    if (this.initEvent) {
+      this.editableEvent = {
+        eventId: this.initEvent.eventId,
+        title: this.initEvent.title,
+        description: this.initEvent.description,
+        startDateTime: this.initEvent.startDateTime,
+        ticketPrice: this.initEvent.ticketPrice,
+        eventType: this.initEvent.eventType,
+        eventMode: this.initEvent.eventMode,
+        maxParticipants: this.initEvent.maxParticipants,
+      };
     }
   }
 
-  handleEventClick() {
-  
-
+  enableEdit(field: keyof EditMode) {
+    if (this.role !== 'SELLER') return;
+    if (!this.isEditModeActive()) {
+      this.resetEditableEvent();
+    }
+    console.log('Enabling edit mode for field:', field);
     
-    // Open dialog with position data
-    const dialogRef = this.dialog.open(EventDetailsDialogComponent, {
-      data: {
-        title:"",
-        start: "",
-        end: "",
-        hangoutLink: "",
-        position: { top: 100, left: 100 },
-      },
-      width: '400px',
-      maxWidth: '90vw',
-      backdropClass:'backdrop-bg-orange',
-      panelClass: 'event-details-dialog',
-      // No position settings here, we'll set it in the component
-    });
-    
-    // Remove highlight when dialog closes
-    
+    this.editMode[field] = true;
+    this.cdr.detectChanges();
   }
-  
+
+  isEditModeActive(): boolean {
+    return Object.values(this.editMode).some((value) => value);
+  }
+
+  cancelEdit() {
+    Object.keys(this.editMode).forEach((key) => {
+      this.editMode[key as keyof EditMode] = false;
+    });
+    this.resetEditableEvent();
+    this.cdr.detectChanges();
+  }
+
+  saveChanges() {
+    if (!this.event || !this.editableEvent) return;
+    this.loading = true;
+
+    this.virtualEventService.updateEvent(this.event.eventId, this.editableEvent).subscribe({
+      next: (updatedEvent: VirtualEvent) => {
+        this.event = updatedEvent;
+        this.initEvent = { ...updatedEvent };
+        this.cancelEdit();
+        this.snackBar.open('Event updated successfully', 'Close', { duration: 3000 });
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error updating event', error);
+        this.snackBar.open('Failed to update event', 'Close', { duration: 3000 });
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file && this.event) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // this.virtualEventService.uploadEventImage(this.event.eventId, formData).subscribe({
+      //   next: (response: { imageUrl: string }) => {
+      //     if (this.event) {
+      //       this.event.eventImage = response.imageUrl;
+      //       this.initEvent = { ...this.event };
+      //       this.resetEditableEvent();
+      //     }
+      //     this.editMode.eventImage = false;
+      //     this.snackBar.open('Image uploaded successfully', 'Close', { duration: 3000 });
+      //     this.cdr.detectChanges();
+      //   },
+      //   error: (error) => {
+      //     console.error('Error uploading image', error);
+      //     this.snackBar.open('Failed to upload image', 'Close', { duration: 3000 });
+      //   },
+      // });
+    }
+  }
 }
-
-

@@ -75,6 +75,7 @@ public class EventTicketServiceImpl implements EventTicketService {
     public EventTicketResponseDTO getEventTicketById(Long id) {
         EventTicket eventTicket = eventTicketRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Event ticket not found with id: " + id));
+
         return eventTicketMapper.toResponseDTO(eventTicket);
     }
 
@@ -123,6 +124,10 @@ public class EventTicketServiceImpl implements EventTicketService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<EventTicket> getTicketsWithSeats(Long userId, Long eventId) {
+        return eventTicketRepository.findTicketsWithSeats(userId, eventId);
+    }
 
     @Override
     public EventTicketResponseDTO generateQRCodeForTicket(Long ticketId) {

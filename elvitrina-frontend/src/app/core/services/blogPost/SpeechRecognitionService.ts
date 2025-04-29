@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class SpeechRecognitionService {
   private recognition: any;
-  private speechSubject = new Subject<string>();
+  private speechSubject: Subject<string> | null = null;
   private isListening = false;
 
   constructor() {
@@ -13,24 +13,35 @@ export class SpeechRecognitionService {
 
   private initSpeechRecognition() {
     const SpeechRecognition = (window as any).SpeechRecognition || 
-                            (window as any).webkitSpeechRecognition;
-    
+                               (window as any).webkitSpeechRecognition;
+
     if (SpeechRecognition) {
       this.recognition = new SpeechRecognition();
       this.recognition.continuous = false;
       this.recognition.interimResults = false;
-      this.recognition.lang = 'fr-FR'; // Français par défaut
-      this.recognition.maxAlternatives = 1; // Limite à 1 résultat
-     
-
+      this.recognition.lang = 'fr-FR';
+      this.recognition.maxAlternatives = 1;
 
       this.recognition.onresult = (event: any) => {
         const transcript = event.results[0][0].transcript;
-        this.speechSubject.next(transcript);
+        if (this.speechSubject) {
+          this.speechSubject.next(transcript);
+          this.speechSubject.complete(); // Fin de l'observable après un résultat
+          this.speechSubject = null;
+        }
+        this.isListening = false;
       };
 
       this.recognition.onerror = (event: any) => {
-        this.speechSubject.error(event.error);
+        if (this.speechSubject) {
+          this.speechSubject.error(event.error);
+          this.speechSubject = null;
+        }
+        this.isListening = false;
+      };
+
+      this.recognition.onend = () => {
+        this.isListening = false;
       };
     }
   }
@@ -40,10 +51,13 @@ export class SpeechRecognitionService {
       throw new Error('Reconnaissance vocale non supportée');
     }
 
-    if (!this.isListening) {
-      this.recognition.start();
-      this.isListening = true;
+    if (this.isListening) {
+      return this.speechSubject!.asObservable();
     }
+
+    this.speechSubject = new Subject<string>();
+    this.recognition.start();
+    this.isListening = true;
 
     return this.speechSubject.asObservable();
   }
@@ -60,4 +74,3 @@ export class SpeechRecognitionService {
            !!(window as any).webkitSpeechRecognition;
   }
 }
-
