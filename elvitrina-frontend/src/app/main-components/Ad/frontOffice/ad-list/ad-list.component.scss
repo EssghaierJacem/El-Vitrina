@@ -1,22 +1,58 @@
-/* ad-list.component.scss */
 .pins-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-  padding: 12px;
-  max-height: 600px; /* Container height limit */
-  overflow-y: auto; /* Enable scrolling if content exceeds */
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+  padding: 20px;
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
 }
 
 .pin {
-  border-radius: 12px;
+  border-radius: 20px;
   overflow: hidden;
-  background: #f8f9fa;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: transform 0.2s ease;
-  
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.35s ease;
+  position: relative;
+
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  }
+
+  &.text-only {
+    background: linear-gradient(135deg, #f7f7f7 0%, #ffffff 100%);
+    border: 1px dashed #ddd;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .text-artistic-background {
+      position: relative;
+      width: 100%;
+      height: 140px;
+      background: radial-gradient(circle at top left, #f0e6ff, #ffffff);
+      overflow: hidden;
+    }
+
+    .decorative-shape {
+      position: absolute;
+      bottom: -10px;
+      right: -10px;
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+      border-radius: 50%;
+      opacity: 0.2;
+    }
+  }
+
+  .pin-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
   }
 
   .pin-content {
@@ -25,56 +61,128 @@
     height: 100%;
   }
 
+  .image-container {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+    background: #eee;
+  }
+
+  .image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%);
+    pointer-events: none;
+  }
+
   .pin-image {
     width: 100%;
-    height: 160px; /* Fixed image height */
+    height: 100%;
     object-fit: cover;
+    transition: transform 0.35s ease;
+
+    .pin:hover & {
+      transform: scale(1.05);
+    }
   }
 
   .pin-text {
-    padding: 12px;
+    padding: 16px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    
+
     h3 {
       margin: 0 0 8px 0;
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 16px;
+      font-weight: 700;
       color: #333;
-      line-height: 1.3;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
-    
+
     p {
       margin: 0;
-      font-size: 12px;
+      font-size: 13px;
       color: #666;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+      line-height: 1.5;
       overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+    }
+  }
+
+  .pin-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.9);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    .pin:hover & {
+      opacity: 1;
+    }
+
+    button {
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
     }
   }
 }
 
-/* Compact mobile version */
+/* Loading and error handling */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.error-message {
+  padding: 20px;
+  text-align: center;
+  color: #d32f2f;
+  background: #fde8e8;
+  border-radius: 8px;
+  margin: 20px;
+}
+
+/* Mobile responsiveness */
 @media (max-width: 600px) {
   .pins-container {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+    padding: 14px;
   }
-  
+
   .pin {
     &[style*="280"] {
       height: 220px !important;
     }
-    &[style*="160"] {
-      height: 120px !important;
+    &[style*="200"] {
+      height: 160px !important;
     }
   }
-  
-  .pin-image {
-    height: 120px !important;
+
+  .pin-actions {
+    opacity: 1 !important;
   }
 }

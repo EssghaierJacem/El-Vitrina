@@ -1,0 +1,102 @@
+.dialog-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 650px;
+    max-height: 80vh;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden; // << Important: no padding to cause fake scroll
+    
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .dialog-container {
+    padding: 24px;
+    overflow-y: auto;
+    height: 100%;
+    box-sizing: border-box;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #555;
+    transition: color 0.3s;
+    z-index: 1;
+  
+    &:hover {
+      color: #000;
+    }
+  }
+  
+  .dialog-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 22px;
+  }
+  
+  .request-info {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    width: 100%;
+    text-align: center;
+  
+    p {
+      margin: 8px 0;
+      color: #555;
+    }
+  
+    .image-container {
+      margin-top: 16px;
+      text-align: center;
+  
+      img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+  
+  .proposals-title {
+    margin-bottom: 16px;
+    font-size: 20px;
+    color: #007bff;
+    text-align: center;
+  }
+  
+  .proposals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  
+    .proposal-card {
+      background: #eef1f7;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+  
+      p {
+        margin: 4px 0;
+      }
+    }
+  }
+  
+  .no-proposals {
+    color: #999;
+    text-align: center;
+    margin-top: 20px;
+  }
+  

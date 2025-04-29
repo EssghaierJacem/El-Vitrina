@@ -7,6 +7,7 @@ package com.sudoers.elvitrinabackend.controller.requestPerso;
         import com.sudoers.elvitrinabackend.service.ProposalPerso.ProposalPersoServiceAdmin;
         import com.sudoers.elvitrinabackend.service.requestPerso.RequestPersoAdmin;
         import com.sudoers.elvitrinabackend.service.requestPerso.RequestPersoService;
+        import com.sudoers.elvitrinabackend.service.user.EmailService;
         import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.http.ResponseEntity;
         import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,8 @@ public class RequestPersoAdminController {
     private RequestPersoAdmin requestPersoService;
     @Autowired
     private ProposalPersoServiceAdmin proposalPersoServiceAdmin;
+    @Autowired
+    private EmailService emailService;
     @GetMapping
     public ResponseEntity<List<RequestPerso>> getAllRequestPerso() {
         return ResponseEntity.ok(requestPersoService.getAllRequestPerso());

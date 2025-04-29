@@ -1,7 +1,6 @@
-<!-- ad-approval-list.component.html -->
 <div class="approval-container">
   <h2>Pending Ad Approvals</h2>
-  
+
   <div class="table-responsive">
     <table class="approval-table">
       <thead>
@@ -49,15 +48,27 @@
     </table>
   </div>
 
+  <!-- Reject Modal -->
+  <div *ngIf="showRejectDialog" class="dialog-overlay" (click)="cancelReject()">
+    <div class="reject-dialog" (click)="$event.stopPropagation()">
+      <h3>Reject Advertisement</h3>
+      <p>Please provide a reason:</p>
+      <textarea [(ngModel)]="rejectionReason" placeholder="Enter rejection reason..." rows="5"></textarea>
+      <div class="dialog-actions">
+        <button class="cancel-btn" (click)="cancelReject()">Cancel</button>
+        <button class="confirm-btn" (click)="confirmReject()" [disabled]="!rejectionReason.trim()">Reject</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Ad Preview Modal -->
   <div *ngIf="selectedAd" class="preview-overlay" (click)="closePreview()">
     <div class="preview-container" (click)="$event.stopPropagation()">
       <button class="close-btn" (click)="closePreview()">
         <i class="material-icons">close</i>
       </button>
-      
+
       <div class="ad-preview" [ngSwitch]="selectedAd.displayType || 'BANNER'">
-        <!-- Banner Ad Preview -->
         <div *ngSwitchCase="'BANNER'" class="banner-preview" [class]="'position-' + (selectedAd.position || 'top')">
           <a [href]="selectedAd.targetUrl" target="_blank" class="ad-link">
             <img *ngIf="selectedAd.imageUrl" [src]="selectedAd.imageUrl" [alt]="selectedAd.title">
@@ -67,8 +78,7 @@
             </div>
           </a>
         </div>
-        
-        <!-- Popup Ad Preview -->
+
         <div *ngSwitchCase="'POPUP'" class="popup-preview">
           <div class="popup-content">
             <a [href]="selectedAd.targetUrl" target="_blank" class="ad-link">
@@ -84,7 +94,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="ad-meta">
         <h3>Ad Details</h3>
         <p><strong>Position:</strong> {{ selectedAd.position || 'Not specified' }}</p>

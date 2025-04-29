@@ -1,83 +1,184 @@
-// ad-popup.component.scss
-.popup-container {
-  position: relative;
-  max-width: 90vw; // Responsive max width
-  max-height: 90vh;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  
-  // Remove all padding and let content dictate size
-  padding: 0;
-  
-  // For text-only ads
-  &.text-only {
-    background: white;
-    padding: 20px;
-    max-width: 400px;
-  }
-}
-
-// Image ads should be edge-to-edge
-.popup-container img {
-  display: block;
-  max-width: 100%;
-  max-height: 80vh;
-  width: auto;
-  height: auto;
-  margin: 0 auto;
-}
-
-.text-content {
-  padding: 20px;
-  background: white;
-  
-  h2 {
-    margin: 0 0 10px 0;
-    color: #2b6cb0;
-    font-size: 1.3rem;
+/* ===============================
+   🔥 Angular Material Dialog Fix
+   =============================== */
+   ::ng-deep .cdk-overlay-pane {
+    background: transparent !important;
+    box-shadow: none !important;
   }
   
-  p {
-    margin: 0;
-    color: #4a5568;
-    line-height: 1.5;
+  ::ng-deep .mat-dialog-container {
+    background: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
   }
-}
-
-.countdown {
-  position: absolute;
-  bottom: 10px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  color: white;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 5px;
-  font-size: 0.8rem;
-  border-radius: 0 0 12px 12px;
-}
-
-.close-popup {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  border: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  font-size: 1rem;
-  transition: all 0.2s ease;
   
-  &:hover {
-    background: rgba(0, 0, 0, 0.8);
-    transform: scale(1.1);
+  /* ===============================
+     🌟 Popup Container Styles
+     =============================== */
+  .popup-container {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: hidden;
+    margin: auto;
+    border-radius: 12px;
+    animation: popupAppear 0.4s ease-out;
+    z-index: 1000;
+  
+    // 🖼️ For image ads
+    &:not(.text-only) {
+      background: transparent;
+      box-shadow: none;
+  
+      img {
+        display: block;
+        max-width: 100%;
+        max-height: 80vh;
+        border-radius: 12px;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        margin: 0 auto;
+      }
+    }
+  
+    // 📄 For text-only ads
+    &.text-only {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
+      max-width: min(90vw, 450px);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      position: relative;
+      overflow: hidden;
+  
+      &::before {
+        content: "";
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(circle at center, rgba(100, 200, 255, 0.4) 0%, rgba(200, 150, 255, 0.2) 100%);
+        border-radius: 50%;
+        top: -30%;
+        left: -20%;
+        animation: floatBubble 15s ease-in-out infinite alternate;
+        z-index: 1;
+        filter: blur(40px);
+      }
+  
+      .text-content {
+        position: relative;
+        z-index: 2;
+        padding: 1.5rem;
+        background: transparent;
+        border-radius: 12px;
+        text-align: center;
+  
+        h2 {
+          margin: 0 0 1rem 0;
+          font-size: 1.7rem;
+          color: #2c3e50;
+          font-weight: 600;
+        }
+  
+        p {
+          margin: 0;
+          color: #4a5568;
+          font-size: 1.1rem;
+          line-height: 1.6;
+        }
+      }
+    }
   }
-}
+  
+  /* ===============================
+     ⏳ Countdown Timer
+     =============================== */
+  .countdown {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    z-index: 10;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* ===============================
+     ❌ Close Button
+     =============================== */
+  .close-popup {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+    z-index: 11;
+    backdrop-filter: blur(4px);
+  
+    &:hover {
+      background: rgba(0, 0, 0, 0.9);
+      transform: scale(1.1);
+    }
+  }
+  
+  /* ===============================
+     ✨ Animations
+     =============================== */
+  @keyframes popupAppear {
+    from {
+      opacity: 0;
+      transform: scale(0.96) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  
+  @keyframes floatBubble {
+    0% {
+      transform: translate(-20%, -20%);
+    }
+    100% {
+      transform: translate(20%, 20%);
+    }
+  }
+  
+  /* ===============================
+     📱 Responsive Adjustments
+     =============================== */
+  @media (max-width: 600px) {
+    .popup-container.text-only {
+      padding: 1.5rem;
+  
+      .text-content {
+        padding: 1.25rem;
+  
+        h2 {
+          font-size: 1.4rem;
+        }
+  
+        p {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+  

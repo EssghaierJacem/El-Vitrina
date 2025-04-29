@@ -1,30 +1,30 @@
-<h2>Request Details</h2>
+<div class="dialog-wrapper">
+  <button class="close-button" (click)="close()">×</button>
 
-<p><strong>Request Name:</strong> {{ data.request.title }}</p>
-<p><strong>Description:</strong> {{ data.request.description }}</p>
-<p><strong>Tags:</strong> {{ data.request.tags }}</p>
+  <div class="dialog-container">
+    <h2 class="dialog-title">📝 Request Details</h2>
 
-<!-- Display request image if available -->
-<div *ngIf="data.request.image">
-  <p><strong>Request Image:</strong></p>
-  <img [src]="data.request.image" alt="Request Image" style="max-width: 100%; height: auto;">
+    <div class="request-info">
+      <p><strong>Request Name:</strong> {{ data.request.title }}</p>
+      <p><strong>Description:</strong> {{ data.request.description }}</p>
+      <p><strong>Tags:</strong> {{ data.request.tags }}</p>
+
+      <div *ngIf="data.request.image" class="image-container">
+        <img [src]="data.request.image" alt="Request Image">
+      </div>
+    </div>
+
+    <h3 class="proposals-title">💬 Proposals</h3>
+
+    <div *ngIf="data.proposals.length; else noProposals" class="proposals-list">
+      <div class="proposal-card" *ngFor="let proposal of data.proposals">
+        <p><strong>Price:</strong> {{ proposal.price }} $</p>
+        <p><strong>Description:</strong> {{ proposal.description }}</p>
+      </div>
+    </div>
+
+    <ng-template #noProposals>
+      <p class="no-proposals">No proposals available for this request.</p>
+    </ng-template>
+  </div>
 </div>
-
-<h3>Proposals</h3>
-<div *ngIf="data.proposals.length; else noProposals">
-  <ul>
-    <li *ngFor="let proposal of data.proposals">
-      <p><strong>Proposal Title:</strong> {{ proposal.price }}</p>
-      <p><strong>Description:</strong> {{ proposal.description }}</p>
-    
-
-
-    </li>
-  </ul>
-</div>
-
-<ng-template #noProposals>
-  <p>No proposals available for this request.</p>
-</ng-template>
-
-

@@ -211,7 +211,7 @@ export class ViewRequestPersoComponent {
     return this.userId === proposalUserId;
   }
   
-  updateProposal(proposalId: number, updateData: any): void {
+  updateProposal(proposalId: number, updateData: any): void { 
     this.proposalPersoService.updateProposalPerso(proposalId, updateData).subscribe({
       next: (updatedProposal) => {
         this.snackBar.open('Proposal updated successfully!', 'Close', {

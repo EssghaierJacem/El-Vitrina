@@ -2,38 +2,62 @@
 .ad-banner {
   position: fixed;
   background: white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  border-radius: 12px;
   overflow: hidden;
   z-index: 1000;
-  transition: all 0.3s ease;
+  transition: 
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease;
+  will-change: transform, opacity;
 }
 
 .ad-banner a {
   display: block;
   text-decoration: none;
   color: inherit;
+  height: 100%;
 }
 
 .ad-image {
-  max-width: 100%;
-  max-height: 100%;
-  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.ad-banner:hover .ad-image {
+  transform: scale(1.02);
 }
 
 .text-content {
   padding: 15px;
   text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .text-content h3 {
   margin: 0 0 8px 0;
   color: #1976d2;
+  font-weight: 600;
+  transition: color 0.3s ease;
 }
 
 .text-content p {
   margin: 0;
   color: #666;
+  transition: color 0.3s ease;
+}
+
+.ad-banner:hover .text-content h3 {
+  color: #0d47a1;
+}
+
+.ad-banner:hover .text-content p {
+  color: #333;
 }
 
 .vertical-text {
@@ -41,13 +65,16 @@
   transform: rotate(180deg);
   text-orientation: mixed;
   margin: 0 auto;
+  height: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .close-btn {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  background: rgba(0,0,0,0.5);
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.7);
   color: white;
   border: none;
   width: 24px;
@@ -58,42 +85,106 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+  z-index: 10;
 }
 
-/* Position Specific */
+.close-btn:hover {
+  background: rgba(0,0,0,0.9);
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Position Specific Styles */
 .position-top {
-  top: 20px;
+  top: -100px;
   left: 50%;
   transform: translateX(-50%);
   width: 728px;
   max-width: 90%;
+  animation: slideDown 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .position-bottom {
-  bottom: 20px;
+  bottom: -100px;
   left: 50%;
   transform: translateX(-50%);
   width: 728px;
   max-width: 90%;
+  animation: slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .position-left {
-  left: 20px;
+  left: -200px;
   top: 50%;
   transform: translateY(-50%);
   width: 160px;
   max-height: 90vh;
+  animation: slideRight 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .position-right {
-  right: 20px;
+  right: -200px;
   top: 50%;
   transform: translateY(-50%);
   width: 160px;
   max-height: 90vh;
+  animation: slideLeft 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-/* Responsive */
+/* Animation Keyframes */
+@keyframes slideDown {
+  from { top: -100px; opacity: 0; }
+  to { top: 20px; opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { bottom: -100px; opacity: 0; }
+  to { bottom: 20px; opacity: 1; }
+}
+
+@keyframes slideRight {
+  from { left: -200px; opacity: 0; }
+  to { left: 20px; opacity: 1; }
+}
+
+@keyframes slideLeft {
+  from { right: -200px; opacity: 0; }
+  to { right: 20px; opacity: 1; }
+}
+
+/* Hover Effects */
+.ad-banner:hover {
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  
+  &.position-top {
+    transform: translateX(-50%) translateY(-5px);
+  }
+  
+  &.position-bottom {
+    transform: translateX(-50%) translateY(-5px);
+  }
+  
+  &.position-left {
+    transform: translateY(calc(-50% - 5px));
+  }
+  
+  &.position-right {
+    transform: translateY(calc(-50% - 5px));
+  }
+}
+
+/* Scroll Behavior Adjustments */
+.scrolling .position-top {
+  transform: translateX(-50%) translateY(20px);
+}
+
+.scrolling .position-bottom {
+  transform: translateX(-50%) translateY(-20px);
+}
+
+/* Responsive Styles */
 @media (max-width: 768px) {
   .position-left, .position-right {
     display: none;
@@ -101,5 +192,15 @@
   
   .position-top, .position-bottom {
     width: 95%;
+  }
+
+  @keyframes slideDown {
+    from { top: -100px; opacity: 0; }
+    to { top: 10px; opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { bottom: -100px; opacity: 0; }
+    to { bottom: 10px; opacity: 1; }
   }
 }
