@@ -1,3 +1,4 @@
+import { AdDisplayComponent } from "../../../main-components/Ad/frontOffice/ad-display/ad-display.component";
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../../core/services/product/product.service';
@@ -11,7 +12,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatSnackBarModule],
+  imports: [CommonModule, RouterModule, MatSnackBarModule,AdDisplayComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

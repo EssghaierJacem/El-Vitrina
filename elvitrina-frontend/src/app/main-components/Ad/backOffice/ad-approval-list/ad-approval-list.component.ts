@@ -1,4 +1,3 @@
-
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-ad-approval-list',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -20,6 +20,7 @@ export class AdApprovalListComponent implements OnInit {
   showRejectDialog = false;
   rejectionReason = '';
   currentAdId: number | null = null;
+  selectedAd: any = null;
 
   constructor(private adService: AdService) {}
 
@@ -35,8 +36,17 @@ export class AdApprovalListComponent implements OnInit {
   }
 
   approveAd(adId: number): void {
+    if (!confirm('Are you sure you want to approve this ad?')) return;
+
     this.adService.updateAdStatus(adId, 'APPROVED').subscribe(
-      () => this.pendingAds = this.pendingAds.filter(ad => ad.id !== adId)
+      () => {
+        this.pendingAds = this.pendingAds.filter(ad => ad.id !== adId);
+        alert('✅ Ad approved and email sent to the advertiser!');
+      },
+      (error) => {
+        console.error('❌ Failed to approve ad', error);
+        alert('❌ Failed to approve the ad.');
+      }
     );
   }
 
@@ -49,28 +59,34 @@ export class AdApprovalListComponent implements OnInit {
   cancelReject(): void {
     this.showRejectDialog = false;
     this.currentAdId = null;
+    this.rejectionReason = '';
   }
 
   confirmReject(): void {
-    if (this.currentAdId && this.rejectionReason) {
+    if (this.currentAdId && this.rejectionReason.trim()) {
       this.adService.updateAdStatus(this.currentAdId, 'REJECTED', this.rejectionReason).subscribe(
         () => {
           this.pendingAds = this.pendingAds.filter(ad => ad.id !== this.currentAdId);
           this.showRejectDialog = false;
           this.currentAdId = null;
+          this.rejectionReason = '';
+          alert('✅ Ad rejected and email with reason sent to the advertiser!');
+        },
+        (error) => {
+          console.error('❌ Failed to reject ad', error);
+          alert('❌ Failed to reject the ad.');
         }
       );
+    } else {
+      alert('⚠️ Please enter a reason for rejection!');
     }
   }
 
+  viewAd(ad: any): void {
+    this.selectedAd = ad;
+  }
 
-  selectedAd: any = null;
-
-viewAd(ad: any): void {
-  this.selectedAd = ad;
-}
-
-closePreview(): void {
-  this.selectedAd = null;
-}
+  closePreview(): void {
+    this.selectedAd = null;
+  }
 }
