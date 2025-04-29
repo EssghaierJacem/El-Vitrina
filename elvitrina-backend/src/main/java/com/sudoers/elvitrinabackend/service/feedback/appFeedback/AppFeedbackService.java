@@ -41,17 +41,105 @@ public class AppFeedbackService implements IAppFeedbackService {
         if (StringUtils.hasText(contactEmail)) {
             String subject = "Thank you for your feedback - El Vitrina";
             String htmlContent = """
-                <html>
-                <body style='font-family: Arial, sans-serif; background: #f9f9f9; padding: 30px;'>
-                  <div style='max-width:500px;margin:auto;background:white;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.05);padding:24px;'>
-                    <h2 style='color:#222;margin-top:0;'>Thank You for Your Feedback!</h2>
-                    <p style='color:#444;font-size:16px;'>We appreciate your input and will use it to improve our app.</p>
-                    <div style='margin-top:32px;color:#888;font-size:13px;border-top:1px solid #eee;padding-top:12px;'>
-                      &copy; 2025 El Vitrina. All rights reserved.
-                    </div>
-                  </div>
-                </body>
-                </html>
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Thank You for Your Feedback</title>
+                <style>
+                    body {
+                        margin: 0;
+                        padding: 0;
+                        background-color: #f9f9f9;
+                        font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+                    }
+                    
+                    .wrapper {
+                        width: 100%;
+                        table-layout: fixed;
+                        padding: 40px 0;
+                    }
+                    
+                    .container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        border-spacing: 0;
+                    }
+                    
+                    .email-background {
+                        background-color: #2a3b62;
+                        background-image: url('https://drive.google.com/uc?export=view&id=1gpIPjhzrlAOyDlmZ2lGEhysM-WzsOY1L');
+                        background-position: center;
+                        background-repeat: repeat;
+                        padding: 30px;
+                    }
+                    
+                    .content-box {
+                        background-color: white;
+                        width: 85%;
+                        max-width: 480px;
+                        margin: 0 auto;
+                        border-radius: 4px;
+                        text-align: center;
+                        padding: 40px 20px;
+                    }
+                    
+                    .logo {
+                        max-width: 200px;
+                        height: auto;
+                        margin-bottom: 30px;
+                    }
+                    
+                    .thank-you {
+                        font-size: 1.2rem;
+                        font-weight: bold;
+                        color: #333;
+                        margin-bottom: 16px;
+                    }
+                    
+                    .message {
+                        font-size: 1rem;
+                        color: #555;
+                        line-height: 1.5;
+                        margin-bottom: 20px;
+                    }
+                    
+                    .footer {
+                        font-size: 0.8rem;
+                        color: #999;
+                        margin-top: 30px;
+                        padding-top: 20px;
+                        border-top: 1px solid #eee;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="wrapper">
+                    <table class="container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                        <tr>
+                            <td class="email-background">
+                                <table class="content-box" cellspacing="0" cellpadding="0" border="0" align="center">
+                                    <tr>
+                                        <td align="center">
+                                            <img src="https://drive.google.com/uc?export=view&id=1Pcz1_yGgjIGk_PUo5zGA_WE_m_GT0BKf" alt="El Vitrina Logo" class="logo">
+                                            
+                                            <h2 class="thank-you">Thank You for Your Feedback!</h2>
+                                            
+                                            <p class="message">We appreciate your input and will use it to improve our app.</p>
+                                            
+                                            <div class="footer">
+                                                © 2025 El Vitrina. All rights reserved.
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </body>
+            </html>
             """;
             try {
                 emailService.sendHtmlEmail(contactEmail, subject, htmlContent);
