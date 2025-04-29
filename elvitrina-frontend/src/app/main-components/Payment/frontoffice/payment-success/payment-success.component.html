@@ -1,3 +1,45 @@
-<div *ngIf="payment">
-  <h2>Paiement validé 🎉</h2>
+<!-- Section visible -->
+<div *ngIf="payment" class="p-8 bg-white rounded-xl shadow-lg text-center">
+  <h2 class="text-2xl font-bold text-green-600 mb-4">✅ Payment Successful!</h2>
+  <p class="text-gray-600 mb-4">Thank you for your payment. You can download your invoice below.</p>
+
+  <button (click)="generateInvoice()"
+          class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full transition">
+    📄 Download Invoice
+  </button>
+</div>
+
+<!-- Section cachée pour génération PDF -->
+<div id="invoice" class="p-8" style="width: 800px; display: none;">
+  <div style="border-bottom: 2px solid #4ade80; padding-bottom: 10px; margin-bottom: 20px;">
+    <h1 style="color: #22c55e;">INVOICE</h1>
+    <p><strong>Invoice ID:</strong> #{{ payment.id }}</p>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <h3 style="color: #111827;">Billed To:</h3>
+    <p><strong>Client Name:</strong> {{ currentUser.name }}</p>
+    <p><strong>Email:</strong> {{ currentUser.email }}</p>
+  </div>
+
+
+  <div style="margin-bottom: 20px;">
+    <h3 style="color: #111827;">Payment Details:</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr>
+        <td style="padding: 8px; border: 1px solid #ccc;"><strong>Amount</strong></td>
+        <td style="padding: 8px; border: 1px solid #ccc;">{{ payment.amount | currency:'EUR' }}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #ccc;"><strong>Method</strong></td>
+        <td style="padding: 8px; border: 1px solid #ccc;">{{ payment.method }}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #ccc;"><strong>Status</strong></td>
+        <td style="padding: 8px; border: 1px solid #ccc;">{{ payment.paystatus }}</td>
+      </tr>
+    </table>
+  </div>
+
+  <p style="text-align: center; margin-top: 40px; font-size: 0.9rem;">Thank you for your business!</p>
 </div>
