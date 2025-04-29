@@ -26,3 +26,12 @@ export interface EventSessionEventRequestDTO {
   sessionTitle: string;
   streamUrl: string;
 }
+
+
+export interface EventSessionEditRequestDTO {
+  sessionId: number;
+  startTime: string;
+  endTime: string;
+  sessionTitle: string;
+  streamUrl: string;
+}

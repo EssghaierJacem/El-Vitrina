@@ -276,14 +276,16 @@ export class GoogleApiService {
   }
 
   createMeetingEvent(summary: string,  start: Date, end: Date, addMeet: boolean = true): Observable<any> {
+    const startDateTime = start instanceof Date ? start.toISOString() : new Date(start).toISOString();
+    const endDateTime = end instanceof Date ? end.toISOString() : new Date(end).toISOString();
     const event = {
       summary,
       start: {
-        dateTime: start.toISOString(),
+        dateTime: startDateTime,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
       },
       end: {
-        dateTime: end.toISOString(),
+        dateTime:endDateTime,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
       },
       conferenceData: addMeet

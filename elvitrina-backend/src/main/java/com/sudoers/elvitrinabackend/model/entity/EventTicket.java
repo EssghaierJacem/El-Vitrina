@@ -8,6 +8,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -24,7 +27,6 @@ public class EventTicket {
     private String description;
 
     private Double price;
-
     private Integer quantityAvailable;
 
     private Integer quantityRemaining;
@@ -35,7 +37,8 @@ public class EventTicket {
     private String qrCodeHash;  // Unique identifier for QR
     private Boolean isValid = true;
     private LocalDateTime validUntil;
-
+    @OneToMany(mappedBy = "eventTicket", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Seats> seats;
 
     @CreationTimestamp
     @Column(updatable = false)

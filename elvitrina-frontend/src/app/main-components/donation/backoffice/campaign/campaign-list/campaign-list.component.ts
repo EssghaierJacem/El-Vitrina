@@ -1,4 +1,7 @@
-import { Component, OnInit ,HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatSort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { DonationCampaignService } from 'src/app/core/services/donation/donation-campaign.service';
 import { CampaignStatusRequestDTO, DonationCampaign } from 'src/app/core/models/donation/donation-campaign.model';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -35,7 +38,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatButtonModule,
     MatTooltipModule,
     MatPaginatorModule,
-    MatProgressSpinnerModule,
     MatCardModule,
     MatMenuModule,
     MatFormFieldModule,
@@ -43,96 +45,104 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     FormsModule,
     MatSortModule,
     MatSnackBarModule,
-    MatChipsModule
+    MatChipsModule,
   ],
-  styleUrls: ['./campaign-list.component.scss']
+  styleUrls: ['./campaign-list.component.scss'],
 })
 export class CampaignListComponent implements OnInit {
   campaigns: DonationCampaign[] = [];
   loading = true;
-  activeCard: number | null = null; // Track the active card (hovered or clicked)
-  clickedCard: number | null = null; // Track the clicked card separately
-  private timer: any;
+  searchText = '';
+  displayedColumns: string[] = ['title', 'description', 'goalAmount', 'currentAmount', 'startDate', 'endDate', 'actions'];
+  dataSource = new MatTableDataSource<DonationCampaign>([]);
 
-  constructor(private campaignService: DonationCampaignService ,
-        private matIconReg: MatIconRegistry ,   private router: Router
-      ) {}
-  
+  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  constructor(
+    private campaignService: DonationCampaignService,
+    private matIconReg: MatIconRegistry,
+    private router: Router
+  ) {}
+
   ngOnInit(): void {
     this.matIconReg.setDefaultFontSetClass('material-symbols-outlined');
+    this.fetchCampaigns();
+  }
+
+  fetchCampaigns(): void {
+    this.loading = true;
     this.campaignService.getAllCampaigns().subscribe({
       next: (data) => {
+        console.log('Fetched campaigns:', data);
         this.campaigns = data;
+        this.dataSource.data = data;
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
         this.loading = false;
-        console.log('Campaigns:', this.campaigns);
       },
       error: (err) => {
-        this.loading = false;
         console.error('Error fetching campaigns:', err);
-      }
+        this.loading = false;
+      },
     });
   }
 
-  onMouseEnter(index: number): void {
-    if (this.clickedCard === null || this.clickedCard === index) {
-      this.activeCard = index; // Show buttons on hover if no card is clicked or this card is clicked
+  applyFilter(): void {
+    this.dataSource.filter = this.searchText.trim().toLowerCase();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
   }
 
-  onMouseLeave(index: number): void {
-    if (this.clickedCard !== index) {
-      this.activeCard = null; // Hide buttons on mouse leave unless this card is clicked
+  editCampaign(id: number): void {
+    this.router.navigate([`/dashboard/donations/campaigns/${id}`]);
+  }
+
+  viewDetails(id: number): void {
+    this.router.navigate([`/dashboard/donations/campaigns/${id}`]);
+  }
+
+  deleteCampaign(id: number): void {
+    if (confirm('Are you sure you want to delete this campaign?')) {
+      this.campaignService.deleteCampaign(id).subscribe({
+        next: () => {
+          this.campaigns = this.campaigns.filter(campaign => campaign.id !== id);
+          this.dataSource.data = this.campaigns;
+          console.log('Campaign deleted:', id);
+        },
+        error: (err) => {
+          console.error('Error deleting campaign:', err);
+        },
+      });
     }
   }
 
-  editCampaign(campaign: DonationCampaign, index: number): void {
-    this.onButtonClick(index);
-    console.log(`Editing campaign: ${campaign.title}`);
-    // Add your edit logic here (e.g., open a dialog, navigate to edit page)
-  }
-
-  viewDetails(campaign: DonationCampaign, index: number): void {
-    this.onButtonClick(index);
-    console.log(`Viewing details of campaign: ${campaign.title}`);
-    this.router.navigate([`/dashboard/donations/campaigns/${campaign.id}`]);
-  }
-  checkCampaign(campaign: DonationCampaign, index: number): void {
+  checkCampaign(campaign: DonationCampaign): void {
     const statusRequest: CampaignStatusRequestDTO = {
       status: 'APPROVED',
-      verified: true
+      verified: true,
     };
-
     this.campaignService.updateCampaignStatus(campaign.id, statusRequest).subscribe({
       next: (updatedCampaign) => {
-        this.onButtonClick(index);
-        // Update the local campaigns array with the updated campaign
         const campaignIndex = this.campaigns.findIndex(c => c.id === campaign.id);
         if (campaignIndex !== -1) {
           this.campaigns[campaignIndex] = updatedCampaign;
+          this.dataSource.data = this.campaigns;
         }
         console.log(`Campaign ${campaign.title} status updated to APPROVED and verified`);
       },
       error: (error) => {
         console.error(`Error updating campaign status:`, error);
-      }
+      },
     });
   }
 
-  private onButtonClick(index: number): void {
-    this.clickedCard = index; // Set the clicked card
-    this.activeCard = index; // Keep the card active (visible buttons)
-
-    // Clear any existing timer
-    if (this.timer) {
-      clearTimeout(this.timer);
-    }
-
-    // Set a timer to close the buttons after 5 seconds of inactivity
-    this.timer = setTimeout(() => {
-      if (this.clickedCard === index) {
-        this.clickedCard = null; // Reset clicked state
-        this.activeCard = null; // Reset active state (hide buttons)
-      }
-    }, 5000); // 5 seconds
+  formatDate(date: string): string {
+    const eventDate = new Date(date);
+    return eventDate.toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'short',
+    });
   }
 }

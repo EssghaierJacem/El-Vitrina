@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { VirtualEvent, VirtualEventRequest } from '../../models/event/virtual-event.model';
+import { VirtualEvent, VirtualEventEditRequest, VirtualEventRequest } from '../../models/event/virtual-event.model';
 import { environment } from '../../../../environments/environment';
 import { EventSessionRequestDTO } from '../../models/event/event-session.model';
 
@@ -9,12 +9,22 @@ import { EventSessionRequestDTO } from '../../models/event/event-session.model';
   providedIn: 'root',
 })
 export class VirtualEventService {
+ 
   protected apiUrl = environment.apiUrl + '/events';
 
   constructor(private http: HttpClient) {}
 
-  createEvent(event: VirtualEventRequest): Observable<VirtualEventRequest> {
-    return this.http.post<VirtualEventRequest>(this.apiUrl, event);
+  createEvent(event: VirtualEventRequest, eventImage: File): Observable<VirtualEventRequest> {
+    const formData = new FormData();
+  
+    // Append the event data (converted to JSON) as a blob or string
+    formData.append('event', new Blob([JSON.stringify(event)], { type: 'application/json' }));
+    
+    // Append the image file
+    formData.append('eventImage', eventImage);
+  
+    // Use HttpClient to send a POST request with the form data
+    return this.http.post<VirtualEventRequest>(this.apiUrl, formData);
   }
 
   getAllEvents(): Observable<VirtualEvent[]> {
@@ -25,7 +35,7 @@ export class VirtualEventService {
     return this.http.get<VirtualEvent>(`${this.apiUrl}/${id}`);
   }
 
-  updateEvent(id: number, event: VirtualEvent): Observable<VirtualEvent> {
+  updateEvent(id: number, event: VirtualEventEditRequest): Observable<VirtualEvent> {
     return this.http.put<VirtualEvent>(`${this.apiUrl}/${id}`, event);
   }
 
@@ -39,6 +49,8 @@ export class VirtualEventService {
   }
 
 
-
+  getImageUrl(filename: string): string {
+    return `${environment.apiUrl}/events/images/${filename}`;
+  }
 
 }

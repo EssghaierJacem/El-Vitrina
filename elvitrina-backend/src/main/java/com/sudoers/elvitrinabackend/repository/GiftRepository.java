@@ -12,4 +12,5 @@ public interface GiftRepository extends JpaRepository<Gift, Long> {
     boolean existsByDonationAndIsRedeemedTrue(Donation donation);
     List<Gift> findByUserAndIsRedeemedFalse(User user);
     Gift findByGiftCode(String giftCode);
+    List<Gift> findAllByUserId(Long userId);
 }

@@ -231,6 +231,9 @@
             <!-- Product Category -->
             <div class="product-category">{{ formatProductCategory(product.category) }}</div>
 
+            
+      
+
             <!-- Product Name -->
             <h3 class="product-name" [routerLink]="['/products', product.productId]">
               {{ product.productName }}
@@ -245,7 +248,7 @@
               <ng-template #regularPrice>
                 <span class="current-price">{{product.price | currency}}</span>
               </ng-template>
-            </div>
+          
 
             <!-- Stock Status -->
             <div class="product-stock" [class.out-of-stock]="product.stockQuantity === 0" *ngIf="product.stockQuantity === 0">
@@ -266,221 +269,228 @@
       </div>
     </div>
     
-    <!-- Reviews Tab -->
-    <div *ngSwitchCase="'reviews'" class="reviews-section">
-      <!-- Reviews Header -->
-      <div class="reviews-header">
-        <h2>Customer Reviews <span>({{store?.feedbackCount || 0}})</span></h2>
-        <div class="review-controls">
-          <button (click)="toggleSummaries()" class="control-button">
-            {{ showSummaries ? 'Show Full Reviews' : 'Show Summarized Reviews' }}
-          </button>
-          <button (click)="toggleFeedbackDisplay()" class="control-button">
-            {{ showAllFeedbacks ? 'Show Less Reviews' : 'Show All Reviews' }}
-          </button>
-          <button (click)="toggleSentimentDisplay()" class="control-button">
-            {{ showMultilingualSentiment ? 'Show Basic Sentiment' : 'Show Detailed Sentiment' }}
-          </button>
+    
+  </div>
+<!-- Reviews Tab -->
+<div *ngSwitchCase="'reviews'" class="reviews-section">
+  <!-- Reviews Header -->
+  <div class="reviews-header">
+    <h2>Customer Reviews <span>({{store?.feedbackCount || 0}})</span></h2>
+    <div class="review-controls">
+      <button (click)="toggleSummaries()" class="control-button">
+        {{ showSummaries ? 'Show Full Reviews' : 'Show Summarized Reviews' }}
+      </button>
+      <button (click)="toggleFeedbackDisplay()" class="control-button">
+        {{ showAllFeedbacks ? 'Show Less Reviews' : 'Show All Reviews' }}
+      </button>
+      <button (click)="toggleSentimentDisplay()" class="control-button">
+        {{ showMultilingualSentiment ? 'Show Basic Sentiment' : 'Show Detailed Sentiment' }}
+      </button>
+    </div>
+  </div>
+  
+  <!-- Create Feedback Form - Simplified -->
+  <div class="create-feedback-section">
+    <app-store-feedback-create [storeId]="store?.storeId ?? 0"></app-store-feedback-create>
+  </div>
+  
+  <!-- Analyzed Feedback List -->
+  <div class="reviews-list" *ngIf="analyzedFeedbacks.length > 0">
+    <div class="review-card" *ngFor="let feedback of getLimitedFeedbacks()">
+      <div class="review-header">
+        <div class="reviewer-avatar">
+          <img *ngIf="feedback.userImage" 
+               [src]="getUserProfileImageUrl(feedback.userImage)" 
+               [alt]="feedback.userName || 'User'"
+               (error)="handleImageError($event, 'user')">
+          <i *ngIf="!feedback.userImage" class="fas fa-user-circle"></i>
+        </div>
+        <div class="reviewer-info">
+          <h3 class="reviewer-name">{{ feedback.userName || 'Anonymous' }}</h3>
+          <div class="review-meta">
+            <div class="rating">
+              <app-star-rating [rating]="feedback.rating" starSize="small" [showRating]="false"></app-star-rating>
+            </div>
+            <span class="review-date">{{ feedback.createdAt | date }}</span>
+          </div>
+        </div>
+        
+        <!-- Sentiment Badge -->
+        <div class="sentiment-badge" 
+             [ngClass]="showMultilingualSentiment ? 
+                        getDetailedSentimentClass(feedback) : 
+                        getSentimentClass(feedback.sentimentScore || 0)">
+          <i [class]="'fas ' + (showMultilingualSentiment ? 
+                              getDetailedSentimentIconClass(feedback) : 
+                              getSentimentIconClass(feedback.sentimentScore || 0))"></i>
+          <span>
+            {{ showMultilingualSentiment ? 
+               (feedback.multilingualSentiment || 
+                (feedback.sentimentScore !== undefined ? 
+                 (feedback.sentimentScore >= 0.25 ? 'Positive' : 
+                  feedback.sentimentScore <= -0.25 ? 'Negative' : 'Neutral') : 
+                 'Neutral')) : 
+               ((feedback.sentimentScore || 0) >= 0.25 ? 'Positive' : 
+                (feedback.sentimentScore || 0) <= -0.25 ? 'Negative' : 'Neutral') }}
+          </span>
         </div>
       </div>
       
-      <!-- Create Feedback Form - Simplified -->
-      <div class="create-feedback-section">
-        <app-store-feedback-create [storeId]="store?.storeId ?? 0"></app-store-feedback-create>
-      </div>
-      
-      <!-- Analyzed Feedback List -->
-      <div class="reviews-list" *ngIf="analyzedFeedbacks.length > 0">
-        <div class="review-card" *ngFor="let feedback of getLimitedFeedbacks()">
-          <div class="review-header">
-            <div class="reviewer-avatar">
-              <img *ngIf="feedback.userImage" 
-                   [src]="getUserProfileImageUrl(feedback.userImage)" 
-                   [alt]="feedback.userName || 'User'"
-                   (error)="handleImageError($event, 'user')">
-              <i *ngIf="!feedback.userImage" class="fas fa-user-circle"></i>
-            </div>
-            <div class="reviewer-info">
-              <h3 class="reviewer-name">{{ feedback.userName || 'Anonymous' }}</h3>
-              <div class="review-meta">
-                <div class="rating">
-                  <app-star-rating [rating]="feedback.rating" starSize="small" [showRating]="false"></app-star-rating>
-                </div>
-                <span class="review-date">{{ feedback.createdAt | date }}</span>
-              </div>
-            </div>
-            
-            <!-- Sentiment Badge -->
-            <div class="sentiment-badge" 
-                 [ngClass]="showMultilingualSentiment ? 
-                            getDetailedSentimentClass(feedback) : 
-                            getSentimentClass(feedback.sentimentScore || 0)">
-              <i [class]="'fas ' + (showMultilingualSentiment ? 
-                                  getDetailedSentimentIconClass(feedback) : 
-                                  getSentimentIconClass(feedback.sentimentScore || 0))"></i>
-              <span>
-                {{ showMultilingualSentiment ? 
-                   (feedback.multilingualSentiment || 
-                    (feedback.sentimentScore !== undefined ? 
-                     (feedback.sentimentScore >= 0.25 ? 'Positive' : 
-                      feedback.sentimentScore <= -0.25 ? 'Negative' : 'Neutral') : 
-                     'Neutral')) : 
-                   ((feedback.sentimentScore || 0) >= 0.25 ? 'Positive' : 
-                    (feedback.sentimentScore || 0) <= -0.25 ? 'Negative' : 'Neutral') }}
-              </span>
-            </div>
-          </div>
-          
-          <div class="review-content">
-            <!-- Show either summarized or full review based on toggle -->
-            <p class="review-comment" *ngIf="!showSummaries || !feedback.summarizedComment">
-              {{ feedback.comment }}
-            </p>
-            <p class="review-summary" *ngIf="showSummaries && feedback.summarizedComment">
-              {{ feedback.summarizedComment }}
-              <span class="summary-badge" title="AI-generated summary">Summary</span>
-            </p>
-            
-            <div class="feedback-metadata">
-              <div class="review-tags">
-                <span class="review-tag feedback-type-badge" [ngClass]="'type-' + feedback.storeFeedbackType">
-                  <i class="fas" [ngClass]="getFeedbackTypeIcon(feedback.storeFeedbackType)"></i>
-                    {{ getFeedbackTypeDisplayName(feedback.storeFeedbackType) }}
-                </span>
-                <span class="review-tag" [class.recommends]="feedback.wouldRecommend" [class.not-recommends]="!feedback.wouldRecommend">
-                  {{ feedback.wouldRecommend ? 'Recommends' : 'Does Not Recommend' }}
-                </span>
-              </div>
-            </div>
+      <div class="review-content">
+        <!-- Show either summarized or full review based on toggle -->
+        <p class="review-comment" *ngIf="!showSummaries || !feedback.summarizedComment">
+          {{ feedback.comment }}
+        </p>
+        <p class="review-summary" *ngIf="showSummaries && feedback.summarizedComment">
+          {{ feedback.summarizedComment }}
+          <span class="summary-badge" title="AI-generated summary">Summary</span>
+        </p>
+        
+        <div class="feedback-metadata">
+          <div class="review-tags">
+            <span class="review-tag feedback-type-badge" [ngClass]="'type-' + feedback.storeFeedbackType">
+              <i class="fas" [ngClass]="getFeedbackTypeIcon(feedback.storeFeedbackType)"></i>
+                {{ getFeedbackTypeDisplayName(feedback.storeFeedbackType) }}
+            </span>
+            <span class="review-tag" [class.recommends]="feedback.wouldRecommend" [class.not-recommends]="!feedback.wouldRecommend">
+              {{ feedback.wouldRecommend ? 'Recommends' : 'Does Not Recommend' }}
+            </span>
           </div>
         </div>
       </div>
-      
-      <!-- Show All Reviews Link (when there are more than the limit) -->
-      <div class="show-more-container" *ngIf="analyzedFeedbacks.length > feedbackLimit && !showAllFeedbacks">
-        <a class="show-more-link" (click)="toggleFeedbackDisplay()">
-          Show more reviews
-        </a>
+    </div>
+  </div>
+  
+  <!-- Show All Reviews Link (when there are more than the limit) -->
+  <div class="show-more-container" *ngIf="analyzedFeedbacks.length > feedbackLimit && !showAllFeedbacks">
+    <a class="show-more-link" (click)="toggleFeedbackDisplay()">
+      Show more reviews
+    </a>
+  </div>
+  
+  <div *ngIf="analyzedFeedbacks.length === 0 && !loadingFeedback" class="no-reviews">
+    <i class="fas fa-comments"></i>
+    <p>No reviews yet. Be the first to leave a review!</p>
+  </div>
+  
+  <div *ngIf="loadingFeedback" class="loading-reviews">
+    <div class="spinner"></div>
+    <p>Loading reviews...</p>
+  </div>
+  
+  <div *ngIf="error && !loadingFeedback" class="error-reviews">
+    <i class="fas fa-exclamation-circle"></i>
+    <p>{{ error }}</p>
+    <button (click)="store?.storeId && loadAnalyzedFeedback(store.storeId)">
+      Try Again
+    </button>
+  </div>
+</div>
+
+<!-- Analytics Tab -->
+<div *ngSwitchCase="'analytics'" class="analytics-section">
+  <h2>Feedback Analytics</h2>
+  
+  <div class="analytics-overview" *ngIf="feedbackAnalytics">
+    <div class="analytics-card">
+      <div class="card-header">
+        <h3>Overview</h3>
       </div>
-      
-      <div *ngIf="analyzedFeedbacks.length === 0 && !loadingFeedback" class="no-reviews">
-        <i class="fas fa-comments"></i>
-        <p>No reviews yet. Be the first to leave a review!</p>
-      </div>
-      
-      <div *ngIf="loadingFeedback" class="loading-reviews">
-        <div class="spinner"></div>
-        <p>Loading reviews...</p>
-      </div>
-      
-      <div *ngIf="error && !loadingFeedback" class="error-reviews">
-        <i class="fas fa-exclamation-circle"></i>
-        <p>{{ error }}</p>
-        <button (click)="store?.storeId && loadAnalyzedFeedback(store.storeId)">
-          Try Again
-        </button>
+      <div class="card-content">
+        <div class="analytics-stats">
+          <div class="stat-item">
+            <div class="stat-value">{{ feedbackAnalytics.averageRating | number:'1.1-1' }}</div>
+            <div class="stat-label">Average Rating</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">{{ feedbackAnalytics.totalFeedbacks }}</div>
+            <div class="stat-label">Total Reviews</div>
+          </div>
+        </div>
       </div>
     </div>
     
-    <!-- Analytics Tab -->
-    <div *ngSwitchCase="'analytics'" class="analytics-section">
-      <h2>Feedback Analytics</h2>
-      
-      <div class="analytics-overview" *ngIf="feedbackAnalytics">
-        <div class="analytics-card">
-          <div class="card-header">
-            <h3>Overview</h3>
-          </div>
-          <div class="card-content">
-            <div class="analytics-stats">
-              <div class="stat-item">
-                <div class="stat-value">{{ feedbackAnalytics.averageRating | number:'1.1-1' }}</div>
-                <div class="stat-label">Average Rating</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-value">{{ feedbackAnalytics.totalFeedbacks }}</div>
-                <div class="stat-label">Total Reviews</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Multilingual Sentiment Analysis Card -->
-        <div class="analytics-card" *ngIf="detailedSentimentChartData.length > 0">
-          <div class="card-header">
-            <h3>
-              Sentiment Analysis
-              <span class="ai-badge">AI</span>
-            </h3>
-            <p>AI-powered sentiment analysis in multiple languages</p>
-          </div>
-          <div class="card-content">
-            <div class="chart-container static-chart">
-              <div class="sentiment-bars">
-                <div *ngFor="let item of detailedSentimentChartData" class="sentiment-bar-item">
-                  <div class="sentiment-label">{{ item.name }}</div>
-                  <div class="sentiment-bar" 
-                      [ngClass]="'sentiment-' + item.name.toLowerCase().replace(' ', '-')"
-                      [style.width.%]="calculateDetailedSentimentBarWidth(item.value)">
-                    <span class="sentiment-value">{{ item.value }}</span>
-                  </div>
-                  <div class="sentiment-percentage" *ngIf="multilingualSentimentAnalytics?.sentimentPercentages">
-                    {{ getSentimentPercentage(item.name) }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Legacy Sentiment Distribution Chart -->
-        <div class="analytics-card" *ngIf="sentimentChartData.length > 0">
-          <div class="card-header">
-            <h3>Sentiment Distribution</h3>
-          </div>
-          <div class="card-content">
-            <div class="chart-container static-chart">
-              <div class="sentiment-bars">
-                <div *ngFor="let item of sentimentChartData" class="sentiment-bar-item">
-                  <div class="sentiment-label">{{ item.name }}</div>
-                  <div class="sentiment-bar" 
-                      [ngClass]="'sentiment-' + item.name.toLowerCase()"
-                      [style.width.%]="item.value / (feedbackAnalytics.totalFeedbacks || 1) * 100">
-                    <span class="sentiment-value">{{ item.value }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <!-- Multilingual Sentiment Analysis Card -->
+    <div class="analytics-card" *ngIf="detailedSentimentChartData.length > 0">
+      <div class="card-header">
+        <h3>
+          Sentiment Analysis
+          <span class="ai-badge">AI</span>
+        </h3>
+        <p>AI-powered sentiment analysis in multiple languages</p>
       </div>
-      
-      <div *ngIf="!feedbackAnalytics && !loadingFeedback" class="no-analytics">
-        <p>No analytics available. Store needs more reviews to generate analytics.</p>
-      </div>
-      
-      <div *ngIf="loadingFeedback" class="loading-analytics">
-        <div class="spinner"></div>
-        <p>Loading analytics...</p>
+      <div class="card-content">
+        <div class="chart-container static-chart">
+          <div class="sentiment-bars">
+            <div *ngFor="let item of detailedSentimentChartData" class="sentiment-bar-item">
+              <div class="sentiment-label">{{ item.name }}</div>
+              <div class="sentiment-bar" 
+                  [ngClass]="'sentiment-' + item.name.toLowerCase().replace(' ', '-')"
+                  [style.width.%]="calculateDetailedSentimentBarWidth(item.value)">
+                <span class="sentiment-value">{{ item.value }}</span>
+              </div>
+              <div class="sentiment-percentage" *ngIf="multilingualSentimentAnalytics?.sentimentPercentages">
+                {{ getSentimentPercentage(item.name) }}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div *ngSwitchCase="'event'" class="events-section">
-      <div class="section-header">
-        <h2>Virtual Events</h2>
-        <button class="create-button" (click)="openCreateEventDialog()">
-          <i class="fas fa-plus"></i> Create a Virtual Event
-        </button>
+    
+    <!-- Legacy Sentiment Distribution Chart -->
+    <div class="analytics-card" *ngIf="sentimentChartData.length > 0">
+      <div class="card-header">
+        <h3>Sentiment Distribution</h3>
       </div>
-      <app-event-store [events]="events"></app-event-store>
-    </div>
-
-    <div *ngSwitchCase="'donation'" class="donation-section">
-      <h2>Donation Campaign</h2>
-      <app-campaign-details [campaigns]="campaigns"></app-campaign-details>
+      <div class="card-content">
+        <div class="chart-container static-chart">
+          <div class="sentiment-bars">
+            <div *ngFor="let item of sentimentChartData" class="sentiment-bar-item">
+              <div class="sentiment-label">{{ item.name }}</div>
+              <div class="sentiment-bar" 
+                  [ngClass]="'sentiment-' + item.name.toLowerCase()"
+                  [style.width.%]="item.value / (feedbackAnalytics.totalFeedbacks || 1) * 100">
+                <span class="sentiment-value">{{ item.value }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+  
+  <div *ngIf="!feedbackAnalytics && !loadingFeedback" class="no-analytics">
+    <p>No analytics available. Store needs more reviews to generate analytics.</p>
+  </div>
+  
+  <div *ngIf="loadingFeedback" class="loading-analytics">
+    <div class="spinner"></div>
+    <p>Loading analytics...</p>
+  </div>
+</div>
 
+<div *ngSwitchCase="'event'" class="reviews-section">
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <h2 style="margin: 0;">Virtual Event</h2>
+    <button mat-raised-button *ngIf="role === 'SELLER'" color="primary" (click)="openCreateEventDialog()">
+      Create a Virtual Event
+    </button>
+  </div>
+  <app-event-store [events]="events"></app-event-store>
+  </div>
+
+  <div *ngSwitchCase="'donation'" class="analytics-section">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+    <h2>
+      Donation Campaign
+    </h2>
+    <button mat-raised-button *ngIf="role === 'SELLER'" color="primary" (click)="openCreateDonationDialog()">
+      Create a Donation Campaign
+    </button>
+  </div>
+    <app-campaign-details [campaigns]="campaigns"></app-campaign-details>
+    </div>
   <!-- Loading Spinner -->
   <div class="loading-state" *ngIf="loading">
     <div class="spinner"></div>

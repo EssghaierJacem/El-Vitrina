@@ -13,7 +13,6 @@ export class EventStoreComponent  implements OnInit {
  @Input() events: VirtualEvent[] = [];
   loading: boolean = true;
   error: string | null = null;
-
   constructor(private eventService: VirtualEventService ,     private router: Router
   ) {}
 
@@ -24,7 +23,6 @@ export class EventStoreComponent  implements OnInit {
 
 
   formatDate(date: Date): string {
-    console.log(date);
     const eventDate = new Date(date);
     return eventDate.toLocaleDateString('en-US', { 
       day: 'numeric', 
@@ -42,6 +40,14 @@ export class EventStoreComponent  implements OnInit {
     const currentParticipants = event.participants?.length || 0;
     return Math.round((currentParticipants / event.maxParticipants) * 100);
   }
+
+    
+  getImageUrl(filename: string): string {
+    
+    console.log(this.eventService.getImageUrl(filename));
+    return this.eventService.getImageUrl(filename);
+  }
+  
 }
 
 

@@ -11,6 +11,129 @@
     <div class="calendar-wrapper">
       <full-calendar [options]="calendarOptions"></full-calendar>
     </div>
+    <div *ngIf="showEventDetails || showEventDialog" class="backdrop" (click)="closeOnBackdropClick($event)"></div>
+    <!-- Event Details Section -->
+    <!-- <div *ngIf="showEventDetails" class="event-details-container" [ngClass]="animationState" [ngStyle]="dialogPosition">
+      <div class="dialog-header">
+        <h2 class="dialog-title">{{ selectedEvent?.title }}</h2>
+        <button mat-icon-button class="close-button" (click)="closeEventDetails()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="dialog-content">
+        <div class="event-info">
+          <div class="info-row">
+            <mat-icon>event</mat-icon>
+            <span>{{ selectedEvent?.start | date:'medium' }}</span>
+          </div>
+          <div class="info-row" *ngIf="selectedEvent?.end">
+            <mat-icon>event</mat-icon>
+            <span>{{ selectedEvent?.end | date:'medium' }}</span>
+          </div>
+          <div class="info-row" *ngIf="selectedEvent?.extendedProps?.hangoutLink">
+            <mat-icon>video_call</mat-icon>
+            <a [href]="selectedEvent?.extendedProps?.hangoutLink" target="_blank" class="meet-link">Join Google Meet</a>
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <button mat-raised-button color="primary" (click)="closeEventDetails()">Close</button>
+        </div>
+      </div>
+    </div> -->
+    <div *ngIf="showEventDetails" class="event-details-container dialog-container" [ngClass]="animationState" [ngStyle]="dialogPosition">
+      <div class="dialog-header">
+        <h2 class="dialog-title">{{ selectedEvent?.title }}</h2>
+        <div class="icon-buttons">
+          <button mat-icon-button class="icon-button" (click)="editEventDetails()">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button class="icon-button" (click)="deleteEventDetails()">
+            <mat-icon>delete</mat-icon>
+          </button>
+          <button mat-icon-button class="icon-button" (click)="closeEventDetails()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+      
+      
+      <div *ngIf="false" class="loading-container">
+        <mat-spinner diameter="32"></mat-spinner>
+        <p>Loading event details...</p>
+      </div>
+      
+      <div class="event-details">
+        <mat-dialog-content>
+          <div class="detail-item">
+          
+            <div class="detail-content">
+              <p class="time-date">
+                <mat-icon class="icon">event</mat-icon>
+                <span>{{ selectedEvent?.start | date: 'EEEE, MMMM d' }}</span>
+              </p>
+              <p class="time-range">
+                <mat-icon class="icon">schedule</mat-icon>
+                <span>{{ selectedEvent?.start | date: 'h:mm a' }} – {{ selectedEvent?.end | date: 'h:mm a' }}</span>
+              </p>
+            </div>
+            
+          </div>
+          
+          <div class="detail-item" *ngIf="selectedEvent?.extendedProps?.hangoutLink">
+            <mat-icon>videocam</mat-icon>
+            <div class="detail-content">
+              <p>Google Meet</p>
+              <a [href]="selectedEvent?.extendedProps?.hangoutLink" target="_blank" class="meet-link">Join with Google Meet</a>
+            </div>
+          </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions>
+          <button mat-raised-button color="primary" class="meet-button" *ngIf="selectedEvent?.extendedProps?.hangoutLink" (click)="joinMeet(selectedEvent?.extendedProps?.hangoutLink)">
+            <mat-icon>video_call</mat-icon> Join Meet
+          </button>
+        </mat-dialog-actions>
+      </div>
+    </div>
+    <!-- Event Creation Section -->
+    <div *ngIf="showEventDialog" class="event-dialog-container" [ngClass]="animationState" [ngStyle]="dialogPosition">
+      <div class="dialog-header">
+        <h2 class="dialog-title">Create New Event</h2>
+        <button mat-icon-button class="close-button" (click)="closeEventDialog()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <form [formGroup]="eventForm" (ngSubmit)="onSubmitEventForm()" class="dialog-content">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Event Title</mat-label>
+          <input matInput formControlName="summary" required>
+          <mat-error *ngIf="eventForm.get('summary')?.hasError('required')">
+            Title is required
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Start Date & Time</mat-label>
+          <input matInput type="datetime-local" formControlName="start" required>
+          <mat-error *ngIf="eventForm.get('start')?.hasError('required')">
+            Start date is required
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>End Date & Time</mat-label>
+          <input matInput type="datetime-local" formControlName="end" required>
+          <mat-error *ngIf="eventForm.get('end')?.hasError('required')">
+            End date is required
+          </mat-error>
+        </mat-form-field>
+        <mat-checkbox formControlName="addMeet">Add Google Meet</mat-checkbox>
+        <div class="dialog-actions">
+          <button mat-button type="button" (click)="closeEventDialog()">Cancel</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="eventForm.invalid">
+            Create Event
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <mat-spinner *ngIf="loading" diameter="50"></mat-spinner>

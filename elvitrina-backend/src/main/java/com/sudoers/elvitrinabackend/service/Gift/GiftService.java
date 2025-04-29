@@ -17,4 +17,7 @@ public interface GiftService {
 
     void redeemGift(Long giftId, Long userId);
     void toggleGiftShared(Long giftId, Long userId);
+
+    List<GiftResponseDTO> getGiftsForUser(Long userId);
+
 }

@@ -1,0 +1,62 @@
+<div class="booking-container">
+  <div class="seat-details">
+    <div class="seat-legends">
+      <div class="seat-legend">
+        <i class="fas fa-couch" style="color:#5a899d"></i><span>Available</span>
+      </div>
+      <div class="seat-legend">
+        <i class="fas fa-couch" style="color:#ced9e2"></i><span>Booked</span>
+      </div>
+      <div class="seat-legend">
+        <i class="fas fa-couch" style="color:#e3417a"></i><span>Selected</span>
+      </div>
+    </div>
+    <div class="seat-box" [ngStyle]="{'grid-template-columns': 'repeat(' + cols + ', 1fr)'}">
+      <div *ngFor="let seat of seats" 
+           class="seat" 
+           [ngClass]="seat.status"
+           (click)="seat.status !== 'booked' && seat.status !== 'empty' && !hasExistingBooking ? toggleSeatSelection(seat) : null"
+           [attr.aria-label]="seat.status === 'empty' ? 'Row label' : 'Seat ' + seat.id + ' ' + seat.status">
+        <ng-container *ngIf="seat.status === 'empty'; else seatIcon">
+          {{ seat.id.split('-')[1] }}
+        </ng-container>
+        <ng-template #seatIcon>
+          <i class="fas fa-couch"></i>
+          <span *ngIf="seat.status === 'booked'" class="tooltip">Booked</span>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  
+  <div class="booking-details">
+    <div class="detail-names">
+      <span class="detail-name">Date</span>
+      <span class="detail-name">Seats</span>
+      <span class="detail-name">Total</span>
+    </div>
+    <div class="detail-values">
+      <span class="detail-value">{{ getFormattedDate() }}</span>
+      <span class="detail-value">
+        {{ hasExistingBooking ? getBookedSeatsDisplay() : (selectedSeats.length > 0 ? selectedSeats.join(', ') : '-') }}
+      </span>
+      <span class="detail-value">
+        ${{ hasExistingBooking ? (existingBookingDetails?.price || 0) : getTotalPrice() }}
+      </span>
+    </div>
+    
+    <div class="action-area">
+      <ng-container *ngIf="hasExistingBooking; else bookButton">
+        <div class="qr-section">
+          <div class="qr-code">
+            <qrcode [qrdata]="qrData" [width]="100" [errorCorrectionLevel]="'M'" aria-label="QR code for your event ticket"></qrcode>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #bookButton>
+        <button class="continue" (click)="bookNow()" [disabled]="userId === null">
+          <i class="fas fa-credit-card"></i> Book now
+        </button>
+      </ng-template>
+    </div>
+  </div>
+</div>

@@ -17,6 +17,7 @@ public class VirtualEventResponseDTO {
     private String title;
     private String description;
     private LocalDateTime startDateTime; // Maps to eventDate
+    private String eventImage;
     private Double ticketPrice;
     private String status;
     private EventType eventType;
