@@ -23,6 +23,13 @@
         <!-- Event Card Component -->
         <div class="event-card">
           <div class="event-image">
+            <img
+            [src]="getImageUrl(event.eventImage)"
+            alt="{{ event.title }}"
+            class="img-fluid event-thumbnail"
+            loading="lazy"
+            onerror="this.src='assets/images/placeholder-event.jpg';"
+            />      
             <div class="badges-container">
               <div class="badge date-badge">
                 <i class="fas fa-calendar-alt date-icon" style="color: #000;"></i>

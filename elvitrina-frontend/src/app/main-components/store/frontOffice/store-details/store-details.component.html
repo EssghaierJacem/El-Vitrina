@@ -355,7 +355,7 @@
         <div *ngSwitchCase="'event'" class="reviews-section">
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <h2 style="margin: 0;">Virtual Event</h2>
-            <button mat-raised-button color="primary" (click)="openCreateEventDialog()">
+            <button mat-raised-button *ngIf="role === 'SELLER'" color="primary" (click)="openCreateEventDialog()">
               Create a Virtual Event
             </button>
           </div>
@@ -364,9 +364,14 @@
 
 
           <div *ngSwitchCase="'donation'" class="analytics-section">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
             <h2>
               Donation Campaign
             </h2>
+            <button mat-raised-button *ngIf="role === 'SELLER'" color="primary" (click)="openCreateDonationDialog()">
+              Create a Donation Campaign
+            </button>
+          </div>
             <app-campaign-details [campaigns]="campaigns"></app-campaign-details>
 
             </div>

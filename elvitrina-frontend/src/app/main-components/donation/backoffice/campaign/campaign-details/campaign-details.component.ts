@@ -64,18 +64,7 @@ export class CampaignDetailsComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
       this.loading = true;
-      this.donationCampaignService.getCampaignById(id).subscribe({
-        next: (data) => {
-          this.campaign = data;
-          this.loading = false;
-          console.log('Campaign data:', this.campaign);
-          
-        },
-        error: (err) => {
-          console.error('Error fetching campaign:', err);
-          this.loading = false;
-        }
-      });
+    this.looaddata(id);
     }
   }
 
@@ -94,13 +83,27 @@ export class CampaignDetailsComponent implements OnInit {
       status: 'APPROVED',
       verified: true
     };
-
     this.donationCampaignService.updateCampaignStatus(this.campaign.id, statusRequest).subscribe({
       next: (updatedCampaign) => {
-        console.log(`Campaign ${this.campaign.title} status updated to APPROVED and verified`);
+        this.loading=true;
+        this.looaddata(this.campaign.id);
       },
       error: (error) => {
-        console.error(`Error updating campaign status:`, error);
+        console.log(`Error updating campaign status:`, error);
+      }
+    });
+  }
+  looaddata(id: number) {
+    this.donationCampaignService.getCampaignById(id).subscribe({
+      next: (data) => {
+        this.campaign = data;
+        this.loading = false;
+        console.log('Campaign data:', this.campaign);
+        
+      },
+      error: (err) => {
+        console.error('Error fetching campaign:', err);
+        this.loading = false;
       }
     });
   }

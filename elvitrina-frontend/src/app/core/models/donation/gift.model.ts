@@ -16,7 +16,17 @@ export interface Gift {
   donorReward: DonorReward;
   donation: Donation;
 }
-
+export interface GiftResponseDTO {
+  giftId: number;
+  name: string;
+  discount:number;
+  description: string;
+  imageUrl: string;
+  giftCode: string;
+  isRedeemed: boolean;
+  isShared: boolean;
+  user: User;
+}
 
 export interface GiftRequestDTO {
   name: string;

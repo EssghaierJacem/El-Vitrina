@@ -79,4 +79,11 @@ export class EventParticipantService {
   validateParticipantTicket(participantId: number): Observable<boolean> {
     return this.http.get<boolean>(`${this.apiUrl}/${participantId}/ticket/validate`);
   }
+
+
+
+  getParticipantsByUserId(userId: number): Observable<EventParticipant> {
+    console.log(userId);
+    return this.http.get<EventParticipant>(`${this.apiUrl}/user/${userId}`);
+  }
 }

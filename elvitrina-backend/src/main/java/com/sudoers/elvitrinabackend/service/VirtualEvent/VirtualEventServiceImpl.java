@@ -17,7 +17,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,14 +47,36 @@ public class VirtualEventServiceImpl implements VirtualEventService {
 
     @Override
     @Transactional
-    public VirtualEventResponseDTO createEvent(VirtualEventRequestDTO requestDTO) {
-        VirtualEvent virtualEvent = virtualEventMapper.toEntity(requestDTO);
+    public VirtualEventResponseDTO createEvent(VirtualEventRequestDTO requestDTO , MultipartFile eventImage) throws IOException {
+        String pathImage = saveImage(eventImage);
+        VirtualEvent virtualEvent = virtualEventMapper.toEntity(requestDTO , pathImage);
         setEventRelationships(virtualEvent, requestDTO);
         if (virtualEvent.getStatus() == null) {
             virtualEvent.setStatus("DRAFT");
         }
         VirtualEvent savedEvent = virtualEventRepository.save(virtualEvent);
         return virtualEventMapper.toResponseDTO(savedEvent);
+    }
+
+    private String saveImage(MultipartFile image) throws IOException {
+        String baseUploadDir = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "event";
+
+        File uploadDirectory = new File(baseUploadDir);
+        if (!uploadDirectory.exists()) {
+            boolean dirsCreated = uploadDirectory.mkdirs();
+            if (!dirsCreated) {
+                throw new IOException("Could not create directory for image upload: " + baseUploadDir);
+            }
+        }
+
+        String originalFilename = image.getOriginalFilename();
+        String filename = System.currentTimeMillis() + "_" + originalFilename;
+
+        File destFile = new File(uploadDirectory, filename);
+
+        image.transferTo(destFile);
+
+        return  filename;
     }
 
     @Override

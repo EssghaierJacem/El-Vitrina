@@ -238,3 +238,98 @@ $indicator-height: 4px;
     }
   }
 }
+
+/* Add this to your existing SCSS file */
+
+/* Variables for verification styling */
+$verified-color: #4CAF50;
+$verified-light: lighten($verified-color, 40%);
+
+/* Verified badge styling */
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  background-color: $verified-light;
+  color: $verified-color;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-left: 10px;
+  border: 1px solid rgba($verified-color, 0.3);
+  
+  mat-icon {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+    margin-right: 4px;
+    color: $verified-color;
+  }
+}
+
+/* Highlight verified campaigns */
+.overview-content {
+  /* Existing styles remain the same */
+  
+  &.verified {
+    position: relative;
+    
+    h3::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -15px;
+      width: 4px;
+      height: 28px;
+      background-color: $verified-color;
+      border-radius: 2px;
+    }
+    
+    .overview-verified-banner {
+      position: absolute;
+      top: -15px;
+      right: -15px;
+      background-color: $verified-color;
+      color: white;
+      padding: 3px 12px;
+      font-size: 0.8rem;
+      transform: rotate(45deg) translateX(10px);
+      transform-origin: bottom right;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+  }
+}
+
+/* Verification icon in the campaign status section */
+.status-content {
+  .status-verified {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    
+    strong {
+      margin-right: 8px;
+    }
+    
+    .verified-indicator {
+      display: inline-flex;
+      align-items: center;
+      color: $verified-color;
+      
+      mat-icon {
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+/* Style for the verify button when campaign is already verified */
+.overview-actions {
+  button[matTooltip="Check"].verified {
+    background-color: $verified-light;
+    
+    img {
+      filter: brightness(0) saturate(100%) hue-rotate(85deg) saturate(2000%) brightness(0.8);
+    }
+  }
+}

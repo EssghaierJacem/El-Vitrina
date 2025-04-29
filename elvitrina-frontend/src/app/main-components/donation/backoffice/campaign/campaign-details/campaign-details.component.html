@@ -50,8 +50,18 @@
     <div class="content">
       <!-- Overview Tab -->
       <section>
-        <div class="overview-content">
-          <h3>{{ campaign.title }}</h3>
+        <div class="overview-content" [ngClass]="{'verified': campaign.verified}">
+          <!-- Verified banner for verified campaigns -->
+          <div *ngIf="campaign.verified" class="overview-verified-banner">Verified</div>
+          
+          <h3>
+            {{ campaign.title }}
+            <!-- Add verified badge next to title -->
+            <span *ngIf="campaign.verified" class="verified-badge">
+              <mat-icon>verified</mat-icon> Verified
+            </span>
+          </h3>
+          
           <p>{{ campaign.description }}</p>
           <div class="overview-dates">
             <span><mat-icon>event</mat-icon> Start: {{ campaign.startDate | date }}</span>
@@ -61,22 +71,30 @@
             <mat-icon>flag</mat-icon> Goal: ${{ campaign.goalAmount }}
           </div>
           <div class="overview-actions">
-           <!-- In your overview-actions div -->
-<button mat-icon-button color="primary" matTooltip="Check" [disabled]="campaign.verified" (click)="checkCampaign()">
-  <img src="/assets/images/svgs/check.svg" alt="Check" class="button-icon">
-</button>
-<button mat-icon-button color="accent" matTooltip="Edit" (click)="editCampaign()">
-  <img src="/assets/images/svgs/edit.svg" alt="Edit" class="button-icon">
-</button>
-<button mat-icon-button color="warn" matTooltip="Delete" (click)="deleteCampaign()">
-  <img src="/assets/images/svgs/delete.svg" alt="delete" class="button-icon">
-</button>
+            <button mat-icon-button color="primary" matTooltip="Check" [disabled]="campaign.verified" 
+                   [ngClass]="{'verified': campaign.verified}" (click)="checkCampaign()">
+              <img src="/assets/images/svgs/check.svg" alt="Check" class="button-icon">
+            </button>
+            <button mat-icon-button color="accent" matTooltip="Edit" (click)="editCampaign()">
+              <img src="/assets/images/svgs/edit.svg" alt="Edit" class="button-icon">
+            </button>
+            <button mat-icon-button color="warn" matTooltip="Delete" (click)="deleteCampaign()">
+              <img src="/assets/images/svgs/delete.svg" alt="delete" class="button-icon">
+            </button>
           </div>
         </div>
       </section>
       <!-- Status Tab -->
       <section>
         <div class="status-content">
+          <!-- Add verification status to the status tab -->
+          <div class="status-verified" *ngIf="campaign.verified">
+            <strong>Verification:</strong>
+            <span class="verified-indicator">
+              <mat-icon>verified</mat-icon> Verified Campaign
+            </span>
+          </div>
+          
           <div>
             <strong>Status:</strong> {{ campaign.status }}
           </div>
@@ -114,6 +132,11 @@
           </div>
           <div>
             <strong>Store:</strong> {{ campaign.storeName || 'N/A' }}
+          </div>
+          <!-- Add verification information in host tab -->
+          <div *ngIf="campaign.verified" class="verification-info">
+            <strong>Status:</strong> <span class="verified-text">Verified</span>
+            <p>This campaign has been verified by our team.</p>
           </div>
         </div>
       </section>
