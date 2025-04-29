@@ -89,11 +89,11 @@
           <div class="price-section">
             <div class="price-display" [class.has-discount]="product.hasDiscount">
               <span class="current-price" [style.color]="'#d01117'">
-                {{ getFinalPrice(product) | currency:'EUR' }}
+                {{ getFinalPrice(product) | currency:'TND' }}
               </span>
               <ng-container *ngIf="product.hasDiscount">
                 <span class="original-price" *ngIf="getOriginalPrice(product)">
-                  {{ getOriginalPrice(product) | currency:'EUR' }}
+                  {{ getOriginalPrice(product) | currency:'TND' }}
                 </span>
                 <span class="discount-badge" *ngIf="getDiscountPercentage(product) > 0">
                   -{{ getDiscountPercentage(product) }}%

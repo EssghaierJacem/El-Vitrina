@@ -48,7 +48,7 @@ export class ProductListComponent implements OnInit {
   dataSource: MatTableDataSource<Product>;
   products: Product[] = [];
   isLoading = true;
-  displayedColumns = ['productId', 'productName', 'price', 'stockQuantity', 'category', 'actions'];
+  displayedColumns = ['productName', 'price', 'stockQuantity', 'category', 'actions'];
   searchText = '';
   categories: ProductCategoryType[] = Object.values(ProductCategoryType);
   pageIndex = 0;

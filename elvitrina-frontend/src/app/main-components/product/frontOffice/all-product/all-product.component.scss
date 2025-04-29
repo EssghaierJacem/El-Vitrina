@@ -11,9 +11,11 @@
     justify-content: center;
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
     background-color: #808080;
     margin-bottom: 40px;
     position: relative;
+    overflow: hidden;
     
     &::before {
       content: '';
@@ -23,6 +25,7 @@
       right: 0;
       bottom: 0;
       background-color: rgba(0, 0, 0, 0.4);
+      z-index: 1;
     }
     
     .hero-content {
@@ -231,10 +234,12 @@
     
     .product-card {
       position: relative;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       
       &:hover {
         transform: translateY(-5px);
+        box-shadow: 0 0 12px 2px rgba(0, 180, 255, 0.28),
+                    0 0 32px 8px rgba(0, 180, 255, 0.13);
       }
       
       .product-image {
@@ -270,54 +275,85 @@
         }
         
         .product-actions {
+          position: absolute;
+          top: 70%;
+          left: 50%;
+          transform: translate(-50%, -50%);
           display: flex;
           justify-content: center;
-          gap: 10px;
-          margin-top: 10px;
-          opacity: 1;
-          transition: opacity 0.3s ease;
-          
+          align-items: center;
+          gap: 15px;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          z-index: 3;
+
           .action-button {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            background-color: #1976d2;
-            color: #fff;
-            border: 2px solid #1565c0;
+            background: #fff;
+            color: #111;
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
-            outline: 2px dashed #ff9800;
-            font-size: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            font-size: 22px;
+            transition: transform 0.18s, background 0.18s, color 0.18s;
+            outline: none;
 
             i {
-              color: #fff !important;
+              color: #111 !important;
+              transition: color 0.18s;
             }
 
-            
             &:hover {
-              background-color: #000;
-              color: white;
+              background: #f3f3f3;
+              transform: scale(1.12);
             }
-            
             &:disabled {
               opacity: 0.5;
               cursor: not-allowed;
             }
-            
             &.wishlist-button {
               color: #ff4a4a;
+              background: #fff;
+              border: 2px solid #ff4a4a;
               
+              i {
+                color: #ff4a4a !important;
+              }
               &:hover {
-                background-color: #ff4a4a;
-                color: white;
+                background: #ff4a4a;
+                i {
+                  color: #fff !important;
+                }
+              }
+              &.liked {
+                background: #fff;
+                border: 2px solid #ff4a4a;
+                i {
+                  color: #ff4a4a !important;
+                }
+              }
+              &.liked:hover {
+                background: #ff4a4a;
+                i {
+                  color: #fff !important;
+                }
               }
             }
           }
         }
+
+        // Show actions on hover
+        &:hover .product-actions {
+          opacity: 1;
+          pointer-events: auto;
+        }
+
       }
       
       .product-info {

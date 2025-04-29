@@ -1,0 +1,15 @@
+.gradient-blue-button {
+    background: linear-gradient(to right, #007bff, #00c6ff); /* blue gradient */
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+  }
+  
+  .gradient-blue-button:hover {
+    background: linear-gradient(to right, #0056b3, #0099cc); /* darker on hover */
+  }
+  

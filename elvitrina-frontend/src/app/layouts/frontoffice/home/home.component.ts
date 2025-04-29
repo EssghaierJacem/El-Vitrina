@@ -16,6 +16,9 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
+
+  readonly IMAGE_BASE_URL = environment.apiUrl + '/products/products/images/';
+
   // Product category groupings
   readonly ARTISAN_CATEGORIES = [
     ProductCategoryType.HANDMADE_JEWELRY,
@@ -108,14 +111,18 @@ export class HomeComponent implements OnInit {
   }
 
   getProductImageUrl(product: Product): string {
-    if (!product || !product.images || product.images.length === 0) {
+    const imagePath = product?.mainImage || product?.images?.[0];
+  
+    if (!imagePath) {
       return 'assets/images/products/no-image.jpg';
     }
-    const imageUrl = product.images[0];
-    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-      return imageUrl;
+  
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
     }
-    return this.IMAGE_PRODUCT_BASE_URL + imageUrl;
+  
+    const fileName = imagePath.replace(/^\/+/, '');
+    return `http://localhost:8080/api/products/products/images/${fileName}`;
   }
 
   getFinalPrice(product: Product): number {

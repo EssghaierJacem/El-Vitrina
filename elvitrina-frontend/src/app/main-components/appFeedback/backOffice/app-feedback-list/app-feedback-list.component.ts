@@ -49,7 +49,7 @@ export class AppFeedbackListComponent implements OnInit {
   dataSource: MatTableDataSource<AppFeedback>;
   feedbacks: AppFeedback[] = [];
   isLoading = true;
-  displayedColumns = ['id', 'type', 'comment', 'createdAt', 'actions'];
+  displayedColumns = ['type', 'comment', 'createdAt', 'actions'];
   searchText = '';
   totalFeedbacks = 0;
   pageIndex = 0;

@@ -166,9 +166,9 @@ export class AllProductComponent implements OnInit {
 
   updateCategoryBackgroundImage(): void {
     if (this.selectedCategory && this.categoryImages[this.selectedCategory]) {
-      this.categoryBackgroundImage = this.categoryImages[this.selectedCategory] || 'assets/images/categories/all-products.jpg';
+      this.categoryBackgroundImage = this.categoryImages[this.selectedCategory] || 'assets/images/all-products.jpg';
     } else {
-      this.categoryBackgroundImage = 'assets/images/categories/all-products.jpg';
+      this.categoryBackgroundImage = 'assets/images/products/h/h5.jpeg';
     }
   }
 

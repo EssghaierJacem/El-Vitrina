@@ -27,6 +27,7 @@ $transition-speed: 0.3s;
   margin: 0 auto;
   padding: 0 20px 60px;
   font-family: $font-family;
+  box-shadow: none !important;
   
   // Store Header
   .store-header {
@@ -40,6 +41,15 @@ $transition-speed: 0.3s;
       position: relative;
       border-radius: 8px;
       overflow: hidden;
+      z-index: 1;
+      &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        left: 0; right: 0; bottom: 0; height: 60px;
+        background: linear-gradient(to top, rgba(0,180,255,0.13) 60%, rgba(255,255,255,0.01) 100%);
+        pointer-events: none;
+      }
     }
     
     .store-info {
@@ -49,15 +59,32 @@ $transition-speed: 0.3s;
       position: relative;
       z-index: 2;
       padding: 0 20px;
+      /* Ensure it overlays above .store-cover */
+    }
       
       .store-avatar {
         flex-shrink: 0;
-        width: 100px;
-        height: 100px;
+        width: 110px;
+        height: 110px;
         border-radius: 50%;
-        border: 4px solid white;
+        border: 5px solid #e3f5ff;
+        background: linear-gradient(135deg, #e3f5ff 60%, #fff 100%);
+        box-shadow: none !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 28px;
+        img {
+          width: 90px;
+          height: 90px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2.5px solid #fff;
+          box-shadow: none !important;
+        }
+      }
         overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: none !important;
         background-color: white;
         
         img {
@@ -68,9 +95,63 @@ $transition-speed: 0.3s;
       }
       
       .store-details {
-        margin-left: 20px;
-        padding-top: 0;
-        
+        margin-left: 0;
+        padding-top: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        h1 {
+          font-size: 2.2rem;
+          font-weight: 800;
+          margin: 0 0 8px;
+          color: #222;
+          letter-spacing: 0.5px;
+          line-height: 1.1;
+        }
+        .store-description {
+          color: #5e6e80;
+          margin: 0 0 18px;
+          font-size: 1.12rem;
+          font-weight: 400;
+          line-height: 1.5;
+          max-width: 600px;
+        }
+        .store-actions {
+          display: flex;
+          gap: 18px;
+          flex-wrap: wrap;
+          margin-top: 8px;
+          .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 22px;
+            border-radius: 30px;
+            border: none;
+            background: #f5faff;
+            color: #0097d6;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: none !important;
+            cursor: pointer;
+            transition: background 0.22s, color 0.22s, box-shadow 0.22s, transform 0.22s;
+            i {
+              font-size: 1.1rem;
+              color: #0097d6;
+              transition: color 0.22s;
+            }
+            &:hover {
+              background: linear-gradient(90deg, #e3f5ff 60%, #b3e8ff 100%);
+              color: #005c8a;
+              box-shadow: none !important;
+              transform: translateY(-2px) scale(1.04);
+              i {
+                color: #005c8a;
+              }
+            }
+          }
+        }
+      }
         h1 {
           font-size: 28px;
           font-weight: 700;
@@ -120,8 +201,6 @@ $transition-speed: 0.3s;
           }
         }
       }
-    }
-  }
 
   /* Add these rules to your existing .all-products-container CSS file */
 
@@ -165,15 +244,19 @@ html, body {
   
   // Store Navigation
   .store-navigation {
-    margin-bottom: 30px;
-    border-bottom: 1px solid #eee;
+    margin-top: 32px;
+    margin-bottom: 46px;
+    border-bottom: 1.5px solid #f3f8fa;
+    box-shadow: 0 2px 10px 0 rgba(0,180,255,0.04);
+    padding: 0 24px 0 24px;
     
     .nav-container {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 20px;
+      gap: 36px;
+      padding: 16px 0 12px 0;
       
       .nav-buttons {
         display: flex;
@@ -280,6 +363,13 @@ html, body {
   }
   
   // Filters
+
+// Ensure product actions appear only on hover (high specificity)
+.product-card:hover .product-image .product-actions {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
   .filters-container {
     margin-bottom: 30px;
     padding: 20px;
@@ -448,17 +538,34 @@ html, body {
     
     .product-card {
       position: relative;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       
       &:hover {
         transform: translateY(-5px);
+        box-shadow: 0 0 12px 2px rgba(0, 180, 255, 0.28),
+                    0 0 32px 8px rgba(0, 180, 255, 0.13);
         
         .product-actions {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 3;
+
           opacity: 1;
+          pointer-events: auto;
         }
       }
       
       .product-image {
+  position: relative;
         position: relative;
         overflow: hidden;
         padding-bottom: 100%;
@@ -493,17 +600,70 @@ html, body {
         }
         
         .product-actions {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 3;
+
           position: absolute;
-          bottom: 10px;
-          left: 0;
-          right: 0;
+          top: 70%;
+          left: 50%;
+          transform: translate(-50%, -50%);
           display: flex;
           justify-content: center;
-          gap: 10px;
+          align-items: center;
+          gap: 15px;
           opacity: 0;
-          transition: opacity 0.3s ease;
-          z-index: 1;
-          
+          pointer-events: none;
+          transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          z-index: 3;
+
+          .action-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #fff;
+            color: #111;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            font-size: 22px;
+            transition: transform 0.18s, background 0.18s, color 0.18s;
+            outline: none;
+
+            i {
+              color: #111 !important;
+              transition: color 0.18s;
+            }
+
+            &:hover {
+              background: #f3f3f3;
+              transform: scale(1.12);
+            }
+            &:disabled {
+              opacity: 0.5;
+            }
+          }
+
+          .wishlist-button.liked,
+          .wishlist-button[ng-reflect-ng-class*='liked'] {
+            background: #fff;
+            i {
+              color: #d01117 !important;
+            }
+          }
+        }
           .action-button {
             width: 36px;
             height: 36px;
@@ -634,7 +794,6 @@ html, body {
         }
       }
     }
-  }
   
   // Empty State
   .empty-state {
@@ -1272,7 +1431,6 @@ html, body {
       }
     }
   }
-}
 
 // Responsive Adjustments
 @media (max-width: 768px) {
