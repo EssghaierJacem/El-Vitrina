@@ -76,6 +76,7 @@ public class DonationCampaignController {
     public ResponseEntity<DonationCampaignResponseDTO> updateCampaignStatus(
             @PathVariable Long id,
             @RequestBody CampaignStatusRequestDTO statusRequest) {
+        System.out.println("****here");
         DonationCampaignResponseDTO updatedCampaign = donationCampaignService.updateStatus(id, statusRequest);
         return ResponseEntity.ok(updatedCampaign);
     }

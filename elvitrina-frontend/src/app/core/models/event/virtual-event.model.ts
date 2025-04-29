@@ -1,3 +1,4 @@
+import { S } from '@fullcalendar/core/internal-common';
 import { EventParticipant, EventParticipantEvent } from '../event/event-participant.model';
 import { EventSession, EventSessionEventRequestDTO, EventSessionRequestDTO } from '../event/event-session.model';
 import { EventTicket } from "../event/event-ticket.model";
@@ -8,6 +9,7 @@ export interface VirtualEvent {
   title: string;
   description: string;
   startDateTime: Date;
+  eventImage:string;
   ticketPrice: number;
   status: string;
   eventType: EventType;
@@ -38,6 +40,29 @@ export interface VirtualEventRequest {
   storeId: number; 
   userId: number; 
 }
+
+export interface VirtualEventEditRequest {
+  eventId: number;
+  title: string;
+  description: string;
+  startDateTime: Date; 
+  ticketPrice: number;
+  eventType: EventType;
+  eventMode: EventMode;
+  maxParticipants: number;
+}
+
+
+export interface EditMode {
+  title: boolean;
+  description: boolean;
+  startDateTime: boolean;
+  ticketPrice: boolean;
+  maxParticipants: boolean;
+  eventType: boolean;
+  eventMode: boolean;
+}
+
 export enum EventType {
   FREE_LIVE = 'FREE_LIVE',
   PAID_WORKSHOP = 'PAID_WORKSHOP',

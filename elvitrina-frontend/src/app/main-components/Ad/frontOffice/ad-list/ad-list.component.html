@@ -1,12 +1,42 @@
-<!-- ad-list.component.html -->
 <div class="pins-container">
-  <div *ngFor="let ad of ads" class="pin" [style.height.px]="ad.imageUrl ? 280 : 160">
-    <div class="pin-content">
-      <img *ngIf="ad.imageUrl" [src]="ad.imageUrl" [alt]="ad.title" class="pin-image">
-      <div class="pin-text">
-        <h3>{{ad.title}}</h3>
-        <p *ngIf="ad.content">{{ad.content}}</p>
+  <div *ngFor="let ad of ads" class="pin" [style.height.px]="ad.imageUrl ? 280 : 200" [class.text-only]="!ad.imageUrl">
+    <a [href]="ad.targetUrl" target="_blank" class="pin-link" (click)="trackClick(ad.id)" (keydown.enter)="trackClick(ad.id)">
+      <div class="pin-content">
+        <ng-container *ngIf="ad.imageUrl; else textOnlyCard">
+          <div class="image-container">
+            <img [src]="ad.imageUrl" [alt]="ad.title" class="pin-image" (error)="handleImageError($event, ad)">
+            <div class="image-overlay"></div>
+          </div>
+        </ng-container>
+
+        <ng-template #textOnlyCard>
+          <div class="text-artistic-background">
+            <div class="decorative-shape"></div>
+          </div>
+        </ng-template>
+
+        <div class="pin-text">
+          <h3>{{ad.title}}</h3>
+          <p *ngIf="ad.content">{{ad.content}}</p>
+        </div>
       </div>
-    </div>
+
+      <div class="pin-actions">
+        <button mat-icon-button (click)="saveAd($event, ad.id)" aria-label="Save ad">
+          <mat-icon>bookmark_border</mat-icon>
+        </button>
+        <button mat-icon-button (click)="shareAd($event, ad.id)" aria-label="Share ad">
+          <mat-icon>share</mat-icon>
+        </button>
+      </div>
+    </a>
   </div>
+</div>
+
+<div *ngIf="loading" class="loading-spinner">
+  <mat-spinner diameter="40"></mat-spinner>
+</div>
+
+<div *ngIf="error" class="error-message">
+  {{error}}
 </div>

@@ -16,6 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { TokenService } from 'src/app/core/services/user/TokenService';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { TranslationRequest, TranslationResponse } from 'src/app/core/models/blogPost/traduction.model';
 
 @Component({
   selector: 'app-blog-post-list',
@@ -104,24 +105,31 @@ export class BlogPostListComponent implements OnInit {
   addComment(postId: number): void {
     const content = this.commentInputs[postId]?.trim();
     if (!content) return;
-
+  
     const newComment: Comment = {
       content,
       blogPost: { id: postId } as any,
       user: { id: this.userId } as any,
-      createdAt: new Date() // Ajout de la date actuelle
-          
+      createdAt: new Date()
     };
-
+  
     this.commentService.createComment(newComment).subscribe({
       next: () => {
         this.commentInputs[postId] = '';
         this.showCommentInput[postId] = false;
-        this.loadComments(postId);
+  
+        this.commentService.getCommentsByBlogPost(postId).subscribe({
+          next: (comments) => {
+            // 🔥 Forcer le changement de référence pour déclencher le rafraîchissement
+            this.comments[postId] = [...comments];
+          },
+          error: (err) => console.error('Erreur lors du rechargement des commentaires :', err)
+        });
       },
-      error: (err) => console.error(err)
+      error: (err) => console.error('Erreur lors de la création du commentaire :', err)
     });
   }
+  
 
   formatDate(date: string): string {
     const now = new Date();
@@ -178,6 +186,9 @@ export class BlogPostListComponent implements OnInit {
     });
   }
 
+  getImageUrl(image: string): string {
+    return `http://localhost:8080/images/${image}`;
+  }
 
   deleteComment(commentId: number, postId: number): void {
     if (confirm('Are you sure you want to delete this comment?')) {
@@ -200,75 +211,92 @@ export class BlogPostListComponent implements OnInit {
   }
 
 
-  // Dans votre composant TypeScript
-currentEditComment: any = null;
-editMode: boolean = false;
 
-editComment(comment: any) {
-  // Si on clique sur le même commentaire en mode édition, on annule
-  if (this.currentEditComment === comment && this.editMode) {
-    this.cancelEdit();
-    return;
-  }
 
-  // Activer le mode édition
-  this.editMode = true;
-  this.currentEditComment = comment;
-  
-  // Vous pouvez aussi initialiser un formControl si vous utilisez ReactiveForms
-  // this.commentForm.patchValue({ content: comment.content });
+  // Ajoutez ces méthodes à votre classe BlogPostListComponent
+
+startEditingComment(comment: Comment): void {
+  this.editingCommentId = comment.id!;
+  this.editedContent = comment.content;
 }
 
-// Fonction pour sauvegarder les modifications
-saveComment() {
-  if (!this.currentEditComment) return;
+cancelEditing(): void {
+  this.editingCommentId = null;
+  this.editedContent = '';
+}
 
-  // Appel au service pour mettre à jour le commentaire
-  this.commentService.updateComment(
-    this.currentEditComment.id, 
-    this.currentEditComment.content
-  ).subscribe({
-    next: (updatedComment) => {
-      // Mettre à jour le commentaire dans le tableau
-      const index = this.comments[this.currentEditComment.postId].findIndex(
-        c => c.id === this.currentEditComment.id
-      );
-      if (index !== -1) {
-        this.comments[this.currentEditComment.postId][index] = updatedComment;
-      }
-      
-      this.cancelEdit();
-      // Optionnel: Afficher un message de succès
-      this.snackBar.open('Commentaire modifié', 'Fermer', { duration: 3000 });
+saveEditedComment(postId: number, commentToUpdate: Comment): void {
+  if (!this.editingCommentId || !this.editedContent.trim()) return;
+
+  const updatedComment: Comment = {
+    id: this.editingCommentId,
+    content: this.editedContent,
+    blogPost: { id: postId } as any,
+    user: { id: this.userId } as any}
+    ;
+
+  this.commentService.updateComment(this.editingCommentId, updatedComment).subscribe({
+    next: () => {
+      this.snackBar.open('Comment updated successfully', 'Close', {
+        duration: 3000,
+        panelClass: ['success-snackbar']
+      });
+      this.editingCommentId = null;
+      this.editedContent = '';
+      this.loadComments(postId);
     },
     error: (err) => {
-      console.error('Erreur lors de la modification', err);
-      // Gérer l'erreur
+      this.snackBar.open('Error updating comment: ' + (err.error?.message || err.message), 'Close', {
+        duration: 5000,
+        panelClass: ['error-snackbar']
+      });
     }
   });
 }
 
-// Fonction pour annuler l'édition
-cancelEdit() {
-  this.editMode = false;
-  this.currentEditComment = null;
-  // this.commentForm.reset(); // Si vous utilisez ReactiveForms
+// Dans votre composant
+toggleLike(post: BlogPost): void {
+  post.isLiked = !post.isLiked;
+  post.reactionNumber += post.isLiked ? 1 : -1;
 }
 
 
-getImageUrl(image: string): string {
-  return `http://localhost:8080/images/${image}`;
+traductionRequest : TranslationRequest = {
+  text: ''
 }
+translationResponse: TranslationResponse | null = null;
 
+currentTranslatedCommentId: number | null = null;
 
-
-
-
-  
+async handleTranslationClick(comment: Comment): Promise<void> {
+  if (this.currentTranslatedCommentId === comment.id && this.translationResponse) {
+    // Hide translation if clicking on same comment
+    this.currentTranslatedCommentId = null;
+    this.translationResponse = null;
+  } else {
+    // Show translation for new comment
+    this.translationResponse = null;
+    this.currentTranslatedCommentId = comment.id!;
+  await  this.translate(comment.content);
   }
-  
-  
-  
+}
+
+translate(cmntr: string): void {
+  this.traductionRequest.text = cmntr;
+  console.log("Translate comment: ", cmntr);
+
+  this.blogPostService.translateText(this.traductionRequest).subscribe(
+    (response: TranslationResponse) => {
+      this.translationResponse = response;
+      console.log("Translation response: ", this.translationResponse);
+    },
+    (error) => {
+      console.error("Translation error: ", error);
+      this.translationResponse = null;
+    }
+  );
+}
 
 
-  
+
+}

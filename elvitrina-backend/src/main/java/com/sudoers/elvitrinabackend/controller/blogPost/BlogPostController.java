@@ -1,8 +1,10 @@
 package com.sudoers.elvitrinabackend.controller.blogPost;
 
+import com.sudoers.elvitrinabackend.exception.ResourceNotFoundException;
 import com.sudoers.elvitrinabackend.model.entity.BlogPost;
 import com.sudoers.elvitrinabackend.model.entity.Formation;
 import com.sudoers.elvitrinabackend.model.entity.User;
+import com.sudoers.elvitrinabackend.repository.BlogPostRepository;
 import com.sudoers.elvitrinabackend.repository.UserRepository;
 import com.sudoers.elvitrinabackend.service.blogPost.BlogPostService;
 import com.sudoers.elvitrinabackend.service.blogPost.IBlogPostService;
@@ -21,6 +23,9 @@ import java.util.List;
 public class BlogPostController {
     @Autowired
     IBlogPostService blogPostService;
+
+    @Autowired
+    BlogPostRepository blogPostRepository;
 
     @Autowired
     UserService userService;
@@ -72,4 +77,28 @@ public class BlogPostController {
     public void removeBlogPost (@PathVariable("id") long id){
         blogPostService.removeBlogPost(id);
     }
+
+
+    @PatchMapping("/{id}/like")
+    public ResponseEntity<BlogPost> incrementLike(@PathVariable Long id) {
+        BlogPost post = blogPostRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+
+        post.setReactionNumber(post.getReactionNumber() + 1);
+        BlogPost updated = blogPostRepository.save(post);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PatchMapping("/{id}/unlike")
+    public ResponseEntity<BlogPost> decrementLike(@PathVariable Long id) {
+        BlogPost post = blogPostRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+
+        post.setReactionNumber(Math.max(0, post.getReactionNumber() - 1));
+        BlogPost updated = blogPostRepository.save(post);
+        return ResponseEntity.ok(updated);
+    }
+
+
+
 }

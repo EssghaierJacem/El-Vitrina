@@ -220,11 +220,15 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
       },
-
       {
         path: 'donations',
         loadChildren: () =>
           import('./main-components/donation/backoffice/donationback.routes').then((m) => m.DONATION_BACK_ROUTES),
+      },
+      {
+        path: 'events',
+        loadChildren: () =>
+          import('./main-components/event/backoffice/eventback.routes').then((m) => m.EVENT_BACK_ROUTES),
       },
     ],
   },

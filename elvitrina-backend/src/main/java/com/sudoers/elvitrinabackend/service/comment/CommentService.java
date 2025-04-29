@@ -2,7 +2,9 @@ package com.sudoers.elvitrinabackend.service.comment;
 
 import com.sudoers.elvitrinabackend.model.entity.Comment;
 import com.sudoers.elvitrinabackend.model.entity.Formation;
+import com.sudoers.elvitrinabackend.model.entity.User;
 import com.sudoers.elvitrinabackend.repository.CommentRepository;
+import com.sudoers.elvitrinabackend.repository.UserRepository;
 import com.sudoers.elvitrinabackend.service.ActionHistory.ActionHistoryService;
 import com.sudoers.elvitrinabackend.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,9 @@ import java.util.List;
 public class CommentService implements ICommentService{
     @Autowired
     CommentRepository commentRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     private UserService userService;
@@ -52,6 +57,9 @@ public class CommentService implements ICommentService{
     public Comment addComment(Comment comment) {
         Comment savedComment = commentRepository.save(comment);
 
+        User user = userRepository.findById(comment.getUser().getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        comment.setUser(user);
         // Historique : Ajout d'un commentaire
         historyService.logAction(
                 "Comment",

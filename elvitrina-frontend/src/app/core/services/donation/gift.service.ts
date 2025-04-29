@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Gift, GiftRequestDTO } from '../../models/donation/gift.model';
+import { Gift, GiftRequestDTO, GiftResponseDTO } from '../../models/donation/gift.model';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
@@ -30,5 +30,10 @@ export class GiftService {
 
   deleteGift(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+
+  getGiftsForUser(userId: number): Observable<GiftResponseDTO[]> {
+    return this.http.get<GiftResponseDTO[]>(`${this.apiUrl}/user/${userId}`);
   }
 }

@@ -38,11 +38,11 @@
               <h3 class="product-name">{{ recommendation.product.productName }}</h3>
               <div class="price-container">
                 <span class="current-price" [class.has-discount]="recommendation.product.hasDiscount">
-                  {{ recommendation.product.price | currency:'EUR' }}
+                  {{ recommendation.product.price | currency:'TND' }}
                 </span>
                 @if (recommendation.product.hasDiscount && recommendation.product.originalPrice) {
                   <span class="original-price">
-                    {{ recommendation.product.originalPrice | currency:'EUR' }}
+                    {{ recommendation.product.originalPrice | currency:'TND' }}
                   </span>
                 }
               </div>

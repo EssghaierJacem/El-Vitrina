@@ -1,14 +1,42 @@
-<div #sceneContainer class="scene-container">
-  <div class="controls-overlay">
-    <div class="generation-controls">
-      <input #modelInput placeholder="Enter model description (e.g. 'modern sofa')">
-      <button (click)="generateModel(modelInput.value)" [disabled]="isLoading">
-        {{ isLoading ? 'Generating...' : 'Generate 3D Model' }}
-      </button>
-    </div>
-    
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
+<div class="scene-wrapper" #sceneContainer>
+  <!-- Three.js canvas will be inserted here -->
+</div>
+
+<div class="overlay">
+  <div class="lottie-container">
+    <ng-lottie 
+      [options]="animationOptions[animationState]" 
+      (animationCreated)="animationCreated($event)">
+    </ng-lottie>
   </div>
+  
+  <div class="status-message">
+    {{ getStatusMessage() }}
+  </div>
+  
+  <div class="input-group">
+    <input 
+      [(ngModel)]="description" 
+      placeholder="Describe your 3D model..."
+      (keyup.enter)="generateModel()"
+    />
+    <button 
+      (click)="generateModel()" 
+      [disabled]="isLoading"
+    >
+      {{ isLoading ? 'Generating...' : 'Generate' }}
+    </button>
+    <button 
+*ngIf="showDownloadButton"
+(click)="downloadModelJson()"
+class="download-button">
+Download Model (.json)
+</button>
+  </div>
+  
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+  <!-- Add this near your other buttons in the template -->
+
 </div>

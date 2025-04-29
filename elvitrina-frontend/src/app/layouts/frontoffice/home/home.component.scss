@@ -1,0 +1,184 @@
+/* Force white color (add to your stylesheet) */
+.text-white,
+.text-white i,
+h4.text-white {
+  color: white !important;
+}
+
+.text-white:hover,
+.text-white:hover i {
+  opacity: 0.8; /* Slight fade on hover */
+  text-decoration: none; /* Optional: removes underline */
+}
+
+/* Top Sellers Navigation */
+.nav-link {
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  color: #495057;
+  border-bottom: none !important;
+  transition: color 0.2s ease;
+  
+  &.active {
+    color: #000 !important;
+    font-weight: 600;
+    position: relative;
+    background-color: transparent !important;
+    
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: #000;
+    }
+  }
+
+  &:hover, &:focus {
+    color: #000;
+    text-decoration: none;
+    background-color: transparent !important;
+    border-color: transparent !important;
+  }
+}
+
+/* Remove Bootstrap tab styling */
+.nav-tabs, .nav {
+  border-bottom: none !important;
+}
+
+/* Product display in tabs */
+.tab-pane {
+  display: none;
+  
+  &.show {
+    display: block;
+  }
+  
+  &.active {
+    opacity: 1;
+  }
+}
+
+/* Grid layout for product cards */
+.row-products {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px;
+  
+  .col-product {
+    padding: 0 15px;
+    margin-bottom: 30px;
+    width: 33.333%;
+    
+    @media (max-width: 991px) {
+      width: 50%;
+    }
+    
+    @media (max-width: 575px) {
+      width: 100%;
+    }
+  }
+}
+
+/* Product cards */
+.card {
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.card-img {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px 10px 0 0;
+}
+
+.card-img-hover {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  height: 260px; /* Fixed height for product images */
+  border-radius: 10px 10px 0 0;
+}
+
+.card-img-front {
+  transition: all 0.3s ease;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Changed to 'contain' to show full image without cropping */
+  background-color: #f8f9fa; /* Light background to make product stand out */
+  padding: 10px; /* Add some padding around the image */
+  border: 2px dashed red !important; /* DEBUG: show image area */
+}
+
+.card-img-hover:hover .card-img-front {
+  transform: scale(1.05);
+}
+
+/* Badges */
+.card-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Card actions */
+.card-actions {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  display: flex;
+  z-index: 10;
+}
+
+.card-action {
+  display: inline-block;
+  margin-left: 0.25rem;
+}
+
+/* Favorite button styling */
+.btn-favorite {
+  background-color: white;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 20;
+  border: none;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+  
+  i {
+    font-size: 18px;
+    color: #888;
+  }
+  
+  .active-heart {
+    color: #dc3545 !important; /* Red color for active heart */
+  }
+}

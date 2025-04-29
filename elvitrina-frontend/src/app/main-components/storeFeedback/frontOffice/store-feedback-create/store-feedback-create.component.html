@@ -1,120 +1,85 @@
 <!-- HTML -->
-<div class="feedback-container">
-  <mat-card class="feedback-card">
-    <mat-card-header>
-      <div class="header-content">
-        <div class="header-icon">
-          <mat-icon>rate_review</mat-icon>
-        </div>
-        <div class="header-text">
-          <mat-card-title>
-            <h2>Share Your Feedback</h2>
-          </mat-card-title>
-          <mat-card-subtitle>Your opinion helps improve our services</mat-card-subtitle>
+<div class="sf-feedback-container">
+  <div class="sf-feedback-card">
+    <div class="sf-feedback-header">
+      <i class="fas fa-comment-alt"></i>
+      <h3>Write a Review</h3>
+    </div>
+    
+    <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" class="sf-feedback-form">
+      <!-- Review Type -->
+      <div class="sf-form-group">
+        <label for="reviewType" class="sf-form-label">Review Type</label>
+        <div class="sf-select-wrapper">
+          <select id="reviewType" 
+                  class="sf-form-select" 
+                  formControlName="storeFeedbackType">
+            <option value="" disabled>Select a type</option>
+            <option value="PRODUCT_QUALITY">Product Quality</option>
+            <option value="DELIVERY">Shipping & Delivery</option>
+            <option value="CUSTOMER_SERVICE">Customer Service</option>
+            <option value="PRICING">Pricing & Value</option>
+            <option value="PACKAGING">Packaging & Presentation</option>
+          </select>
         </div>
       </div>
-    </mat-card-header>
-    
-    <mat-divider></mat-divider>
-    
-    <mat-card-content>
-      <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" class="feedback-form">
-        <!-- Feedback Type -->
-        <div class="form-section">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>What aspect are you reviewing?</mat-label>
-            <mat-select formControlName="storeFeedbackType" required>
-              <mat-option *ngFor="let option of feedbackTypeOptions" [value]="option.value">
-                {{ option.label }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="isFieldInvalid('storeFeedbackType')">
-              {{ getErrorMessage('storeFeedbackType') }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Rating -->
-        <div class="form-section rating-section">
-          <div class="rating-header">
-            <span class="section-label">Your Rating</span>
-            <div class="rating-display" *ngIf="feedbackForm.get('rating')?.value">
-              <app-star-rating [rating]="feedbackForm.get('rating')?.value" [starSize]="'medium'"></app-star-rating>
-            </div>
-          </div>
+      
+      <!-- Rating Bar - Using CSS-only stars -->
+      <div class="sf-form-group">
+        <label class="sf-form-label">Your Rating</label>
+        <div class="sf-star-rating">
+          <input type="radio" id="star5" name="rating" value="5" (change)="setRating(5)" [checked]="feedbackForm.get('rating')?.value === 5">
+          <label for="star5" title="5 stars"></label>
           
-          <mat-slider
-            class="rating-slider"
-            [min]="1"
-            [max]="5"
-            [step]="1"
-            [discrete]="true"
-            [showTickMarks]="true">
-            <input matSliderThumb formControlName="rating">
-          </mat-slider>
+          <input type="radio" id="star4" name="rating" value="4" (change)="setRating(4)" [checked]="feedbackForm.get('rating')?.value === 4">
+          <label for="star4" title="4 stars"></label>
           
-          <div class="rating-labels">
-            <span>POOR</span>
-            <span>EXCELLENT</span>
-          </div>
+          <input type="radio" id="star3" name="rating" value="3" (change)="setRating(3)" [checked]="feedbackForm.get('rating')?.value === 3">
+          <label for="star3" title="3 stars"></label>
           
-          <mat-error *ngIf="isFieldInvalid('rating')" class="rating-error">
-            {{ getErrorMessage('rating') }}
-          </mat-error>
+          <input type="radio" id="star2" name="rating" value="2" (change)="setRating(2)" [checked]="feedbackForm.get('rating')?.value === 2">
+          <label for="star2" title="2 stars"></label>
+          
+          <input type="radio" id="star1" name="rating" value="1" (change)="setRating(1)" [checked]="feedbackForm.get('rating')?.value === 1">
+          <label for="star1" title="1 star"></label>
         </div>
-
-        <!-- Comment -->
-        <div class="form-section">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Your Feedback</mat-label>
-            <textarea
-              matInput
-              formControlName="comment"
-              rows="4"
-              required
-              placeholder="Please share your experience with us..."
-              [maxlength]="500"
-            ></textarea>
-            <mat-hint align="end" [class.low-chars]="getRemainingCharacters() < 50">
-              {{ getRemainingCharacters() }} characters remaining
-            </mat-hint>
-            <mat-error *ngIf="isFieldInvalid('comment')">
-              {{ getErrorMessage('comment') }}
-            </mat-error>
-          </mat-form-field>
+        <div class="sf-rating-label">
+          {{ getRatingText(feedbackForm.get('rating')?.value || 0) }}
         </div>
-
-        <!-- Would Recommend -->
-        <div class="form-section recommendation-section">
-          <mat-checkbox formControlName="wouldRecommend" color="primary" class="recommendation-checkbox">
-            <span class="recommendation-text">I WOULD RECOMMEND THIS STORE</span>
-          </mat-checkbox>
+      </div>
+      
+      <!-- Comment Text Area -->
+      <div class="sf-form-group">
+          <textarea 
+          class="sf-form-textarea"
+            formControlName="comment" 
+            placeholder="Share your experience with this store..."
+            rows="3"
+            [maxlength]="500">
+          </textarea>
+        <div class="sf-char-count">
+            {{ getRemainingCharacters() }} characters remaining
         </div>
-      </form>
-    </mat-card-content>
-    
-    <mat-divider></mat-divider>
-    
-    <mat-card-actions class="card-actions">
-      <button
-        mat-stroked-button
-        type="button"
-        (click)="resetForm()"
-        [disabled]="isSubmitting"
-        matTooltip="Clear all form fields"
-        class="reset-button">
-        <mat-icon>refresh</mat-icon>
-        RESET
-      </button>
-      <button
-        mat-stroked-button
-        (click)="onSubmit()"
-        [disabled]="isSubmitting"
-        class="submit-button">
-        <mat-spinner *ngIf="isSubmitting" diameter="20" class="spinner"></mat-spinner>
-        <span>SUBMIT FEEDBACK</span>
-        <mat-icon *ngIf="!isSubmitting">send</mat-icon>
-      </button>
-    </mat-card-actions>
-  </mat-card>
+      </div>
+      
+      <!-- Footer Row -->
+      <div class="sf-form-group sf-recommendation">
+        <label class="sf-checkbox-container">
+          <input type="checkbox" formControlName="wouldRecommend">
+          <span class="sf-checkbox-label">I recommend this store</span>
+        </label>
+      </div>
+      
+      <!-- Form Footer -->
+      <div class="sf-form-footer">
+          <button 
+            type="submit"
+            [disabled]="feedbackForm.invalid || isSubmitting"
+          class="sf-submit-button">
+          <span *ngIf="isSubmitting" class="sf-spinner"></span>
+            <span *ngIf="!isSubmitting">Post Review</span>
+          </button>
+      </div>
+    </form>
+  </div>
 </div>

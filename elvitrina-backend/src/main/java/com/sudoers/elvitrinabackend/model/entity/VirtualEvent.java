@@ -24,7 +24,7 @@ public class VirtualEvent {
     private String title;
 
     private String description;
-
+    private String eventImage;
     private LocalDateTime eventDate;
     private Double ticketPrice;
 

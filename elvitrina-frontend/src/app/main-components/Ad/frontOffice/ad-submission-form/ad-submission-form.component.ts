@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AdService } from 'src/app/core/services/Ad/ad.service';
 
 @Component({
   selector: 'app-ad-submission-form',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule
@@ -14,41 +16,57 @@ import { AdService } from 'src/app/core/services/Ad/ad.service';
 })
 export class AdSubmissionFormComponent {
   ad: any = {
-    displayType: 'BANNER', // Default to banner
+    displayType: 'BANNER',
     position: 'top',
     width: 728,
     height: 90
   };
 
-  constructor(private adService: AdService) {}
+  constructor(
+    private adService: AdService,
+    private router: Router
+  ) {}
 
-  onDisplayTypeChange() {
+  onDisplayTypeChange(): void {
     if (this.ad.displayType === 'POPUP') {
-      // Reset position and set popup defaults
       this.ad.position = null;
-      this.ad.width = 400;  // Default popup size
+      this.ad.width = 400;
       this.ad.height = 400;
-      this.ad.displayDuration = 15; // Default duration
+      this.ad.displayDuration = 15;
     } else {
-      // Reset to banner defaults
       this.ad.position = 'top';
       this.ad.width = 728;
       this.ad.height = 90;
       this.ad.displayDuration = null;
     }
   }
-  
+
   onSubmit(): void {
-    // Prepare the payload
+    if (this.ad.startDate && this.ad.endDate) {
+      const start = new Date(this.ad.startDate);
+      const end = new Date(this.ad.endDate);
+
+      if (start >= end) {
+        alert('Error: Start Date must be before End Date.');
+        return;
+      }
+    }
+
     const payload = {
       ...this.ad,
-      // Ensure position is null for popups
       position: this.ad.displayType === 'POPUP' ? null : this.ad.position
     };
-  
+
     this.adService.submitAd(payload).subscribe({
-      next: () => alert('Ad submitted for approval!'),
+      next: () => {
+        alert('Ad submitted for approval!');
+        this.router.navigate(['/']);
+      },
       error: (error) => alert('Submission failed: ' + error.message)
     });
+  }
+
+  onCancel(): void {
+    this.router.navigate(['/']);
   }
 }

@@ -47,6 +47,11 @@ public class GiftController {
         return ResponseEntity.ok(giftService.getAvailableGiftsForUser(userId));
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<GiftResponseDTO>> getGiftsForUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(giftService.getGiftsForUser(userId));
+    }
+
     @PostMapping("/{id}/claim/{donationId}")
     public ResponseEntity<GiftClaimResponseDTO> claimGift(
             @PathVariable("id") Long giftId,

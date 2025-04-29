@@ -23,6 +23,12 @@ import { Product } from '../../../../core/models/product/product.model';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
+// Replace the CategoryOption interface with a simpler one
+interface CategoryOption {
+  value: string;
+  displayName: string;
+}
+
 @Component({
   selector: 'app-product-edit',
   standalone: true,
@@ -48,7 +54,8 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 export class ProductEditComponent implements OnInit {
   productForm: FormGroup;
   loading = false;
-  categories = Object.values(ProductCategoryType);
+  // Replace simple array with formatted categories
+  categoryOptions: CategoryOption[] = [];
   userStores: Store[] = [];
   role: string = '';
   canEditProduct: boolean = false;
@@ -57,9 +64,21 @@ export class ProductEditComponent implements OnInit {
   tagsControl = new FormControl<string[]>([]);
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   uploadedFiles: File[] = [];
+  
+  // Add properties for category debugging
+  showCategoryDebug = false;
 
   readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
 
+  // Add getter for current category value
+  get currentCategory(): string {
+    return this.productForm?.get('category')?.value || 'none';
+  }
+  
+  // Add toggle method for category debug
+  toggleCategoryDebug(): void {
+    this.showCategoryDebug = !this.showCategoryDebug;
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -71,7 +90,43 @@ export class ProductEditComponent implements OnInit {
     public router: Router,
     private route: ActivatedRoute
   ) {
+    // Initialize categories first
+    this.initCategoryOptions();
+    // Then initialize form
     this.initForm();
+    
+    // Log categories on initialization to verify they're loaded
+    console.log('Categories initialized in constructor:', this.categoryOptions);
+  }
+
+  // Initialize category options with proper display names
+  private initCategoryOptions(): void {
+    // Create an array of category options with hardcoded values
+    const categories = [
+      { key: 'HANDMADE_JEWELRY', name: 'Handmade Jewelry' },
+      { key: 'POTTERY_CERAMICS', name: 'Pottery & Ceramics' },
+      { key: 'TEXTILES_FABRICS', name: 'Textiles & Fabrics' },
+      { key: 'ART_PAINTINGS', name: 'Art Paintings' },
+      { key: 'HOME_DECOR', name: 'Home Decor' },
+      { key: 'CLOTHING_ACCESSORIES', name: 'Clothing & Accessories' },
+      { key: 'ECO_FRIENDLY', name: 'Eco Friendly' },
+      { key: 'LOCAL_FOODS', name: 'Local Foods' },
+      { key: 'HEALTH_WELLNESS', name: 'Health & Wellness' },
+      { key: 'BOOKS_STATIONERY', name: 'Books & Stationery' },
+      { key: 'TOYS_GAMES', name: 'Toys & Games' },
+      { key: 'VINTAGE_ANTIQUES', name: 'Vintage & Antiques' },
+      { key: 'DIGITAL_PRODUCTS', name: 'Digital Products' },
+      { key: 'CRAFTS_DIY', name: 'Crafts & DIY' },
+      { key: 'PET_SUPPLIES', name: 'Pet Supplies' }
+    ];
+    
+    // Map to the expected interface format and sort
+    this.categoryOptions = categories.map(cat => ({
+      value: cat.key,
+      displayName: cat.name
+    })).sort((a, b) => a.displayName.localeCompare(b.displayName));
+    
+    console.log('Category options initialized:', this.categoryOptions);
   }
 
   ngOnInit(): void {
@@ -152,6 +207,11 @@ export class ProductEditComponent implements OnInit {
   }
 
   private populateForm(product: Product): void {
+    // Make sure categories are initialized
+    if (this.categoryOptions.length === 0) {
+      this.initCategoryOptions();
+    }
+    
     // Determine if the product has a discount
     const hasDiscount = product.originalPrice !== null && 
                         product.originalPrice !== undefined && 
@@ -168,19 +228,33 @@ export class ProductEditComponent implements OnInit {
       this.tagsControl.setValue(product.tags);
     }
     
+    // Debug logging for category
+    console.log('Product category before form population:', product.category);
+    console.log('Available categories:', this.categoryOptions.map(c => c.value));
+    
+    // First patch all fields except category
     this.productForm.patchValue({
       storeId: product.storeId,
       productName: product.productName,
       description: product.description || '',
       price: hasDiscount ? product.originalPrice : product.price,
       stockQuantity: product.stockQuantity,
-      category: product.category,
       hasDiscount: hasDiscount,
       discountPercentage: discountPercentage,
       freeShipping: product.freeShipping || false
     });
     
-    // Update discountPercentage control based on hasDiscount
+    // Explicitly set the category field with a timeout to ensure UI is updated
+    setTimeout(() => {
+      this.productForm.get('category')?.setValue(product.category);
+      console.log('Category explicitly set to:', product.category);
+      console.log('Category form control value after explicit set:', this.productForm.get('category')?.value);
+    }, 0);
+    
+    // Debug logging after form population
+    console.log('Category form control value after population:', this.productForm.get('category')?.value);
+    
+    // Update discountPercentage control based on hasDiscount checkbox
     if (hasDiscount) {
       this.productForm.get('discountPercentage')?.enable();
     }
@@ -229,6 +303,11 @@ export class ProductEditComponent implements OnInit {
         discountControl?.disable();
         discountControl?.setValue(0);
       }
+    });
+    
+    // Add logging for category changes
+    this.productForm.get('category')?.valueChanges.subscribe(category => {
+      console.log('Category selected:', category);
     });
   }
 
@@ -323,8 +402,11 @@ export class ProductEditComponent implements OnInit {
   }
 
   getCategoryDisplayName(category: ProductCategoryType): string {
+    if (!category) return '';
+    
+    // Clean up the display name by replacing underscores with spaces and capitalizing each word
     return category.split('_').map(word => 
-      word.charAt(0) + word.slice(1).toLowerCase()
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
     ).join(' ');
   }
 
@@ -374,5 +456,15 @@ export class ProductEditComponent implements OnInit {
 
   navigateToProducts(): void {
     this.router.navigate(['/products']);
+  }
+
+  // Add method to manually set a category
+  setCategory(category: string): void {
+    console.log('Manually setting category to:', category);
+    this.productForm.get('category')?.setValue(category);
+    console.log('Category form control value after manual set:', this.productForm.get('category')?.value);
+    
+    // Force mark as touched to trigger validation
+    this.productForm.get('category')?.markAsTouched();
   }
 }

@@ -109,6 +109,30 @@
       color: #000;
     }
   }
+  .event-image {
+    height: 200px;  /* Default height for desktop */
+    position: relative;
+  }
+  
+  /* Medium screens (tablets) */
+  @media (max-width: 768px) {
+    .event-card .event-image {
+      height: 150px;
+    }
+  }
+  
+  /* Mobile screens */
+  @media (max-width: 480px) {
+    .event-card .event-image {
+      height: 120px;
+    }
+  }
+  .event-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  /* This maintains aspect ratio while filling the container */
+    object-position: center;  /* Centers the image focus */
+  }
 
   .price-badge {
     position: absolute;

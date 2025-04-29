@@ -15,6 +15,12 @@ import { StoreService } from 'src/app/core/services/store/store.service';
 import { StoreCategoryType } from 'src/app/core/models/store/store-category-type.enum';
 import * as L from 'leaflet';
 
+// Interface for category display
+interface CategoryOption {
+  value: StoreCategoryType;
+  displayName: string;
+}
+
 @Component({
   selector: 'app-store-edit',
   standalone: true,
@@ -48,7 +54,8 @@ export class StoreEditComponent implements OnInit, AfterViewInit {
   imagePreview: string | null = null;
   coverImagePreview: string | null = null;
   
-  categoryOptions = Object.values(StoreCategoryType);
+  categories = Object.values(StoreCategoryType);
+  categoryOptions: CategoryOption[] = [];
 
   private map: L.Map | undefined;
   private marker: L.Marker | undefined;
@@ -64,7 +71,45 @@ export class StoreEditComponent implements OnInit, AfterViewInit {
     private router: Router,
     private snackBar: MatSnackBar
   ) {
+    this.initCategoryOptions();
     this.initForm();
+  }
+
+  private initCategoryOptions(): void {
+    this.categoryOptions = this.categories.map(category => ({
+      value: category,
+      displayName: this.getStoreCategoryDisplayName(category)
+    })).sort((a, b) => a.displayName.localeCompare(b.displayName));
+  }
+
+  getStoreCategoryDisplayName(category: StoreCategoryType | string): string {
+    switch (category) {
+      case StoreCategoryType.HANDMADE_JEWELRY: return 'Handmade Jewelry';
+      case StoreCategoryType.POTTERY_CERAMICS: return 'Pottery & Ceramics';
+      case StoreCategoryType.TEXTILES_FABRICS: return 'Textiles & Fabrics';
+      case StoreCategoryType.ART_PAINTINGS: return 'Art & Paintings';
+      case StoreCategoryType.HOME_DECOR: return 'Home Decor';
+      case StoreCategoryType.CLOTHING_ACCESSORIES: return 'Clothing & Accessories';
+      case StoreCategoryType.ECO_FRIENDLY: return 'Eco-Friendly Products';
+      case StoreCategoryType.LOCAL_FOODS: return 'Local Foods & Beverages';
+      case StoreCategoryType.HEALTH_WELLNESS: return 'Health & Wellness';
+      case StoreCategoryType.BOOKS_STATIONERY: return 'Books & Stationery';
+      case StoreCategoryType.TOYS_GAMES: return 'Toys & Games';
+      case StoreCategoryType.VINTAGE_ANTIQUES: return 'Vintage & Antiques';
+      case StoreCategoryType.DIGITAL_PRODUCTS: return 'Digital Products';
+      case StoreCategoryType.CRAFTS_DIY: return 'Crafts & DIY Kits';
+      case StoreCategoryType.PET_SUPPLIES: return 'Pet Supplies';
+      default: 
+        // Format unrecognized enum values
+        if (typeof category === 'string') {
+          return category
+            .replace(/_/g, ' ')
+            .split(' ')
+            .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+            .join(' ');
+        }
+        return String(category);
+    }
   }
 
   ngOnInit(): void {

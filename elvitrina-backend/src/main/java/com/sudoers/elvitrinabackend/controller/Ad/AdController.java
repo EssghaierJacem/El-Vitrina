@@ -5,6 +5,7 @@ import com.sudoers.elvitrinabackend.model.entity.Ad;
 import com.sudoers.elvitrinabackend.model.enums.AdStatus;
 import com.sudoers.elvitrinabackend.repository.AdRepository;
 import com.sudoers.elvitrinabackend.service.Ad.AdService;
+import com.sudoers.elvitrinabackend.service.user.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

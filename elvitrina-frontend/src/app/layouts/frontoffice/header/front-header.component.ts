@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TokenService } from 'src/app/core/services/user/TokenService';
@@ -16,6 +16,8 @@ import { CustomOrderService } from 'src/app/core/services/Panier/CustomOrderServ
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { ShoppingCartComponent } from 'src/app/main-components/custom-order/Frontoffice/shopping-cart/shopping-cart.component';
+import { AuthService } from 'src/app/core/services/auth/auth.service';
+import { UserService } from 'src/app/core/services/user/UserService';
 
 
 @Component({
@@ -32,7 +34,7 @@ import { ShoppingCartComponent } from 'src/app/main-components/custom-order/Fron
   templateUrl: './front-header.component.html',
   styleUrls: ['./front-header.component.scss']
 })
-export class FrontHeaderComponent implements OnInit {
+export class FrontHeaderComponent implements OnInit, AfterViewInit {
   firstName = '';
   userId: number | null = null;
   role = '';
@@ -56,7 +58,9 @@ export class FrontHeaderComponent implements OnInit {
     private storeService: StoreService,
     private dialog: MatDialog,
     private productService: ProductService,
-    private orderService: CustomOrderService
+    private orderService: CustomOrderService,
+    private authService: AuthService,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -86,6 +90,19 @@ export class FrontHeaderComponent implements OnInit {
       }
     }
   }
+
+  ngAfterViewInit(): void {
+    // Prevent dropdown from closing when clicking on tabs
+    setTimeout(() => {
+      const tabLinks = document.querySelectorAll('.nav-tabs .nav-link');
+      tabLinks.forEach(link => {
+        link.addEventListener('click', (event) => {
+          event.stopPropagation();
+        });
+      });
+    }, 1000);
+  }
+
   loadOrders(): void {
     this.orderService.getAllOrders().subscribe((data: CustomOrder[]) => {
       this.orders = data;
@@ -162,8 +179,17 @@ export class FrontHeaderComponent implements OnInit {
     }
   }
 
+  readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
+
   getProductImage(product: Product): string {
-    return product.images && product.images.length > 0 ? product.images[0] : 'assets/images/default-product.jpg';
+    if (!product || !product.images || product.images.length === 0) {
+      return 'assets/images/products/no-image.jpg';
+    }
+    const imageUrl = product.images[0];
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    return this.IMAGE_BASE_URL + imageUrl;
   }
 
   wishlistClick(): void {
@@ -174,6 +200,11 @@ export class FrontHeaderComponent implements OnInit {
       console.error('Navigation error:', err);
     });
   }
+
+  goToProductDetail(product: Product): void {
+    this.router.navigate(['/product', product.productId]);
+  }
+
   trackInterest(topic: string): void {
     const existing = localStorage.getItem('interestedIn') || '';
     const keywords = new Set(existing.split(',').map(k => k.trim()).filter(k => k));
@@ -181,5 +212,14 @@ export class FrontHeaderComponent implements OnInit {
     localStorage.setItem('interestedIn', Array.from(keywords).join(', '));
   }
   
+  formatCategoryName(category: string): string {
+    if (!category) return '';
+    // Replace underscores with spaces and convert to title case
+    return category
+      .replace(/_/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+      .join(' ');
+  }
 }
 

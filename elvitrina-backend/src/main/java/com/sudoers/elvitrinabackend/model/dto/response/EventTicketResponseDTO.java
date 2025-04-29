@@ -1,11 +1,13 @@
 package com.sudoers.elvitrinabackend.model.dto.response;
 
+import com.sudoers.elvitrinabackend.model.entity.Seats;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,4 +23,5 @@ public class EventTicketResponseDTO {
     private LocalDateTime validUntil;
     private String qrCodeHash;
     private Boolean isValid;
+    private List<Seats> seats;
 }

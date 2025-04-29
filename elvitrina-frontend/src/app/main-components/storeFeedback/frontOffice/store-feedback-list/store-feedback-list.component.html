@@ -4,7 +4,7 @@
     <h2>{{storeName}} <span class="rating-count">has {{feedbackCount}} reviews</span></h2>
     <div class="overall-rating">
       <div class="stars">
-        <app-star-rating [rating]="averageRating" size="large"></app-star-rating>
+        <app-star-rating [rating]="averageRating" starSize="large" [showRating]="false"></app-star-rating>
       </div>
     </div>
   </div>
@@ -40,13 +40,26 @@
   <div class="reviews-list" *ngIf="!loading && !error && feedbacks.length > 0">
     <div class="review-card" *ngFor="let feedback of feedbacks">
       <div class="review-header">
-        <div class="stars-date">
-          <app-star-rating [rating]="feedback.rating"></app-star-rating>
-          <span class="review-date">{{formatDate(feedback.createdAt || '')}}</span>
+        <div class="reviewer-avatar">
+          <img *ngIf="feedback.userImage" [src]="getUserImageUrl(feedback.userImage)" alt="User profile" (error)="handleImageError($event)">
+          <div *ngIf="!feedback.userImage" class="avatar-placeholder">
+            <i class="fas fa-user-circle"></i>
+          </div>
         </div>
-        <div class="reviewer-info">
-          <span class="reviewer-name">{{feedback.userName || 'Anonymous'}}</span>
-          <span class="feedback-type">{{getFeedbackTypeDisplayName(feedback.storeFeedbackType)}}</span>
+        <div class="reviewer-details">
+          <div class="stars-date">
+            <app-star-rating [rating]="feedback.rating" [showRating]="false"></app-star-rating>
+            <span class="review-date">{{formatDate(feedback.createdAt || '')}}</span>
+          </div>
+          <div class="reviewer-info">
+            <span class="reviewer-name">{{feedback.userName || 'Anonymous'}}</span>
+            <div class="type-badge-container">
+              <span class="feedback-type" [ngClass]="'type-' + feedback.storeFeedbackType">
+                <i class="fas {{getFeedbackTypeIcon(feedback.storeFeedbackType)}}"></i>
+                {{getFeedbackTypeDisplayName(feedback.storeFeedbackType)}}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 

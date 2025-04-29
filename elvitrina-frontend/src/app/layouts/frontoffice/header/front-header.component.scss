@@ -164,6 +164,22 @@ header,
   color: #000;
 }
 
+/* Remove any orange border-bottom */
+.nav-tabs .nav-link:focus,
+.nav-tabs .nav-item.show .nav-link {
+  border-color: transparent;
+  border-bottom: 2px solid #000;
+}
+
+/* Ensure no orange color appears */
+.nav-tabs .nav-link:focus,
+.nav-tabs .nav-link:active,
+.nav-link:focus {
+  border-color: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
 /* Dropdown Content Styles */
 .fw-bold {
   font-weight: 600 !important;

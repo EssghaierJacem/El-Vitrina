@@ -12,11 +12,13 @@ import { MatOptionModule } from '@angular/material/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-app-feedback-dialog',
   templateUrl: './app-feedback-dialog.component.html',
   styleUrls: ['./app-feedback-dialog.component.scss'],
+  standalone: true,
   imports: [
     MatCardModule,
     MatFormFieldModule,
@@ -25,7 +27,8 @@ import { FormsModule } from '@angular/forms';
     MatOptionModule,
     ReactiveFormsModule,
     CommonModule,
-    FormsModule
+    FormsModule,
+    MatButtonModule
   ]
 })
 export class AppFeedbackDialogComponent {
@@ -49,7 +52,8 @@ export class AppFeedbackDialogComponent {
     this.feedbackForm = this.fb.group({
       appFeedbackType: ['', Validators.required],
       comment: ['', [Validators.required, Validators.minLength(10)]],
-      contactEmail: ['', [Validators.email]]
+      contactName: ['', [Validators.required]],
+      contactEmail: ['', [Validators.required, Validators.email]]
     });
   }
 

@@ -122,26 +122,19 @@ export const navItems: NavItem[] = [
   {
     displayName: "Donations",
     iconName: "heart",
-    route: "/dashboard/donations",
-    children: [
-      {
-        displayName: "Campaigns",
-        iconName: "bullhorn",
-        route: "/dashboard/donations/campaigns",
-      },
-    ]
+    route: "/dashboard/donations/campaigns",
   },
   {
     displayName: 'Events',
     iconName: 'calendar-event',
-    route: 'dashboard/events',
-    children: []
+    route: 'dashboard/events/eventback',
+    
   },
 
   {
     navCap: 'RequestPerso',
   },
-  {
+  /*{
     displayName: 'Request',
     iconName: 'point',
     route: '/dashboard/RequestPerso/listrequest',
@@ -150,24 +143,24 @@ export const navItems: NavItem[] = [
     displayName: 'PropsalPerso',
     iconName: 'point',
     route: '/dashboard/RequestPerso/listproposal',
-  },
-
+  },*/
+  {
+    displayName: 'Moderation',
+    iconName: 'shield-check',
+    route: '/dashboard/RequestPerso/moderation',
+  }, 
   {
     displayName: 'Ads',
-    iconName: 'point',
+    iconName: 'ad',
     route: '/dashboard/AdAdmin/admin/ads',
   },
 
   {
     displayName: 'Stats',
-    iconName: 'point',
+    iconName: 'chart-pie',
     route: '/dashboard/RequestPerso/stats',
   }, 
-  {
-    displayName: 'Moderation',
-    iconName: 'point',
-    route: '/dashboard/RequestPerso/moderation',
-  }, 
+
 
 
 
