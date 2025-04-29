@@ -42,6 +42,7 @@ export class ProductEditComponent implements OnInit {
   loading = false;
   productId: number | null = null;
   stores: Store[] = [];
+  uploadedFiles: File[] = [];
   
   categories: ProductCategoryType[] = Object.values(ProductCategoryType);
   statusOptions = Object.values(ProductStatus);
@@ -137,44 +138,50 @@ export class ProductEditComponent implements OnInit {
   onSubmit(): void {
     if (this.productForm.valid && !this.loading && this.productId) {
       this.loading = true;
-      
-      const productData = this.productForm.value;
-      
+  
+      const productData = { ...this.productForm.value };
+  
       // Convert comma-separated image URLs to array
       if (productData.images) {
         productData.images = productData.images.split(',').map((url: string) => url.trim()).filter((url: string) => url);
       } else {
         productData.images = [];
       }
-
-      // Ensure category is a valid ProductCategoryType
+  
+      // Ensure category is valid
       if (!Object.values(ProductCategoryType).includes(productData.category)) {
-        this.snackBar.open('Invalid product category', 'Close', {
-          duration: 5000
-        });
+        this.snackBar.open('Invalid product category', 'Close', { duration: 5000 });
         this.loading = false;
         return;
       }
-
-      this.productService.update(this.productId, productData).subscribe({
+  
+      // FormData to send JSON + uploaded files
+      const formData = new FormData();
+      formData.append('product', new Blob([JSON.stringify(productData)], { type: 'application/json' }));
+  
+      if (this.uploadedFiles.length > 0) {
+        this.uploadedFiles.forEach(file => {
+          formData.append('images', file);
+        });
+      }
+  
+      // 🔥 Call the updated service method
+      this.productService.update(this.productId, formData).subscribe({
         next: (response) => {
           console.log('Product updated successfully:', response);
-          this.snackBar.open('Product updated successfully', 'Close', {
-            duration: 3000
-          });
+          this.snackBar.open('Product updated successfully', 'Close', { duration: 3000 });
           this.router.navigate(['/dashboard/products']);
         },
         error: (error) => {
           console.error('Error updating product:', error);
-          this.snackBar.open(error.message || 'Error updating product', 'Close', {
-            duration: 5000
-          });
+          this.snackBar.open(error.message || 'Error updating product', 'Close', { duration: 5000 });
           this.loading = false;
         },
         complete: () => {
           this.loading = false;
         }
       });
+  
     } else {
       Object.keys(this.productForm.controls).forEach(key => {
         const control = this.productForm.get(key);
@@ -194,5 +201,18 @@ export class ProductEditComponent implements OnInit {
     return category.split('_').map(word => 
       word.charAt(0) + word.slice(1).toLowerCase()
     ).join(' ');
+  }
+
+  getStatusDisplayName(status: string): string {
+    return status.split('_').map(word =>
+      word.charAt(0) + word.slice(1).toLowerCase()
+    ).join(' ');
+  }
+
+  onImagesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.uploadedFiles = Array.from(input.files);
+    }
   }
 }

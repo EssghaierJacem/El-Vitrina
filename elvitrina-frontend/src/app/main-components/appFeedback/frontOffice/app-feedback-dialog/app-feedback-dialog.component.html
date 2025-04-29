@@ -1,0 +1,67 @@
+<div class="feedback-dialog">
+  <div class="dialog-header">
+    <h2>Send a Feedback</h2>
+    <button type="button" class="close-button" (click)="onCancel()">
+      <span>×</span>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()">
+      <!-- Feedback Type -->
+      <div class="form-group">
+        <label for="feedbackType">Feedback Type</label>
+        <div class="select-wrapper">
+          <select id="feedbackType" formControlName="appFeedbackType" class="form-control">
+            <option value="" disabled selected>All Categories</option>
+            <option *ngFor="let option of feedbackTypeOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+        <div class="error-message" *ngIf="feedbackForm.get('appFeedbackType')?.hasError('required') && feedbackForm.get('appFeedbackType')?.touched">
+          Feedback type is required
+        </div>
+      </div>
+
+      <!-- Comment -->
+      <div class="form-group">
+        <label for="comment">Comment</label>
+        <textarea id="comment" formControlName="comment" rows="4" class="form-control" placeholder="what do you think about the app?"></textarea>
+        <div class="error-message" *ngIf="feedbackForm.get('comment')?.hasError('required') && feedbackForm.get('comment')?.touched">
+          Comment is required
+        </div>
+        <div class="error-message" *ngIf="feedbackForm.get('comment')?.hasError('minlength') && feedbackForm.get('comment')?.touched">
+          Comment must be at least 10 characters
+        </div>
+      </div>
+
+      <div class="form-row">
+        <!-- Name Field -->
+        <div class="form-group half-width">
+          <input formControlName="contactName" type="text" class="form-control" placeholder="Your Name *">
+        </div>
+
+        <!-- Contact Email -->
+        <div class="form-group half-width">
+          <input id="email" formControlName="contactEmail" type="email" class="form-control" placeholder="Your Email *">
+          <div class="error-message" *ngIf="feedbackForm.get('contactEmail')?.hasError('email') && feedbackForm.get('contactEmail')?.touched">
+            Please enter a valid email address
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button 
+          type="submit" 
+          [disabled]="feedbackForm.invalid || isSubmitting"
+          class="subscribe-button"
+        >
+          <span *ngIf="isSubmitting">Submitting...</span>
+          <span *ngIf="!isSubmitting">Subscribe</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

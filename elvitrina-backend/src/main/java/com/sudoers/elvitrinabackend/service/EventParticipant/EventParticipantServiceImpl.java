@@ -3,10 +3,7 @@ package com.sudoers.elvitrinabackend.service.EventParticipant;
 import com.sudoers.elvitrinabackend.exception.ResourceNotFoundException;
 import com.sudoers.elvitrinabackend.model.dto.request.EventParticipantRequestDTO;
 import com.sudoers.elvitrinabackend.model.dto.response.EventParticipantResponseDTO;
-import com.sudoers.elvitrinabackend.model.entity.EventParticipant;
-import com.sudoers.elvitrinabackend.model.entity.EventTicket;
-import com.sudoers.elvitrinabackend.model.entity.User;
-import com.sudoers.elvitrinabackend.model.entity.VirtualEvent;
+import com.sudoers.elvitrinabackend.model.entity.*;
 import com.sudoers.elvitrinabackend.model.mapper.EventParticipantMapper;
 import com.sudoers.elvitrinabackend.repository.EventParticipantRepository;
 import com.sudoers.elvitrinabackend.repository.EventTicketRepository;
@@ -81,6 +78,13 @@ public class EventParticipantServiceImpl implements EventParticipantService {
                 .orElseThrow(() -> new ResourceNotFoundException("Event participant not found with id: " + id));
         return eventParticipantMapper.toResponseDTO(participant);
     }
+    @Override
+    public EventParticipantResponseDTO getEventParticipantByUserId(Long userId) {
+        EventParticipant participant = eventParticipantRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event participant not found with userId: " + userId));
+        System.out.println(participant.getId());
+        return eventParticipantMapper.toResponseDTO(participant);
+    }
 
     @Override
     @Transactional
@@ -135,30 +139,47 @@ public class EventParticipantServiceImpl implements EventParticipantService {
     }
 
     @Override
+    @Transactional
     public EventParticipantResponseDTO registerParticipant(EventParticipantRequestDTO requestDTO) {
-        if (eventParticipantRepository.existsByUserIdAndVirtualEventEventId(requestDTO.getUserId(), requestDTO.getEventId())) {
-            throw new IllegalStateException("User is already registered for this event");
+        System.out.println("***********");
+        System.out.println(requestDTO.getSeatIds());
+        // Check if participant already exists
+        if (eventParticipantRepository.existsByUserIdAndVirtualEventEventId(
+                requestDTO.getUserId(), requestDTO.getEventId())) {
+            throw new IllegalStateException("User already registered for this event");
         }
 
+        // Get user and event
         User user = userRepository.findById(requestDTO.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + requestDTO.getUserId()));
         VirtualEvent event = virtualEventRepository.findById(requestDTO.getEventId())
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + requestDTO.getEventId()));
-        EventTicket ticket = requestDTO.getTicketId() != null ? eventTicketRepository.findById(requestDTO.getTicketId())
-                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + requestDTO.getTicketId())) : null;
 
-        EventParticipant participant = eventParticipantMapper.toEntity(requestDTO);
+        // Create and save participant
+        EventParticipant participant = new EventParticipant();
         participant.setUser(user);
         participant.setVirtualEvent(event);
-        participant.setEventTicket(ticket);
-        participant.setRegistrationDate(LocalDateTime.now());
-        participant.setAttended(false); // Default value
+        participant.setAttended(false);
 
         EventParticipant savedParticipant = eventParticipantRepository.save(participant);
-        if (ticket != null) {
-            ticket.setEventParticipant(savedParticipant);
-            eventTicketRepository.save(ticket);
-        }
+
+        // Create and save ticket
+        EventTicket ticket = new EventTicket();
+        ticket.setName(event.getTitle());
+        ticket.setDescription(event.getDescription());
+        ticket.setPrice(event.getTicketPrice() * requestDTO.getTicketCount());
+        ticket.setVirtualEvent(event);
+        ticket.setEventParticipant(savedParticipant);
+        List<Seats> seats = requestDTO.getSeatIds().stream()
+                .map(seatId -> new Seats(null, seatId, ticket))
+                .collect(Collectors.toList());
+        ticket.setSeats(seats);
+        EventTicket savedTicket = eventTicketRepository.save(ticket);
+        System.out.println(savedTicket.getTicketId());
+
+        // Update participant with ticket reference
+        savedParticipant.setEventTicket(savedTicket);
+        eventParticipantRepository.save(savedParticipant);
 
         return eventParticipantMapper.toResponseDTO(savedParticipant);
     }

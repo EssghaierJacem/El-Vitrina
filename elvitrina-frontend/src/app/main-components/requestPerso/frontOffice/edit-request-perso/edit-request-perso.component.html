@@ -1,0 +1,95 @@
+<form [formGroup]="editForm" (ngSubmit)="onSubmitUpdateForm($event)" enctype="multipart/form-data">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Edit Request</mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <!-- Title -->
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Title *</mat-label>
+        <input matInput formControlName="title" required>
+        <mat-error *ngIf="editForm.get('title')?.hasError('required')">
+          Title is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Description *</mat-label>
+        <textarea matInput formControlName="description" rows="4" required></textarea>
+        <mat-error *ngIf="editForm.get('description')?.hasError('required')">
+          Description is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Price Fields -->
+      <div class="price-fields">
+        <mat-form-field appearance="fill">
+          <mat-label>Min Price *</mat-label>
+          <input matInput type="number" formControlName="minPrice" required>
+          <mat-error *ngIf="editForm.get('minPrice')?.hasError('required')">
+            Min price is required
+          </mat-error>
+          <mat-error *ngIf="editForm.get('minPrice')?.hasError('min')">
+            Must be positive
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Max Price *</mat-label>
+          <input matInput type="number" formControlName="maxPrice" required>
+          <mat-error *ngIf="editForm.get('maxPrice')?.hasError('required')">
+            Max price is required
+          </mat-error>
+          <mat-error *ngIf="editForm.get('maxPrice')?.hasError('min')">
+            Must be positive
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="image-upload-container">
+        <input type="file" accept="image/*" (change)="onFileSelected($event)" #fileInput style="display: none;">
+        <button mat-raised-button type="button" (click)="fileInput.click()" color="primary">
+          <mat-icon>upload</mat-icon> Choose Image
+        </button>
+        
+        <div *ngIf="selectedFile || selectedRequest?.image" class="image-preview">
+          <img [src]="previewUrl || getImageUrl(selectedRequest?.image)" alt="Preview" class="preview-image">
+          <button *ngIf="selectedFile" mat-icon-button color="warn" (click)="removeSelectedFile()" matTooltip="Remove image">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        <mat-hint>Current image will be kept if no new image is selected</mat-hint>
+      </div>
+
+      <!-- Delivery Time -->
+      <mat-form-field appearance="fill">
+        <mat-label>Delivery Time *</mat-label>
+        <input matInput type="date" formControlName="deliveryTime" required>
+        <mat-error *ngIf="editForm.get('deliveryTime')?.hasError('required')">
+          Delivery time is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Tags -->
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Tags * (comma separated)</mat-label>
+        <input matInput formControlName="tags" required>
+        <mat-error *ngIf="editForm.get('tags')?.hasError('required')">
+          At least one tag is required
+        </mat-error>
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" type="submit" [disabled]="editForm.invalid">
+        Update Request
+      </button>
+      <button mat-raised-button color="warn" type="button" routerLink="/requestperso/getAllRequestPerso">
+        Cancel
+      </button> 
+    </mat-card-actions>
+  </mat-card>
+</form>

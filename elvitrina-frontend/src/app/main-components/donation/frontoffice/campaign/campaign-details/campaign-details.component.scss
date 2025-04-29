@@ -1,0 +1,252 @@
+@import '../../../../../../assets/scss/variables';
+
+// Campaign Container
+.campaign-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  padding: 2rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+    
+    .green-text {
+      color: #1976d2; // Updated to store's primary blue
+    }
+  }
+
+  .description {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+  }
+
+  .progress-section {
+    margin-bottom: 2rem;
+
+    .amount {
+      color: #1976d2; // Updated to store's primary blue
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background-color: #f5f5f5; // Updated to store's light gray
+      border-radius: 5px;
+      overflow: hidden;
+
+      .progress {
+        height: 100%;
+        background-color: #1976d2; // Updated to store's primary blue
+        border-radius: 5px;
+        transition: width 0.3s ease;
+      }
+    }
+  }
+
+  .stats-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    gap: 1rem;
+
+    .stat-box {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      flex: 1;
+
+      .stat-number {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        color: #333;
+      }
+
+      .stat-label {
+        color: #777;
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-end;
+
+    .contribute-btn {
+      background-color: #1976d2; // Updated to store's primary blue
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #1565c0; // Darker blue for hover
+      }
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+
+    .more-info {
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0.75rem 1.5rem;
+
+      &:hover {
+        color: #1976d2; // Updated to store's primary blue
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Coupon Styles
+.coupon {
+  width: 400px;
+  height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 2rem auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  display: flex;
+  align-items: stretch;
+  position: relative;
+  text-transform: uppercase;
+  background-color: #fff;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  &::before {
+    left: 0;
+    background-image: radial-gradient(circle at 0 50%, transparent 25px, #ffd700 26px); // Updated to store's gold
+  }
+
+  &::after {
+    right: 0;
+    background-image: radial-gradient(circle at 100% 50%, transparent 25px, #ffd700 26px); // Updated to store's gold
+  }
+
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .left {
+    width: 20%;
+    border-right: 2px dashed rgba(0, 0, 0, 0.13);
+    background-color: #f5f5f5; // Updated to store's light gray
+
+    div {
+      transform: rotate(-90deg);
+      white-space: nowrap;
+      font-weight: 600;
+      color: #333;
+    }
+  }
+
+  .center {
+    flex-grow: 1;
+    text-align: center;
+    background-color: #fff;
+
+    h2 {
+      background: #1976d2; // Updated to store's primary blue
+      color: #ffd700; // Updated to store's gold
+      padding: 0.5rem 1rem;
+      font-size: 1.8rem;
+      white-space: nowrap;
+    }
+
+    h3 {
+      font-size: 1.8rem;
+      color: #333;
+    }
+
+    small {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: #777;
+    }
+  }
+
+  .right {
+    width: 120px;
+    background-image: radial-gradient(circle at 100% 50%, transparent 25px, #fff 26px);
+
+    div {
+      font-family: 'Libre Barcode 128 Text', cursive;
+      font-size: 2.5rem;
+      font-weight: 400;
+      transform: rotate(-90deg);
+      color: #333;
+    }
+  }
+
+  @media screen and (max-width: 500px) {
+    display: grid;
+    grid-template-columns: 1fr;
+    height: auto;
+    padding: 1rem;
+
+    .left {
+      width: 100%;
+      border-right: none;
+      border-bottom: 2px dashed rgba(0, 0, 0, 0.13);
+
+      div {
+        transform: rotate(0deg);
+      }
+    }
+
+    .right {
+      width: 100%;
+      background-image: none;
+
+      div {
+        transform: rotate(0deg);
+      }
+    }
+  }
+}

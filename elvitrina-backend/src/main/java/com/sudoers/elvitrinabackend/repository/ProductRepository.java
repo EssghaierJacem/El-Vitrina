@@ -20,8 +20,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByStockQuantityLessThan(int threshold);
 
     // Statistics queries
-    @Query("SELECT p.category, COUNT(p) FROM Product p GROUP BY p.category")
-    Map<ProductCategoryType, Long> countByCategoryGroup();
+    @Query("SELECT new map(p.category as category, COUNT(p) as count) FROM Product p GROUP BY p.category")
+    List<Map<String, Object>> countByCategoryGroup();
 
     Long countByStatus(ProductStatus status);
     Long countByHasDiscountTrue();
@@ -36,4 +36,21 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     default Long countActiveProducts() {
         return countByStatus(ProductStatus.ACTIVE);
     }
+
+    // For tag search
+    List<Product> findByTagsContaining(String tag);
+
+
+
+    List<Product> findTop4ByOrderByCreatedAtDesc();
+
+    @Query("""
+        SELECT FUNCTION('MONTH', p.createdAt) AS month, COUNT(p)
+        FROM Product p
+        WHERE p.createdAt IS NOT NULL
+        GROUP BY FUNCTION('MONTH', p.createdAt)
+        ORDER BY FUNCTION('MONTH', p.createdAt)
+    """)
+    List<Object[]> countProductsAddedPerMonth();
+
 }

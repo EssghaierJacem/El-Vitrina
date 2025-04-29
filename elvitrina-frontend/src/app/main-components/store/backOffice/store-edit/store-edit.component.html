@@ -3,7 +3,7 @@
     <!-- Header with Back Button -->
     <div class="d-flex justify-content-between align-items-center m-b-16">
       <div class="d-flex align-items-center">
-        <button mat-icon-button color="primary" [routerLink]="['../details', storeId]">
+        <button mat-icon-button color="primary" [routerLink]="['/dashboard/stores']">
           <mat-icon>arrow_back</mat-icon>
         </button>
         <mat-card-title>Edit Store</mat-card-title>
@@ -34,38 +34,53 @@
       </mat-form-field>
 
       <!-- Category -->
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Category</mat-label>
-        <mat-select formControlName="category" required>
-          @for (category of categoryOptions; track category) {
-            <mat-option [value]="category">{{ category }}</mat-option>
-          }
-        </mat-select>
-        <mat-error *ngIf="storeForm.get('category')?.hasError('required')">
+      <div class="form-group mb-3">
+        <label for="categorySelect" class="form-label">Category</label>
+        <select id="categorySelect" class="form-select form-control" formControlName="category">
+          <option value="" disabled>Select a category</option>
+          <option *ngFor="let option of categoryOptions" [value]="option.value">
+            {{option.displayName}}
+          </option>
+        </select>
+        <div class="invalid-feedback" *ngIf="storeForm.get('category')?.invalid && storeForm.get('category')?.touched">
           Category is required
-        </mat-error>
-      </mat-form-field>
+        </div>
+      </div>
 
-      <!-- Address -->
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Address</mat-label>
-        <input matInput formControlName="address" required>
-        <mat-error *ngIf="storeForm.get('address')?.hasError('required')">
-          Address is required
-        </mat-error>
-      </mat-form-field>
+      <!-- Map Location -->
+      <div class="map-container m-b-16">
+        <label class="form-label">Store Location</label>
+        <div id="map" style="height: 400px; width: 100%; border-radius: 4px;"></div>
+        <div class="coordinates-display m-t-8">
+          <small>
+            Store Address: {{storeForm.get('address')?.value}}
+          </small>
+        </div>
+      </div>
 
-      <!-- Image URL -->
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Image URL</mat-label>
-        <input matInput formControlName="image">
-      </mat-form-field>
+      <!-- Store Image -->
+      <div class="form-group">
+        <label>Store Image</label>
+        <input type="file" (change)="onFileSelected($event, 'image')">
+        <img *ngIf="isFileSelected('image'); else showExistingImage" 
+            [src]="imagePreview" 
+            class="preview-image">
+        <ng-template #showExistingImage>
+          <img *ngIf="existingImageUrl" [src]="existingImageUrl" class="preview-image">
+        </ng-template>
+      </div>
 
-      <!-- Cover Image URL -->
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Cover Image URL</mat-label>
-        <input matInput formControlName="coverImage">
-      </mat-form-field>
+      <!-- Cover Image -->
+      <div class="form-group">
+        <label>Cover Image</label>
+        <input type="file" (change)="onFileSelected($event, 'coverImage')">
+        <img *ngIf="isFileSelected('coverImage'); else showExistingCover" 
+            [src]="coverImagePreview" 
+            class="preview-image">
+        <ng-template #showExistingCover>
+          <img *ngIf="existingCoverImageUrl" [src]="existingCoverImageUrl" class="preview-image">
+        </ng-template>
+      </div>
 
       <!-- Status -->
       <div class="m-b-16">

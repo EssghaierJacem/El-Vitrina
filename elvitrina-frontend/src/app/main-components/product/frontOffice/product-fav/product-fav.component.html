@@ -1,0 +1,66 @@
+<div class="favorites-container">
+    <h2>My Favorite Products</h2>
+    
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <mat-spinner diameter="40" color="primary"></mat-spinner>
+      <p>LOADING YOUR FAVORITES</p>
+    </div>
+    
+    <!-- Products Grid -->
+    <div class="products-grid" *ngIf="!isLoading">
+      <ng-container *ngIf="favoriteProducts$ | async as products">
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="products.length === 0">
+          <mat-icon>favorite_border</mat-icon>
+          <h3>No Favorites Yet</h3>
+          <p>Browse our collection and add products to your wishlist</p>
+          <button mat-raised-button color="primary" [routerLink]="['/products']">
+            Browse Products
+          </button>
+        </div>
+        
+        <!-- Product Cards -->
+        <mat-card class="product-card" *ngFor="let product of products">
+          <!-- Product Image -->
+          <div class="product-image" (click)="viewProductDetails(product.productId)">
+            <img [src]="getProductImageUrl(product)" 
+                 [alt]="product.productName"
+                 (error)="handleImageError($event)">
+          </div>
+          
+          <!-- Product Details -->
+          <mat-card-content>
+            <h3 (click)="viewProductDetails(product.productId)" class="product-name">
+              {{ product.productName }}
+            </h3>
+            
+            <!-- Price -->
+            <div class="product-price" [class.has-discount]="product.hasDiscount">
+              <span class="current-price">{{ getFinalPrice(product) | currency:'TND' }}</span>
+              <ng-container *ngIf="product.hasDiscount">
+                <span class="original-price" *ngIf="getOriginalPrice(product)">
+                  {{ getOriginalPrice(product) | currency:'TND' }}
+                </span>
+                <span class="discount-badge" *ngIf="getDiscountPercentage(product) > 0">
+                  -{{ getDiscountPercentage(product) }}%
+                </span>
+              </ng-container>
+            </div>
+          </mat-card-content>
+          
+          <!-- Actions -->
+          <mat-card-actions>
+            <button mat-button color="warn" (click)="onRemoveFavorite(product.productId)">
+              <mat-icon>favorite_border</mat-icon>
+              Remove
+            </button>
+            <button mat-button color="primary" (click)="viewProductDetails(product.productId)">
+              <mat-icon>visibility</mat-icon>
+              View Details
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </ng-container>
+    </div>
+  </div>

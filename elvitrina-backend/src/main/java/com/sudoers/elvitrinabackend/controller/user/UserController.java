@@ -3,9 +3,17 @@ package com.sudoers.elvitrinabackend.controller.user;
 import com.sudoers.elvitrinabackend.model.dto.UserDTO;
 import com.sudoers.elvitrinabackend.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.Resource;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -61,6 +69,38 @@ public class UserController {
         return userService.updateUser(id, userDTO);
     }
 
+    @PostMapping("/{id}/upload-image")
+    public ResponseEntity<UserDTO> uploadImage(@PathVariable Long id,
+                                               @RequestParam("image") MultipartFile imageFile) {
+        UserDTO updatedUser = userService.uploadUserImage(id, imageFile);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @GetMapping("/users/images/{filename:.+}")
+    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+        try {
+            Path filePath = Paths.get("uploads/user-images").resolve(filename);
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (!resource.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            String contentType = Files.probeContentType(filePath);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
@@ -76,6 +116,4 @@ public class UserController {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
-
-
 }

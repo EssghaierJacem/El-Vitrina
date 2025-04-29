@@ -10,12 +10,21 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -29,14 +38,12 @@ public class VirtualEventController {
         this.virtualEventService = virtualEventService;
     }
 
-    @PostMapping
-    @Operation(summary = "Create a new virtual event", description = "Creates a virtual event with the provided details.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Event created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid request data")
-    })
-    public ResponseEntity<VirtualEventResponseDTO> createEvent(@Valid @RequestBody VirtualEventRequestDTO requestDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(virtualEventService.createEvent(requestDTO));
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<VirtualEventResponseDTO> createEvent(
+            @RequestPart("event") VirtualEventRequestDTO requestDTO,
+            @RequestPart("eventImage") MultipartFile eventImage) throws IOException {
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(virtualEventService.createEvent(requestDTO, eventImage));
     }
 
     @GetMapping
@@ -60,7 +67,10 @@ public class VirtualEventController {
     public ResponseEntity<VirtualEventResponseDTO> getEventById(@PathVariable Long id) {
         return ResponseEntity.ok(virtualEventService.getEventById(id));
     }
-
+    @GetMapping("/store/{id}")
+    public ResponseEntity<List<VirtualEventResponseDTO>> getEventByStoreId(@PathVariable Long id) {
+        return ResponseEntity.ok(virtualEventService.getEventByStoreId(id));
+    }
     @PutMapping("/{id}")
     @Operation(summary = "Update an event", description = "Updates an existing virtual event.")
     @ApiResponses({
@@ -112,6 +122,35 @@ public class VirtualEventController {
     @Operation(summary = "Check event capacity", description = "Checks if the event has available capacity.")
     public ResponseEntity<Boolean> checkEventCapacity(@PathVariable Long id) {
         return ResponseEntity.ok(virtualEventService.checkEventCapacity(id));
+    }
+    @GetMapping("/images/{filename:.+}")
+    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+        System.out.println("here");
+        try {
+            Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "event");
+            Path filePath = uploadDir.resolve(filename);
+            System.out.println("Looking for file: " + filePath.toString());
+            System.out.println("File exists: " + Files.exists(filePath));
+
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (!resource.exists() || !resource.isReadable()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            String contentType = Files.probeContentType(filePath);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+        } catch (MalformedURLException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PatchMapping("/{id}/stream/start")

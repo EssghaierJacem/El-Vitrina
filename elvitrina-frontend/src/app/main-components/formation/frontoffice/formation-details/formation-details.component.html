@@ -1,0 +1,92 @@
+<div class="formation-details-container" *ngIf="formation">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Explore Formation</h1>
+    <p class="subtitle">Deepen your skills with our curated course</p>
+  </div>
+
+  <!-- Back Button -->
+  <div class="back-button">
+    <button mat-stroked-button color="primary" [routerLink]="['/formation']">
+      <mat-icon>arrow_back</mat-icon> Back to Formations
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="d-flex justify-content-center my-4">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <!-- Formation Details Card -->
+  <mat-card class="formation-details-card" *ngIf="!isLoading">
+    <img
+      class="card-image"
+      [src]="getCategoryImage(formation.formationCategory)"
+      alt="Formation Category Image"
+    />
+
+    <mat-card-content class="content">
+      <h2 class="formation-title">{{ formation.courseTitle }}</h2>
+      <span class="category-chip">{{ formation.formationCategory }}</span>
+
+      <p class="description my-3">{{ formation.description }}</p>
+
+      <div class="info-grid">
+        <div><strong>Duration:</strong> {{ formation.duration }}h</div>
+        <div><strong>Price:</strong> ${{ formation.price }}</div>
+        <div><strong>Language:</strong> {{ formation.language }}</div>
+        <div><strong>Level:</strong> {{ formation.level }}</div>
+      </div>
+
+      <div class="enroll-btn">
+          <button mat-raised-button 
+                  [color]="isAlreadyEnrolled() ? 'warn' : 'primary'" 
+                  (click)="enroll()">
+            <mat-icon>{{ isAlreadyEnrolled() ? 'cancel' : 'school' }}</mat-icon>
+            {{ isAlreadyEnrolled() ? 'Unenroll' : 'Enroll Now' }}
+          </button>
+      </div>
+    </mat-card-content>
+    
+    <!-- Section des formations en cours -->
+    <div class="enrolled-section" *ngIf="!isLoading">
+      <div class="section-header">
+        <h2>Your Learning Journey</h2>
+        <p *ngIf="enrolledFormations.length > 0">Continue your progress with these courses</p>
+      </div>
+  
+      <div *ngIf="enrolledFormations.length > 0; else emptyEnrolledList">
+        <div class="compact-cards-container">
+          <div class="compact-card" *ngFor="let enrolledFormation of enrolledFormations">
+            <div class="card-header">
+              <img [src]="getCategoryImage(enrolledFormation.formationCategory)" 
+                   alt="Category" class="category-icon">
+              <div class="title-wrapper">
+                <h3 class="title">{{ enrolledFormation.courseTitle }}</h3>
+                <div class="meta-info">
+                  <span class="level-badge">{{ enrolledFormation.level }}</span>
+                  <span class="duration">
+                    <mat-icon>schedule</mat-icon>
+                    {{ enrolledFormation.duration }}h
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+        
+          </div>
+        </div>
+      </div>
+  
+      <ng-template #emptyEnrolledList>
+        <div class="empty-state">
+          <mat-icon class="empty-icon">school</mat-icon>
+          <h3>No enrolled courses yet</h3>
+          <p>Start your learning journey by enrolling in courses</p>
+          <button mat-raised-button color="primary" [routerLink]="['/formation']">
+            Browse Courses
+          </button>
+        </div>
+      </ng-template>
+    </div>

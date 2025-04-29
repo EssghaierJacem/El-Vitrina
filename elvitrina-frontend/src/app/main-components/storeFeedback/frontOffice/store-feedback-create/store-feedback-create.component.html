@@ -1,1 +1,85 @@
-<p>store-feedback-create works!</p>
+<!-- HTML -->
+<div class="sf-feedback-container">
+  <div class="sf-feedback-card">
+    <div class="sf-feedback-header">
+      <i class="fas fa-comment-alt"></i>
+      <h3>Write a Review</h3>
+    </div>
+    
+    <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" class="sf-feedback-form">
+      <!-- Review Type -->
+      <div class="sf-form-group">
+        <label for="reviewType" class="sf-form-label">Review Type</label>
+        <div class="sf-select-wrapper">
+          <select id="reviewType" 
+                  class="sf-form-select" 
+                  formControlName="storeFeedbackType">
+            <option value="" disabled>Select a type</option>
+            <option value="PRODUCT_QUALITY">Product Quality</option>
+            <option value="DELIVERY">Shipping & Delivery</option>
+            <option value="CUSTOMER_SERVICE">Customer Service</option>
+            <option value="PRICING">Pricing & Value</option>
+            <option value="PACKAGING">Packaging & Presentation</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Rating Bar - Using CSS-only stars -->
+      <div class="sf-form-group">
+        <label class="sf-form-label">Your Rating</label>
+        <div class="sf-star-rating">
+          <input type="radio" id="star5" name="rating" value="5" (change)="setRating(5)" [checked]="feedbackForm.get('rating')?.value === 5">
+          <label for="star5" title="5 stars"></label>
+          
+          <input type="radio" id="star4" name="rating" value="4" (change)="setRating(4)" [checked]="feedbackForm.get('rating')?.value === 4">
+          <label for="star4" title="4 stars"></label>
+          
+          <input type="radio" id="star3" name="rating" value="3" (change)="setRating(3)" [checked]="feedbackForm.get('rating')?.value === 3">
+          <label for="star3" title="3 stars"></label>
+          
+          <input type="radio" id="star2" name="rating" value="2" (change)="setRating(2)" [checked]="feedbackForm.get('rating')?.value === 2">
+          <label for="star2" title="2 stars"></label>
+          
+          <input type="radio" id="star1" name="rating" value="1" (change)="setRating(1)" [checked]="feedbackForm.get('rating')?.value === 1">
+          <label for="star1" title="1 star"></label>
+        </div>
+        <div class="sf-rating-label">
+          {{ getRatingText(feedbackForm.get('rating')?.value || 0) }}
+        </div>
+      </div>
+      
+      <!-- Comment Text Area -->
+      <div class="sf-form-group">
+          <textarea 
+          class="sf-form-textarea"
+            formControlName="comment" 
+            placeholder="Share your experience with this store..."
+            rows="3"
+            [maxlength]="500">
+          </textarea>
+        <div class="sf-char-count">
+            {{ getRemainingCharacters() }} characters remaining
+        </div>
+      </div>
+      
+      <!-- Footer Row -->
+      <div class="sf-form-group sf-recommendation">
+        <label class="sf-checkbox-container">
+          <input type="checkbox" formControlName="wouldRecommend">
+          <span class="sf-checkbox-label">I recommend this store</span>
+        </label>
+      </div>
+      
+      <!-- Form Footer -->
+      <div class="sf-form-footer">
+          <button 
+            type="submit"
+            [disabled]="feedbackForm.invalid || isSubmitting"
+          class="sf-submit-button">
+          <span *ngIf="isSubmitting" class="sf-spinner"></span>
+            <span *ngIf="!isSubmitting">Post Review</span>
+          </button>
+      </div>
+    </form>
+  </div>
+</div>

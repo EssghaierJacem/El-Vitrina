@@ -2,6 +2,7 @@ package com.sudoers.elvitrinabackend.controller.EventTicket;
 
 import com.sudoers.elvitrinabackend.model.dto.request.EventTicketRequestDTO;
 import com.sudoers.elvitrinabackend.model.dto.response.EventTicketResponseDTO;
+import com.sudoers.elvitrinabackend.model.entity.EventTicket;
 import com.sudoers.elvitrinabackend.service.EventTicket.EventTicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -62,9 +63,17 @@ public class EventTicketController {
     @GetMapping("/event/{eventId}")
     public ResponseEntity<List<EventTicketResponseDTO>> getTicketsByEventId(@PathVariable Long eventId) {
         List<EventTicketResponseDTO> tickets = eventTicketService.getTicketsByEventId(eventId);
+        System.out.println(tickets.isEmpty());
         return ResponseEntity.ok(tickets);
     }
-
+    @GetMapping("/with-seats")
+    public ResponseEntity<List<EventTicket>> getTicketsWithSeats(
+            @RequestParam Long userId,
+            @RequestParam Long eventId) {
+        List<EventTicket> ticketsWithSeats = eventTicketService.getTicketsWithSeats(userId, eventId);
+        System.out.println(ticketsWithSeats.isEmpty());
+        return ResponseEntity.ok(ticketsWithSeats);
+    }
     @PostMapping("/{ticketId}/qrcode")
     public ResponseEntity<EventTicketResponseDTO> generateQRCodeForTicket(
             @PathVariable Long ticketId) {
@@ -77,12 +86,12 @@ public class EventTicketController {
         return ResponseEntity.ok(eventTicketService.validateTicket(ticketId));
     }
 
-    @PostMapping("/multi-session")
+ /*   @PostMapping("/multi-session")
     public ResponseEntity<List<EventTicketResponseDTO>> issueMultiSessionTickets(
             @RequestBody EventTicketRequestDTO requestDTO,
             @RequestParam(defaultValue = "1") int quantity) {
         return new ResponseEntity<>(eventTicketService.issueMultiSessionTickets(requestDTO, quantity), HttpStatus.CREATED);
-    }
+    }*/
 
     @PatchMapping("/{ticketId}/early-bird")
     public ResponseEntity<EventTicketResponseDTO> applyEarlyBirdPricing(

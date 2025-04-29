@@ -1,0 +1,243 @@
+$primary: #1976d2;
+$background: #f5f5f5;
+$text-primary: #333;
+$text-secondary: #666;
+$success: #38a169;
+$error: #f44336;
+$accent: #ff4081;
+
+:host {
+  display: block;
+  font-family: 'Roboto', sans-serif;
+}
+
+.event-details-container {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 16px;
+}
+
+.event-overview {
+  margin-bottom: 32px;
+  .overview-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 24px;
+  }
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: $text-primary;
+  margin: 0 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .calendar-subtitle {
+    font-size: 0.9rem;
+    color: $text-secondary;
+    font-weight: 400;
+  }
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  
+  .save-button, .ai-button {
+    background: linear-gradient(90deg, $primary 0%, lighten($primary, 20%) 100%);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    &:hover:not([disabled]) {
+      background: linear-gradient(90deg, darken($primary, 10%) 0%, $primary 100%);
+      transform: translateY(-2px);
+    }
+    
+    &[disabled] {
+      opacity: 0.7;
+    }
+    
+    .button-spinner {
+      margin-right: 8px;
+    }
+  }
+  
+  .ai-button {
+    background: linear-gradient(90deg, $accent 0%, lighten($accent, 20%) 100%);
+    
+    &:hover:not([disabled]) {
+      background: linear-gradient(90deg, darken($accent, 10%) 0%, $accent 100%);
+    }
+  }
+}
+
+.image-actions {
+  margin: 16px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  
+  .image-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    .button-spinner {
+      margin-right: 8px;
+      width: 20px !important;
+      height: 20px !important;
+    }
+  }
+}
+
+.calendar-section, .sessions-section {
+  margin-bottom: 32px;
+  .calendar-card, mat-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 16px;
+    min-height: 400px;
+  }
+}
+
+.loading-container, .loading-calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  background: $background;
+  border-radius: 8px;
+  color: $text-secondary;
+  font-size: 1rem;
+  gap: 16px;
+}
+
+.loading-calendar {
+  min-height: 100px;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.sessions-list {
+  .session-item {
+    height: auto !important;
+    margin: 8px 0;
+    padding: 8px 0;
+  }
+  .session-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .session-title {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    color: $text-primary;
+   
+    .session-icon {
+      margin-right: 8px;
+      color: $primary;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+  .session-time {
+    color: $text-secondary;
+    font-size: 0.85rem;
+    margin-top: 4px;
+  }
+  mat-divider {
+    margin: 8px 0;
+  }
+}
+
+/* AI Dialog Styles */
+.ai-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.ai-dialog {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+}
+
+.ai-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ai-dialog-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.ai-dialog-content {
+  padding: 24px;
+}
+
+.ai-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 24px;
+  gap: 8px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.full-width {
+  width: 100%;
+}

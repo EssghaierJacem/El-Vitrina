@@ -1,0 +1,199 @@
+<form (ngSubmit)="onSubmit()" #adForm="ngForm" class="ad-form">
+  <!-- Title -->
+  <div class="form-group">
+    <label for="title">Ad Title*</label>
+    <input 
+      type="text" 
+      id="title" 
+      [(ngModel)]="ad.title" 
+      name="title" 
+      required
+      minlength="5"
+      maxlength="100"
+      #title="ngModel"
+    >
+    <div *ngIf="title.invalid && (title.dirty || title.touched)" class="error">
+      <div *ngIf="title.errors?.['required']">Title is required</div>
+      <div *ngIf="title.errors?.['minlength']">Minimum 5 characters</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="form-group">
+    <label for="content">Description</label>
+    <textarea 
+      id="content" 
+      [(ngModel)]="ad.content" 
+      name="content" 
+      rows="3"
+    ></textarea>
+  </div>
+
+  <!-- Image URL -->
+  <div class="form-group">
+    <label for="imageUrl">Image URL</label>
+    <input 
+      type="url" 
+      id="imageUrl" 
+      [(ngModel)]="ad.imageUrl" 
+      name="imageUrl"
+      #imageUrl="ngModel"
+      pattern="https?://.+"
+    >
+    <small class="hint">Leave blank for text-only ads</small>
+    <div *ngIf="imageUrl.invalid && (imageUrl.dirty || imageUrl.touched)" class="error">
+      <div *ngIf="imageUrl.errors?.['pattern']">Must start with http:// or https://</div>
+    </div>
+  </div>
+
+  <!-- Target URL -->
+  <div class="form-group">
+    <label for="targetUrl">Destination URL*</label>
+    <input 
+      type="url" 
+      id="targetUrl" 
+      [(ngModel)]="ad.targetUrl" 
+      name="targetUrl" 
+      required
+      #targetUrl="ngModel"
+      pattern="https?://.+"
+    >
+    <div *ngIf="targetUrl.invalid && (targetUrl.dirty || targetUrl.touched)" class="error">
+      <div *ngIf="targetUrl.errors?.['required']">URL is required</div>
+      <div *ngIf="targetUrl.errors?.['pattern']">Must start with http:// or https://</div>
+    </div>
+  </div>
+
+  <!-- Advertiser Email -->
+  <div class="form-group">
+    <label for="advertiserEmail">Your Email*</label>
+    <input 
+      type="email" 
+      id="advertiserEmail" 
+      [(ngModel)]="ad.advertiserEmail" 
+      name="advertiserEmail" 
+      required
+      email
+      #advertiserEmail="ngModel"
+    >
+    <div *ngIf="advertiserEmail.invalid && (advertiserEmail.dirty || advertiserEmail.touched)" class="error">
+      <div *ngIf="advertiserEmail.errors?.['required']">Email is required</div>
+      <div *ngIf="advertiserEmail.errors?.['email']">Invalid email format</div>
+    </div>
+  </div>
+
+  <!-- Ad Type -->
+  <div class="form-group">
+    <label for="displayType">Ad Type*</label>
+    <select 
+      id="displayType" 
+      [(ngModel)]="ad.displayType" 
+      name="displayType" 
+      required
+      #displayType="ngModel"
+      (change)="onDisplayTypeChange()"
+    >
+      <option value="BANNER">Banner Ad</option>
+      <option value="POPUP">Popup Ad</option>
+    </select>
+  </div>
+
+  <!-- Popup Display Duration -->
+  <div class="form-group" *ngIf="ad.displayType === 'POPUP'">
+    <label for="displayDuration">Display Duration (seconds)</label>
+    <input 
+      type="number" 
+      id="displayDuration" 
+      [(ngModel)]="ad.displayDuration" 
+      name="displayDuration"
+      min="5"
+      max="60"
+    >
+    <small class="hint">5 to 60 seconds</small>
+  </div>
+
+  <!-- Position & Dimensions for Banner -->
+  <div class="form-group" *ngIf="ad.displayType === 'BANNER'">
+    <label for="position">Position*</label>
+    <select 
+      id="position" 
+      [(ngModel)]="ad.position" 
+      name="position" 
+      [required]="ad.displayType === 'BANNER'"
+      #position="ngModel"
+    >
+      <option value="top">Top Banner</option>
+      <option value="left">Sidebar Left</option>
+      <option value="right">Sidebar Right</option>
+      <option value="bottom">Footer</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="width">Width (px)</label>
+    <input 
+      type="number" 
+      id="width" 
+      [(ngModel)]="ad.width" 
+      name="width" 
+      min="100"
+      max="1200"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="height">Height (px)</label>
+    <input 
+      type="number" 
+      id="height" 
+      [(ngModel)]="ad.height" 
+      name="height" 
+      min="50"
+      max="800"
+    >
+  </div>
+
+  <!-- Start and End Dates -->
+  <div class="form-row">
+    <div class="form-group">
+      <label for="startDate">Start Date</label>
+      <input 
+        type="datetime-local" 
+        id="startDate" 
+        [(ngModel)]="ad.startDate" 
+        name="startDate"
+        #startDate="ngModel"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="endDate">End Date</label>
+      <input 
+        type="datetime-local" 
+        id="endDate" 
+        [(ngModel)]="ad.endDate" 
+        name="endDate"
+        #endDate="ngModel"
+      />
+    </div>
+  </div>
+
+  <!-- Submit + Cancel -->
+  <div class="button-group">
+    <button 
+      type="submit" 
+      [disabled]="!adForm.valid" 
+      class="submit-btn"
+    >
+      Submit Ad
+    </button>
+
+    <button 
+      type="button" 
+      class="cancel-btn" 
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+  </div>
+</form>

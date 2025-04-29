@@ -1,0 +1,22 @@
+<!-- Message d'erreur -->
+<div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+<!-- Section des recommandations de produits -->
+<div *ngIf="recommendedProducts.length > 0; else noResults">
+  <h2 class="recommendation-title">
+    Here are the products that suit you the most based on your personality
+  </h2>
+
+  <div *ngFor="let product of recommendedProducts" class="card">
+
+    <h3>{{ product.name }}</h3>
+    <p>Description: {{ product.description }}</p>
+    <p>Price :{{ product.price }}</p>
+    <p><strong>Score:</strong> <span [attr.data-score]="product.score">{{ product.score }}</span></p>
+  </div>
+</div>
+
+<!-- Message quand aucun résultat n'est disponible -->
+<ng-template #noResults>
+  <p>No recommendations at the moment.</p>
+</ng-template>

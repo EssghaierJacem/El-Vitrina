@@ -1,0 +1,25 @@
+<div class="dialog-container">
+    <h2 mat-dialog-title>Join {{ data.event.title }}</h2>
+    <mat-dialog-content>
+      <p>Available tickets: {{ maxTickets }}</p>
+      <div class="ticket-control">
+        <button mat-icon-button (click)="decrement()" [disabled]="(ticketCount.value ?? 0) <= 1">
+          <mat-icon>remove</mat-icon>
+        </button>
+        <mat-form-field appearance="outline">
+          <mat-label>Number of Tickets</mat-label>
+          <input matInput type="number" [formControl]="ticketCount" min="1" [max]="maxTickets">
+          <mat-error *ngIf="ticketCount.hasError('required')">Ticket count is required</mat-error>
+          <mat-error *ngIf="ticketCount.hasError('min')">Minimum 1 ticket</mat-error>
+          <mat-error *ngIf="ticketCount.hasError('max')">Maximum {{ maxTickets }} tickets</mat-error>
+        </mat-form-field>
+        <button mat-icon-button (click)="increment()" [disabled]="(ticketCount.value ?? 0) >= maxTickets">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="onCancel()">Cancel</button>
+      <button mat-raised-button color="primary" (click)="onJoin()" [disabled]="ticketCount.invalid">Join</button>
+    </mat-dialog-actions>
+  </div>

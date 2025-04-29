@@ -1,8 +1,7 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation, Renderer2, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';  // Import DOCUMENT to access the DOM
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { CoreService } from 'src/app/services/core.service';
 import { FrontHeaderComponent } from './header/front-header.component';
 import { FrontTopstripComponent } from './top-strip/front-topstrip.component';
@@ -14,7 +13,10 @@ import { SidebarComponent } from '../full/sidebar/sidebar.component';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { FooterComponent } from './footer/footer.component';
-
+import { AdService } from 'src/app/core/services/Ad/ad.service';
+import { AdDisplayService } from 'src/app/core/services/Ad/AdDisplay.service';
+import { NavigationEnd, Router } from '@angular/router';
+import { AdDisplayComponent } from "../../main-components/Ad/frontOffice/ad-display/ad-display.component";
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
 
@@ -31,8 +33,10 @@ const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
     NgScrollbarModule,
     TablerIconsModule,
     FooterComponent,
- ],
+    AdDisplayComponent
+],
   templateUrl: './front.component.html',
+  styleUrls: ['./style.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class FrontComponent implements OnInit {
@@ -47,7 +51,9 @@ export class FrontComponent implements OnInit {
     private router: Router,
     private breakpointObserver: BreakpointObserver,
     private renderer: Renderer2,  // Inject Renderer2
-    @Inject(DOCUMENT) private document: Document  // Inject DOCUMENT to access the DOM
+    @Inject(DOCUMENT) private document: Document,  // Inject DOCUMENT to access the DOM
+    private adService: AdService,
+    private adDisplay: AdDisplayService
   ) {
     this.layoutChangesSubscription = this.breakpointObserver
       .observe([MOBILE_VIEW, TABLET_VIEW])
@@ -59,8 +65,24 @@ export class FrontComponent implements OnInit {
     this.addExternalFiles();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  
 
+  }
+ /* private showInterstitialOnNavigation() {
+    this.adService.getActiveAds().subscribe(ads => {
+      const interstitial = ads.find(ad => ad.displayType === 'INTERSTITIAL');
+      if (interstitial) {
+        this.adDisplay.showInterstitialAd(interstitial);
+      }
+    });
+  }*/
+  /*loadAds() {
+    this.adService.getActiveAds().subscribe(ads => {
+      this.adDisplay.showAds(ads);
+    });
+  }
+    */
   ngOnDestroy() {
     this.layoutChangesSubscription.unsubscribe();
   }

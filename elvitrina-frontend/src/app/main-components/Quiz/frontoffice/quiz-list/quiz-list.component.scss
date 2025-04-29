@@ -1,0 +1,184 @@
+/* Style général */
+.quiz-home, .quiz-list-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f0f4ff 0%, #d9e3ff 100%);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 42, 102, 0.2);
+}
+
+/* Carte de quiz */
+.quiz-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 42, 102, 0.15);
+  text-align: center;
+}
+
+/* Texte de question en noir */
+.text-white {
+  color: #000000 !important; /* Noir pur au lieu de blanc */
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin: 1.5rem 0;
+}
+
+/* En-tête */
+.quiz-card h1 {
+  color: #003366;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.quiz-card h2 {
+  color: #003366;
+  font-size: 1.8rem;
+  margin: 1rem 0;
+}
+
+/* ... (le reste du CSS reste inchangé) ... */
+/* Icône */
+.quiz-icon {
+  width: 120px;
+  height: 120px;
+  margin: 1rem auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 42, 102, 0.3));
+}
+
+/* Statistiques - Nuances plus foncées */
+.quiz-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin: 2rem 0;
+}
+
+.quiz-stats div {
+  background: rgba(0, 68, 136, 0.1); /* Plus foncé */
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  min-width: 120px;
+}
+
+.quiz-stats p {
+  color: #004488; /* Plus foncé */
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.quiz-stats h3 {
+  color: #003366; /* Bleu marine */
+  font-size: 2rem;
+  margin: 0;
+}
+
+/* Boutons principaux - Dégradé plus foncé */
+.btn {
+  background: linear-gradient(135deg, #004488 0%, #002244 100%); /* Dégradé foncé */
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 42, 102, 0.4);
+  margin: 0.5rem;
+  display: inline-block;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 42, 102, 0.5);
+  background: linear-gradient(135deg, #0055aa 0%, #003366 100%);
+}
+
+/* Boutons secondaires - Contour foncé */
+.btn-secondary {
+  background: white;
+  color: #003366; /* Bleu marine */
+  border: 2px solid #003366;
+  padding: 0.8rem 1.5rem;
+  font-weight: 600;
+}
+
+.btn-secondary:hover {
+  background: rgba(0, 51, 102, 0.1); /* Plus foncé */
+}
+
+/* Options de question - Bordure foncée */
+.quiz-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.quiz-buttons button {
+  width: 100%;
+  text-align: left;
+  padding: 1rem 1.5rem;
+  background: white;
+  border: 2px solid #d9e3ff;
+  color: #003366; /* Bleu marine */
+  transition: all 0.2s ease;
+}
+
+.quiz-buttons button:hover {
+  border-color: #004488; /* Plus foncé */
+  transform: translateX(5px);
+}
+
+.quiz-buttons button.selected {
+  background: rgba(0, 68, 136, 0.1); /* Plus foncé */
+  border-color: #004488; /* Plus foncé */
+  font-weight: 600;
+}
+
+/* Barre de progression - Dégradé foncé */
+.progress-container {
+  width: 100%;
+  background: #d9e3ff;
+  height: 8px;
+  border-radius: 4px;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #004488 0%, #002244 100%); /* Dégradé foncé */
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+/* Timer (inchangé) */
+.timer {
+  color: #ff5555;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+/* Chargement - Texte foncé */
+.quiz-loading {
+  text-align: center;
+  color: #003366; /* Bleu marine */
+  font-size: 1.5rem;
+  padding: 3rem;
+}
+
+/* Message de confirmation (inchangé) */
+.confirmation {
+  color: #00aa55;
+  text-align: center;
+  margin-top: 1.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+}

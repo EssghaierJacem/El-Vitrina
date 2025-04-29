@@ -1,0 +1,219 @@
+.formation-details-container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #7f8c8d;
+  }
+}
+
+.back-button {
+  margin-bottom: 16px;
+}
+
+.card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 1px solid #eee;
+  border-radius: 8px 8px 0 0;
+}
+
+.formation-details-card {
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.formation-title {
+  font-size: 24px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.category-chip {
+  display: inline-block;
+  background-color: #e0f2f1;
+  color: #00796b;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.description {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.enroll-btn {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.enrolled-section {
+  margin-top: 3rem;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+
+  .section-header {
+    margin-bottom: 1.5rem;
+    
+    h2 {
+      font-size: 1.5rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    
+    p {
+      color: #666;
+      margin: 0;
+    }
+  }
+}
+
+.compact-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.compact-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.2s;
+  
+  &:hover {
+    transform: translateY(-4px);
+  }
+
+  .card-header {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    
+    .category-icon {
+      width: 32px;
+      height: 32px;
+      margin-right: 12px;
+      object-fit: contain;
+    }
+    
+    .title {
+      font-size: 1rem;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .card-body {
+    padding: 1rem;
+    
+    .progress-container {
+      margin-bottom: 1rem;
+      
+      .progress-text {
+        display: block;
+        font-size: 0.8rem;
+        color: #666;
+        margin-top: 4px;
+      }
+    }
+    
+    .meta-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      
+      .level-badge {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: 500;
+      }
+      
+      .duration {
+        color: #666;
+      }
+    }
+  }
+
+  .card-actions {
+    padding: 0 1rem 1rem 1rem;
+    display: flex;
+    justify-content: flex-end;
+    
+    button {
+      font-size: 0.85rem;
+    }
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  
+  .empty-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    color: #bdbdbd;
+    margin-bottom: 1rem;
+  }
+  
+  h3 {
+    color: #424242;
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    color: #757575;
+    margin-bottom: 1.5rem;
+  }
+
+  .enroll-btn button {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+    }
+    
+    &[color='warn'] {
+      background-color: #f44336;
+      
+      &:hover {
+        background-color: #d32f2f;
+      }
+    }
+  }
+}

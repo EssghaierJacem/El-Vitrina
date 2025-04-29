@@ -1,0 +1,137 @@
+<div class="page-layout">
+
+  <!-- 🌀 Lottie Animation + Button -->
+  <div class="lottie-side">
+    <ng-lottie 
+    [options]="animationOptions"
+    (animationCreated)="animationCreated($event)">
+  </ng-lottie>
+  
+
+    <button mat-raised-button color="primary" class="try-ai-button"
+      [routerLink]="['/RequestGenerate/generate']">
+      🚀 Try Our AI 3D Model Generator
+    </button>
+  </div>
+
+  <!-- 🛠️ Main Request Management Area -->
+  <div class="requests-side">
+
+    <!-- Filter Buttons -->
+    <div class="filter-buttons">
+      <button mat-raised-button 
+              [class.active-filter]="filter === 'all'"
+              (click)="applyFilter('all')">
+        <mat-icon>list_alt</mat-icon> 
+        <span class="button-text">All Requests</span>
+        <span class="count-badge">{{allRequestsCount}}</span>
+      </button>
+      
+      <button mat-raised-button 
+              [class.active-filter]="filter === 'mine'"
+              (click)="applyFilter('mine')">
+        <mat-icon>person</mat-icon>
+        <span class="button-text">My Requests</span>
+        <span class="count-badge">{{mineRequestsCount}}</span>
+      </button>
+      
+      <button mat-raised-button 
+              [class.active-filter]="filter === 'others'"
+              (click)="applyFilter('others')">
+        <mat-icon>people</mat-icon>
+        <span class="button-text">Others' Requests</span>
+        <span class="count-badge">{{othersRequestsCount}}</span>
+      </button>
+    </div>
+
+    <!-- Request Cards List -->
+    <div class="card-container" *ngFor="let request of allrequests" [attr.data-id]="request.id">
+      <mat-card *ngIf="request.status === 'ACCEPTED'">
+
+        <!-- Delete Button -->
+        <button mat-icon-button class="delete-button" 
+          (click)="removeRequestFromView(request.id)">
+          <mat-icon>close</mat-icon>
+        </button>
+
+        <!-- Header Info -->
+        <mat-card-header>
+          <div mat-card-avatar class="example-header-image">
+            <img [src]="request.user?.image || '/assets/images/RequestPerso/default-avatar.png'" 
+                 class="user-image"
+                 onerror="this.src='/assets/images/RequestPerso/default-avatar.png'"/>
+          </div>
+          <mat-card-title>{{ request.title }}</mat-card-title>
+          <mat-card-subtitle>
+            Requested by: {{ request.user.name }} | Posted On: {{ request.date | date:'short' }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <!-- Image + Description -->
+        <mat-grid-list cols="5">
+          <mat-grid-tile [colspan]="2">
+            <img mat-card-image 
+                 [src]="request.image || '/assets/images/RequestPerso/Default.png'" 
+                 alt="Request Image" 
+                 class="request-image"
+                 onerror="this.src='/assets/images/RequestPerso/Default.png'"/>
+          </mat-grid-tile>
+          <mat-grid-tile [colspan]="3">
+            {{ request.description.length > 600 ? (request.description | slice:0:600) + '...' : request.description }}
+          </mat-grid-tile>
+        </mat-grid-list>
+
+        <hr>
+
+        <!-- Actions -->
+        <mat-card-actions>
+          <button mat-raised-button color="primary">
+            {{ request.viewCount }} <mat-icon>visibility</mat-icon>
+          </button>
+
+          <button mat-raised-button color="primary"
+            [routerLink]="['/requestperso/viewRequestPerso', request.id]">
+            View Request
+          </button>
+
+          <button *ngIf="userId === request.user?.id" mat-raised-button color="accent"
+            [routerLink]="['/requestperso/edit', request.id]">
+            <mat-icon>edit</mat-icon> Edit
+          </button>
+
+          <button *ngIf="userId !== request.user?.id" mat-raised-button color="accent"
+            (click)="changeStatus(request, 'PENDING')">
+            <mat-icon>report</mat-icon> Report
+          </button>
+
+          <button *ngIf="userId === request.user?.id" mat-raised-button color="warn"
+            (click)="confirmDelete(request.id)">
+            <mat-icon>delete_forever</mat-icon> Delete
+          </button>
+        </mat-card-actions>
+
+        <!-- Heat Progress -->
+        <mat-card-footer class="request-heat-footer">
+          <div class="heat-info">
+            <span class="heat-value">{{ getRequestHeat(request) }}%</span>
+            <div class="compact-progress-container">
+              <mat-progress-bar 
+                mode="determinate"
+                [value]="getRequestHeat(request)"
+                [class]="getHeatLevelClass(request)">
+              </mat-progress-bar>
+              <mat-icon class="moving-fire" 
+                [style.left]="getRequestHeat(request) + '%'"
+                [class]="getHeatLevelClass(request)">
+                whatshot
+              </mat-icon>
+            </div>
+          </div>
+        </mat-card-footer>
+
+      </mat-card>
+    </div>
+
+  </div>
+
+</div>

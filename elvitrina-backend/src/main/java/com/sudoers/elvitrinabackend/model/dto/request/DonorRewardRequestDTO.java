@@ -16,6 +16,6 @@ public class DonorRewardRequestDTO {
     private String description;
     private BigDecimal minimumDonationAmount;
     private Integer availableQuantity;
-    private String imageUrl;
-    private Long campaignId;
+    private Integer redemptionCode;
+
 }

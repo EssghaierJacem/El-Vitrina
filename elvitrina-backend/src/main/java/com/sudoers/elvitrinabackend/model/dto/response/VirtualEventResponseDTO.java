@@ -13,10 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VirtualEventResponseDTO {
-    private Long id;
+    private Long eventId;
     private String title;
     private String description;
     private LocalDateTime startDateTime; // Maps to eventDate
+    private String eventImage;
     private Double ticketPrice;
     private String status;
     private EventType eventType;
@@ -27,6 +28,7 @@ public class VirtualEventResponseDTO {
     private String streamUrl;
     private String chatChannelId;
     private List<EventTicketResponseDTO> tickets;
+    private List<EventParticipantResponseDTO> participants;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

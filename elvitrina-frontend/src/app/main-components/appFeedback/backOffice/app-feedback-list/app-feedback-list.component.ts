@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
@@ -49,23 +49,30 @@ export class AppFeedbackListComponent implements OnInit {
   dataSource: MatTableDataSource<AppFeedback>;
   feedbacks: AppFeedback[] = [];
   isLoading = true;
-  displayedColumns = ['id', 'type', 'comment', 'createdAt', 'actions'];
+  displayedColumns = ['type', 'comment', 'createdAt', 'actions'];
   searchText = '';
+  totalFeedbacks = 0;
+  pageIndex = 0;
+  pageSize = 10;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private feedbackService: AppFeedbackService) {
+  constructor(
+    private feedbackService: AppFeedbackService,
+    private cdr: ChangeDetectorRef
+  ) {
     this.dataSource = new MatTableDataSource<AppFeedback>([]);
   }
 
   ngOnInit(): void {
-    this.loadFeedbacks();
+    this.loadPaginatedFeedbacks();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    //this.loadPaginatedFeedbacks();
   }
 
   loadFeedbacks() {
@@ -88,6 +95,27 @@ export class AppFeedbackListComponent implements OnInit {
       error: (error) => {
         console.error('Error loading feedbacks:', error);
         this.isLoading = false;
+      }
+    });
+  }
+
+  loadPaginatedFeedbacks(): void {
+    this.isLoading = true;
+    this.feedbackService.getPaginatedFeedbacks(
+      this.pageIndex, 
+      this.pageSize, 
+      this.searchText
+    ).subscribe({
+      next: (response) => {
+        this.dataSource.data = response.content;
+        this.totalFeedbacks = response.totalElements;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading feedbacks:', error);
+        this.isLoading = false;
+        // Add user feedback here:
+        alert('Failed to load feedbacks. Please check console for details.');
       }
     });
   }
@@ -163,6 +191,8 @@ export class AppFeedbackListComponent implements OnInit {
   }
 
   onPageChange(event: any) {
-    this.loadFeedbacks();
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadPaginatedFeedbacks();
   }
 }

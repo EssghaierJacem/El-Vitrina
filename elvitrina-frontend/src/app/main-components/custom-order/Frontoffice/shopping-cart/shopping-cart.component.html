@@ -1,0 +1,48 @@
+<mat-card class="cardWithShadow">
+  <mat-card-title>My Orders</mat-card-title>
+
+  <!-- Search bar + Filter Recent -->
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+    <mat-label>Search</mat-label>
+    <input matInput [(ngModel)]="searchText" (ngModelChange)="applyFilter()" placeholder="By status or customer">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="toggleRecentOrders()" class="m-b-16">
+    {{ showRecentOnly ? 'Show All Orders' : 'Show Recent Orders' }}
+  </button>
+
+  <!-- Card-style list -->
+  <div class="orders-container">
+    <mat-card class="order-card" *ngFor="let order of filteredOrders">
+      <div class="order-details">
+        <div class="order-info">
+          <strong>Order #{{ order.id }}</strong>
+          <p>Date: {{ order.orderDate | date:'mediumDate' }}</p>
+          <p>Amount: {{ order.price * order.quantity | currency:'TND' }}</p>
+          <span class="status" [ngClass]="getStatusClass(order.status)">
+            {{ order.status }}
+          </span>
+        </div>
+
+        <div class="order-actions">
+          <button mat-icon-button color="primary" [routerLink]="['/order/view', order.id]" matTooltip="View details">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" *ngIf="order.id !== undefined" (click)="deleteOrder(order.id!)" matTooltip="Delete order">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-card>
+
+    <div class="no-orders" *ngIf="filteredOrders.length === 0">
+      <mat-icon>shopping_cart</mat-icon>
+      <p>No orders found</p>
+    </div>
+
+    <div class="total-amount" *ngIf="filteredOrders.length > 0">
+      <strong>Total:</strong> {{ getTotalAmount() | currency:'TND' }}
+    </div>
+  </div>
+</mat-card>

@@ -1,0 +1,115 @@
+<mat-horizontal-stepper linear #stepper>
+  <!-- STEP 1: Payment Method Selection -->
+  <mat-step [completed]="paymentCreated">
+    <ng-template matStepLabel>Payment Method</ng-template>
+    <mat-radio-group [(ngModel)]="selectedPaymentMethod" (change)="onPaymentMethodSelected($event)" class="mb-3">
+      <mat-radio-button [value]="PaymentMethodType.CREDIT_CARD">Credit Card</mat-radio-button>
+      <mat-radio-button [value]="PaymentMethodType.CASHONDELIVER">Cash on Delivery</mat-radio-button>
+    </mat-radio-group>
+
+    <app-payement-creation
+      *ngIf="selectedPaymentMethod"
+      [stepper]="stepper"
+      [selectedMethod]="selectedPaymentMethod"
+      (amountChange)="updateTotalAmount($event)"
+      (paymentCreated)="onPaymentCreated($event)">
+    </app-payement-creation>
+
+    <div class="step-actions">
+      <button mat-raised-button color="primary" matStepperNext [disabled]="!paymentCreated">Next</button>
+    </div>
+  </mat-step>
+
+  <!-- STEP 2: Personal Info or Delivery Information (Displayed Side by Side for Credit Card Payment) -->
+  <mat-step *ngIf="paymentCreated" [stepControl]="selectedPaymentMethod === PaymentMethodType.CASHONDELIVER ? personalInfoFormGroup : deliveryFormGroup">
+    <div class="step-content-container">
+      <!-- Personal Info or Delivery Info Form -->
+      <div class="step-form">
+        <form [formGroup]="selectedPaymentMethod === PaymentMethodType.CASHONDELIVER ? personalInfoFormGroup : deliveryFormGroup">
+          <ng-template matStepLabel>
+            {{ selectedPaymentMethod === PaymentMethodType.CASHONDELIVER ? 'Personal Information' : 'Delivery Information' }}
+          </ng-template>
+
+          <!-- Form Fields (Full Name, Phone, etc.) -->
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Full Name</mat-label>
+            <input matInput formControlName="fullName" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Phone</mat-label>
+            <input matInput formControlName="phone" />
+          </mat-form-field>
+
+          <ng-container *ngIf="selectedPaymentMethod === PaymentMethodType.CASHONDELIVER">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" />
+            </mat-form-field>
+          </ng-container>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Address</mat-label>
+            <textarea matInput formControlName="address"></textarea>
+          </mat-form-field>
+
+          <app-leaflet-map (addressSelected)="handleMapAddress($event)"></app-leaflet-map>
+
+          <div *ngIf="selectedPaymentMethod !== PaymentMethodType.CASHONDELIVER">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Delivery Address</mat-label>
+              <textarea matInput formControlName="deliveryAddress"></textarea>
+            </mat-form-field>
+          </div>
+
+          <div class="step-actions">
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-raised-button color="primary" matStepperNext>Next</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Payment Amount (for Credit Card) -->
+      <div *ngIf="selectedPaymentMethod === PaymentMethodType.CREDIT_CARD" class="payment-summary">
+        <p><strong>Total Amount:</strong> {{ totalAmount | currency }}</p> <!-- Displaying the total amount -->
+      </div>
+    </div>
+  </mat-step>
+
+  <!-- STEP 3: Secure Payment -->
+  <ng-container *ngIf="selectedPaymentMethod === PaymentMethodType.CREDIT_CARD">
+    <mat-step [stepControl]="creditCardFormGroup">
+      <form [formGroup]="creditCardFormGroup">
+        <ng-template matStepLabel>Secure Payment</ng-template>
+        <app-payment [amountToPay]="totalAmount"></app-payment>
+
+        <div class="step-actions">
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-raised-button color="primary" matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+  </ng-container>
+
+  <!-- STEP 4: Order Summary -->
+  <mat-step #orderSummary>
+    <ng-template matStepLabel>Order Summary</ng-template>
+
+    <p><strong>Name:</strong> {{ personalInfoFormGroup.value.fullName }}</p>
+    <p><strong>Phone:</strong> {{ personalInfoFormGroup.value.phone }}</p>
+    <p><strong>Email:</strong> {{ personalInfoFormGroup.value.email }}</p>
+    <p><strong>Address:</strong> {{ personalInfoFormGroup.value.address }}</p>
+
+    <div class="step-actions">
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-raised-button color="accent" (click)="onOrderConfirmation()">Confirm</button>
+    </div>
+  </mat-step>
+
+  <!-- STEP 5: Confirmation -->
+  <mat-step>
+    <ng-template matStepLabel>Confirmation</ng-template>
+    <p>Thank you for your order 🛒!</p>
+  </mat-step>
+</mat-horizontal-stepper>

@@ -1,0 +1,39 @@
+<mat-card class="order-details-card">
+  <mat-card-header>
+    <mat-card-title>Order Details</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div *ngIf="order; else loading">
+      <div class="products-list">
+        <h3>Products</h3>
+        <div *ngFor="let product of products">
+          <img [src]="product.mainImage" alt="{{ product.productName }}">
+          <p>{{ product.productName }} - {{ product.price | currency:'TND' }}</p>
+        </div>
+      </div>
+
+      <div class="order-info">
+        <h3>Order Summary</h3>
+        <p><strong>Total Price:</strong> {{ order.price | currency:'TND' }}</p>
+        <p><strong>Order Date:</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>
+        <p><strong>Status:</strong>
+          <span [ngClass]="getStatusClass(order.status)" class="status-badge">{{ order.status }}</span>
+        </p>
+      </div>
+    </div>
+
+    <ng-template #loading>
+      <div class="loading">
+        <mat-icon>hourglass_empty</mat-icon>
+        Loading order details...
+      </div>
+    </ng-template>
+  </mat-card-content>
+
+  <mat-card-actions class="order-actions">
+    <button mat-flat-button color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon> Back to Orders
+    </button>
+  </mat-card-actions>
+</mat-card>

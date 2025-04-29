@@ -1,0 +1,47 @@
+<table mat-table [dataSource]="dataSource" matSort>
+  <!-- Keep existing question column -->
+  <ng-container matColumnDef="question">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Question</th>
+    <td mat-cell *matCellDef="let quiz">{{ quiz.question }}</td>
+  </ng-container>
+
+  <!-- Add separate columns for each option -->
+  <ng-container matColumnDef="option1">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Option 1</th>
+    <td mat-cell *matCellDef="let quiz">{{ quiz.option1 }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="option2">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Option 2</th>
+    <td mat-cell *matCellDef="let quiz">{{ quiz.option2 }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="option3">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Option 3</th>
+    <td mat-cell *matCellDef="let quiz">{{ quiz.option3 }}</td>
+  </ng-container>
+
+  <!-- Keep other columns -->
+  <ng-container matColumnDef="bonneReponse">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Correct Answer</th>
+    <td mat-cell *matCellDef="let quiz">{{ quiz.bonneReponse }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="score">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Score</th>
+    <td mat-cell *matCellDef="let quiz">{{ quiz.score }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <td mat-cell *matCellDef="let quiz">
+      <button mat-button  *ngIf="quiz.id" routerLink="['/dashboard/quiz/edit', quiz.id]">
+        Edit
+      </button>
+      <button mat-button color="warn" (click)="deleteQuiz(quiz.id)">Delete</button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

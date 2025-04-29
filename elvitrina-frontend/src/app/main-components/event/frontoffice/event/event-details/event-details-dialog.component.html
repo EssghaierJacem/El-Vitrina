@@ -1,0 +1,44 @@
+<div class="dialog-container" [@dialogEnter]>
+  <div class="dialog-header">
+    <h2 class="dialog-title">{{ data.title }}</h2>
+    <button mat-icon-button class="close-icon-button" (click)="onClose()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="32"></mat-spinner>
+    <p>Loading event details...</p>
+  </div>
+  
+  <div *ngIf="!loading" class="event-details" [@contentFade]>
+    <mat-dialog-content>
+      <div class="detail-item">
+        <mat-icon>event</mat-icon>
+        <div class="detail-content">
+          <p class="time-date">
+            {{ data.start | date: 'EEEE, MMMM d' }}
+          </p>
+          <p class="time-range" style="color: black;">
+            {{ data.start | date: 'h:mm a' }} – {{ data.end | date: 'h:mm a' }}
+          </p>
+        </div>
+      </div>
+      
+      <div class="detail-item" *ngIf="data.hangoutLink">
+        <mat-icon>videocam</mat-icon>
+        <div class="detail-content">
+          <p>Google Meet</p>
+          <a [href]="data.hangoutLink" target="_blank" class="meet-link">Join with Google Meet</a>
+        </div>
+      </div>
+    </mat-dialog-content>
+    
+    <mat-dialog-actions>
+      <button mat-stroked-button class="close-button" (click)="onClose()">Close</button>
+      <button mat-raised-button class="meet-button" *ngIf="data.hangoutLink" (click)="joinMeet()">
+        <mat-icon>video_call</mat-icon> Join Meet
+      </button>
+    </mat-dialog-actions>
+  </div>
+</div>

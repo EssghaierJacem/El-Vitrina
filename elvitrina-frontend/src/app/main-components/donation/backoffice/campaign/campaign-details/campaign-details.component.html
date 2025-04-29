@@ -1,0 +1,145 @@
+<div class="campaign-details-container">
+  <h1>Campaign Details</h1>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading campaign details...</p>
+  </div>
+
+  <div *ngIf="!loading && !campaign" class="no-data-message">
+    <p>Campaign not found.</p>
+  </div>
+
+  <div *ngIf="!loading && campaign" class="tabs">
+    <!-- Radio inputs for tab control -->
+    <input type="radio" id="tab1" name="tab-control" checked>
+    <input type="radio" id="tab2" name="tab-control">
+    <input type="radio" id="tab3" name="tab-control">
+    <input type="radio" id="tab4" name="tab-control">
+
+    <!-- Tab labels -->
+    <ul>
+      <li title="Overview">
+        <label for="tab1" role="button">
+          <mat-icon>info</mat-icon>
+          <span>Overview</span>
+        </label>
+      </li>
+      <li title="Status">
+        <label for="tab2" role="button">
+          <mat-icon>assessment</mat-icon>
+          <span>Status</span>
+        </label>
+      </li>
+      <li title="Rewards">
+        <label for="tab3" role="button">
+          <mat-icon>card_giftcard</mat-icon>
+          <span>Rewards</span>
+        </label>
+      </li>
+      <li title="Host">
+        <label for="tab4" role="button">
+          <mat-icon>person</mat-icon>
+          <span>Host</span>
+        </label>
+      </li>
+    </ul>
+
+    <div class="slider"><div class="indicator"></div></div>
+
+    <div class="content">
+      <!-- Overview Tab -->
+      <section>
+        <div class="overview-content" [ngClass]="{'verified': campaign.verified}">
+          <!-- Verified banner for verified campaigns -->
+          <div *ngIf="campaign.verified" class="overview-verified-banner">Verified</div>
+          
+          <h3>
+            {{ campaign.title }}
+            <!-- Add verified badge next to title -->
+            <span *ngIf="campaign.verified" class="verified-badge">
+              <mat-icon>verified</mat-icon> Verified
+            </span>
+          </h3>
+          
+          <p>{{ campaign.description }}</p>
+          <div class="overview-dates">
+            <span><mat-icon>event</mat-icon> Start: {{ campaign.startDate | date }}</span>
+            <span><mat-icon>event</mat-icon> End: {{ campaign.endDate | date }}</span>
+          </div>
+          <div class="overview-goal">
+            <mat-icon>flag</mat-icon> Goal: ${{ campaign.goalAmount }}
+          </div>
+          <div class="overview-actions">
+            <button mat-icon-button color="primary" matTooltip="Check" [disabled]="campaign.verified" 
+                   [ngClass]="{'verified': campaign.verified}" (click)="checkCampaign()">
+              <img src="/assets/images/svgs/check.svg" alt="Check" class="button-icon">
+            </button>
+            <button mat-icon-button color="accent" matTooltip="Edit" (click)="editCampaign()">
+              <img src="/assets/images/svgs/edit.svg" alt="Edit" class="button-icon">
+            </button>
+            <button mat-icon-button color="warn" matTooltip="Delete" (click)="deleteCampaign()">
+              <img src="/assets/images/svgs/delete.svg" alt="delete" class="button-icon">
+            </button>
+          </div>
+        </div>
+      </section>
+      <!-- Status Tab -->
+      <section>
+        <div class="status-content">
+          <!-- Add verification status to the status tab -->
+          <div class="status-verified" *ngIf="campaign.verified">
+            <strong>Verification:</strong>
+            <span class="verified-indicator">
+              <mat-icon>verified</mat-icon> Verified Campaign
+            </span>
+          </div>
+          
+          <div>
+            <strong>Status:</strong> {{ campaign.status }}
+          </div>
+          <div>
+            <strong>Goal:</strong> ${{ campaign.goalAmount }}
+          </div>
+          <div>
+            <strong>Current Amount:</strong> ${{ campaign.currentAmount }}
+          </div>
+        </div>
+      </section>
+      <!-- Rewards Tab -->
+      <section>
+        <div class="rewards-content">
+          <h2>Rewards</h2>
+          <div *ngIf="campaign.rewards?.length; else noRewards">
+            <ul>
+              <li *ngFor="let reward of campaign.rewards">
+                <strong>{{ reward.title }}</strong>
+                <span>Min: ${{ reward.minimumDonationAmount }}</span>
+                <span>Available: {{ reward.availableQuantity }}</span>
+              </li>
+            </ul>
+          </div>
+          <ng-template #noRewards>
+            <p>No rewards available for this campaign.</p>
+          </ng-template>
+        </div>
+      </section>
+      <!-- Host Tab -->
+      <section>
+        <div class="host-content">
+          <div>
+            <strong>User:</strong> {{ campaign.userName || 'N/A' }}
+          </div>
+          <div>
+            <strong>Store:</strong> {{ campaign.storeName || 'N/A' }}
+          </div>
+          <!-- Add verification information in host tab -->
+          <div *ngIf="campaign.verified" class="verification-info">
+            <strong>Status:</strong> <span class="verified-text">Verified</span>
+            <p>This campaign has been verified by our team.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

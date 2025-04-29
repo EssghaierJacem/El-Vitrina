@@ -1,0 +1,99 @@
+<mat-card class="center-card">
+  <mat-card-header>
+    <mat-card-title>Create New Request</mat-card-title>
+    <mat-card-subtitle>Fill in the details below</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div>
+      <form [formGroup]="RequestForm" enctype="multipart/form-data">
+
+        <!-- Title -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Title</mat-label>
+          <input matInput formControlName="title" placeholder="Enter title">
+          <mat-error *ngIf="RequestForm.get('title')?.hasError('required')">Title is required</mat-error>
+        </mat-form-field>
+
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="4" placeholder="Enter description"></textarea>
+          <mat-error *ngIf="RequestForm.get('description')?.hasError('required')">Description is required</mat-error>
+          <mat-error *ngIf="RequestForm.get('description')?.hasError('maxlength')">Description too long (max 5000 characters)</mat-error>
+        </mat-form-field>
+
+        <!-- Min Price -->
+        <mat-form-field appearance="outline">
+          <mat-label>Min Price</mat-label>
+          <input matInput type="number" formControlName="minPrice">
+          <mat-error *ngIf="RequestForm.get('minPrice')?.hasError('required')">Min Price is required</mat-error>
+          <mat-error *ngIf="RequestForm.get('minPrice')?.hasError('min')">Min Price must be positive</mat-error>
+        </mat-form-field>
+
+        <!-- Max Price -->
+        <mat-form-field appearance="outline">
+          <mat-label>Max Price</mat-label>
+          <input matInput type="number" formControlName="maxPrice">
+          <mat-error *ngIf="RequestForm.get('maxPrice')?.hasError('required')">Max Price is required</mat-error>
+          <mat-error *ngIf="RequestForm.get('maxPrice')?.hasError('min')">Max Price must be positive</mat-error>
+          <mat-error *ngIf="!priceIsValid() && RequestForm.get('maxPrice')?.touched">Max Price must be greater than Min Price</mat-error>
+        </mat-form-field>
+
+        <!-- Image Upload -->
+        <div class="image-upload-container">
+          <input type="file" accept="image/*" (change)="onFileSelected($event)" #fileInput style="display: none;">
+          <button mat-raised-button color="primary" (click)="fileInput.click()">Choose Image</button>
+          <div *ngIf="previewUrl" class="image-preview">
+            <img [src]="previewUrl" alt="Preview" class="preview-image">
+          </div>
+        </div>
+
+        <!-- Delivery Time -->
+        <mat-form-field appearance="outline">
+          <mat-label>Delivery Time</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="deliveryTime">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker [startAt]="today" [startView]="'month'"></mat-datepicker>
+          <input matInput [min]="today" [matDatepicker]="picker" formControlName="deliveryTime">
+          <mat-error *ngIf="RequestForm.get('deliveryTime')?.hasError('required')">Delivery date is required</mat-error>
+          <mat-error *ngIf="RequestForm.get('deliveryTime')?.hasError('minDate')">Date must be today or later</mat-error>
+        </mat-form-field>
+
+        <!-- Tags -->
+        <mat-card class="tags-section">
+          <mat-card-content>
+            <mat-form-field appearance="outline">
+              <mat-label>Tags</mat-label>
+              <mat-chip-grid #chipGrid aria-label="enter tags">
+                <mat-chip-row *ngFor="let tag of tags; let i = index" (removed)="remove(tag)">
+                  {{ tag }}
+                  <button matChipRemove>
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+                <input placeholder="New Tag..."
+                  [matChipInputFor]="chipGrid"
+                  (matChipInputTokenEnd)="add($event)" />
+              </mat-chip-grid>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Buttons -->
+        <div style="margin-top: 20px;">
+          <button mat-raised-button color="warn" (click)="cancel()" style="margin-right: 10px;">
+            Cancel
+          </button>
+
+          <button mat-raised-button color="primary" 
+                  [disabled]="!RequestForm.valid || !selectedFile || !priceIsValid()" 
+                  (click)="createRequest()">
+            Post your request
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </mat-card-content>
+</mat-card>

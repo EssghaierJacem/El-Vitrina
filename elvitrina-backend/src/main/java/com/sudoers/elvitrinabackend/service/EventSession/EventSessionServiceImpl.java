@@ -30,17 +30,18 @@ public class EventSessionServiceImpl implements EventSessionService {
         this.virtualEventRepository = virtualEventRepository;
     }
 
+
     @Override
     public EventSessionResponseDTO addSessionToEvent(EventSessionRequestDTO requestDTO) {
         VirtualEvent virtualEvent = virtualEventRepository.findById(requestDTO.getVirtualEventId())
                 .orElseThrow(() -> new ResourceNotFoundException("Virtual event not found with id: " + requestDTO.getVirtualEventId()));
 
         EventSession session = new EventSession();
-        session.setStartTime(requestDTO.getStartTime());
-        session.setEndTime(requestDTO.getEndTime());
+        session.setStartTime(requestDTO.getStartTime().toLocalDateTime()); // Convert OffsetDateTime to LocalDateTime
+        session.setEndTime(requestDTO.getEndTime().toLocalDateTime());
         session.setSessionTitle(requestDTO.getSessionTitle());
         session.setVirtualEvent(virtualEvent);
-
+session.setStreamUrl(requestDTO.getStreamUrl());
         EventSession savedSession = eventSessionRepository.save(session);
         return mapToResponseDTO(savedSession);
     }
@@ -78,9 +79,18 @@ public class EventSessionServiceImpl implements EventSessionService {
         dto.setEndTime(session.getEndTime());
         dto.setSessionTitle(session.getSessionTitle());
         dto.setVirtualEventId(session.getVirtualEvent().getEventId());
-        dto.setCompleted(session.getEndTime().isBefore(LocalDateTime.now()));
-        dto.setCreatedAt(session.getCreatedAt());
-        dto.setUpdatedAt(session.getUpdatedAt());
+        dto.setStreamUrl(session.getStreamUrl());
         return dto;
     }
+
+
+    @Override
+    public void removeSessionByEventIdAndTitle(Long eventId, String title) {
+        List<EventSession> sessions = eventSessionRepository.findByEventIdAndTitle(eventId, title);
+        if (sessions.isEmpty()) {
+            throw new IllegalArgumentException("No sessions found with the given event ID and title.");
+        }
+        eventSessionRepository.deleteAll(sessions);
+    }
+
 }

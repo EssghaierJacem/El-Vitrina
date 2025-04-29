@@ -32,6 +32,7 @@ public class DonationCampaignController {
     public ResponseEntity<DonationCampaignResponseDTO> createCampaign(@RequestBody DonationCampaignRequestDTO requestDTO) {
         DonationCampaignResponseDTO savedCampaign = donationCampaignService.save(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCampaign);
+
     }
 
     @GetMapping
@@ -75,6 +76,7 @@ public class DonationCampaignController {
     public ResponseEntity<DonationCampaignResponseDTO> updateCampaignStatus(
             @PathVariable Long id,
             @RequestBody CampaignStatusRequestDTO statusRequest) {
+        System.out.println("****here");
         DonationCampaignResponseDTO updatedCampaign = donationCampaignService.updateStatus(id, statusRequest);
         return ResponseEntity.ok(updatedCampaign);
     }

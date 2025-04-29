@@ -1,5 +1,6 @@
 package com.sudoers.elvitrinabackend.model.dto.response;
 
+import com.sudoers.elvitrinabackend.model.entity.Seats;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,18 +13,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventTicketResponseDTO {
-    private Long id;
-    private String ticketType;
+    private Long ticketId;
+    private String name;
     private String description;
     private BigDecimal price;
-    private Integer quantity;
-    private Integer soldCount;
-    private Integer remainingCount;
-    private Long eventId;
-    private String eventTitle;
-    private Boolean isValid;
-    private String qrCodeUrl; // URL to the generated QR code
+    private Integer quantityAvailable;
+    private Integer quantityRemaining;
+    private String type;
     private LocalDateTime validUntil;
-    private BigDecimal earlyBirdPricing;
-    private List<Long> sessionIds; // Sessions this ticket applies to
+    private String qrCodeHash;
+    private Boolean isValid;
+    private List<Seats> seats;
 }

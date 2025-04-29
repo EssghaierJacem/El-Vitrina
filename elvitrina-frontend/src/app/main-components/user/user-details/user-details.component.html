@@ -1,7 +1,6 @@
 <mat-card class="cardWithShadow theme-card p-4">
     <div class="d-flex align-items-center gap-16 m-b-24">
-      <img
-        [src]="user?.image || '/assets/images/default-avatar.png'"
+        <img [src]="getUserImage()"
         alt="User image"
         class="rounded-circle shadow-sm"
         width="90"

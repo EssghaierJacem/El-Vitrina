@@ -1,82 +1,113 @@
-<mat-card class="cardWithShadow">
+<mat-card class="cardWithShadow theme-card p-4">
   <mat-card-content>
     <!-- Header with Back Button -->
-    <div class="d-flex justify-content-between align-items-center m-b-16">
-      <div class="d-flex align-items-center">
-        <button mat-icon-button color="primary" [routerLink]="['../']">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <mat-card-title>Store Details</mat-card-title>
-      </div>
-      @if (store) {
-        <button mat-raised-button color="primary" [routerLink]="['../edit', store.storeId]">
-          <mat-icon>edit</mat-icon>
-          Edit Store
-        </button>
-      }
+    <div class="d-flex align-items-center gap-16 m-b-24">
+      <button mat-icon-button color="primary" [routerLink]="['../']">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2 class="f-w-600 f-s-20 m-0">Store Details</h2>
     </div>
 
-    @if (isLoading) {
-      <div class="d-flex justify-content-center m-t-16">
-        <mat-spinner></mat-spinner>
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center p-y-32">
+      <mat-spinner diameter="40" class="m-auto"></mat-spinner>
+    </div>
+
+    <!-- Store Details -->
+    <div *ngIf="store" class="store-details">
+      <!-- Cover Image -->
+      <div class="store-cover-image">
+        <img *ngIf="getCoverImage(store); else noCoverImage" 
+             [src]="getCoverImage(store)" 
+             [alt]="store.storeName + ' Cover'" 
+             class="w-100 cover-image" 
+             (error)="handleImageError($event)">
+        <ng-template #noCoverImage>
+          <img src="assets/images/no-image.svg" alt="No Cover Image Available" class="w-100 cover-image">
+        </ng-template>
       </div>
-    } @else if (store) {
-      <div class="store-details">
-        <!-- Store Image -->
-        @if (store.image) {
-          <div class="store-image m-b-16">
-            <img [src]="store.image" [alt]="store.storeName" class="w-100">
-          </div>
-        }
 
-        <!-- Cover Image -->
-        @if (store.coverImage) {
-          <div class="store-cover-image m-b-16">
-            <img [src]="store.coverImage" [alt]="store.storeName + ' Cover'" class="w-100">
-          </div>
-        }
+      <!-- Store Logo -->
+      <div class="store-image">
+        <img *ngIf="getStoreImage(store); else noImage" 
+             [src]="getStoreImage(store)" 
+             [alt]="store.storeName" 
+             class="rounded-image shadow-sm" 
+             (error)="handleImageError($event)">
+        <ng-template #noImage>
+          <img src="assets/images/no-image.svg" alt="No Image Available" class="rounded-image shadow-sm">
+        </ng-template>
+      </div>
 
-        <!-- Store Information -->
-        <div class="store-info">
-          <h2>{{ store.storeName }}</h2>
-          <p class="text-muted">{{ store.description }}</p>
+      <!-- Store Information -->
+      <div class="store-info">
+        <h2 class="f-w-600 f-s-24 m-b-8">{{ store.storeName }}</h2>
+        <p class="text-muted f-s-16 m-b-24">{{ store.description }}</p>
 
-          <div class="details-grid">
-            <div class="detail-item">
-              <strong>Category:</strong>
-              <span>{{ store.category }}</span>
+        <div class="p-x-20 p-y-16">
+          <div class="row">
+            <div class="col-md-6 m-b-16">
+              <p class="f-w-500 m-b-4">🏷️ Category :</p>
+              <p class="text-muted">{{ store.category }}</p>
             </div>
-            <div class="detail-item">
-              <strong>Status:</strong>
-              <mat-chip [color]="store.status ? 'primary' : 'warn'">
+
+            <div class="col-md-6 m-b-16">
+              <p class="f-w-500 m-b-4">🔘 Status :</p>
+              <mat-chip [color]="store.status ? 'primary' : 'warn'" selected>
                 {{ store.status ? 'Active' : 'Inactive' }}
               </mat-chip>
             </div>
-            <div class="detail-item">
-              <strong>Featured:</strong>
-              <mat-icon [color]="store.featured ? 'primary' : ''">
-                {{ store.featured ? 'star' : 'star_border' }}
-              </mat-icon>
+
+            <div class="col-md-6 m-b-16">
+              <p class="f-w-500 m-b-4">⭐ Featured :</p>
+              <div class="d-flex align-items-center">
+                <mat-icon [color]="store.featured ? 'primary' : ''" class="m-r-4">
+                  {{ store.featured ? 'star' : 'star_border' }}
+                </mat-icon>
+                <span class="text-muted">{{ store.featured ? 'Yes' : 'No' }}</span>
+              </div>
             </div>
-            <div class="detail-item">
-              <strong>Address:</strong>
-              <span>{{ store.address }}</span>
+
+            <!-- Store Location Map -->
+            <div class="col-12 m-b-16">
+              <p class="f-w-500 m-b-4">📍 Store Location :</p>
+              <div class="map-container">
+                <div id="store-location-map" style="height: 400px; width: 100%; border-radius: 4px;"></div>
+              </div>
             </div>
-            <div class="detail-item">
-              <strong>Created At:</strong>
-              <span>{{ store.createdAt | date:'medium' }}</span>
+
+            <div class="col-md-6 m-b-16">
+              <p class="f-w-500 m-b-4">📅 Created At :</p>
+              <p class="text-muted">{{ store.createdAt | date:'medium' }}</p>
             </div>
-            <div class="detail-item">
-              <strong>Last Updated:</strong>
-              <span>{{ store.updatedAt | date:'medium' }}</span>
+
+            <div class="col-md-6 m-b-16">
+              <p class="f-w-500 m-b-4">🔄 Last Updated :</p>
+              <p class="text-muted">{{ store.updatedAt | date:'medium' }}</p>
             </div>
           </div>
         </div>
       </div>
-    } @else {
-      <div class="text-center m-t-16">
-        <p>Store not found</p>
+
+      <!-- Actions at Bottom -->
+      <mat-divider class="m-t-24"></mat-divider>
+      <div class="d-flex justify-content-end gap-8 m-t-20">
+        <button mat-flat-button color="primary" [routerLink]="['../edit', store.storeId]">
+          <mat-icon class="m-r-4">edit</mat-icon> Edit
+        </button>
+        <button mat-stroked-button color="warn" (click)="deleteStore(store.storeId)">
+          <mat-icon class="m-r-4">delete</mat-icon> Delete
+        </button>
       </div>
-    }
+    </div>
+
+    <!-- Not Found State -->
+    <div *ngIf="!isLoading && !store" class="text-center p-y-32 text-danger">
+      <mat-icon>error</mat-icon>
+      <p>Store not found</p>
+      <button mat-raised-button color="primary" [routerLink]="['../']">
+        Back to List
+      </button>
+    </div>
   </mat-card-content>
 </mat-card>

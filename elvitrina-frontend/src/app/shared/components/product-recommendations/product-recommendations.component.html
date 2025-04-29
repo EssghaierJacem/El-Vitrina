@@ -1,0 +1,58 @@
+<div class="recommendations-container">
+  <h2 class="section-title">{{ getRecommendationTypeLabel() }}</h2>
+  
+  @if (loading) {
+    <div class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading recommendations...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-state">
+      <mat-icon color="warn">error</mat-icon>
+      <p>{{ error }}</p>
+    </div>
+  } @else if (recommendations.length === 0) {
+    <div class="empty-state">
+      <p>No similar products found.</p>
+    </div>
+  } @else {
+    <div class="recommendations-grid">
+      @for (recommendation of recommendations; track recommendation.product.productId) {
+        <div class="recommendation-card" (click)="navigateToProduct(recommendation.product.productId)">
+          <div class="product-link">
+            <div class="product-image">
+              <img 
+                [src]="recommendation.product.images && recommendation.product.images.length > 0 ? 
+                  getProductImageUrl(recommendation.product.images[0]) : 
+                  'assets/images/default-product.png'" 
+                [alt]="recommendation.product.productName"
+                (error)="onImageError($event)"
+              >
+              @if (recommendation.product.hasDiscount) {
+                <span class="discount-badge">
+                  -{{ recommendation.product.discountPercentage }}%
+                </span>
+              }
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">{{ recommendation.product.productName }}</h3>
+              <div class="price-container">
+                <span class="current-price" [class.has-discount]="recommendation.product.hasDiscount">
+                  {{ recommendation.product.price | currency:'TND' }}
+                </span>
+                @if (recommendation.product.hasDiscount && recommendation.product.originalPrice) {
+                  <span class="original-price">
+                    {{ recommendation.product.originalPrice | currency:'TND' }}
+                  </span>
+                }
+              </div>
+              <div class="similarity-score">
+                <span>{{ formatSimilarityScore(recommendation.similarityScore) }} match</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div> 

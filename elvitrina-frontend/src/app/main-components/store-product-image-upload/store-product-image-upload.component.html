@@ -1,0 +1,15 @@
+<div>
+  <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+
+  <div *ngIf="imagePreview">
+    <p>Preview before upload:</p>
+    <img [src]="imagePreview" alt="Preview" style="max-width: 200px; margin: 10px 0;" />
+  </div>
+
+  <button (click)="upload()" [disabled]="!selectedFile">Upload</button>
+
+  <div *ngIf="uploadedImageUrl">
+    <p>Uploaded Image:</p>
+    <img [src]="uploadedImageUrl" alt="Uploaded" style="max-width: 200px; margin-top: 10px;" />
+  </div>
+</div>

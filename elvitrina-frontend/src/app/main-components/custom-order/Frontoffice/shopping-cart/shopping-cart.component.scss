@@ -1,0 +1,323 @@
+/* Variables globales */
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1e40af;
+  --primary-light: #3b82f6;
+  --primary-lighter: #93c5fd;
+  --secondary: #475569;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --pending: #8b5cf6;
+  --processing: #06b6d4;
+  --delivered: #10b981;
+  --cancelled: #f43f5e;
+  --background: #f8fafc;
+  --card-bg: #ffffff;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 10px 25px -5px rgba(37, 99, 235, 0.15), 0 10px 10px -5px rgba(37, 99, 235, 0.1);
+  --radius: 0.5rem;
+  --radius-lg: 1rem;
+  --transition: all 0.3s ease;
+}
+
+/* Styles généraux */
+body {
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* Card principale */
+.cardWithShadow {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  border: none;
+  transition: var(--transition);
+}
+
+.cardWithShadow:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Titre de la carte */
+.mat-card-title {
+  color: var(--primary-dark);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.mat-card-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 60px;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+  border-radius: 3px;
+}
+
+/* Champ de recherche */
+.mat-form-field {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.mat-form-field.mat-focused .mat-form-field-outline {
+  color: var(--primary);
+}
+
+.mat-form-field-outline {
+  border-radius: var(--radius);
+}
+
+.mat-form-field-wrapper {
+  padding-bottom: 0.75rem;
+}
+
+/* Bouton de filtre */
+.mat-raised-button {
+  border-radius: var(--radius);
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.mat-raised-button.mat-primary {
+  background-color: var(--primary);
+}
+
+.mat-raised-button.mat-primary:hover {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+
+/* Conteneur des commandes */
+.orders-container {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Carte de commande */
+.order-card {
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  border-left: 5px solid var(--primary);
+  background-color: var(--card-bg);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  margin-bottom: 0;
+  overflow: visible;
+}
+
+.order-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* Style pour les statuts des commandes */
+.order-card.pending {
+  border-left-color: var(--pending);
+}
+
+.order-card.processing {
+  border-left-color: var(--processing);
+}
+
+.order-card.delivered {
+  border-left-color: var(--delivered);
+}
+
+.order-card.cancelled {
+  border-left-color: var(--cancelled);
+}
+
+/* Détails de la commande */
+.order-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-info {
+  flex: 1;
+}
+
+.order-info strong {
+  color: var(--text);
+  font-size: 1.125rem;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.order-info p {
+  color: var(--text-light);
+  margin: 0.25rem 0;
+  font-size: 0.875rem;
+}
+
+/* Badge de statut */
+.status {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.75rem;
+}
+
+.status.pending {
+  background-color: rgba(139, 92, 246, 0.15);
+  color: var(--pending);
+}
+
+.status.processing {
+  background-color: rgba(6, 182, 212, 0.15);
+  color: var(--processing);
+}
+
+.status.delivered {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--delivered);
+}
+
+.status.cancelled {
+  background-color: rgba(244, 63, 94, 0.15);
+  color: var(--cancelled);
+}
+
+/* Actions de commande */
+.order-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mat-icon-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
+  transition: var(--transition);
+}
+
+.mat-icon-button:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  transform: scale(1.1);
+}
+
+.mat-icon-button.mat-primary {
+  color: var(--primary);
+}
+
+.mat-icon-button.mat-warn {
+  color: var(--danger);
+}
+
+/* Message pas de commandes */
+.no-orders {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  background-color: rgba(226, 232, 240, 0.3);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.no-orders mat-icon {
+  font-size: 3rem;
+  height: 3rem;
+  width: 3rem;
+  color: var(--text-light);
+  opacity: 0.5;
+  margin-bottom: 1rem;
+}
+
+.no-orders p {
+  color: var(--text-light);
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+/* Montant total */
+.total-amount {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: linear-gradient(45deg, var(--primary-dark) 0%, var(--primary) 100%);
+  color: white;
+  border-radius: var(--radius);
+  text-align: right;
+  font-size: 1.125rem;
+}
+
+.total-amount strong {
+  margin-right: 0.5rem;
+  font-weight: 600;
+}
+
+/* Animation pour les cartes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.order-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Media queries pour responsive */
+@media (max-width: 768px) {
+  .order-details {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .order-actions {
+    margin-top: 1rem;
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .mat-card-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Utilitaires */
+.w-100 {
+  width: 100%;
+}
+
+.m-b-16 {
+  margin-bottom: 1rem;
+}
+
+/* Style pour smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}

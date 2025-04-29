@@ -1,0 +1,127 @@
+.campaign-card {
+  margin: 16px;
+  padding: 16px;
+  max-width: 1000px; /* Cap card width */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.m-b-16 {
+  margin-bottom: 16px;
+}
+
+.m-t-16 {
+  margin-top: 16px;
+}
+
+.search-field {
+  width: 100%;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  max-width: 100%; /* Ensure table fits within card */
+}
+
+.campaign-table {
+  width: 100%;
+  table-layout: auto; /* Allow columns to adjust based on content */
+  th {
+    text-transform: uppercase;
+    font-weight: bold;
+    background-color: #f5f5f5;
+    padding: 8px;
+  }
+  td {
+    padding: 8px;
+  }
+}
+
+/* Column-specific widths */
+th[mat-header-cell][matColumnDef="title"],
+td[mat-cell][matColumnDef="title"] {
+  width: 200px;
+  min-width: 150px;
+}
+
+th[mat-header-cell][matColumnDef="description"],
+td[mat-cell][matColumnDef="description"] {
+  width: 300px;
+  min-width: 200px;
+  max-width: 300px; /* Limit description column */
+}
+
+th[mat-header-cell][matColumnDef="goalAmount"],
+td[mat-cell][matColumnDef="goalAmount"] {
+  width: 120px;
+  min-width: 100px;
+}
+
+th[mat-header-cell][matColumnDef="currentAmount"],
+td[mat-cell][matColumnDef="currentAmount"] {
+  width: 120px;
+  min-width: 100px;
+}
+
+th[mat-header-cell][matColumnDef="startDate"],
+td[mat-cell][matColumnDef="startDate"] {
+  width: 100px;
+  min-width: 80px;
+}
+
+th[mat-header-cell][matColumnDef="endDate"],
+td[mat-cell][matColumnDef="endDate"] {
+  width: 100px;
+  min-width: 80px;
+}
+
+th[mat-header-cell][matColumnDef="actions"],
+td[mat-cell][matColumnDef="actions"] {
+  width: 80px;
+  min-width: 80px;
+}
+
+/* Truncate long text */
+td.truncate {
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+mat-paginator {
+  margin-top: 16px;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  margin: 16px 0;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .campaign-card {
+    margin: 8px;
+    padding: 8px;
+  }
+
+  th[mat-header-cell],
+  td[mat-cell] {
+    padding: 4px;
+    font-size: 12px;
+  }
+
+  th[mat-header-cell][matColumnDef="description"],
+  td[mat-cell][matColumnDef="description"] {
+    max-width: 150px;
+  }
+}

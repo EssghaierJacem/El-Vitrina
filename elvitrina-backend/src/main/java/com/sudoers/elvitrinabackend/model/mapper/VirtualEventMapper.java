@@ -19,32 +19,32 @@ import java.util.stream.Collectors;
 public class VirtualEventMapper {
 
     private final EventTicketMapper eventTicketMapper;
+    private final EventParticipantMapper eventParticipantMapper;
 
     @Autowired
-    public VirtualEventMapper(EventTicketMapper eventTicketMapper) {
+    public VirtualEventMapper(EventTicketMapper eventTicketMapper ,EventParticipantMapper eventParticipantMapper ) {
         this.eventTicketMapper = eventTicketMapper;
+        this.eventParticipantMapper = eventParticipantMapper;
     }
 
-    public VirtualEvent toEntity(VirtualEventRequestDTO dto) {
+    public VirtualEvent toEntity(VirtualEventRequestDTO dto ,  String imagePath) {
         VirtualEvent event = new VirtualEvent();
         event.setTitle(dto.getTitle());
         event.setDescription(dto.getDescription());
         event.setEventDate(dto.getStartDateTime());
         event.setTicketPrice(dto.getTicketPrice());
-        event.setStatus(dto.getStatus());
         event.setEventType(dto.getEventType());
         event.setEventMode(dto.getEventMode());
+        event.setEventImage(imagePath);
         event.setMaxParticipants(dto.getMaxParticipants());
-        event.setStreamUrl(dto.getStreamUrl());
-        event.setChatChannelId(dto.getChatChannelId());
 
         // Map sessions if provided
         if (dto.getSessions() != null && !dto.getSessions().isEmpty()) {
             List<EventSession> sessions = dto.getSessions().stream()
                     .map(sessionDTO -> {
                         EventSession session = new EventSession();
-                        session.setStartTime(sessionDTO.getStartTime());
-                        session.setEndTime(sessionDTO.getEndTime());
+                        session.setStartTime(sessionDTO.getStartTime().toLocalDateTime());
+                        session.setEndTime(sessionDTO.getEndTime().toLocalDateTime());
                         session.setSessionTitle(sessionDTO.getSessionTitle());
                         session.setVirtualEvent(event); // Bidirectional relationship
                         return session;
@@ -59,7 +59,7 @@ public class VirtualEventMapper {
 
     public VirtualEventResponseDTO toResponseDTO(VirtualEvent event) {
         VirtualEventResponseDTO dto = new VirtualEventResponseDTO();
-        dto.setId(event.getEventId());
+        dto.setEventId(event.getEventId());
         dto.setTitle(event.getTitle());
         dto.setDescription(event.getDescription());
         dto.setStartDateTime(event.getEventDate());
@@ -67,6 +67,7 @@ public class VirtualEventMapper {
         dto.setStatus(event.getStatus());
         dto.setEventType(event.getEventType());
         dto.setEventMode(event.getEventMode());
+        dto.setEventImage(event.getEventImage());
         dto.setMaxParticipants(event.getMaxParticipants());
         dto.setParticipantCount(event.getParticipants() != null ? event.getParticipants().size() : 0);
         dto.setStreamUrl(event.getStreamUrl());
@@ -82,6 +83,7 @@ public class VirtualEventMapper {
                     sessionDTO.setStartTime(session.getStartTime());
                     sessionDTO.setEndTime(session.getEndTime());
                     sessionDTO.setSessionTitle(session.getSessionTitle());
+                    sessionDTO.setStreamUrl(session.getStreamUrl());
                     return sessionDTO;
                 })
                 .collect(Collectors.toList()) : Collections.emptyList());
@@ -91,6 +93,10 @@ public class VirtualEventMapper {
                 .map(eventTicketMapper::toResponseDTO)
                 .collect(Collectors.toList()) : Collections.emptyList());
 
+        // Map par
+        dto.setParticipants(event.getParticipants() != null ? event.getParticipants().stream()
+                .map(eventParticipantMapper::toResponseDTO)
+                .collect(Collectors.toList()) : Collections.emptyList());
         return dto;
     }
 
@@ -99,20 +105,17 @@ public class VirtualEventMapper {
         if (dto.getDescription() != null) event.setDescription(dto.getDescription());
         if (dto.getStartDateTime() != null) event.setEventDate(dto.getStartDateTime());
         if (dto.getTicketPrice() != null) event.setTicketPrice(dto.getTicketPrice());
-        if (dto.getStatus() != null) event.setStatus(dto.getStatus());
         if (dto.getEventType() != null) event.setEventType(dto.getEventType());
         if (dto.getEventMode() != null) event.setEventMode(dto.getEventMode());
         if (dto.getMaxParticipants() != null) event.setMaxParticipants(dto.getMaxParticipants());
-        if (dto.getStreamUrl() != null) event.setStreamUrl(dto.getStreamUrl());
-        if (dto.getChatChannelId() != null) event.setChatChannelId(dto.getChatChannelId());
 
         // Update sessions if provided
         if (dto.getSessions() != null && !dto.getSessions().isEmpty()) {
             List<EventSession> sessions = dto.getSessions().stream()
                     .map(sessionDTO -> {
                         EventSession session = new EventSession();
-                        session.setStartTime(sessionDTO.getStartTime());
-                        session.setEndTime(sessionDTO.getEndTime());
+                        session.setStartTime(sessionDTO.getStartTime().toLocalDateTime());
+                        session.setEndTime(sessionDTO.getEndTime().toLocalDateTime());
                         session.setSessionTitle(sessionDTO.getSessionTitle());
                         session.setVirtualEvent(event);
                         return session;

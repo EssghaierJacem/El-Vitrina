@@ -1,0 +1,66 @@
+<div class="payment-history-container">
+  <!-- Header -->
+  <div class="header">
+    <h1>💳 Payment History</h1>
+    <p>Review all your past transactions.</p>
+  </div>
+
+  <!-- Filters by status -->
+  <div class="filters-container">
+    <button class="filter-button" [class.active]="selectedStatus === 'ALL'" (click)="filterPayments('ALL')">
+      All Payments
+    </button>
+    <button class="filter-button" [class.active]="selectedStatus === 'SUCCESS'" (click)="filterPayments('SUCCESS')">
+      <span class="indicator success"></span>
+      Successful
+    </button>
+    <button class="filter-button" [class.active]="selectedStatus === 'PENDING'" (click)="filterPayments('PENDING')">
+      <span class="indicator pending"></span>
+      Pending
+    </button>
+    <button class="filter-button" [class.active]="selectedStatus === 'FAILED'" (click)="filterPayments('FAILED')">
+      <span class="indicator failed"></span>
+      Failed
+    </button>
+  </div>
+
+  <!-- Payment list -->
+  <div *ngIf="filteredPayments.length > 0; else noPayment" class="payment-grid">
+    <div *ngFor="let payment of filteredPayments" class="payment-card">
+      <!-- Amount -->
+      <h3>{{ payment.amount | currency:'EUR' }}</h3>
+
+      <!-- Transaction date -->
+      <div class="date">
+        <p>📅 {{ payment.transactionDate | date:'medium' }}</p>
+      </div>
+
+      <!-- Payment method -->
+      <p><strong>Method:</strong> {{ payment.method }}</p>
+
+      <!-- Payment status -->
+      <div class="status-container">
+        <span class="status-label">Status:</span>
+        <mat-icon *ngIf="payment.paystatus === 'SUCCESS'" class="status-icon success">check_circle</mat-icon>
+        <mat-icon *ngIf="payment.paystatus === 'PENDING'" class="status-icon pending">hourglass_empty</mat-icon>
+        <mat-icon *ngIf="payment.paystatus === 'FAILED'" class="status-icon failed">error</mat-icon>
+
+        <span class="status-badge"
+              [ngClass]="{
+                'success': payment.paystatus === 'SUCCESS',
+                'pending': payment.paystatus === 'PENDING',
+                'failed': payment.paystatus === 'FAILED'
+              }">
+          {{ payment.paystatus }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- No payment found -->
+  <ng-template #noPayment>
+    <div class="empty-state">
+      <p>🚫 No payments found yet.</p>
+    </div>
+  </ng-template>
+</div>

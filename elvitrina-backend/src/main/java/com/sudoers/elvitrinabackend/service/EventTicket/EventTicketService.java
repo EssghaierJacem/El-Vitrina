@@ -2,6 +2,7 @@ package com.sudoers.elvitrinabackend.service.EventTicket;
 
 import com.sudoers.elvitrinabackend.model.dto.request.EventTicketRequestDTO;
 import com.sudoers.elvitrinabackend.model.dto.response.EventTicketResponseDTO;
+import com.sudoers.elvitrinabackend.model.entity.EventTicket;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,8 +19,9 @@ public interface EventTicketService {
 
     EventTicketResponseDTO generateQRCodeForTicket(Long ticketId);
     boolean validateTicket(Long ticketId);
-    List<EventTicketResponseDTO> issueMultiSessionTickets(EventTicketRequestDTO requestDTO, int quantity);
+//    List<EventTicketResponseDTO> issueMultiSessionTickets(EventTicketRequestDTO requestDTO, int quantity);
     EventTicketResponseDTO applyEarlyBirdPricing(Long ticketId);
     EventTicketResponseDTO trackTicketAvailability(Long ticketId);
     EventTicketResponseDTO cancelTicket(Long ticketId);
+    public List<EventTicket> getTicketsWithSeats(Long userId, Long eventId);
 }

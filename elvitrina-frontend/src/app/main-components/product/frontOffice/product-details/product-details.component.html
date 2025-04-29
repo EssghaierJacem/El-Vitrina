@@ -1,1 +1,211 @@
-<p>product-details works!</p>
+<div class="product-details-container">
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb-nav">
+      <ul>
+        <li><a [routerLink]="['/']">Home Page</a></li>
+        <li><a [routerLink]="['/products']">Categories</a></li>
+        <li *ngIf="product && product.category">
+          <a [routerLink]="['/products/category', product.category]">{{ formatCategoryName(product.category) }}</a>
+        </li>
+        <li *ngIf="product">{{ product.productName }}</li>
+      </ul>
+    </nav>
+  
+    <!-- Loading State -->
+    @if (loading) {
+      <div class="loading-state">
+        <mat-spinner></mat-spinner>
+        <h3>Loading product details...</h3>
+      </div>
+    }
+  
+    <!-- Error State -->
+    @else if (error) {
+      <div class="error-state">
+        <mat-icon color="warn">error</mat-icon>
+        <h3>{{ error }}</h3>
+        <button mat-raised-button color="primary" [routerLink]="['/products']">
+          Back to Products
+        </button>
+      </div>
+    }
+  
+    <!-- Product Content -->
+    @else if (product) {
+      <div class="product-content">
+        <!-- Thumbnail Gallery (Left Side) -->
+        <div class="thumbnail-column">
+          @if (product.images && product.images.length > 0) {
+            <div class="thumbnail-list">
+              @for (image of product.images; track image; let i = $index) {
+                <div 
+                  class="thumbnail" 
+                  [class.active]="i === selectedImageIndex"
+                  (click)="selectImage(i)"
+                >
+                  <img [src]="getProductImageUrl(product)" [alt]="product.productName" (error)="onImageError($event)">
+                </div>
+              }
+            </div>
+          }
+        </div>
+  
+        <!-- Main Product Image (Center) -->
+        <div class="main-image-container">
+          <div class="main-image">
+              <img 
+              [src]="getProductImageUrl(product)" [alt]="product.productName"
+              class="featured-image"
+              (error)="onImageError($event)"
+            >
+          </div>
+          
+          <div class="image-navigation">
+            @if (product.images && product.images.length > 1) {
+              <button mat-icon-button class="nav-button prev" (click)="previousImage()">
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+              <button mat-icon-button class="nav-button next" (click)="nextImage()">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            }
+          </div>
+          
+          <button 
+            mat-icon-button 
+            [color]="isInWishlist ? 'warn' : ''" 
+            (click)="toggleWishlist()"
+            class="wishlist-button"
+          >
+            <mat-icon>{{ isInWishlist ? 'favorite' : 'favorite_border' }}</mat-icon>
+          </button>
+        </div>
+  
+        <!-- Product Info (Right Side) -->
+        <div class="product-info">
+          <h1 class="product-name">{{product.productName}}</h1>
+          
+          <!-- Price Section -->
+          <div class="price-section">
+            <div class="price-display" [class.has-discount]="product.hasDiscount">
+              <span class="current-price" [style.color]="'#d01117'">
+                {{ getFinalPrice(product) | currency:'TND' }}
+              </span>
+              <ng-container *ngIf="product.hasDiscount">
+                <span class="original-price" *ngIf="getOriginalPrice(product)">
+                  {{ getOriginalPrice(product) | currency:'TND' }}
+                </span>
+                <span class="discount-badge" *ngIf="getDiscountPercentage(product) > 0">
+                  -{{ getDiscountPercentage(product) }}%
+                </span>
+              </ng-container>
+            </div>
+            <div class="price-info">
+              <span class="vat-info">VAT included (if applicable), <a href="#">plus delivery charges</a></span>
+            </div>
+          </div>
+
+          <div class="product-meta">
+            <span class="shipping" *ngIf="product.freeShipping">FREE shipping</span>
+            <span class="bestseller" *ngIf="product.isBestseller">Bestseller</span>
+            <span class="stock" *ngIf="product.stockQuantity === 0">Out of Stock</span>
+          </div>
+  
+          <!-- Inventory Status -->
+          <div class="inventory-alert" *ngIf="product.stockQuantity <= 5 && product.stockQuantity > 0">
+            Only {{ product.stockQuantity }} left, currently in {{ inBaskets }} baskets
+          </div>
+  
+          <!-- Seller/Store Info -->
+          <div class="seller-info" *ngIf="product.store">
+            <a [routerLink]="['/stores', product.storeId]" class="store-link">
+              {{ product.store.storeName }}
+            </a>
+            <!-- Show featured badge only if store is featured -->
+            <mat-icon *ngIf="product.store.featured" class="featured-icon" matTooltip="Featured Store">verified</mat-icon>
+          </div>
+  
+          <!-- Product Features -->
+          <div class="product-features">
+            <div class="feature-item">
+              <mat-icon>swap_horiz</mat-icon>
+              <span>Returns and exchanges accepted</span>
+            </div>
+            <div class="feature-item promotion">
+              <mat-icon>local_offer</mat-icon>
+              <span>Save 20% when you buy 3 items in this store</span>
+              <a href="#" class="promotion-link">Take advantage of the promotion</a>
+            </div>
+            @if (product.freeShipping) {
+              <div class="feature-item">
+                <mat-icon>local_shipping</mat-icon>
+                <span>Free Shipping</span>
+              </div>
+            }
+            @if (product.isBestseller) {
+              <div class="feature-item">
+                <mat-icon>star</mat-icon>
+                <span>Bestseller</span>
+              </div>
+            }
+          </div>
+  
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button 
+              mat-raised-button 
+              class="buy-now-button" 
+              [disabled]="product.stockQuantity === 0"
+            >
+              Buy now
+            </button>
+            <button 
+              mat-raised-button 
+              class="add-to-cart-button" 
+              (click)="addToCart()"
+              [disabled]="product.stockQuantity === 0 || product.status === 'OUT_OF_STOCK'"
+            >
+              Add to cart
+            </button>
+          </div>
+  
+          <!-- Product Description -->
+          @if (product.description) {
+            <div class="description-section">
+              <h2>Description</h2>
+              <p>{{ product.description }}</p>
+            </div>
+          }
+          
+          <!-- Category -->
+          <div class="category-section">
+            <h2>Category</h2>
+            <p>{{ formatCategoryName(product.category) }}</p>
+          </div>
+
+          <!-- Tags Section -->
+          <div class="tags-section" *ngIf="product?.tags?.length">
+            <h2>Tags</h2>
+            <div class="tags">
+              <mat-chip-listbox>
+                <mat-chip *ngFor="let tag of product.tags">{{ tag }}</mat-chip>
+              </mat-chip-listbox>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Product Recommendations Section -->
+      <div class="recommendations-section">
+        <app-product-recommendations 
+          [product]="product" 
+          [recommendationType]="recommendationTypes.CATEGORY">
+        </app-product-recommendations>
+        
+        <app-product-recommendations 
+          [product]="product" 
+          [recommendationType]="recommendationTypes.TEXT">
+        </app-product-recommendations>
+      </div>
+    }
+  </div>

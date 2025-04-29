@@ -28,4 +28,12 @@ export class AuthService {
       params: { token, newPassword }
     });
   }
+
+  faceLogin(file: File): Observable<AuthResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post<AuthResponse>(`${this.apiUrl}/face-login`, formData);
+  }
+
 }

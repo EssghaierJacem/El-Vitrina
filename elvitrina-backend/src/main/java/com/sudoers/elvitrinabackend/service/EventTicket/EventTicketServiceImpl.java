@@ -75,6 +75,7 @@ public class EventTicketServiceImpl implements EventTicketService {
     public EventTicketResponseDTO getEventTicketById(Long id) {
         EventTicket eventTicket = eventTicketRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Event ticket not found with id: " + id));
+
         return eventTicketMapper.toResponseDTO(eventTicket);
     }
 
@@ -123,6 +124,10 @@ public class EventTicketServiceImpl implements EventTicketService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<EventTicket> getTicketsWithSeats(Long userId, Long eventId) {
+        return eventTicketRepository.findTicketsWithSeats(userId, eventId);
+    }
 
     @Override
     public EventTicketResponseDTO generateQRCodeForTicket(Long ticketId) {
@@ -138,7 +143,7 @@ public class EventTicketServiceImpl implements EventTicketService {
             ticket.setUpdatedAt(LocalDateTime.now());
             EventTicket savedTicket = eventTicketRepository.save(ticket);
             EventTicketResponseDTO dto = eventTicketMapper.toResponseDTO(savedTicket);
-            dto.setQrCodeUrl("/qrcodes/" + ticket.getQrCodeHash() + ".png"); // Placeholder URL
+            dto.setQrCodeHash(ticket.getQrCodeHash() ); // Placeholder URL
             return dto;
         } catch (WriterException | IOException e) {
             throw new RuntimeException("Failed to generate QR code", e);
@@ -152,7 +157,7 @@ public class EventTicketServiceImpl implements EventTicketService {
         return ticket.getIsValid() && (ticket.getValidUntil() == null || ticket.getValidUntil().isAfter(LocalDateTime.now()));
     }
 
-    @Override
+   /* @Override
     public List<EventTicketResponseDTO> issueMultiSessionTickets(EventTicketRequestDTO requestDTO, int quantity) {
         VirtualEvent event = virtualEventRepository.findById(requestDTO.getEventId())
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + requestDTO.getEventId()));
@@ -181,7 +186,7 @@ public class EventTicketServiceImpl implements EventTicketService {
                 .peek(dto -> dto.setSessionIds(sessions.stream().map(EventSession::getSessionId).collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
-
+*/
     @Override
     public EventTicketResponseDTO applyEarlyBirdPricing(Long ticketId) {
         EventTicket ticket = eventTicketRepository.findById(ticketId)

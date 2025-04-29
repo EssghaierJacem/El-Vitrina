@@ -17,6 +17,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { AppNavItemComponent } from './sidebar/nav-item/nav-item.component';
 import { navItems } from './sidebar/sidebar-data';
 import { AppTopstripComponent } from './top-strip/topstrip.component';
+import { AdDisplayComponent } from "../../main-components/Ad/frontOffice/ad-display/ad-display.component";
 
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
@@ -34,8 +35,9 @@ const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
     NgScrollbarModule,
     TablerIconsModule,
     HeaderComponent,
-    AppTopstripComponent
-  ],
+    AppTopstripComponent,
+    AdDisplayComponent,
+],
   templateUrl: './full.component.html',
   styleUrls: [],
   encapsulation: ViewEncapsulation.None

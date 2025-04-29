@@ -1,1 +1,113 @@
-<p>store-feedback-list works!</p>
+<div class="feedback-container etsy-style">
+  <!-- Header with overall rating -->
+  <div class="feedback-header">
+    <h2>{{storeName}} <span class="rating-count">has {{feedbackCount}} reviews</span></h2>
+    <div class="overall-rating">
+      <div class="stars">
+        <app-star-rating [rating]="averageRating" starSize="large" [showRating]="false"></app-star-rating>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- Sorting controls -->
+  <div class="sort-controls">
+    <span>Sort by:</span>
+    <button mat-button [matMenuTriggerFor]="sortMenu">
+      suggested
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+    <mat-menu #sortMenu="matMenu">
+      <button mat-menu-item (click)="sortBy('dateDesc')">Most recent</button>
+      <button mat-menu-item (click)="sortBy('ratingDesc')">Highest rating</button>
+      <button mat-menu-item (click)="sortBy('ratingAsc')">Lowest rating</button>
+    </mat-menu>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center p-y-32">
+    <mat-spinner diameter="40" class="m-auto"></mat-spinner>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!loading && error" class="text-center p-y-32 text-danger">
+    <mat-icon>error</mat-icon>
+    <p>{{error}}</p>
+  </div>
+
+  <!-- Reviews list -->
+  <div class="reviews-list" *ngIf="!loading && !error && feedbacks.length > 0">
+    <div class="review-card" *ngFor="let feedback of feedbacks">
+      <div class="review-header">
+        <div class="reviewer-avatar">
+          <img *ngIf="feedback.userImage" [src]="getUserImageUrl(feedback.userImage)" alt="User profile" (error)="handleImageError($event)">
+          <div *ngIf="!feedback.userImage" class="avatar-placeholder">
+            <i class="fas fa-user-circle"></i>
+          </div>
+        </div>
+        <div class="reviewer-details">
+          <div class="stars-date">
+            <app-star-rating [rating]="feedback.rating" [showRating]="false"></app-star-rating>
+            <span class="review-date">{{formatDate(feedback.createdAt || '')}}</span>
+          </div>
+          <div class="reviewer-info">
+            <span class="reviewer-name">{{feedback.userName || 'Anonymous'}}</span>
+            <div class="type-badge-container">
+              <span class="feedback-type" [ngClass]="'type-' + feedback.storeFeedbackType">
+                <i class="fas {{getFeedbackTypeIcon(feedback.storeFeedbackType)}}"></i>
+                {{getFeedbackTypeDisplayName(feedback.storeFeedbackType)}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-content">
+        <p class="review-text">{{feedback.comment}}</p>
+        
+        <!-- Recommendation -->
+        <div class="review-meta">
+          <div class="recommendation" *ngIf="feedback.wouldRecommend">
+            <mat-icon>check</mat-icon>
+            <span>Recommends this item</span>
+          </div>
+        </div>
+
+        <!-- Rating details -->
+        <div class="rating-details">
+          <div class="rating-category">
+            <span>Quality of the item</span>
+            <div class="rating-value">
+              {{feedback.rating}}
+              <mat-icon class="star-icon">star</mat-icon>
+            </div>
+          </div>
+          <div class="rating-category">
+            <span>Delivery</span>
+            <div class="rating-value">
+              {{feedback.rating}}
+              <mat-icon class="star-icon">star</mat-icon>
+            </div>
+          </div>
+          <div class="rating-category" *ngIf="feedback.storeFeedbackType === 'CUSTOMER_SERVICE'">
+            <span>Customer service</span>
+            <div class="rating-value">
+              {{feedback.rating === 1 ? feedback.rating : 5}}
+              <mat-icon class="star-icon">star</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="no-reviews" *ngIf="!loading && !error && feedbacks.length === 0">
+    <mat-icon>star_border</mat-icon>
+    <p>No reviews yet. Be the first to review this store!</p>
+    <button mat-raised-button color="primary" (click)="openFeedbackDialog()">
+      Add Review
+    </button>
+  </div>
+</div>

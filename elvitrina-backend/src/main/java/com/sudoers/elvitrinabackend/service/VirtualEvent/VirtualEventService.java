@@ -6,12 +6,16 @@ import com.sudoers.elvitrinabackend.model.enums.EventMode;
 import com.sudoers.elvitrinabackend.model.enums.EventType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface VirtualEventService {
-    VirtualEventResponseDTO createEvent(VirtualEventRequestDTO requestDTO);
+    VirtualEventResponseDTO createEvent(VirtualEventRequestDTO requestDTO , MultipartFile eventImage) throws IOException;
     VirtualEventResponseDTO getEventById(Long id);
+    List<VirtualEventResponseDTO>  getEventByStoreId(Long id);
+
     List<VirtualEventResponseDTO> getAllEvents();
     Page<VirtualEventResponseDTO> getEventsPaginated(Pageable pageable);
     VirtualEventResponseDTO updateEvent(Long id, VirtualEventRequestDTO requestDTO);

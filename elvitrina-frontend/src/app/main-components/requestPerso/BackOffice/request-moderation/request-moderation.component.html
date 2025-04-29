@@ -1,0 +1,81 @@
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Request Moderation</h2>
+
+  <!-- Bulk Action Buttons -->
+  <div class="mb-3">
+    <button class="btn btn-success" (click)="bulkAction('ACCEPTED')" [disabled]="!selectedRequests.size">
+      Bulk Approve
+    </button>
+  </div>
+
+  <!-- Filter by Status -->
+  <div class="mb-3">
+    <label for="statusFilter">Filter by Status</label>
+    <select id="statusFilter" class="form-control" (change)="filterRequests($event)">
+      <option value="ALL">All</option>
+      <option value="PENDING">Pending</option>
+      <option value="ACCEPTED">Approved</option>
+    </select>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="!requests" class="text-center">
+    <p>Loading requests...</p>
+  </div>
+
+  <!-- Table for displaying requests -->
+  <table class="table table-striped" *ngIf="requests?.length">
+    <thead>
+      <tr>
+        <th scope="col">
+          <input type="checkbox" (change)="toggleSelectAll($event)" />
+        </th>
+       
+        <th scope="col">Request Name</th>
+        <th scope="col">Status</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let request of filteredRequests">
+        <td>
+          <input 
+            type="checkbox" 
+            (change)="toggleRequestSelection(request.id)" 
+            [checked]="selectedRequests.has(request.id)" />
+        </td>
+       
+        <td>{{ request.title }}</td>
+        <td>
+          <span [ngClass]="{
+            'badge badge-warning': request.status === 'PENDING',
+            'badge badge-success': request.status === 'ACCEPTED',
+            'badge badge-danger': request.status === 'REJECTED'
+          }">
+            {{ request.status }}
+          </span>
+        </td>
+        <td>
+          <ng-container *ngIf="request.status === 'PENDING'">
+            <button class="btn btn-info btn-sm" (click)="changeStatus(request, 'ACCEPTED')">
+              <i class="fa fa-check-circle"></i> Approve
+            </button>
+          </ng-container>
+
+          <button class="btn btn-primary btn-sm" (click)="viewRequest(request)">
+            <i class="fa fa-eye"></i> View
+          </button>
+
+          <button class="btn btn-warning btn-sm" (click)="deleteRequest(request.id)">
+            <i class="fa fa-trash"></i> Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Empty state when no requests -->
+  <div *ngIf="requests?.length === 0" class="text-center">
+    <p>No requests available.</p>
+  </div>
+</div>

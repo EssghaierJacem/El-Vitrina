@@ -24,6 +24,7 @@ public class EventSessionController {
     @PostMapping
     public ResponseEntity<EventSessionResponseDTO> addSessionToEvent(
             @RequestBody EventSessionRequestDTO requestDTO) {
+        System.out.println(requestDTO);
         return new ResponseEntity<>(eventSessionService.addSessionToEvent(requestDTO), HttpStatus.CREATED);
     }
 
@@ -38,4 +39,17 @@ public class EventSessionController {
             @PathVariable Long sessionId) {
         return ResponseEntity.ok(eventSessionService.markSessionAsCompleted(sessionId));
     }
+
+
+    @DeleteMapping("/{eventId}/sessions")
+    public ResponseEntity<Void> removeSessionByEventIdAndTitle(
+            @PathVariable Long eventId,
+            @RequestParam String title) {
+        eventSessionService.removeSessionByEventIdAndTitle(eventId, title);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
+
 }

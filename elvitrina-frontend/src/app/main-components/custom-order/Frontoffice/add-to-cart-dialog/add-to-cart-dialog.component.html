@@ -1,0 +1,56 @@
+<mat-card class="cardWithShadow theme-card card">
+  <mat-card-header>
+    <mat-card-title style="color: #003366;">Place My Order</mat-card-title> <!-- Dark blue color for title -->
+  </mat-card-header>
+  <mat-card-content>
+    <form (ngSubmit)="createOrder()">
+         <!-- Success message (initially hidden) -->
+      <div *ngIf="showSuccessMessage" class="success-message">
+        <mat-icon>check_circle</mat-icon>
+        Order added to cart successfully!
+      </div>
+      <div class="row">
+        <!-- Quantity with buttons -->
+        <div class="col-lg-6">
+          <label style="color: #003366;">Quantity</label> <!-- Dark blue color for label -->
+          <div class="d-flex align-items-center">
+            <button mat-mini-button color="accent" type="button" (click)="decreaseQuantity()" style="background-color: #003366; color: white;">-</button> <!-- Dark blue button -->
+            <input matInput type="number" [(ngModel)]="order.quantity" name="quantity" class="mx-2 w-25 text-center" min="1" readonly />
+            <button mat-mini-button color="accent" type="button" (click)="increaseQuantity()" style="background-color: #003366; color: white;">+</button> <!-- Dark blue button -->
+          </div>
+        </div>
+
+        <!-- Unit price (readonly) -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label style="color: #003366;">Unit Price (TND)</mat-label> <!-- Dark blue color for label -->
+            <input matInput [value]="product.price" readonly style="background-color: #f0f0f0;" />
+          </mat-form-field>
+        </div>
+
+        <!-- Automatic date -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label style="color: #003366;">Order Date</mat-label> <!-- Dark blue color for label -->
+            <input matInput [value]="order.orderDate | date:'shortDate'" readonly style="background-color: #f0f0f0;" />
+          </mat-form-field>
+        </div>
+
+        <!-- User name (readonly) -->
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label style="color: #003366;">Customer Name</mat-label> <!-- Dark blue color for label -->
+            <input matInput [value]="currentUser.name" readonly style="background-color: #f0f0f0;" />
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="m-t-12">
+        <!-- "Place Order" button with dark blue background -->
+        <button mat-flat-button style="background-color: #003366; color: white;" type="submit">Place Order</button>
+        <!-- "Cancel" button with red background for cancellation -->
+        <button mat-stroked-button color="warn" type="button" routerLink="/products">Cancel</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

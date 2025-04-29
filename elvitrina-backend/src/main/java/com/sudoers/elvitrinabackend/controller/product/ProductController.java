@@ -4,18 +4,35 @@ import com.sudoers.elvitrinabackend.model.dto.ProductCreationDTO;
 import com.sudoers.elvitrinabackend.model.dto.ProductDTO;
 import com.sudoers.elvitrinabackend.model.dto.ProductSummaryDTO;
 import com.sudoers.elvitrinabackend.model.dto.ProductUpdateDTO;
+import com.sudoers.elvitrinabackend.model.dto.ImageAnalysisDTO;
 import com.sudoers.elvitrinabackend.model.enums.ProductCategoryType;
 import com.sudoers.elvitrinabackend.model.enums.ProductStatus;
 import com.sudoers.elvitrinabackend.service.product.ProductService;
+import com.sudoers.elvitrinabackend.service.Image.ImageUploadService;
+import jdk.jfr.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/products")
@@ -25,9 +42,12 @@ public class ProductController {
     private ProductService productService;
 
     // ---- CRUD Endpoints ----
-    @PostMapping
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductCreationDTO productDTO) {
-        ProductDTO createdProduct = productService.createProduct(productDTO);
+    @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<ProductDTO> createProduct(
+            @RequestPart("product") ProductCreationDTO productDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
+        ProductDTO createdProduct = productService.createProduct(productDTO, images);
         return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
@@ -52,10 +72,13 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<ProductDTO> updateProduct(
             @PathVariable Long id,
-            @RequestBody ProductUpdateDTO productDTO) {
-        ProductDTO updatedProduct = productService.updateProduct(id, productDTO);
+            @RequestPart("product") ProductUpdateDTO productDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
+        ProductDTO updatedProduct = productService.updateProduct(id, productDTO, images);
         return ResponseEntity.ok(updatedProduct);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
@@ -126,15 +149,27 @@ public class ProductController {
 
     // ---- Statistics Endpoints ----
     @GetMapping("/stats/category-count")
-    public ResponseEntity<Map<ProductCategoryType, Long>> countProductsByCategory() {
-        Map<ProductCategoryType, Long> stats = productService.countProductsByCategory();
-        return ResponseEntity.ok(stats);
+    public ResponseEntity<List<Map<String, Object>>> countProductsByCategory() {
+        Map<ProductCategoryType, Long> rawStats = productService.countProductsByCategory();
+        List<Map<String, Object>> formattedStats = new ArrayList<>();
+        
+        rawStats.forEach((category, count) -> {
+            Map<String, Object> categoryData = new HashMap<>();
+            categoryData.put("category", category);
+            categoryData.put("count", count);
+            formattedStats.add(categoryData);
+        });
+        
+        return ResponseEntity.ok(formattedStats);
     }
 
     @GetMapping("/stats/active-count")
-    public ResponseEntity<Long> countActiveProducts() {
+    public ResponseEntity<Map<String, Object>> countActiveProducts() {
         Long count = productService.countActiveProducts();
-        return ResponseEntity.ok(count);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "ACTIVE");
+        response.put("count", count);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/stats/discounted-count")
@@ -187,12 +222,35 @@ public class ProductController {
     }
 
     // ---- Image Handling Endpoints ----
-    @PostMapping("/{id}/images")
-    public ResponseEntity<ProductDTO> addImageToProduct(
-            @PathVariable Long id,
-            @RequestParam String imageUrl) {
-        ProductDTO product = productService.addImageToProduct(id, imageUrl);
-        return ResponseEntity.ok(product);
+    @PostMapping("/{id}/upload-image")
+    public ResponseEntity<ProductDTO> uploadProductImage(@PathVariable Long id,
+                                                         @RequestParam("image") MultipartFile imageFile) {
+        ProductDTO updatedProduct = productService.addImageToProduct(id, imageFile);
+        return ResponseEntity.ok(updatedProduct);
+    }
+
+    @GetMapping("/products/images/{filename:.+}")
+    public ResponseEntity<Resource> getProductImage(@PathVariable String filename) {
+        try {
+            Path filePath = Paths.get("uploads/product-images").resolve(filename);
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (!resource.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            String contentType = Files.probeContentType(filePath);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @DeleteMapping("/{id}/images")
@@ -217,4 +275,83 @@ public class ProductController {
         List<ProductDTO> products = productService.findByStatus(status);
         return ResponseEntity.ok(products);
     }
+
+    // Add these endpoints to your existing ProductController class
+
+    // ---- Tag Management Endpoints ----
+    @PostMapping("/{id}/tags")
+    public ResponseEntity<ProductDTO> addTagsToProduct(
+            @PathVariable Long id,
+            @RequestBody Set<String> tags) {
+        ProductDTO updatedProduct = productService.addTags(id, tags);
+        return ResponseEntity.ok(updatedProduct);
+    }
+
+    @DeleteMapping("/{id}/tags")
+    public ResponseEntity<ProductDTO> removeTagsFromProduct(
+            @PathVariable Long id,
+            @RequestBody Set<String> tags) {
+        ProductDTO updatedProduct = productService.removeTags(id, tags);
+        return ResponseEntity.ok(updatedProduct);
+    }
+
+    // ---- Tag Search Endpoints ----
+    @GetMapping("/search/by-tag")
+    public ResponseEntity<List<ProductDTO>> searchProductsByTag(
+            @RequestParam String tag) {
+        List<ProductDTO> products = productService.findByTag(tag);
+        return ResponseEntity.ok(products);
+    }
+
+    // ---- Image Analysis Endpoints ----
+    
+    @PostMapping("/{id}/analyze-image")
+    public ResponseEntity<ImageAnalysisDTO> analyzeProductImage(
+            @PathVariable Long id,
+            @RequestParam String imageUrl) {
+        ImageAnalysisDTO analysisResult = productService.analyzeProductImage(id, imageUrl);
+        return ResponseEntity.ok(analysisResult);
+    }
+    
+    @PostMapping("/analyze-image-file")
+    public ResponseEntity<ImageAnalysisDTO> analyzeImageFile(
+            @RequestParam("image") MultipartFile imageFile) {
+        ImageAnalysisDTO analysisResult = productService.analyzeImageFile(imageFile);
+        return ResponseEntity.ok(analysisResult);
+    }
+    
+    @PostMapping("/{id}/apply-analysis")
+    public ResponseEntity<ProductDTO> applyImageAnalysis(
+            @PathVariable Long id,
+            @RequestParam String imageUrl,
+            @RequestParam(defaultValue = "true") boolean applyTags,
+            @RequestParam(defaultValue = "true") boolean applyCategory,
+            @RequestParam(defaultValue = "true") boolean applyDescription) {
+        ProductDTO updatedProduct = productService.applyImageAnalysis(id, imageUrl, applyTags, applyCategory, applyDescription);
+        return ResponseEntity.ok(updatedProduct);
+    }
+
+    private String saveImage(MultipartFile file) {
+        try {
+            // Define the upload directory (you can change this path)
+            String uploadDir = "/uploads/product-images"; // Update this path as needed
+            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path uploadPath = Paths.get(uploadDir);
+
+            // Create the directory if it doesn't exist
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // Save the file to the server
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(file.getInputStream(), filePath);
+
+            // Return the relative URL for the image
+            return "/uploads/product-images/" + fileName; // Adjust this based on your server configuration
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save image: " + e.getMessage());
+        }
+    }
+
 }

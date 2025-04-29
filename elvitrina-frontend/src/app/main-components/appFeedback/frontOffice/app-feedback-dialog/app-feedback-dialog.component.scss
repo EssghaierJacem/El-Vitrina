@@ -1,0 +1,204 @@
+.cardWithShadow {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.m-t-16 {
+  margin-top: 16px;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-content-end {
+  justify-content: flex-end;
+}
+
+.cancel-button {
+  background-color: transparent;
+  color: #222;
+  border: 1px solid #222;
+  border-radius: 24px;
+  padding: 12px 24px;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.submit-button {
+  background-color: black;
+  color: white;
+  border-radius: 24px;
+  padding: 12px 24px;
+
+  &:hover {
+    background-color: black;
+  }
+
+  &:disabled {
+    background-color: #e1e1e1;
+    color: #888;
+  }
+}
+
+.feedback-dialog {
+  max-width: 550px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+  padding: 0;
+  color: #999;
+  
+  span {
+    display: block;
+    height: 24px;
+    width: 24px;
+    line-height: 24px;
+  }
+  
+  &:hover {
+    color: #333;
+  }
+}
+
+.dialog-content {
+  padding: 24px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  
+  &:focus {
+    outline: none;
+    border-color: #000;
+  }
+}
+
+.select-wrapper {
+  position: relative;
+  
+  &:after {
+    content: "▼";
+    font-size: 12px;
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    color: #555;
+    pointer-events: none;
+  }
+  
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: white;
+    padding-right: 30px;
+    height: 40px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+  }
+}
+
+// Additional style for dropdown options
+select option {
+  padding: 8px;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.subscribe-button {
+  background-color: #222;
+  color: white;
+  border: none;
+  border-radius: 0;
+  padding: 12px 32px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: #000;
+  }
+  
+  &:disabled {
+    background-color: #ddd;
+    color: #999;
+    cursor: not-allowed;
+  }
+}
+
+.form-row {
+  display: flex;
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+.half-width {
+  flex: 0 0 50%;
+  padding-left: 10px;
+  padding-right: 10px;
+  
+  .form-control {
+    width: 100%;
+  }
+}

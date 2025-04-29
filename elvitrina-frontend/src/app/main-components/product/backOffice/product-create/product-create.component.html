@@ -97,7 +97,7 @@
           </mat-checkbox>
         </div>
 
-        <!-- Discount Percentage (enabled only if hasDiscount is checked) -->
+        <!-- Discount Percentage -->
         <mat-form-field appearance="outline" class="w-100" *ngIf="productForm.get('hasDiscount')?.value">
           <mat-label>Discount Percentage</mat-label>
           <input matInput type="number" formControlName="discountPercentage" min="0" max="100">
@@ -105,20 +105,14 @@
             Discount percentage must be greater than or equal to 0
           </mat-error>
           <mat-error *ngIf="productForm.get('discountPercentage')?.hasError('max')">
-            Discount percentage must be less than or equal to 100
+            Discount percentage cannot exceed 100
           </mat-error>
         </mat-form-field>
 
-        <!-- Additional Options -->
+        <!-- Free Shipping -->
         <div class="m-b-16">
           <mat-checkbox formControlName="freeShipping" color="primary">
             Free Shipping
-          </mat-checkbox>
-        </div>
-
-        <div class="m-b-16">
-          <mat-checkbox formControlName="isBestseller" color="primary">
-            Bestseller
           </mat-checkbox>
         </div>
 
@@ -127,7 +121,7 @@
           <mat-label>Status</mat-label>
           <mat-select formControlName="status" required>
             <mat-option *ngFor="let status of statusOptions" [value]="status">
-              {{ status }}
+              {{ getStatusDisplayName(status) }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="productForm.get('status')?.hasError('required')">
@@ -136,14 +130,18 @@
         </mat-form-field>
 
         <!-- Image URLs Section -->
-        <div class="section-title m-t-24 m-b-16">Images</div>
+        <div class="form-group">
+          <label>Upload Product Images</label>
+          <input type="file" (change)="onImagesSelected($event)" multiple accept="image/*">
         
-        <!-- Image URLs -->
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Image URLs (comma-separated)</mat-label>
-          <textarea matInput formControlName="images" rows="3" placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"></textarea>
-          <mat-hint>Enter multiple image URLs separated by commas</mat-hint>
-        </mat-form-field>
+          <!-- Preview uploaded images -->
+          <div class="uploaded-images" *ngIf="uploadedImagesPreview.length > 0">
+            <div *ngFor="let img of uploadedImagesPreview" class="image-preview">
+              <img [src]="img" alt="Uploaded Image" class="preview-image">
+            </div>
+          </div>
+        </div>
+        
 
         <!-- Action Buttons -->
         <div class="d-flex justify-content-end gap-2 m-t-24">
@@ -151,11 +149,8 @@
             Cancel
           </button>
           <button mat-raised-button color="primary" type="submit" [disabled]="productForm.invalid || loading">
-            @if (loading) {
-              <mat-spinner diameter="20"></mat-spinner>
-            } @else {
-              Create Product
-            }
+            <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+            <span *ngIf="!loading">Create Product</span>
           </button>
         </div>
       </form>

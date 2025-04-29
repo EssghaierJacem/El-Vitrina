@@ -1,53 +1,49 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { TablerIconsModule } from 'angular-tabler-icons';
 
-// ecommerce card
-interface productCards {
+interface ProductCard {
     id: number;
-    imgSrc: string;
-    title: string;
-    price: string;
-    rprice: string;
+    productName: string;
+    price: number;
+    imageUrl: string;
 }
 
 @Component({
     selector: 'app-blog-card',
+    standalone: true,
     imports: [MatCardModule, TablerIconsModule, MatButtonModule],
     templateUrl: './blog-card.component.html',
 })
-export class AppBlogCardsComponent {
-    constructor() { }
+export class AppBlogCardsComponent implements OnInit {
 
-    productcards: productCards[] = [
-        {
-            id: 1,
-            imgSrc: '/assets/images/products/s4.jpg',
-            title: 'Boat Headphone',
-            price: '285',
-            rprice: '375',
-        },
-        {
-            id: 2,
-            imgSrc: '/assets/images/products/s5.jpg',
-            title: 'MacBook Air Pro',
-            price: '285',
-            rprice: '375',
-        },
-        {
-            id: 3,
-            imgSrc: '/assets/images/products/s7.jpg',
-            title: 'Red Valvet Dress',
-            price: '285',
-            rprice: '375',
-        },
-        {
-            id: 4,
-            imgSrc: '/assets/images/products/s11.jpg',
-            title: 'Cute Soft Teddybear',
-            price: '285',
-            rprice: '375',
-        },
-    ];
+    constructor(private http: HttpClient) {}
+
+    productcards: ProductCard[] = [];
+
+    ngOnInit(): void {
+        this.http.get<ProductCard[]>('http://localhost:8080/api/stats/top-products').subscribe({
+            next: (data) => {
+                this.productcards = data;
+            },
+            error: (err) => {
+                console.error('Failed to fetch products', err);
+            }
+        });        
+    }
+    
+    getImageUrlFromFilename(filename?: string): string {
+        if (!filename) {
+          return 'assets/images/products/no-image.jpg';
+        }
+      
+        if (filename.startsWith('http://') || filename.startsWith('https://')) {
+          return filename;
+        }
+      
+        const cleaned = filename.replace(/^\/+/, '');
+        return `http://localhost:8080/api/products/products/images/${cleaned}`;
+      }
 }

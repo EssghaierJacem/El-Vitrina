@@ -1,0 +1,810 @@
+/* Clean, minimal feedback form styling with sf- prefix to avoid conflicts */
+.sf-feedback-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.sf-feedback-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.sf-feedback-header {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  
+  i {
+    color: #333;
+    font-size: 18px;
+  }
+  
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+.sf-feedback-form {
+  padding: 15px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 20px;
+}
+
+.sf-form-group {
+  margin-bottom: 16px;
+}
+
+/* Make type and rating appear side by side */
+.sf-form-group:nth-child(1), 
+.sf-form-group:nth-child(2) {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Make textarea full width */
+.sf-form-group:nth-child(3) {
+  width: 100%;
+}
+
+/* Make checkbox and submit button row */
+.sf-form-group.sf-recommendation {
+  margin-bottom: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.sf-form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.sf-select-wrapper {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #666;
+    pointer-events: none;
+  }
+}
+
+.sf-form-select {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 15px;
+  color: #333;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: #1C2D41;
+    box-shadow: 0 0 0 1px rgba(28, 45, 65, 0.2);
+  }
+  
+  option {
+    padding: 10px;
+  }
+}
+
+.sf-rating-label {
+  font-size: 14px;
+  color: #666;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.sf-form-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 80px;
+  max-height: 120px;
+  
+  &:focus {
+    outline: none;
+    border-color: #999;
+  }
+}
+
+.sf-char-count {
+  margin-top: 4px;
+  text-align: right;
+  font-size: 12px;
+  color: #666;
+}
+
+.sf-recommendation {
+  padding-top: 0;
+}
+
+.sf-checkbox-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  
+  input[type="checkbox"] {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+  }
+  
+  .sf-checkbox-label {
+    font-size: 14px;
+    color: #333;
+  }
+}
+
+.sf-form-footer {
+  margin-top: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.sf-submit-button {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 4px;
+  background-color: #1C2D41;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  &:hover:not(:disabled) {
+    background-color: #263b53;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@media (max-width: 576px) {
+  .sf-feedback-container {
+    padding: 10px;
+  }
+  
+  .sf-form-label, .sf-checkbox-label {
+    font-size: 14px;
+  }
+  
+  .sf-form-select, .sf-form-textarea {
+    font-size: 14px;
+  }
+  
+  .sf-submit-button {
+    width: 100%;
+  }
+}
+
+/* Main container styling */
+.feedback-container {
+  margin-bottom: 30px;
+}
+
+.feedback-simple-card {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Header styling */
+.feedback-header {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  
+  i {
+    font-size: 18px;
+    color: #333;
+  }
+  
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+/* Form styling */
+.feedback-simple-form {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .type-select {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+}
+
+/* Rating section */
+.rating-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  .rating-slider {
+    width: 100%;
+  }
+  
+  .rating-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    i {
+      color: #ddd;
+      font-size: 18px;
+      
+      &.fas {
+        color: #ffc107;
+      }
+    }
+    
+    .rating-text {
+      font-size: 14px;
+      color: #666;
+      margin-left: 4px;
+    }
+  }
+}
+
+/* Comment input */
+.comment-input {
+  .comment-field {
+    width: 100%;
+  }
+  
+  textarea {
+    resize: vertical;
+    font-size: 14px;
+  }
+  
+  .low-chars {
+    color: #f44336;
+  }
+}
+
+/* Form footer */
+.form-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  
+  .feedback-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+    
+    .type-select {
+      min-width: 200px;
+      flex: 1;
+    }
+    
+    .recommend-check {
+      margin-top: 10px;
+      
+      span {
+        font-size: 14px;
+      }
+    }
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    
+    .submit-button {
+      background-color: #000;
+      color: #fff;
+      height: 40px;
+      padding: 0 24px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      
+      &:hover:not([disabled]) {
+        background-color: #333;
+      }
+      
+      &[disabled] {
+        background-color: #ccc;
+        color: #666;
+      }
+      
+      .spinner {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+/* Material styling overrides */
+::ng-deep {
+  .mat-mdc-form-field {
+    width: 100%;
+  }
+
+  .mat-mdc-form-field-appearance-outline .mat-mdc-form-field-outline {
+    color: #ddd;
+  }
+  
+  .mat-mdc-form-field-appearance-outline.mat-focused .mat-mdc-form-field-outline {
+    color: #000;
+  }
+  
+  .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
+    background-color: #000;
+    border-color: #000;
+  }
+  
+  .mat-mdc-slider.mat-primary {
+    --mdc-slider-handle-color: #000;
+    --mdc-slider-focus-handle-color: #000;
+    --mdc-slider-hover-handle-color: #000;
+    --mdc-slider-active-track-color: #000;
+    --mdc-slider-inactive-track-color: rgba(0, 0, 0, 0.3);
+  }
+
+  // Updated mat-select styles
+  .mdc-text-field--outlined {
+    --mdc-outlined-text-field-container-height: 56px;
+  }
+
+  .mat-mdc-select {
+    width: 100%;
+  }
+
+  .mat-mdc-select-trigger {
+    height: 56px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+  }
+
+  .mat-mdc-select-value {
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  .mat-mdc-select-arrow {
+    color: rgba(0, 0, 0, 0.54);
+  }
+
+  .mat-mdc-select-panel {
+    background: white !important;
+    border-radius: 4px !important;
+    margin-top: 4px !important;
+    min-width: 200px !important;
+  }
+
+  .mat-mdc-option {
+    height: 48px !important;
+    line-height: 48px !important;
+    padding: 0 16px !important;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04) !important;
+    }
+  }
+
+  .mat-mdc-select-value {
+    padding: 8px 0;
+  }
+
+  .mat-mdc-form-field-appearance-outline {
+    .mat-mdc-form-field-wrapper {
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .form-footer {
+    .feedback-options {
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+}
+
+.feedback-card {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+
+  mat-card-header {
+    margin-bottom: 1.5rem;
+    
+    mat-card-title {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #333;
+    }
+  }
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.rating-section {
+  margin-bottom: 1.5rem;
+
+  .rating-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  .rating-error {
+    color: #f44336;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+}
+
+.recommendation-section {
+  margin-bottom: 1.5rem;
+}
+
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+
+  button {
+    min-width: 120px;
+    
+    mat-spinner {
+      display: inline-block;
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 600px) {
+  .feedback-card {
+    margin: 1rem;
+  }
+
+  mat-card-header {
+    mat-card-title {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+/* Add this specific styling for mat-select */
+.mat-select-panel {
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: absolute !important;
+  z-index: 9999 !important;
+}
+
+.mat-select-panel-wrap {
+  visibility: visible !important;
+}
+
+.cdk-overlay-pane {
+  transform: none !important;
+  visibility: visible !important;
+  z-index: 9999 !important;
+}
+
+.cdk-overlay-container {
+  z-index: 9999 !important;
+}
+
+/* Use simpler selectors for styling */
+.type-select {
+  width: 100%;
+  min-width: 200px;
+  
+  ::ng-deep .mat-mdc-form-field-infix {
+    width: auto;
+    min-width: 200px;
+  }
+}
+
+/* Fix for the mat-select dropdown */
+::ng-deep {
+  .mat-mdc-select-panel {
+    background-color: white !important;
+    min-width: 200px !important;
+    max-width: none !important;
+    transform: translateY(0) !important;
+    margin-top: 0 !important;
+    border-radius: 4px !important;
+    overflow: auto !important;
+    max-height: 256px !important;
+    position: static !important;
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 
+                0 4px 5px 0 rgba(0,0,0,.14), 
+                0 1px 10px 0 rgba(0,0,0,.12) !important;
+  }
+  
+  .mat-mdc-option {
+    min-height: 48px !important;
+    line-height: 48px !important;
+    padding: 0 16px !important;
+    font-size: 16px !important;
+    font-family: Roboto, "Helvetica Neue", sans-serif !important;
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    display: block !important;
+  }
+  
+  /* Fix the select trigger element */
+  .mat-mdc-select-trigger {
+    height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+  }
+  
+  /* Fix the select value text display */
+  .mat-mdc-select-value {
+    display: block !important;
+    position: relative !important;
+    max-width: calc(100% - 24px) !important;
+    flex: 1 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* Test section */
+.test-dropdown-section {
+  margin-bottom: 20px;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  
+  h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  
+  mat-form-field {
+    display: block;
+    width: 100%;
+  }
+}
+
+/* Custom select styling */
+.custom-select-container {
+  margin-bottom: 20px;
+  
+  .select-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
+  }
+  
+  .custom-select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px top 50%;
+    background-size: 12px auto;
+    color: rgba(0, 0, 0, 0.87);
+    
+    &:focus {
+      outline: none;
+      border-color: #000;
+    }
+    
+    &:hover {
+      border-color: #999;
+    }
+    
+    option {
+      padding: 10px;
+    }
+  }
+  
+  .select-error {
+    color: #f44336;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+
+/* Pure HTML select styling */
+.pure-select-container {
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.pure-select-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.pure-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.pure-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 56px;
+  padding: 0 16px;
+  background-color: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  border-radius: 4px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.87);
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.pure-select:hover {
+  border-color: rgba(0, 0, 0, 0.42);
+}
+
+.pure-select:focus {
+  outline: none;
+  border-color: #000;
+  border-width: 2px;
+}
+
+.pure-select-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid rgba(0, 0, 0, 0.54);
+  pointer-events: none;
+}
+
+.pure-select-error {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* CSS-only star rating component - fixed overlapping */
+.sf-star-rating {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  font-size: 0;
+  position: relative;
+  
+  > input {
+    display: none;
+  }
+  
+  > label {
+    display: inline-block;
+    position: relative;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    margin: 0 4px;
+    color: #cccccc;
+    font-size: 0;
+    
+    &:before {
+      content: "★";
+      position: absolute;
+      font-size: 30px;
+      top: 0;
+      left: 0;
+      color: #cccccc;
+    }
+  }
+  
+  > input:checked ~ label:before,
+  > label:hover ~ label:before,
+  > label:hover:before {
+    color: #1C2D41;
+  }
+}
+
+.sf-rating-label {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+}
+
+.sf-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: sf-spinner 0.8s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes sf-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}

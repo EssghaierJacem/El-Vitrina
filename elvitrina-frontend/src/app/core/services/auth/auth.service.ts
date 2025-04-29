@@ -104,4 +104,9 @@ export class AuthService {
   getToken(): string | null {
     return localStorage.getItem('token');
   }
+
+  getUserId(): number {
+    const user = this.getCurrentUser();
+    return user?.id ?? 0;
+  }
 } 

@@ -11,4 +11,6 @@ public class MessageDTO {
     private Long senderId;
     private Long receiverId;
     private String content;
+    private Boolean delivered;
+    private Boolean read;
 }

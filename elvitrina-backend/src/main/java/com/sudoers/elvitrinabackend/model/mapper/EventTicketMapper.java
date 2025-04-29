@@ -3,9 +3,12 @@ package com.sudoers.elvitrinabackend.model.mapper;
 import com.sudoers.elvitrinabackend.model.dto.request.EventTicketRequestDTO;
 import com.sudoers.elvitrinabackend.model.dto.response.EventTicketResponseDTO;
 import com.sudoers.elvitrinabackend.model.entity.EventTicket;
+import com.sudoers.elvitrinabackend.model.entity.Seats;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 @Component
 public class EventTicketMapper {
@@ -23,20 +26,20 @@ public class EventTicketMapper {
 
     public EventTicketResponseDTO toResponseDTO(EventTicket ticket) {
         EventTicketResponseDTO dto = new EventTicketResponseDTO();
-        dto.setId(ticket.getTicketId());
-        dto.setTicketType(ticket.getType());
+        dto.setTicketId(ticket.getTicketId());
         dto.setDescription(ticket.getDescription());
         dto.setPrice(ticket.getPrice() != null ? BigDecimal.valueOf(ticket.getPrice()) : null);
-        dto.setQuantity(ticket.getQuantityAvailable());
-        dto.setSoldCount(ticket.getQuantityAvailable() - ticket.getQuantityRemaining());
-        dto.setRemainingCount(ticket.getQuantityRemaining());
-        dto.setEventId(ticket.getVirtualEvent() != null ? ticket.getVirtualEvent().getEventId() : null);
-        dto.setEventTitle(ticket.getVirtualEvent() != null ? ticket.getVirtualEvent().getTitle() : null);
         dto.setIsValid(ticket.getIsValid());
-        dto.setQrCodeUrl(ticket.getQrCodeHash() != null ? "/qrcodes/" + ticket.getQrCodeHash() + ".png" : null);
+        dto.setQrCodeHash(ticket.getQrCodeHash());
         dto.setValidUntil(ticket.getValidUntil());
-        dto.setEarlyBirdPricing(ticket.getEarlyBirdPricing() != null ? BigDecimal.valueOf(ticket.getEarlyBirdPricing()) : null);
-        dto.setSessionIds(null); // Set in service if linked to sessions
+        dto.setSeats(ticket.getSeats() != null ? ticket.getSeats().stream()
+                .map(seats -> {
+                    Seats seat = new Seats();
+                    seat.setId(seats.getId());
+                    seat.setSeatId(seats.getSeatId());
+                    return seat;
+                })
+                .collect(Collectors.toList()) : Collections.emptyList());
         return dto;
     }
 

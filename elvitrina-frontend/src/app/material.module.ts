@@ -41,6 +41,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import { GoogleApiService } from './core/services/event/google-calendar-api.service';
 
 @NgModule({
   declarations: [],
@@ -81,5 +82,6 @@ import { MatTableModule } from '@angular/material/table';
     MatSortModule,
     MatTableModule,
   ],
+  providers: [GoogleApiService],
 })
 export class MaterialModule {}

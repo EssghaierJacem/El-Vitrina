@@ -1,0 +1,68 @@
+<div class="stats-container">
+  <h2 class="title">📊 Global Statistics</h2>
+
+  <div class="summary-cards">
+    <div class="filter-controls">
+      <label>📅 Month:
+        <select [(ngModel)]="selectedMonth" (change)="loadOverviewByMonth()">
+          <option *ngFor="let m of months" [value]="m.value">{{ m.name }}</option>
+        </select>
+      </label>
+
+      <label>Year:
+        <select [(ngModel)]="selectedYear" (change)="loadOverviewByMonth()">
+          <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="stat-card orders">
+      <h3>Total Orders</h3>
+      <p>{{ totalOrders }}</p>
+    </div>
+    <div class="stat-card payments">
+      <h3>Total Payments</h3>
+      <p>{{ totalPayments }}</p>
+    </div>
+    <div class="stat-card revenue">
+      <h3>Revenue</h3>
+      <p>{{ totalRevenue | currency:'DNT' }}</p>
+    </div>
+  </div>
+
+  <div class="charts">
+    <div class="chart-container">
+      <h3>Orders by Status</h3>
+      <ngx-charts-bar-vertical
+        *ngIf="ordersChartData.length"
+        [results]="ordersChartData"
+        [xAxis]="true"
+        [yAxis]="true"
+        [legend]="true"
+        [showDataLabel]="true">
+      </ngx-charts-bar-vertical>
+    </div>
+
+    <div class="chart-container">
+      <h3>Payments by Method</h3>
+      <ngx-charts-pie-chart
+        *ngIf="paymentsChartData.length"
+        [results]="paymentsChartData"
+        [legend]="true"
+        [doughnut]="true">
+      </ngx-charts-pie-chart>
+    </div>
+
+    <div class="chart-container wide">
+      <h3>Monthly Revenue</h3>
+      <ngx-charts-line-chart
+        *ngIf="revenueChartData.length"
+        [results]="revenueChartData"
+        [legend]="true"
+        [xAxis]="true"
+        [yAxis]="true"
+        [autoScale]="true">
+      </ngx-charts-line-chart>
+    </div>
+  </div>
+</div>

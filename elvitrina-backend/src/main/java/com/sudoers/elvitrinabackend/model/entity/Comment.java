@@ -1,5 +1,7 @@
 package com.sudoers.elvitrinabackend.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +20,7 @@ public class Comment {
     private Long id;
 
     @ManyToOne
+    @JsonIgnoreProperties("comments" )
     @JoinColumn(name = "blog_post_id")
     private BlogPost blogPost;
 
@@ -35,6 +38,7 @@ public class Comment {
     private List<Comment> childComments;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties("comments" )
+    @JoinColumn(name = "user_id")
     private User user;
 }

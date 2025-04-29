@@ -5,7 +5,7 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
+import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
@@ -18,6 +18,7 @@ import { StoreService } from 'src/app/core/services/store/store.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatChipsModule } from '@angular/material/chips';
 import * as XLSX from 'xlsx';
+import { Page } from 'src/app/core/models/page.model';
 
 @Component({
   selector: 'app-store-list',
@@ -47,11 +48,16 @@ export class StoreListComponent implements OnInit {
   dataSource: MatTableDataSource<Store>;
   stores: Store[] = [];
   isLoading = true;
-  displayedColumns = ['storeId', 'storeName', 'category', 'status', 'featured', 'actions'];
+  displayedColumns = ['storeName', 'category', 'status', 'featured', 'actions'];
   searchText = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
+  // Pagination properties
+  pageSize = 5;
+  pageIndex = 0;
+  totalStores = 0;
 
   constructor(
     private storeService: StoreService,
@@ -61,46 +67,55 @@ export class StoreListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadStores();
+    console.log('Fetching all stores...');
+    this.storeService.getAllStores().subscribe({
+      next: (stores: Store[]) => {
+        console.log('Stores fetched successfully:', stores);
+        this.dataSource.data = stores;
+        this.isLoading = false; // Update loading state
+      },
+      error: (error) => {
+        console.error('Error fetching stores:', error);
+        this.isLoading = false; // Ensure loading state is updated on error
+      }
+    });
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator; // Ensure paginator is assigned
     this.dataSource.sort = this.sort;
   }
 
-  loadStores() {
+  loadPaginatedStores(): void {
     this.isLoading = true;
-    this.storeService.getAll().subscribe({
-      next: (data) => {
-        this.stores = data;
-        this.dataSource.data = data;
+    this.storeService.getPaginatedStores(this.pageIndex, this.pageSize).subscribe({
+      next: (response: Page<Store>) => {
+        this.dataSource.data = response.content;
+        this.totalStores = response.totalElements;
         this.isLoading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading stores:', error);
-        this.snackBar.open('Error loading stores', 'Close', {
-          duration: 5000
-        });
         this.isLoading = false;
       }
     });
   }
 
-  applyFilter() {
-    const filterValue = this.searchText.toLowerCase();
-    this.dataSource.filter = filterValue.trim();
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadPaginatedStores();
+  }
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+  applyFilter(): void {
+    this.dataSource.filter = this.searchText.trim().toLowerCase();
   }
 
   deleteStore(id: number) {
     if (confirm('Are you sure you want to delete this store?')) {
       this.storeService.delete(id).subscribe({
         next: () => {
-          this.loadStores();
+          this.loadPaginatedStores();
           this.snackBar.open('Store deleted successfully', 'Close', {
             duration: 3000
           });

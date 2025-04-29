@@ -21,5 +21,14 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
     @Query("SELECT AVG(d.amount) FROM Donation d")
     Double findAverageDonationAmount();
 
+    @Query("""
+    SELECT FUNCTION('YEAR', d.createdAt) AS year, SUM(d.amount)
+    FROM Donation d
+    WHERE d.createdAt IS NOT NULL
+    GROUP BY FUNCTION('YEAR', d.createdAt)
+    ORDER BY FUNCTION('YEAR', d.createdAt)
+    """)
+    List<Object[]> sumDonationsPerYear();
+
 
 }

@@ -22,7 +22,7 @@ public class Donation {
 
     private String type;
 
-    private Boolean anonymitySetting;
+    private Boolean anonymitySetting = false;
 
     private String donorMessage;
 

@@ -41,6 +41,13 @@ public class EventParticipantController {
         return ResponseEntity.ok(participant);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<EventParticipantResponseDTO> getParticipantByUserId(@PathVariable Long userId) {
+        EventParticipantResponseDTO participant = eventParticipantService.getEventParticipantByUserId(userId);
+        return ResponseEntity.ok(participant);
+    }
+
+
     @PutMapping("/{id}")
     public ResponseEntity<EventParticipantResponseDTO> updateParticipant(@PathVariable Long id, @RequestBody EventParticipantRequestDTO requestDTO) {
         EventParticipantResponseDTO updatedParticipant = eventParticipantService.updateEventParticipant(id, requestDTO);
@@ -67,7 +74,10 @@ public class EventParticipantController {
 
     @PostMapping("/register")
     public ResponseEntity<EventParticipantResponseDTO> registerParticipant(
+
             @RequestBody EventParticipantRequestDTO requestDTO) {
+
+System.out.println(requestDTO);
         return new ResponseEntity<>(eventParticipantService.registerParticipant(requestDTO), HttpStatus.CREATED);
     }
 

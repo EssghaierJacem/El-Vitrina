@@ -42,4 +42,7 @@ public interface StoreRepository extends JpaRepository<Store, Long>  {
     // Optional: Filtered pagination
     Page<Store> findByStatus(boolean status, Pageable pageable);
     Page<Store> findByCategory(StoreCategoryType category, Pageable pageable);
+
+    @Query("SELECT s.storeName FROM Store s WHERE s.storeId = :storeId")
+    String findStoreNameById(@Param("storeId") Long storeId);
 }
