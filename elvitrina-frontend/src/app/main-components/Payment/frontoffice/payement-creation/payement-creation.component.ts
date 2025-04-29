@@ -51,13 +51,13 @@ export class PayementCreationComponent implements OnInit {
   @Input() stepper!: MatStepper;
   @Output() paymentCreated = new EventEmitter<boolean>();
   @Output() methodSelected = new EventEmitter<PaymentMethodType>();
-  @Input() selectedMethod: any; // Assurez-vous que cela correspond bien au type de la méthode de paiement
+  @Input() selectedMethod: PaymentMethodType;
 
   paymentMethods = [
     { value: 'CREDITCARD', viewValue: 'Credit Card' },
     { value: 'PAYPAL', viewValue: 'PayPal' },
     { value: 'BANKTRANSFER', viewValue: 'Bank Transfer' },
-    { value: 'CASH', viewValue: 'Cash' }
+    { value: 'CASHONDELIVER', viewValue: 'Cash' }
   ];
 
   paymentStatuses = [

@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { CheckoutStepperComponent } from '../checkout-stepper/checkout-stepper.component';
 import { ShoppingCartComponent } from 'src/app/main-components/custom-order/Frontoffice/shopping-cart/shopping-cart.component';
-import { PendingOrdersComponent } from "../pending-orders/pending-orders.component";
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-checkout',
-  imports: [ CheckoutStepperComponent, PendingOrdersComponent,
+  imports: [ CheckoutStepperComponent,
     CommonModule
   ],
   templateUrl: './checkout.component.html',

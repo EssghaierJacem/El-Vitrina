@@ -54,6 +54,6 @@ export class CustomOrderService {
     return this.http.delete<CustomOrder>(`${this.apiUrl}/${orderId}/removeProduct/${productId}`);
   }
   updateOrderStatus2(orderId: number, status: string) {
-    return this.http.patch(`/api/orders/${orderId}/status`, { status });
+    return this.http.patch(`${this.apiUrl}/${orderId}/status`, { status });
   }
 }

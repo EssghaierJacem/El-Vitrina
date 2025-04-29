@@ -115,49 +115,92 @@ export class CheckoutStepperComponent implements OnInit {
 
   generateInvoicePDF() {
     const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    const lineHeight = 8;
+    let y = 30;
 
-    // Ajouter un en-tête avec un design amélioré
-    doc.setFontSize(20);
-    doc.setFont('helvetica', 'bold');
-    doc.text("Invoice", 105, 20, { align: 'center' });
-    // Centrer le titre
+    const rightAlign = (label: string, value: string, offset = 80) => {
+      doc.text(label, margin, y);
+      doc.text(value, margin + offset, y, { align: 'right' });
+      y += lineHeight;
+    };
 
-    // Ligne de séparation
-    doc.setLineWidth(0.5);
-    doc.line(20, 25, 190, 25);
-
-    // Ajouter les informations de paiement
-    doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Full Name: ${this.personalInfoFormGroup.value.fullName}`, 20, 40);
-    doc.text(`Phone: ${this.personalInfoFormGroup.value.phone}`, 20, 50);
-    doc.text(`Email: ${this.personalInfoFormGroup.value.email}`, 20, 60);
-    doc.text(`Address: ${this.personalInfoFormGroup.value.address}`, 20, 70);
-    doc.text(`Total Amount: ${this.totalAmount / 100} DNT`, 20, 80);
+    doc.setFontSize(16);
+    doc.text("INVOICE", margin, y);
+    y += 10;
 
-    // Ajouter la méthode de paiement si elle est sélectionnée
-    doc.text(`Payment Method: ${this.selectedPaymentMethod}`, 20, 90);
-
-    // Si vous avez un formulaire de livraison ou d'autres informations, vous pouvez les ajouter ici.
-    if (this.selectedPaymentMethod === 'CREDIT_CARD') {
-      doc.text(`Delivery Address: ${this.deliveryFormGroup.value.address}`, 20, 100);
-    }
-
-    // Ajouter une ligne de séparation pour la section footer
-    doc.line(20, 110, 190, 110);
-
-    // Ajouter un pied de page avec un message de remerciement
     doc.setFontSize(10);
-    doc.setFont('helvetica', 'italic');
-    doc.text("Thank you for your order!", 105, 120, { align: 'center' });  // Centrer le texte
+    doc.setTextColor(100);
+    doc.text(`Invoice Number: #${new Date().getTime()}`, margin, y);
+    doc.text(`Invoice Date: ${new Date().toLocaleDateString()}`, pageWidth - margin, y, { align: 'right' });
+    y += 10;
 
-    // Ajouter une date de création de facture
-    const date = new Date();
-    doc.text(`Invoice Date: ${date.toLocaleDateString()}`, 20, 130);
+    // Separator
+    doc.setDrawColor(200);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 10;
 
-    // Sauvegarder le PDF
-    doc.save("invoice.pdf");
+    // Customer Information
+    doc.setFontSize(12);
+    doc.setTextColor(0);
+    doc.setFont('bold');
+    doc.text("Billing Information", margin, y);
+    y += lineHeight;
+
+    doc.setFont( 'normal');
+    rightAlign("Full Name:", this.personalInfoFormGroup.value.fullName);
+    rightAlign("Phone:", this.personalInfoFormGroup.value.phone);
+    rightAlign("Email:", this.personalInfoFormGroup.value.email);
+    rightAlign("Address:", this.personalInfoFormGroup.value.address);
+    y += 5;
+
+    // Separator
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 10;
+
+    // Payment Details
+    doc.setFont( 'bold');
+    doc.text("Payment Details", margin, y);
+    y += lineHeight;
+
+    doc.setFont('normal');
+    rightAlign("Payment Method:", this.selectedPaymentMethod.replace('_', ' '));
+    rightAlign("Total Amount:", `${this.totalAmount} TND`);
+    if (this.selectedPaymentMethod === 'CREDIT_CARD') {
+      rightAlign("Delivery Address:", this.deliveryFormGroup.value.address);
+    }
+    y += 5;
+
+    // Summary Box
+    doc.setFont('bold');
+    doc.setDrawColor(180);
+    doc.rect(margin, y, pageWidth - 2 * margin, 25);
+
+    y += 8;
+    doc.text("Amount Due", margin + 5, y);
+    doc.setFontSize(14);
+    doc.text(`${this.totalAmount} TND`, pageWidth - margin - 5, y, { align: 'right' });
+
+    y += 15;
+    doc.setFontSize(10);
+    doc.setFont('normal');
+    doc.text("Please keep this invoice as a proof of your purchase.", margin + 5, y);
+
+    y += 10;
+    doc.setDrawColor(200);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 8;
+
+    doc.setTextColor(100);
+    doc.text("Thank you for your order!", pageWidth / 2, y, { align: 'center' });
+
+    // Save
+    doc.save(`invoice_${new Date().getTime()}.pdf`);
   }
+
+
 
   onOrderConfirmation() {
     this.generateInvoicePDF();  // Appeler la génération du PDF lors de la confirmation
