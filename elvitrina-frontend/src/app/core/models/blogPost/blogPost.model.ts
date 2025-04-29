@@ -12,7 +12,9 @@ export interface BlogPost {
   status?: boolean;
   image?: string;
   tag?: string;
-  reactionNumber?: number;
+  reactionNumber: number;
   reaction?: ReactionType;
   comments?: Comment[];
+  isLiked?: boolean; 
+
 }
