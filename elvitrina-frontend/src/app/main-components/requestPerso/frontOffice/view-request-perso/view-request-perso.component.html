@@ -130,7 +130,12 @@
               (click)="deleteProposal(proposal.id)">
         <mat-icon>delete</mat-icon> Delete
       </button>
-     
+      <button *ngIf="!isProposalOwner(proposal.user?.id)"
+      mat-raised-button 
+      color="basic"
+      [routerLink]="['/users', proposal.user.id]">
+<mat-icon>account_circle</mat-icon> View Profile
+</button>
     </mat-card-actions>
     
   </mat-card>

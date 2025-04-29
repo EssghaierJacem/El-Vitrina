@@ -141,7 +141,7 @@ export const navItems: NavItem[] = [
   {
     navCap: 'RequestPerso',
   },
-  {
+  /*{
     displayName: 'Request',
     iconName: 'point',
     route: '/dashboard/RequestPerso/listrequest',
@@ -150,24 +150,24 @@ export const navItems: NavItem[] = [
     displayName: 'PropsalPerso',
     iconName: 'point',
     route: '/dashboard/RequestPerso/listproposal',
-  },
-
+  },*/
+  {
+    displayName: 'Moderation',
+    iconName: 'shield-check',
+    route: '/dashboard/RequestPerso/moderation',
+  }, 
   {
     displayName: 'Ads',
-    iconName: 'point',
+    iconName: 'ad',
     route: '/dashboard/AdAdmin/admin/ads',
   },
 
   {
     displayName: 'Stats',
-    iconName: 'point',
+    iconName: 'chart-pie',
     route: '/dashboard/RequestPerso/stats',
   }, 
-  {
-    displayName: 'Moderation',
-    iconName: 'point',
-    route: '/dashboard/RequestPerso/moderation',
-  }, 
+
 
 
 
