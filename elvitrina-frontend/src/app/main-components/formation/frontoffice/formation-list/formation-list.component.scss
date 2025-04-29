@@ -23,7 +23,9 @@ mat-card:hover {
 }
 .card-image {
   width: 100%;
-  height: 100px; // ← plus petite hauteur
+  height: 200px;
+  
+  
   object-fit: cover;
   border-bottom: 1px solid #eee;
 

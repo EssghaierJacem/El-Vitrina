@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BlogPost } from '../../models/blogPost/blogPost.model';
+import { TranslationRequest, TranslationResponse } from '../../models/blogPost/traduction.model';
 
 @Injectable({
   providedIn: 'root'
@@ -37,4 +38,20 @@ export class BlogPostService {
   deleteBlogPost(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}` + "/removeblogpost");
   }
+
+
+
+  likePost(postId: number): Observable<BlogPost> {
+    return this.http.patch<BlogPost>(`${this.apiUrl}/${postId}/like`, {});
+  }
+  
+  unlikePost(postId: number): Observable<BlogPost> {
+    return this.http.patch<BlogPost>(`${this.apiUrl}/${postId}/unlike`, {});
+  }
+
+  translateText(request: TranslationRequest): Observable<TranslationResponse> {
+    const url = `http://localhost:8080/api/translation/translate`; // Endpoint matching the Spring @PostMapping
+    return this.http.post<TranslationResponse>(url, request);
+  }
+  
 }
