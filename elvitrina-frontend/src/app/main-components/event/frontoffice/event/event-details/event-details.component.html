@@ -8,49 +8,190 @@
   <section class="event-overview">
     <mat-card class="overview-card">
       <mat-card-content>
-        <h1 class="event-title">{{ event.title }}</h1>
-        <p class="event-description">{{ event.description }}</p>
-        <div class="event-meta">
-          <span><mat-icon>event</mat-icon> {{ event.startDateTime | date:'medium' }}</span>
-          <span><mat-icon>attach_money</mat-icon> {{ event.ticketPrice | currency }}</span>
-          <span><mat-icon>group</mat-icon> Max: {{ event.maxParticipants }}</span>
-          <span><mat-icon>live_tv</mat-icon> {{ event.eventType }} / {{ event.eventMode }}</span>
+        <!-- Two-column layout for title/description and image -->
+        <div class="event-overview-content">
+          <div class="event-text">
+            <!-- Title with edit functionality -->
+            <div class="editable-field">
+              <h1 class="event-title" *ngIf="!editMode.title">
+                {{ event.title }}
+                <mat-icon *ngIf="role === 'SELLER'" class="edit-icon" (click)="enableEdit('title')">edit</mat-icon>
+              </h1>
+              <mat-form-field *ngIf="editMode.title" appearance="outline" class="full-width">
+                <input matInput [(ngModel)]="editableEvent!.title" placeholder="Event Title">
+              </mat-form-field>
+            </div>
+            
+            <!-- Description with edit functionality -->
+            <div class="editable-field">
+              <p class="event-description" *ngIf="!editMode.description">
+                {{ event.description }}
+                <mat-icon *ngIf="role === 'SELLER'" class="edit-icon" (click)="enableEdit('description')">edit</mat-icon>
+              </p>
+              <mat-form-field *ngIf="editMode.description" appearance="outline" class="full-width">
+                <textarea matInput [(ngModel)]="editableEvent!.description" rows="4" placeholder="Event Description"></textarea>
+              </mat-form-field>
+            </div>
+            
+            <!-- Event metadata with edit functionality -->
+            <div class="event-meta">
+              <!-- Date/Time with edit functionality -->
+              <span *ngIf="!editMode.startDateTime">
+                <mat-icon>event</mat-icon> {{ event.startDateTime | date:'medium' }}
+                <mat-icon *ngIf="role === 'SELLER'" class="edit-icon" (click)="enableEdit('startDateTime')">edit</mat-icon>
+              </span>
+              <mat-form-field *ngIf="editMode.startDateTime" appearance="outline">
+                <input matInput [matDatepicker]="picker" [(ngModel)]="editableEvent!.startDateTime" placeholder="Start Date">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+              
+              <!-- Price with edit functionality -->
+              <span *ngIf="!editMode.ticketPrice">
+                <mat-icon>attach_money</mat-icon> {{ event.ticketPrice | currency }}
+                <mat-icon *ngIf="role === 'SELLER'" class="edit-icon" (click)="enableEdit('ticketPrice')">edit</mat-icon>
+              </span>
+              <mat-form-field *ngIf="editMode.ticketPrice" appearance="outline">
+                <input matInput [(ngModel)]="editableEvent!.ticketPrice" type="number" placeholder="Ticket Price">
+              </mat-form-field>
+              
+              <!-- Max participants with edit functionality -->
+              <span *ngIf="!editMode.maxParticipants">
+                <mat-icon>group</mat-icon> Max: {{ event.maxParticipants }}
+                <mat-icon *ngIf="role === 'SELLER'" class="edit-icon" (click)="enableEdit('maxParticipants')">edit</mat-icon>
+              </span>
+              <mat-form-field *ngIf="editMode.maxParticipants" appearance="outline">
+                <input matInput [(ngModel)]="editableEvent!.maxParticipants" type="number" placeholder="Max Participants">
+              </mat-form-field>
+              
+              <!-- Event type with edit functionality -->
+              <span *ngIf="!editMode.eventType">
+                <mat-icon>live_tv</mat-icon> {{ event.eventType }}
+                <mat-icon *ngIf="role === 'SELLER'" class="edit-icon" (click)="enableEdit('eventType')">edit</mat-icon>
+              </span>
+              <mat-form-field *ngIf="editMode.eventType" appearance="outline">            
+                <mat-select [(ngModel)]="editableEvent!.eventType" placeholder="Event Type">
+                  <mat-option *ngFor="let type of eventTypes" [value]="type">
+                    {{type}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <!-- Event mode with edit functionality -->
+              <span *ngIf="!editMode.eventMode">
+                <mat-icon>settings</mat-icon> {{ event.eventMode }}
+                <mat-icon *ngIf="role === 'SELLER'" class="edit-icon" (click)="enableEdit('eventMode')">edit</mat-icon>
+              </span>
+              <mat-form-field *ngIf="editMode.eventMode" appearance="outline">
+                <mat-select [(ngModel)]="editableEvent!.eventMode" placeholder="Event Mode">
+                  <mat-option *ngFor="let mode of eventModes" [value]="mode">
+                    {{mode}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          
+          <div class="event-image" *ngIf="event.eventImage">
+            <img
+              [src]="getImageUrl(event.eventImage)"
+              [alt]="event.title"
+              class="img-fluid event-thumbnail"
+              loading="lazy"
+              onerror="this.src='assets/images/placeholder-event.jpg';"
+            />
+            <button *ngIf="role === 'SELLER'" mat-icon-button class="edit-image-button" (click)="enableEdit('eventImage')">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <input 
+              *ngIf="editMode.eventImage" 
+              type="file" 
+              accept="image/*" 
+              class="file-input" 
+              (change)="onFileSelected($event)"
+              #fileInput
+            >
+          </div>
         </div>
       </mat-card-content>
       
-  
- 
-      <!-- In your event-details.component.html, inside the mat-card-actions -->
+      <!-- Card actions -->
       <mat-card-actions>
-        <ng-container *ngIf="!hasUserJoined(); else alreadyJoined">
-         
+        <!-- Save button visible when editing -->
+        <button 
+          *ngIf="role === 'SELLER' && isEditModeActive()" 
+          mat-raised-button 
+          color="primary" 
+          class="save-button" 
+          (click)="saveChanges()">
+          <mat-icon>save</mat-icon>
+          Save Changes
+        </button>
+        
+        <!-- Cancel button visible when editing -->
+        <button 
+          *ngIf="role === 'SELLER' && isEditModeActive()" 
+          mat-button 
+          color="warn" 
+          (click)="cancelEdit()">
+          Cancel
+        </button>
+        
+        <!-- Regular actions when not editing -->
+        <ng-container *ngIf="!isEditModeActive()">
+          <ng-container *ngIf="isUserRole() && !hasUserJoined(); else alreadyJoined">
+            <button mat-raised-button color="primary" class="join-event-button" (click)="joinEvent()">
+              <mat-icon class="button-icon">event</mat-icon>
+              Join Event
+            </button>
+          </ng-container>
+          <ng-template #alreadyJoined>
+            <span *ngIf="isUserRole()" style="display: flex; align-items: center; color: green;">
+              <mat-icon>check_circle</mat-icon>
+              <span style="margin-left: 8px;">You have joined this event</span>
+            </span>
+          </ng-template>
         </ng-container>
-        <ng-template #alreadyJoined>
-          <span style="display: flex; align-items: center; color: green;">
-            <mat-icon>check_circle</mat-icon>
-            <span style="margin-left: 8px;">You have joined this event</span>
-          </span>
-        </ng-template>
       </mat-card-actions>
     </mat-card>
+    <div class="seat-booking-section">
+      <h2 class="section-title">Seat Selection</h2>
+      <app-seat-booking 
+      [eventTitle]="event.title"
+        [eventId]="event.eventId"
+        [ticketPrice]="event.ticketPrice"
+  [eventDate]="event.startDateTime"
+  [maxParticipants]="event.maxParticipants"
+  [EventParticipant]="event.participants"
+        >
+      </app-seat-booking>
+    </div>
   </section>
-  
+
   <!-- Calendar -->
   <section class="calendar-section">
-    <h2 class="section-title">
-      Event Calendar
-    </h2>
+    <br>
+    <h2 class="section-title">Event Calendar</h2>
     <mat-card class="calendar-card">
       <mat-card-content>
-        <div *ngIf="role === 'seller' && !googleEventsLoaded" class="loading-calendar">
+        <div *ngIf="role === 'SELLER' && !googleEventsLoaded" class="loading-calendar">
           <mat-spinner diameter="30"></mat-spinner>
           <span>Loading Google Calendar events...</span>
         </div>
+        <button *ngIf="role === 'SELLER'" mat-raised-button color="primary" (click)="setEventSession()">
+          See Just Event Session
+        </button>
         <app-calendar [calendarEvents]="displayedCalendarEvents" [role]="role" [eventId]="event.eventId"></app-calendar>
       </mat-card-content>
     </mat-card>
   </section>
-  
+  <div class="audio-summary-section">
+    <event-audio 
+      [eventId]="event.eventId" 
+      [eventTitle]="event.title">
+    </event-audio>
+  </div>
+  <br>
   <!-- Timeline -->
   <section class="timeline-section">
     <h2 class="section-title">Event Timeline</h2>
@@ -73,7 +214,7 @@
       </mat-card>
     </div>
   </section>
-  
+
   <!-- Participants -->
   <section class="participants-section">
     <h2 class="section-title">People Joined</h2>

@@ -1,0 +1,72 @@
+.summary-container {
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+
+  .summary-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    color: #333;
+
+    mat-icon {
+      margin-right: 8px;
+      color: #673ab7;
+    }
+
+    span {
+      font-weight: 500;
+      font-size: 16px;
+    }
+  }
+
+  .summary-text {
+    padding: 8px 0;
+    margin-bottom: 16px;
+    border-left: 3px solid #673ab7;
+    padding-left: 12px;
+    
+    p {
+      margin: 0;
+      line-height: 1.5;
+      color: #444;
+      font-size: 15px;
+    }
+  }
+
+  .summary-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .read-button {
+      .loading-icon {
+        animation: spin 1.5s linear infinite;
+      }
+    }
+
+    .progress-container {
+      flex: 1;
+      margin-left: 8px;
+      
+      .reading-progress {
+        height: 6px;
+        border-radius: 3px;
+      }
+    }
+
+    .generate-text, .loading-text {
+      color: #666;
+      font-size: 14px;
+      margin-left: 8px;
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

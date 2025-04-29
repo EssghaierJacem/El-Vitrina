@@ -3,9 +3,12 @@ package com.sudoers.elvitrinabackend.model.mapper;
 import com.sudoers.elvitrinabackend.model.dto.request.EventTicketRequestDTO;
 import com.sudoers.elvitrinabackend.model.dto.response.EventTicketResponseDTO;
 import com.sudoers.elvitrinabackend.model.entity.EventTicket;
+import com.sudoers.elvitrinabackend.model.entity.Seats;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 @Component
 public class EventTicketMapper {
@@ -29,6 +32,14 @@ public class EventTicketMapper {
         dto.setIsValid(ticket.getIsValid());
         dto.setQrCodeHash(ticket.getQrCodeHash());
         dto.setValidUntil(ticket.getValidUntil());
+        dto.setSeats(ticket.getSeats() != null ? ticket.getSeats().stream()
+                .map(seats -> {
+                    Seats seat = new Seats();
+                    seat.setId(seats.getId());
+                    seat.setSeatId(seats.getSeatId());
+                    return seat;
+                })
+                .collect(Collectors.toList()) : Collections.emptyList());
         return dto;
     }
 

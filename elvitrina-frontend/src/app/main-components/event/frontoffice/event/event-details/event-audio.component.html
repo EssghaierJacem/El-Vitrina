@@ -1,0 +1,51 @@
+<div class="summary-container">
+  <div class="summary-title">
+    <mat-icon>headset</mat-icon>    <span>AI Event Summary</span>
+  </div>
+  
+  <div *ngIf="summaryText" class="summary-text">
+    <p>{{ summaryText }}</p>
+  </div>
+  
+  <div class="summary-actions">
+    <button
+      mat-mini-fab
+      color="primary"
+      [disabled]="isLoading"
+      (click)="toggleReading()"
+      class="read-button"
+      [matTooltip]="!hasSummary ? 'Generate summary' : (isReading ? 'Stop reading' : 'Read aloud')"
+    >
+      <mat-icon *ngIf="!isLoading && !isReading && hasSummary">volume_up</mat-icon>
+      <mat-icon *ngIf="!isLoading && isReading">stop</mat-icon>
+      <mat-icon *ngIf="!isLoading && !hasSummary">auto_awesome</mat-icon>
+      <mat-icon *ngIf="isLoading" class="loading-icon">loop</mat-icon>
+    </button>
+    
+    <button
+      *ngIf="hasSummary"
+      mat-icon-button
+      color="primary"
+      (click)="copySummaryToClipboard()"
+      matTooltip="Copy summary to clipboard"
+    >
+      <mat-icon>content_copy</mat-icon>
+    </button>
+    
+    <div class="progress-container" *ngIf="isReading">
+      <mat-progress-bar
+        [value]="readingProgress"
+        color="accent"
+        class="reading-progress"
+      ></mat-progress-bar>
+    </div>
+    
+    <div class="generate-text" *ngIf="!hasSummary && !isLoading">
+      Generate AI summary
+    </div>
+    
+    <div class="loading-text" *ngIf="isLoading">
+      {{ !hasSummary ? 'Generating summary...' : 'Loading summary...' }}
+    </div>
+  </div>
+</div>

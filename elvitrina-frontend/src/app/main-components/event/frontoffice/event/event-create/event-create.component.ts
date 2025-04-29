@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -32,8 +32,9 @@ import { EventJoinDialogComponent } from '../event-join/event-join.component';
 import { EventParticipantRequest } from 'src/app/core/models/event/event-participant.model';
 import { TokenService } from 'src/app/core/services/user/TokenService';
 import { EventDetailsDialogComponent } from './event-details-dialog.conponent';
-import { AiContentService } from 'src/app/core/models/event/aiservice.service';
-
+import { AiContentService } from 'src/app/core/services/event/aiservice.service';
+import { saveAs } from 'file-saver';
+import { query } from '@angular/animations';
 enum EventType {
   FREE_LIVE = 'FREE_LIVE',
   PAID_LIVE = 'PAID_LIVE',
@@ -67,6 +68,7 @@ enum EventMode {
     MatInputModule,
     ReactiveFormsModule,
     MatSortModule,
+    FormsModule, 
     MatSnackBarModule,
     MatChipsModule,
     MatDialogModule,
@@ -86,13 +88,19 @@ export class EventCreateComponent implements OnInit {
   eventForm: FormGroup;
   event: VirtualEvent;
   loading = true;
+  loadingAiContent = false;
+  loadingAiImage =false;
   saving = false;
+  showAiDialog = false;
+aiPromptInput = '';
   calendarEvents: any[] = [];
   googleCalendarEvents: any[] = [];
   showCalendar = true;
   storeId: number;
+  eventImage: File;
   userId = this.authService.getUserId();
   role = this.authService.getRole();
+  firstName = this.authService.getFirstName();
   displayedCalendarEvents: any[] = [];
   googleEventsLoaded = false;
   eventTypes = Object.values(EventType);
@@ -113,10 +121,11 @@ export class EventCreateComponent implements OnInit {
 
   ngOnInit(): void {
     const today = new Date();
-    
+    this.loadPuterScript();
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
+      eventImage: [''],
       startDateTime: [today, Validators.required],
       ticketPrice: [0, [Validators.required, Validators.min(0)]],
       eventType: [EventType.FREE_LIVE, Validators.required],
@@ -228,7 +237,8 @@ export class EventCreateComponent implements OnInit {
     const eventData = this.prepareEventData();
     console.log('Event data to be saved:', eventData);
     
-    this.virtualEventService.createEvent(eventData).subscribe(
+    
+    this.virtualEventService.createEvent(eventData, this.eventImage).subscribe(
       (response) => {
         this.saving = false;
         this.snackBar.open('Event created successfully', 'Close', { duration: 3000 });
@@ -289,11 +299,14 @@ export class EventCreateComponent implements OnInit {
     const file = input.files?.[0];
     if (file) {
       console.log('Selected image:', file);
+  
       // Create a URL for the selected image to display it (optional)
       this.selectedImageUrl = URL.createObjectURL(file);
       console.log('Image URL:', this.selectedImageUrl);
-      // Optionally store the file or URL in the form
-      this.eventForm.patchValue({ imageUrl: this.selectedImageUrl });
+    
+      // Update the form to include the actual file
+      this.eventImage = file;
+  
       // Reset the input to allow selecting the same file again
       input.value = '';
     } else {
@@ -301,39 +314,285 @@ export class EventCreateComponent implements OnInit {
     }
   }
   
-  onGenerateAIContent(): void {
-    this.loading = true;
-
-    const prompt = 'Generate details for a cooking event, including title, description, start date and time, and end date and time.';
+  
+//   async onGenerateAIContent(): Promise<void> {
+//     this.loading = true;
+//  const data = input from html,
     
-    this.aiContentService.generateEventContent(prompt).subscribe({
-      next: (response : any) => {
-        // Update form controls with AI-generated content
-        this.eventForm.patchValue({
-          title: response.title,
-          description: response.description,
-          startDateTime: response.startDateTime ? new Date(response.startDateTime) : null
-          // Note: endDateTime is not in the form but could be emitted to calendar
-        });
+//     const prompt = await this.askPuter(data);
 
-        // Optionally emit session details to calendar
-        // if (response.startDateTime && response.endDateTime) {
-        //   this.sessionCreated.emit({
-        //     title: response.title,
-        //     start: new Date(response.startDateTime),
-        //     end: new Date(response.endDateTime)
-        //   });
-        // }
+//   }
 
-        this.snackBar.open('Event details updated with AI content!', 'Close', { duration: 3000 });
-        this.loading = false;
-      },
-      error: (error :any) => {
-        console.error('Error generating AI content:', error);
-        this.snackBar.open('Failed to generate AI content. Using fallback data.', 'Close', { duration: 3000 });
-        this.loading = false;
+  // async onGenerateAIImage(): Promise<void> {
+  //   // this.loading = true;
+  
+  //   // Extract form values
+  //   const formValue = this.eventForm.value;
+  //   const title = formValue.title || 'Untitled Event';
+  //   const description = formValue.description || 'A unique virtual event experience.';
+  //   const ticketPrice = formValue.ticketPrice || 0;
+  //   const maxParticipants = formValue.maxParticipants || 10;
+  //   const startDateTime = formValue.startDateTime
+  //     ? new Date(formValue.startDateTime).toLocaleString('en-US', {
+  //         month: 'long',
+  //         day: 'numeric',
+  //         year: 'numeric',
+  //         hour: 'numeric',
+  //         minute: '2-digit',
+  //         hour12: true,
+  //       })
+  //     : 'TBD';
+  
+  //   // Construct the query for askPuter
+  //   const query = `
+  //     Create a professional and detailed prompt for an AI image generation model to produce a web-optimized hero image for a virtual event. The image should have a 16:9 aspect ratio, be visually stunning, and suitable for a website homepage. Use the following event details to craft the prompt:
+  
+  //     - **Event Title**: "${title}"
+  //     - **Description**: "${description}"
+  //     - **Ticket Price**: ${ticketPrice === 0 ? 'Free' : `$${ticketPrice}`}
+  //     - **Max Participants**: ${maxParticipants}
+  //     - **Start Date and Time**: ${startDateTime}
+  
+  //     The prompt should:
+  //     1. Include the event title "${title}" in modern, web-friendly typography.
+  //     2. Display event details (date, time, ticket price, and host as "Hosted by ${this.firstName}") in a clean, smaller font.
+  //     3. Suggest a subtle "Register Now" button.
+  //     4. Incorporate visual elements that reflect the event's theme based on the description, ensuring a clean, digital style with high contrast for web viewing.
+  //     5. Avoid overly busy elements and prioritize readability and aesthetic appeal for digital screens.
+  //     6. Ensure the design aligns with a professional and beautiful aesthetic, suitable for a website promoting this event.
+  
+  //     The output should be a concise and professional prompt ready for an AI image generation model to create an accurate and visually appealing image.
+  //   `;
+  
+  //   try {
+  //     const aiPrompt = await this.askPuter(query);
+  //     console.log('AI-generated prompt:', aiPrompt);
+      
+  //     this.aiContentService.generateHeroImage(aiPrompt).subscribe({
+  //       next: (response) => {
+  //         if (response.imageUrl) {
+  //           this.selectedImageUrl = response.imageUrl;
+  //           this.eventImage = new File([response.blob], response.fileName, { type: response.blob.type });
+  //           this.snackBar.open('AI image generated successfully!', 'Close', { duration: 3000 });
+  //         } else {
+  //           this.snackBar.open('No image generated. Using fallback.', 'Close', { duration: 3000 });
+  //         }
+  //         this.loading = false;
+  //       },
+  //       error: (error) => {
+  //         console.error('Error generating AI image:', error);
+  //         this.snackBar.open('Failed to generate AI image.', 'Close', { duration: 3000 });
+  //         this.loading = false;
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.error('Error with Puter AI:', error);
+  //     this.snackBar.open('Failed to generate AI prompt.', 'Close', { duration: 3000 });
+  //     this.loading = false;
+  //   }
+  // }
+
+  async onGenerateAIImage(): Promise<void> {
+    this.loadingAiImage = true;
+  
+    // Extract form values
+    const formValue = this.eventForm.value;
+    const title = formValue.title || 'Untitled Event';
+    const description = formValue.description || 'A unique virtual event experience.';
+    const ticketPrice = formValue.ticketPrice || 0;
+    const maxParticipants = formValue.maxParticipants || 10;
+    const startDateTime = formValue.startDateTime
+      ? new Date(formValue.startDateTime).toLocaleString('en-US', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        })
+      : 'TBD';
+  
+    // Construct the query for askPuter
+    const query = `
+      Create a professional and detailed prompt for an AI image generation model to produce a web-optimized hero image for a virtual event. The image should have a 16:9 aspect ratio, be visually stunning, and suitable for a website homepage. Use the following event details to craft the prompt:
+  
+      - **Event Title**: "${title}"
+      - **Description**: "${description}"
+      - **Ticket Price**: ${ticketPrice === 0 ? 'Free' : `$${ticketPrice}`}
+      - **Max Participants**: ${maxParticipants}
+      - **Start Date and Time**: ${startDateTime}
+  
+      The prompt should:
+      1. Include the event title "${title}" in modern, web-friendly typography.
+      2. Display event details (date, time, ticket price, and host as "Hosted by ${this.firstName}") in a clean, smaller font.
+      3. Suggest a subtle "Register Now" button.
+      4. Incorporate visual elements that reflect the event's theme based on the description, ensuring a clean, digital style with high contrast for web viewing.
+      5. Avoid overly busy elements and prioritize readability and aesthetic appeal for digital screens.
+      6. Ensure the design aligns with a professional and beautiful aesthetic, suitable for a website promoting this event.
+  
+      The output should be a concise and professional prompt ready for an AI image generation model to create an accurate and visually appealing image.
+    `;
+  
+    try {
+      const aiPrompt = await this.askPuter(query);
+      console.log('AI-generated prompt:', aiPrompt);
+      
+      this.aiContentService.generateHeroImage(aiPrompt).subscribe({
+        next: (response) => {
+          if (response.imageUrl) {
+            this.selectedImageUrl = response.imageUrl;
+            this.eventImage = new File([response.blob], response.fileName, { type: response.blob.type });
+            this.snackBar.open('AI image generated successfully!', 'Close', { duration: 3000 });
+          } else {
+            this.snackBar.open('No image generated. Using fallback.', 'Close', { duration: 3000 });
+          }
+          this.loadingAiImage = false;
+        },
+        error: (error) => {
+          console.error('Error generating AI image:', error);
+          this.snackBar.open('Failed to generate AI image.', 'Close', { duration: 3000 });
+          this.loadingAiImage = false;
+        }
+      });
+    } catch (error) {
+      console.error('Error with Puter AI:', error);
+      this.snackBar.open('Failed to generate AI prompt.', 'Close', { duration: 3000 });
+      this.loadingAiImage = false;
+    }
+  }
+  
+  askPuter(query: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (!query.trim()) {
+        reject('Please enter a query.');
+        return;
       }
+  
+      if (typeof window['puter'] === 'undefined') {
+        reject('Puter.js is not loaded yet.');
+        return;
+      }
+      console.log(window['puter']);
+      const puter = window['puter'];
+      // const puter = window['puter'];
+      // puter.auth.signIn();
+      puter.ai
+      // .chat(query, { model: 'gpt-4.1' })
+        .chat(query, { model: 'claude-3-7-sonnet' })
+        .then((res: any) => {
+          resolve(res.message.content[0].text);
+        })
+        .catch((err: any) => {
+          console.log('Error:', err);
+          console.error('Error:', err);
+          reject('An error occurred. Please try again.');
+        });
     });
+  }
+
+
+  loadPuterScript(): void {
+    const script = document.createElement('script');
+    script.src = 'https://js.puter.com/v2/';
+    script.async = true;
+    script.onload = () => console.log('Puter.js script loaded.');
+    script.onerror = () => console.error('Failed to load Puter.js script.');
+    document.body.appendChild(script);
+    
+  }
+  // New method for downloading the AI-generated image
+  downloadAIImage(): void {
+    if (this.eventImage && this.selectedImageUrl) {
+      saveAs(this.eventImage, this.eventImage.name);
+    }
+  }
+
+
+  
+  
+  // Add these methods to your component class
+  closeAiDialog(): void {
+    this.showAiDialog = false;
+  }
+  
+  async generateEventFromPrompt(): Promise<void> {
+    if (!this.aiPromptInput.trim()) return;
+    
+    // Close the dialog
+    this.showAiDialog = false;
+    
+    // Show loading state
+    this.loadingAiContent = true;
+    
+    try {
+      // Generate event details using AI
+      const detailsPrompt = `
+        Based on this user description: "${this.aiPromptInput}"
+  
+        Generate a full event plan including:
+        1. A catchy, professional title for the event (max 60 characters)
+        2. A compelling description (2-3 paragraphs, focusing on benefits and experience)
+        3. A reasonable ticket price (as a number only, without currency symbol)
+        4. A suitable maximum number of participants (as a number only)
+  
+        Format your response exactly as follows, with each item on a new line:
+        TITLE: [generated title]
+        DESCRIPTION: [generated description]
+        PRICE: [price as number only]
+        MAX_PARTICIPANTS: [number only]
+      `;
+  
+      const aiResponse = await this.askPuter(detailsPrompt);
+      
+      // Parse the AI response
+      const titleMatch = aiResponse.match(/TITLE: (.*)/);
+      const descriptionMatch = aiResponse.match(/DESCRIPTION: ([\s\S]*?)(?=PRICE:|$)/);
+      const priceMatch = aiResponse.match(/PRICE: ([\d\.]+)/);
+      const maxParticipantsMatch = aiResponse.match(/MAX_PARTICIPANTS: (\d+)/);
+      
+      // Update the form with AI-generated content
+      if (titleMatch && titleMatch[1]) {
+        this.eventForm.patchValue({ title: titleMatch[1].trim() });
+      }
+      
+      if (descriptionMatch && descriptionMatch[1]) {
+        this.eventForm.patchValue({ description: descriptionMatch[1].trim() });
+      }
+      
+      if (priceMatch && priceMatch[1]) {
+        const price = parseFloat(priceMatch[1]);
+        this.eventForm.patchValue({ ticketPrice: price });
+      }
+      
+      if (maxParticipantsMatch && maxParticipantsMatch[1]) {
+        const maxParticipants = parseInt(maxParticipantsMatch[1]);
+        this.eventForm.patchValue({ maxParticipants: maxParticipants });
+      }
+      
+      // Show success message
+      this.snackBar.open('Event details generated! Generating image...', 'Close', { duration: 3000 });
+      
+      // Call the image generation function after content is generated
+      try {
+        await this.onGenerateAIImage();
+      } catch (error) {
+        console.error('Error generating AI image after content:', error);
+      } finally {
+        this.loadingAiContent = false;
+      }
+      
+    } catch (error) {
+      console.error('Error generating AI content:', error);
+      this.snackBar.open('Failed to generate event content.', 'Close', { duration: 3000 });
+      this.loadingAiContent = false;
+    }
+  }
+  
+  onGenerateAIContent(): void {
+    // Show the dialog
+    this.showAiDialog = true;
+    // Reset the input field
+    this.aiPromptInput = '';
   }
   
 }

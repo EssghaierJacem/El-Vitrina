@@ -82,4 +82,15 @@ session.setStreamUrl(requestDTO.getStreamUrl());
         dto.setStreamUrl(session.getStreamUrl());
         return dto;
     }
+
+
+    @Override
+    public void removeSessionByEventIdAndTitle(Long eventId, String title) {
+        List<EventSession> sessions = eventSessionRepository.findByEventIdAndTitle(eventId, title);
+        if (sessions.isEmpty()) {
+            throw new IllegalArgumentException("No sessions found with the given event ID and title.");
+        }
+        eventSessionRepository.deleteAll(sessions);
+    }
+
 }

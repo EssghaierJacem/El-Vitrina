@@ -7,5 +7,11 @@ export interface EventTicket {
   description: string;
   price: number;
   qrCodeHash: string;
+  seats?: SeatTicket[];
+}
+
+export interface SeatTicket {
+  id: number;
+  seatId?: string;
 }
 

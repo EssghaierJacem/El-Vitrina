@@ -27,7 +27,7 @@ public class VirtualEventMapper {
         this.eventParticipantMapper = eventParticipantMapper;
     }
 
-    public VirtualEvent toEntity(VirtualEventRequestDTO dto) {
+    public VirtualEvent toEntity(VirtualEventRequestDTO dto ,  String imagePath) {
         VirtualEvent event = new VirtualEvent();
         event.setTitle(dto.getTitle());
         event.setDescription(dto.getDescription());
@@ -35,6 +35,7 @@ public class VirtualEventMapper {
         event.setTicketPrice(dto.getTicketPrice());
         event.setEventType(dto.getEventType());
         event.setEventMode(dto.getEventMode());
+        event.setEventImage(imagePath);
         event.setMaxParticipants(dto.getMaxParticipants());
 
         // Map sessions if provided
@@ -66,6 +67,7 @@ public class VirtualEventMapper {
         dto.setStatus(event.getStatus());
         dto.setEventType(event.getEventType());
         dto.setEventMode(event.getEventMode());
+        dto.setEventImage(event.getEventImage());
         dto.setMaxParticipants(event.getMaxParticipants());
         dto.setParticipantCount(event.getParticipants() != null ? event.getParticipants().size() : 0);
         dto.setStreamUrl(event.getStreamUrl());

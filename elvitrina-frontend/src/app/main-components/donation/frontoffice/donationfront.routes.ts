@@ -19,7 +19,7 @@ export const DONATION_FRONT_ROUTES: Routes = [
       
       
       {
-        path: 'campaigns/create',
+        path: 'campaigns/:id/create',
         component: CampaignCreateComponent,
         data: {
           title: 'Create Donation',

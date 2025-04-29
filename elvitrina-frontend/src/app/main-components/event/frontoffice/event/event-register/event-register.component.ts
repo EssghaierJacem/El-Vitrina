@@ -123,10 +123,10 @@ export class EventRegisterComponent implements OnInit {
       };
   
       console.log('Event Data:', eventDataForBackend);
-      this.eventService.createEvent(eventDataForBackend).subscribe({
-        next: (response) => console.log('Event created:', response),
-        error: (err) => console.error('Error creating event:', err)
-      });
+      // this.eventService.createEvent(eventDataForBackend).subscribe({
+      //   next: (response) => console.log('Event created:', response),
+      //   error: (err) => console.error('Error creating event:', err)
+      // });
     }
   }
   // Format date to YYYY-MM-DD for input type="date"

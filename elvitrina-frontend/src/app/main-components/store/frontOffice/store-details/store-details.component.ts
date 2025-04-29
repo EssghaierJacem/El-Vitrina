@@ -37,6 +37,9 @@ import { DonationCampaignService } from 'src/app/core/services/donation/donation
 import { DonationCampaign } from 'src/app/core/models/donation/donation-campaign.model';
 import { CampaignDetailsComponent } from 'src/app/main-components/donation/frontoffice/campaign/campaign-details/campaign-details.component';
 import { StoreFeedback, getSentimentCategory, getDetailedSentimentCategory, getSentimentScore } from '../../../../core/models/storeFeedback/store-feedback.model';
+import { TokenService } from 'src/app/core/services/user/TokenService';
+import { CampaignCreateComponent } from 'src/app/main-components/donation/frontoffice/campaign/campaign-create/campaign-create.component';
+import { MatDialog } from '@angular/material/dialog';
 
 interface SortOption {
   value: string;
@@ -68,6 +71,7 @@ interface SortOption {
     StoreFeedbackCreateComponent,
     EventStoreComponent, 
     CampaignDetailsComponent,
+
   ],
   templateUrl: './store-details.component.html',
   styleUrls: ['./store-details.component.scss']
@@ -84,6 +88,8 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
   filteredProducts: Product[] = [];
   events: VirtualEvent[] = [];
   campaigns: DonationCampaign;
+  role: string = this.authToken.getRole() || 'USER';
+
   // Make Math available in the template
   Math = Math;
   
@@ -99,7 +105,7 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
   detailedSentimentChartData: any[] = [];
   showSummaries = true;
   showMultilingualSentiment = true;
-
+   
   // Helper methods for templates
   getAbsoluteValue(value: number): number {
     return Math.abs(value);
@@ -122,7 +128,6 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
     { value: 'name_desc', label: 'Name: Z to A' }
   ];
   selectedSort = 'relevance';
-
   // Remove default image paths since we want to use direct URLs
   defaultStoreImage = '';
   defaultAvatarImage = '';
@@ -140,8 +145,10 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private donationCampaignService: DonationCampaignService,
     private authService: AuthService,
+    private authToken: TokenService,
     private fb: FormBuilder,
     private router: Router,
+    private dialog: MatDialog,
     private favoriteService: FavoriteService
   ) {
     this.feedbackForm = this.fb.group({
@@ -868,7 +875,24 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
 
   openCreateEventDialog(): void {
     this.router.navigate(['/events', this.store.storeId, 'create']);
-
-
 }
+
+
+  openCreateDonationDialog(): void {
+    const dialogRef = this.dialog.open(CampaignCreateComponent, {
+      width: '600px',
+      data: { storeId: this.store.storeId }, // Pass storeId to the dialog
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log('Dialog closed with success:', result);
+        // Handle post-dialog actions if needed
+      } else {
+        console.log('Dialog closed without success.');
+      }
+    });
+  }
+
+
 }

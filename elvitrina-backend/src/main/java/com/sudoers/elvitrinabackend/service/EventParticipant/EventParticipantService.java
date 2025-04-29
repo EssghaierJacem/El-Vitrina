@@ -21,4 +21,5 @@ public interface EventParticipantService {
     EventParticipantResponseDTO provideRecordingAccess(Long participantId, boolean enable);
     EventParticipantResponseDTO trackSessionAttendance(Long participantId, boolean attended);
     boolean validateParticipantTicket(Long participantId);
+    public EventParticipantResponseDTO getEventParticipantByUserId(Long userId);
 }
