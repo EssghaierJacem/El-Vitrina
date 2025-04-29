@@ -1,52 +1,66 @@
-<div class="p-6 bg-gray-50 min-h-screen flex flex-col items-center justify-center">
-  <!-- Entête -->
-  <div class="text-center mb-10">
-    <h1 class="text-4xl font-extrabold text-green-700 drop-shadow-md">💳 Historique des Paiements</h1>
-    <p class="text-lg text-gray-600 mt-2">
-      Consultez l’ensemble de vos transactions.
-    </p>
+<div class="payment-history-container">
+  <!-- Header -->
+  <div class="header">
+    <h1>💳 Payment History</h1>
+    <p>Review all your past transactions.</p>
   </div>
 
-  <!-- Liste des paiements -->
-  <div *ngIf="payments.length > 0; else noPayment"
-       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 w-full max-w-7xl px-4">
-    <div *ngFor="let payment of payments"
-         class="bg-white rounded-3xl shadow-xl p-6 border-t-4 border-green-600 relative overflow-hidden transform transition hover:scale-105 hover:shadow-2xl group">
+  <!-- Filters by status -->
+  <div class="filters-container">
+    <button class="filter-button" [class.active]="selectedStatus === 'ALL'" (click)="filterPayments('ALL')">
+      All Payments
+    </button>
+    <button class="filter-button" [class.active]="selectedStatus === 'SUCCESS'" (click)="filterPayments('SUCCESS')">
+      <span class="indicator success"></span>
+      Successful
+    </button>
+    <button class="filter-button" [class.active]="selectedStatus === 'PENDING'" (click)="filterPayments('PENDING')">
+      <span class="indicator pending"></span>
+      Pending
+    </button>
+    <button class="filter-button" [class.active]="selectedStatus === 'FAILED'" (click)="filterPayments('FAILED')">
+      <span class="indicator failed"></span>
+      Failed
+    </button>
+  </div>
 
-      <!-- Header de la carte -->
+  <!-- Payment list -->
+  <div *ngIf="filteredPayments.length > 0; else noPayment" class="payment-grid">
+    <div *ngFor="let payment of filteredPayments" class="payment-card">
+      <!-- Amount -->
+      <h3>{{ payment.amount | currency:'EUR' }}</h3>
 
-      <h3 class="text-2xl font-bold text-green-700 mb-2 group-hover:text-green-900 transition">
-        {{ payment.amount | currency:'EUR' }}
-      </h3>
+      <!-- Transaction date -->
+      <div class="date">
+        <p>📅 {{ payment.transactionDate | date:'medium' }}</p>
+      </div>
 
-      <p class="text-sm text-gray-500 mb-2">📅 {{ payment.transactionDate | date:'medium' }}</p>
-      <p class="text-sm text-gray-600 mb-2">
-        <strong>Méthode :</strong> {{ payment.method }}
-      </p>
+      <!-- Payment method -->
+      <p><strong>Method:</strong> {{ payment.method }}</p>
 
-      <div class="flex items-center mb-3">
-        <p class="text-sm text-gray-600 font-semibold mr-2">Statut:</p>
-        <!-- Icône dynamique selon le statut -->
+      <!-- Payment status -->
+      <div class="status-container">
+        <span class="status-label">Status:</span>
         <mat-icon *ngIf="payment.paystatus === 'SUCCESS'" class="status-icon success">check_circle</mat-icon>
         <mat-icon *ngIf="payment.paystatus === 'PENDING'" class="status-icon pending">hourglass_empty</mat-icon>
         <mat-icon *ngIf="payment.paystatus === 'FAILED'" class="status-icon failed">error</mat-icon>
-        <span class="px-2 py-1 rounded-full text-black text-sm"
+
+        <span class="status-badge"
               [ngClass]="{
-                'bg-green-500': payment.paystatus === 'SUCCESS',
-                'bg-yellow-500': payment.paystatus === 'PENDING',
-                'bg-red-500': payment.paystatus === 'FAILED'
+                'success': payment.paystatus === 'SUCCESS',
+                'pending': payment.paystatus === 'PENDING',
+                'failed': payment.paystatus === 'FAILED'
               }">
           {{ payment.paystatus }}
         </span>
       </div>
-
-
-
     </div>
   </div>
 
-  <!-- Template s'affichant s'il n'y a aucun paiement -->
+  <!-- No payment found -->
   <ng-template #noPayment>
-    <p class="text-center text-gray-500 text-lg mt-10">🚫 Aucun paiement trouvé pour l’instant.</p>
+    <div class="empty-state">
+      <p>🚫 No payments found yet.</p>
+    </div>
   </ng-template>
 </div>

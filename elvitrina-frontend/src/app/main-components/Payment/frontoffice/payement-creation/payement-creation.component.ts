@@ -68,6 +68,7 @@ export class PayementCreationComponent implements OnInit {
   ];
 
   availableOrders: any[] = [];
+order: any;
 
   constructor(
     private customOrderService: CustomOrderService,
@@ -83,39 +84,48 @@ export class PayementCreationComponent implements OnInit {
   }
   ngOnInit(): void {
     this.customOrderService.getAllOrders().subscribe((orders) => {
-      this.availableOrders = orders;
+    // ✅ Filtrer uniquement les commandes en statut PENDING
+    this.availableOrders = orders.filter(order => order.status === 'PENDING');
     });
   }
 
-  createPayment() {
-    console.log('Sending payment:', this.payment);
+ // ✅ Met à jour le montant automatiquement à chaque sélection de commandes
+ onOrdersSelectionChange() {
+  this.calculateTotal = this.availableOrders
+    .filter(order => this.payment.orderIds.includes(order.id))
+    .reduce((sum, order) => sum + (order.calculateTotal || 0), 0);
 
-    this.paymentService.createPayment(this.payment).subscribe({
-      error: (err) => console.error('Error creating payment:', err)
-    });
+  this.payment.amount = this.calculateTotal;  // Le champ devient readonly côté HTML
+  this.amountChange.emit(this.payment.amount);
+}
 
-    // Mise à jour du statut des commandes associées
-    this.payment.orderIds.forEach(orderId => {
-      this.customOrderService.updateOrderStatus2(orderId, 'Completed').subscribe({
-        next: () => {
-          console.log(`Order ${orderId} status updated to Completed.`);
-        },
-        error: (err) => {
-          console.error(`Error updating status for Order ${orderId}:`, err);
-        }
+// ✅ Créer le paiement et mettre à jour les statuts
+createPayment() {
+  this.payment.amount = this.calculateTotal;
+  this.payment.paystatus = PaymentStatusType.SUCCESS;  // 🔁 Mettez à jour le statut
+
+  this.paymentService.createPayment(this.payment).subscribe({
+    next: () => {
+      // ✅ Mise à jour du statut des commandes à CONFIRMED
+      this.payment.orderIds.forEach(orderId => {
+        this.customOrderService.updateOrderStatus2(orderId, 'CONFIRMED').subscribe({
+          next: () => {
+            console.log(`Order ${orderId} status updated to CONFIRMED.`);
+          },
+          error: (err) => {
+            console.error(`Error updating status for Order ${orderId}:`, err);
+          }
+        });
       });
-    });
 
-    this.paymentCreated.emit(true);
-    this.methodSelected.emit(this.payment.method);
-    this.stepper.next();
-  }
-
-  onOrdersSelectionChange() {
-    this.calculateTotal = this.availableOrders
-      .filter(order => this.payment.orderIds.includes(order.id))
-      .reduce((sum, order) => sum + (order.calculateTotal || 0), 0);
-
-    this.payment.amount = this.calculateTotal;
-  }
+      // 🔔 Événements / navigation
+      this.paymentCreated.emit(true);
+      this.methodSelected.emit(this.payment.method);
+      this.stepper.next();
+    },
+    error: (err) => {
+      console.error('Error creating payment:', err);
+    }
+  });
+}
 }

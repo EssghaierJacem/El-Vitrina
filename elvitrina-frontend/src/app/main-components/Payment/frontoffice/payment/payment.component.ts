@@ -17,7 +17,6 @@ export class PaymentComponent implements OnInit {
   constructor(private paymentService: PaymentService) {}
 
   ngOnInit() {
-    // Appel de la méthode pour récupérer le dernier paiement
     this.getLastPaymentAmount();
   }
 
