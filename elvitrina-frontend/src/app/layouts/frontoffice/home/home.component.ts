@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit {
   activeCategory: string = 'artisan';
 
   // Image base URL from environment
-  readonly IMAGE_PRODUCT_BASE_URL = 'http://localhost:8080/api/products/products/images/';
+  // readonly IMAGE_PRODUCT_BASE_URL = 'http://localhost:8080/api/products/products/images/';
 
   constructor(
     private productService: ProductService,
@@ -107,15 +107,16 @@ export class HomeComponent implements OnInit {
     this.activeCategory = category;
   }
 
-  getProductImageUrl(product: Product): string {
-    if (!product || !product.images || product.images.length === 0) {
-      return 'assets/images/products/no-image.jpg';
+  getProductImageUrl(image: string | undefined): string {
+    if (!image) {
+      return 'assets/images/products/no-image.jpg'; 
     }
-    const imageUrl = product.images[0];
-    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-      return imageUrl;
+  
+    if (image.startsWith('http')) {
+      return image; 
     }
-    return this.IMAGE_PRODUCT_BASE_URL + imageUrl;
+  
+    return `http://localhost:8080/api/products/products/images/${image}`;
   }
 
   getFinalPrice(product: Product): number {

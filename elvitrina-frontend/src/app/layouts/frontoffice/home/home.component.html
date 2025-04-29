@@ -338,8 +338,12 @@
                     <div class="card-img">
                       <!-- Image -->
                       <a class="card-img-hover" [routerLink]="['/products', product.productId]">
-                        <img class="card-img-top card-img-front" [src]="getProductImageUrl(product)" [alt]="product.productName" (error)="handleImageError($event)">
-                      </a>
+                        <img *ngFor="let image of product.images" 
+                        [src]="getProductImageUrl(image)" 
+                        [alt]="product.productName" 
+                        class="product-image" 
+                        (error)="handleImageError($event)">                     
+                       </a>
 
                       <!-- Favorite button -->
                       <button class="btn btn-favorite position-absolute top-0 end-0 m-2" (click)="toggleFavorite(product)">
@@ -400,8 +404,11 @@
                     <div class="card-img">
                       <!-- Image -->
                       <a class="card-img-hover" [routerLink]="['/products', product.productId]">
-                        <img class="card-img-top card-img-front" [src]="getProductImageUrl(product)" [alt]="product.productName" (error)="handleImageError($event)">
-<div style="font-size:10px; word-break:break-all; color:#c00;">{{ getProductImageUrl(product) }}</div>
+                        <img *ngFor="let image of product.images" 
+                        [src]="getProductImageUrl(image)" 
+                        [alt]="product.productName" 
+                        class="product-image" 
+                        (error)="handleImageError($event)">
                       </a>
 
                       <!-- Favorite button -->
@@ -468,8 +475,11 @@
                     <div class="card-img">
                       <!-- Image -->
                       <a class="card-img-hover" [routerLink]="['/products', product.productId]">
-                        <img class="card-img-top card-img-front" [src]="getProductImageUrl(product)" [alt]="product.productName" (error)="handleImageError($event)">
-<div style="font-size:10px; word-break:break-all; color:#c00;">{{ getProductImageUrl(product) }}</div>
+                        <img *ngFor="let image of product.images" 
+                        [src]="getProductImageUrl(image)" 
+                        [alt]="product.productName" 
+                        class="product-image" 
+                        (error)="handleImageError($event)">                      
                       </a>
 
                       <!-- Favorite button -->
@@ -531,8 +541,11 @@
                     <div class="card-img">
                       <!-- Image -->
                       <a class="card-img-hover" [routerLink]="['/products', product.productId]">
-                        <img class="card-img-top card-img-front" [src]="getProductImageUrl(product)" [alt]="product.productName" (error)="handleImageError($event)">
-<div style="font-size:10px; word-break:break-all; color:#c00;">{{ getProductImageUrl(product) }}</div>
+                        <img *ngFor="let image of product.images" 
+                        [src]="getProductImageUrl(image)" 
+                        [alt]="product.productName" 
+                        class="product-image" 
+                        (error)="handleImageError($event)">                      
                       </a>
 
                       <!-- Favorite button -->
@@ -599,8 +612,11 @@
                     <div class="card-img">
                       <!-- Image -->
                       <a class="card-img-hover" [routerLink]="['/products', product.productId]">
-                        <img class="card-img-top card-img-front" [src]="getProductImageUrl(product)" [alt]="product.productName" (error)="handleImageError($event)">
-<div style="font-size:10px; word-break:break-all; color:#c00;">{{ getProductImageUrl(product) }}</div>
+                        <img *ngFor="let image of product.images" 
+                        [src]="getProductImageUrl(image)" 
+                        [alt]="product.productName" 
+                        class="product-image" 
+                        (error)="handleImageError($event)">                      
                       </a>
 
                       <!-- Favorite button -->
@@ -662,8 +678,11 @@
                     <div class="card-img">
                       <!-- Image -->
                       <a class="card-img-hover" [routerLink]="['/products', product.productId]">
-                        <img class="card-img-top card-img-front" [src]="getProductImageUrl(product)" [alt]="product.productName" (error)="handleImageError($event)">
-<div style="font-size:10px; word-break:break-all; color:#c00;">{{ getProductImageUrl(product) }}</div>
+                        <img *ngFor="let image of product.images" 
+                        [src]="getProductImageUrl(image)" 
+                        [alt]="product.productName" 
+                        class="product-image" 
+                        (error)="handleImageError($event)">                      
                       </a>
 
                       <!-- Favorite button -->

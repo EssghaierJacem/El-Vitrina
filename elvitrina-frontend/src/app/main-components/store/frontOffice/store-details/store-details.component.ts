@@ -774,7 +774,7 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
           imgElement.src = '/assets/images/stores/no-image.jpg';
           break;
         case 'user':
-          imgElement.src = '/assets/images/avatars/default-avatar.png';
+          imgElement.src = '/assets/images/profile/user-1.jpg';
           break;
         default:
           imgElement.src = '/assets/images/products/no-image.jpg';
@@ -1005,25 +1005,16 @@ getLimitedFeedbacks(): StoreFeedback[] {
   return this.analyzedFeedbacks.slice(0, this.feedbackLimit);
 }
 
-// Get the proper URL for user profile images
-getUserProfileImageUrl(imagePath: string): string {
-  if (!imagePath) {
-    return '/assets/images/avatars/default-avatar.png';
+getUserProfileImageUrl(filename: string): string {
+
+  if (filename.startsWith('http://') || filename.startsWith('https://')) {
+    return filename;
   }
-  
-  // If it's already a full URL, return it as is
-  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-    return imagePath;
-  }
-  
-  // If it's a relative path starting with '/', append it to the API URL
-  if (imagePath.startsWith('/')) {
-    return `${environment.apiUrl}${imagePath}`;
-  }
-  
-  // Otherwise, assume it's a filename and prepend the base URL
-  return `${this.USER_IMAGE_BASE_URL}${imagePath}`;
+
+  const cleaned = filename.replace(/^\/+/, '');
+  return `http://localhost:8080/user-images/${cleaned}`;
 }
+
 
 // Helper method to get the feedback type display name
 getFeedbackTypeDisplayName(type: StoreFeedbackType): string {
