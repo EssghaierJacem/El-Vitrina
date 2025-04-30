@@ -67,7 +67,7 @@ export class AiContentService {
   }
 
   generateHeroImage(prompt: string): Observable<{ imageUrl: string; fileName: string; blob: Blob }> {
-    const stabilityApiKey = 'sk-0wgozVMYGx5uGZop106GDiM8VSWwn6uYcQUsw5jKl4LR4c2Y';
+    const stabilityApiKey = 'sk-sQMdtRkoIXmuMCdE0iC5nqD004YyYl92HaWSXGRRfLV3bMm8';
     
     const headers = new HttpHeaders({
       'authorization': `Bearer ${stabilityApiKey}`,
