@@ -6,74 +6,94 @@
     <title>Thank You for Your Feedback</title>
     <style>
         body {
-            background: #f4f8fb;
-            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f9f9f9;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
         }
+        
+        .wrapper {
+            width: 100%;
+            table-layout: fixed;
+            padding: 40px 0;
+        }
+        
         .container {
+            max-width: 600px;
+            margin: 0 auto;
+            border-spacing: 0;
+        }
+        
+        .email-background {
+            background-color: #2a3b62;
+            background-image: url('https://drive.google.com/uc?export=view&id=1gpIPjhzrlAOyDlmZ2lGEhysM-WzsOY1L');
+            background-position: center;
+            background-repeat: repeat;
+            padding: 30px;
+        }
+        
+        .content-box {
+            background-color: white;
+            width: 85%;
             max-width: 480px;
-            margin: 40px auto;
-            background: #fff;
-            border-radius: 18px;
-            box-shadow: 0 4px 24px rgba(40, 70, 120, 0.07);
-            border: 2px solid #0076d7;
-            overflow: hidden;
-        }
-        .header {
-            background: linear-gradient(90deg, #0076d7 0%, #4fc3f7 100%);
-            padding: 32px 0 16px 0;
+            margin: 0 auto;
+            border-radius: 4px;
             text-align: center;
+            padding: 40px 20px;
         }
+        
         .logo {
-            width: 120px;
+            max-width: 200px;
             height: auto;
-            display: block;
-            margin: 0 auto 12px auto;
+            margin-bottom: 30px;
         }
-        .content {
-            padding: 32px 28px 40px 28px;
-            text-align: center;
+        
+        .thank-you {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 16px;
         }
-        .title {
-            font-size: 1.5rem;
-            color: #0d2345;
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
+        
         .message {
-            color: #364a63;
-            font-size: 1.06rem;
-            margin-bottom: 18px;
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 20px;
         }
+        
         .footer {
-            background: #f4f8fb;
-            padding: 16px;
-            text-align: center;
-            font-size: 0.98rem;
-            color: #6c7a89;
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
     </style>
 </head>
-<body style="margin:0; padding:0; background: #f9f9f9 url('https://drive.google.com/uc?export=view&id=1gpIPjhzrlAOyDlmZ2lGEhysM-WzsOY1L') center center repeat; min-height:100vh;">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="min-height:100vh;">
-        <tr>
-            <td align="center" valign="top">
-                <table cellpadding="0" cellspacing="0" border="0" width="380" style="background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08); margin:40px 0; padding:0;">
-                    <tr>
-                        <td align="center" style="padding:32px 24px 16px 24px;">
-                            <img src="https://drive.google.com/uc?export=view&id=1Pcz1_yGgjIGk_PUo5zGA_WE_m_GT0BKf" alt="El Vitrina Logo" style="max-width:180px; height:auto; display:block; margin:0 auto 20px auto;">
-                            <h2 style="font-family:Arial,sans-serif; font-size:1.35rem; font-weight:bold; color:#232323; margin:0 0 14px 0;">Thank You for Your Feedback!</h2>
-                            <p style="font-family:Arial,sans-serif; font-size:1rem; color:#222; margin:0 0 12px 0;">We appreciate your feedback and will use it to improve our app.</p>
-                            <hr style="border:none; border-top:1px solid #ececec; margin:24px 0 12px 0;">
-                            <div style="font-family:Arial,sans-serif; font-size:0.95rem; color:#b0b0b0; text-align:center; margin-top:8px;">
-                                &copy; 2025 El Vitrina. All rights reserved.
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+<body>
+    <div class="wrapper">
+        <table class="container" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+                <td class="email-background">
+                    <table class="content-box" cellspacing="0" cellpadding="0" border="0" align="center">
+                        <tr>
+                            <td align="center">
+                                <img src="https://drive.google.com/uc?export=view&id=1Pcz1_yGgjIGk_PUo5zGA_WE_m_GT0BKf" alt="El Vitrina Logo" class="logo">
+                                
+                                <h2 class="thank-you">Thank You for Your Feedback!</h2>
+                                
+                                <p class="message">We appreciate your input and will use it to improve our app.</p>
+                                
+                                <div class="footer">
+                                    © 2025 El Vitrina. All rights reserved.
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
 </body>
 </html>
