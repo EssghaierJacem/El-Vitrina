@@ -5,8 +5,10 @@ import com.sudoers.elvitrinabackend.model.dto.AdReviewRequest;
 import com.sudoers.elvitrinabackend.model.entity.Ad;
 import com.sudoers.elvitrinabackend.model.enums.AdStatus;
 import com.sudoers.elvitrinabackend.repository.AdRepository;
+import com.sudoers.elvitrinabackend.service.user.EmailService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 @Service
 public class AdService {
-
+    @Autowired
+    private EmailService emailService;
     private final AdRepository adRepository;
 
     public AdService(AdRepository adRepository) {
@@ -41,18 +44,23 @@ public class AdService {
     public Ad updateAdStatus(Long id, AdStatus status, String rejectionReason) {
         Ad ad = adRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ad not found"));
-
+        String advertiserEmail = ad.getAdvertiserEmail();
+        String adTitle = ad.getTitle();
         ad.setStatus(status);
 
         if (status == AdStatus.APPROVED) {
             ad.setIsApproved(true);
-            ad.setRejectionReason(null);
+            ad.setRejectionReason(null); emailService.sendAdApprovalEmail(advertiserEmail, adTitle);
+
         } else if (status == AdStatus.REJECTED) {
             ad.setIsApproved(false);
             ad.setRejectionReason(rejectionReason);
+            emailService.sendAdRejectionEmail(advertiserEmail, adTitle, rejectionReason);
         }
 
         return adRepository.save(ad);
+
+
     }
 
     public List<Ad> getActiveAds() {

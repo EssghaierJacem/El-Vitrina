@@ -1,23 +1,42 @@
+// admin-stats.component.scss
 .admin-dashboard {
   padding: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
 
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
 
     h1 {
       font-size: 2rem;
       color: #3f51b5;
+      margin: 0;
     }
 
     .date-range-picker {
       display: flex;
       gap: 16px;
+      
+      @media (max-width: 576px) {
+        flex-direction: column;
+        width: 100%;
+      }
 
       mat-form-field {
         width: 180px;
+        
+        @media (max-width: 576px) {
+          width: 100%;
+        }
       }
     }
   }
@@ -32,6 +51,8 @@
       background: #f5f5f5;
       text-align: center;
       transition: all 0.3s ease;
+      border-radius: 8px;
+      overflow: hidden;
 
       &:hover {
         transform: translateY(-4px);
@@ -41,6 +62,7 @@
       .stat-value {
         font-size: 2.5rem;
         color: #2c3e50;
+        padding: 16px 0;
       }
     }
   }
@@ -50,21 +72,72 @@
     grid-template-columns: 1fr;
     gap: 32px;
     margin-bottom: 32px;
+    
+    .chart-card {
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f9f9f9;
+      
+      mat-card-content {
+        display: flex;
+        justify-content: center;
+        padding: 16px;
+        min-height: 400px;
+      }
+    }
   }
 
   .top-lists {
     display: flex;
     gap: 24px;
     flex-wrap: wrap;
+    margin-bottom: 32px;
 
     .top-list-card {
       flex: 1;
       min-width: 300px;
+      border-radius: 8px;
+      background: #f5f5f5;
+      
+      mat-list-item {
+        height: auto;
+        padding: 8px 0;
+      }
     }
   }
 
   .loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 100px;
+    gap: 16px;
+    
+    p {
+      font-size: 1.2rem;
+      color: #666;
+    }
+  }
+  
+  .empty-state {
     text-align: center;
-    margin-top: 50px;
+    padding: 32px;
+    
+    p {
+      margin-bottom: 16px;
+      font-size: 1.1rem;
+      color: #666;
+    }
+  }
+}
+
+// Global style for error snackbar
+::ng-deep .error-snackbar {
+  background: #f44336;
+  color: white;
+  
+  .mat-simple-snackbar-action {
+    color: white;
   }
 }

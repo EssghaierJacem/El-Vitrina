@@ -1,0 +1,55 @@
+.payment-card {
+  max-width: 600px;
+  margin: 24px auto;
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  background: #ffffff;
+
+  mat-card-header {
+    text-align: center;
+    margin-bottom: 12px;
+
+    mat-card-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2e3a59;
+    }
+  }
+
+  mat-card-content {
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+
+      .detail-label {
+        font-weight: 500;
+        color: #7d7d7d;
+      }
+
+      .detail-value {
+        font-weight: 600;
+        color: #333;
+      }
+
+      mat-chip {
+        font-weight: 500;
+      }
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 24px;
+
+      button {
+        font-weight: 600;
+        padding: 10px 24px;
+        border-radius: 30px;
+      }
+    }
+  }
+}

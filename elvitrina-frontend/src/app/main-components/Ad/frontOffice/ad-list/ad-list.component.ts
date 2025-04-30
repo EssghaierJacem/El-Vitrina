@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AdService } from 'src/app/core/services/Ad/ad.service';
 
 interface Ad {
@@ -28,7 +29,8 @@ interface Ad {
     FormsModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatButtonModule
+    MatButtonModule,
+    MatSnackBarModule
   ],
   templateUrl: './ad-list.component.html',
   styleUrls: ['./ad-list.component.scss']
@@ -39,7 +41,10 @@ export class AdListComponent implements OnInit {
   error: string | null = null;
   private rowSpans = new Map<number, number>();
 
-  constructor(private adService: AdService) {}
+  constructor(
+    private adService: AdService,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.loadActiveAds();
@@ -52,7 +57,11 @@ export class AdListComponent implements OnInit {
     
     this.adService.getActiveAds().subscribe({
       next: (ads) => {
-        this.ads = ads;
+        this.ads = ads.map(ad => ({
+          ...ad,
+          // Fallback image if original fails
+          imageUrl: ad.imageUrl || 'assets/images/ad-placeholder.png'
+        }));
         this.loading = false;
         ads.forEach(ad => this.rowSpans.set(ad.id, this.calculateRowSpan(ad)));
       },
@@ -70,6 +79,12 @@ export class AdListComponent implements OnInit {
     });
   }
 
+  handleImageError(event: Event, ad: Ad): void {
+    const img = event.target as HTMLImageElement;
+    img.src = '';
+    ad.imageUrl = undefined; // important: trigger text-only style
+    this.rowSpans.set(ad.id, this.calculateRowSpan({ ...ad, imageUrl: undefined }));
+  }
   getRowSpan(ad: Ad): number {
     return this.rowSpans.get(ad.id) || this.calculateRowSpan(ad);
   }
@@ -84,19 +99,36 @@ export class AdListComponent implements OnInit {
     return Math.ceil(aspectRatio * 24);
   }
 
-  onImageLoad(event: Event, ad: Ad): void {
-    this.rowSpans.set(ad.id, this.calculateRowSpan(ad));
-  }
-
   saveAd(event: MouseEvent, adId: number): void {
     event.stopPropagation();
     event.preventDefault();
-    console.log('Saved ad', adId);
+    this.snackBar.open('Ad saved to your collection', 'Close', {
+      duration: 2000,
+    });
+    // Implement actual save functionality here
   }
 
   shareAd(event: MouseEvent, adId: number): void {
     event.stopPropagation();
     event.preventDefault();
-    console.log('Shared ad', adId);
+    if (navigator.share) {
+      const ad = this.ads.find(a => a.id === adId);
+      navigator.share({
+        title: ad?.title,
+        text: ad?.content,
+        url: ad?.targetUrl
+      }).catch(err => {
+        console.error('Error sharing:', err);
+      });
+    } else {
+      this.snackBar.open('Link copied to clipboard', 'Close', {
+        duration: 2000,
+      });
+      // Fallback for browsers that don't support Web Share API
+      const ad = this.ads.find(a => a.id === adId);
+      navigator.clipboard.writeText(ad?.targetUrl || '');
+    }
   }
+
+  
 }

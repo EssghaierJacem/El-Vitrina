@@ -10,7 +10,7 @@ CORS(app)
 MYSQL_CONFIG = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'root',
+    'password': '0000',
     'database': 'elvitrina'
 }
 
@@ -34,12 +34,12 @@ def recommend_products():
     user_embedding = model.encode(user_text).reshape(1, -1)
 
     # Récupération des produits
-    cursor.execute("SELECT product_id, product_name, description FROM product")
+    cursor.execute("SELECT product_id, product_name, description ,price FROM product")
     products = cursor.fetchall()
 
     results = []
     for product in products:
-        full_text = f"{product['product_name']}. {product['description']}"
+        full_text = f"{product['product_name']}. {product['description']}.{product['price']}"
         product_embedding = model.encode(full_text).reshape(1, -1)
         score = cosine_similarity(user_embedding, product_embedding)[0][0]
         results.append((product, score))
@@ -53,6 +53,7 @@ def recommend_products():
         {
             "name": prod['product_name'],
             "description": prod['description'],
+            "price": prod['price'],
             "score": round(float(score), 3)  # Correction ici
         }
         for prod, score in top

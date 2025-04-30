@@ -1,7 +1,5 @@
 <table mat-table [dataSource]="dataSource" matSort>
   <!-- Keep existing question column -->
-   
-
   <ng-container matColumnDef="question">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Question</th>
     <td mat-cell *matCellDef="let quiz">{{ quiz.question }}</td>
@@ -25,7 +23,7 @@
 
   <!-- Keep other columns -->
   <ng-container matColumnDef="bonneReponse">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Bonne Réponse</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Correct Answer</th>
     <td mat-cell *matCellDef="let quiz">{{ quiz.bonneReponse }}</td>
   </ng-container>
 
@@ -38,9 +36,9 @@
     <th mat-header-cell *matHeaderCellDef>Actions</th>
     <td mat-cell *matCellDef="let quiz">
       <button mat-button  *ngIf="quiz.id" routerLink="['/dashboard/quiz/edit', quiz.id]">
-        Éditer
+        Edit
       </button>
-        <button mat-button color="warn" (click)="deleteQuiz(quiz.id)">Supprimer</button>
+      <button mat-button color="warn" (click)="deleteQuiz(quiz.id)">Delete</button>
     </td>
   </ng-container>
 

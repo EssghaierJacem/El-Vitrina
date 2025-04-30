@@ -43,38 +43,16 @@ export class PaymentViewComponent implements OnInit {
       this.paymentService.getPaymentById(id).subscribe({
         next: (data) => {
           this.payment = data;
-          this.setStatusClass();
+       //   this.setStatusClass();
         },
         error: (err) => console.error('Error loading payment:', err)
       });
     }
   }
 
-  private setStatusClass() {
-    switch(this.payment.paystatus) {
-      case PaymentStatusType.SUCCESS:
-        this.statusClass = 'status-completed';
-        break;
-      case PaymentStatusType.PENDING:
-        this.statusClass = 'status-pending';
-        break;
-      case PaymentStatusType.FAILED:
-        this.statusClass = 'status-failed';
-        break;
-      default:
-        this.statusClass = 'status-default';
-    }
-  }
-
-  getStatusText(status: PaymentStatusType): string {
-    return {
-      [PaymentStatusType.SUCCESS]: 'Payment successful',
-      [PaymentStatusType.PENDING]: 'Pending',
-      [PaymentStatusType.FAILED]: 'Failed',
-    }[status] || 'Unknown';
-  }
 
   navigateToPayments() {
-    this.router.navigate(['dashboard/list/payment']);
+    this.router.navigate(['dashboard/payment/list']);
   }
 }
+

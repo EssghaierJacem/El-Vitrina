@@ -26,4 +26,7 @@ export class AdminProposalPersoService {
   deleteProposalPerso(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+  sendProposalContactEmail(emailData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/send-proposal-contact`, emailData);
+  }
 }

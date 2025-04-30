@@ -9,18 +9,18 @@ import { RequestPersoCreateComponent } from './main-components/requestPerso/fron
 import { chartRoutes } from './main-components/chart-ines/chart/charts-routes';
 import { HomeComponent } from './layouts/frontoffice/home/home.component';
 
-export const routes: Routes = [   
-  {  
+export const routes: Routes = [
+  {
     path: '',
     component: FrontComponent,
     children: [
       {
         path: '',
-        component: HomeComponent 
+        component: HomeComponent
       },
       {
         path: 'home',
-        redirectTo: '', pathMatch: 'full' 
+        redirectTo: '', pathMatch: 'full'
       },
       {
         path: 'offers',
@@ -52,6 +52,11 @@ export const routes: Routes = [
         path: 'payment',
         loadChildren: () =>
           import('./main-components/Payment/frontoffice/payment.routes').then((m) => m.PaymentsRoutes),
+      },
+      {
+        path: 'order',
+        loadChildren: () =>
+          import('./main-components/custom-order/Frontoffice/custom-order-Front.routes').then(m => m.CustomOrderFrontRoutes),
       },
       {
        path: 'quiz',
@@ -94,6 +99,7 @@ export const routes: Routes = [
       },
 
 
+
       {
         path: 'donations',
         loadChildren: () =>
@@ -113,7 +119,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: FullComponent,
-   canActivate: [AdminGuard],
+ // canActivate: [AdminGuard],
     children: [
       {
         path: '',

@@ -1,4 +1,5 @@
 <section>
+  <app-ad-display></app-ad-display>
   <div class="row gx-0 d-block d-lg-flex flickity flickity-lg-none" data-flickity='{"watchCSS": true}'>
 
     <!-- Item -->
@@ -321,414 +322,87 @@
         <div class="tab-content">
           <!-- Artisan Products Tab -->
           <div class="tab-pane fade" [class.show]="activeCategory === 'artisan'" [class.active]="activeCategory === 'artisan'">
-            <div class="row-products">
-              <!-- First row (3 products) -->
-              <div class="col-product" *ngFor="let product of artisanProducts.slice(0, 3)">
+            <div class="row">
+              <div class="col-12 col-md-4 mb-4" *ngFor="let product of artisanProducts.slice(0, 6)">
                 <!-- Product Card -->
-                <div class="card mb-7">
-                  <!-- Badge -->
-                  <div class="badge bg-white text-body card-badge card-badge-start text-uppercase" *ngIf="product.isBestseller">
-                    Bestseller
-                  </div>
-                  <div class="badge bg-dark card-badge card-badge-start text-uppercase" *ngIf="product.hasDiscount">
-                    Sale
-                  </div>
-
-                  <!-- Image -->
-                  <div class="card-img">
-                    <!-- Image -->
-                    <a class="card-img-hover" [routerLink]="['/products', product.productId]">
-                      <img *ngFor="let image of product.images" 
-                      [src]="getProductImageUrl(image)" 
-                      [alt]="product.productName" 
-                      class="product-image" 
-                      (error)="handleImageError($event)">                     
-                     </a>
-
-                    <!-- Favorite button -->
-                    <button class="btn btn-favorite position-absolute top-0 end-0 m-2" (click)="toggleFavorite(product)">
-                      <i [ngClass]="{'fe fe-heart': !product.isFavorite, 'fe fe-heart active-heart': product.isFavorite}"></i>
-                    </button>
-
-                    <!-- Actions -->
-                    <div class="card-actions">
-                      <span class="card-action">
-                        <button class="btn btn-xs btn-circle btn-white-primary" [routerLink]="['/products', product.productId]">
-                          <i class="fe fe-eye"></i>
-                        </button>
+                <div class="product-card mb-7">
+                  <!-- Product Image -->
+                  <div class="product-image">
+                    <img [src]="getProductImageUrl(product)" [alt]="product.productName" (error)="handleImageError($event)">
+                    <!-- Badges -->
+                    <div class="product-badges">
+                      <span class="discount-badge" *ngIf="product.hasDiscount && product.discountPercentage">
+                        -{{ product.discountPercentage }}%
                       </span>
-                      <span class="card-action">
-                        <button class="btn btn-xs btn-circle btn-white-primary" (click)="addToCart(product)">
-                          <i class="fe fe-shopping-cart"></i>
-                        </button>
-                      </span>
+                      <div class="badge bg-white text-body card-badge card-badge-start text-uppercase" *ngIf="product.isBestseller">
+                        Bestseller
+                      </div>
                     </div>
-                  </div>
-
-                  <!-- Body -->
-                  <div class="card-body px-0">
-                    <!-- Category -->
-                    <div class="fs-xs">
-                      <a class="text-muted" href="#">{{ product.category }}</a>
+                    <!-- Product Actions overlayed on the image -->
+                    <div class="product-actions">
+                      <button class="action-button view-button" [routerLink]="['/products', product.productId]">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                      <button class="action-button cart-button" 
+                              [routerLink]="['/products/addtocart', product.productId]"
+                              [disabled]="product.stockQuantity === 0">
+                        <i class="fas fa-shopping-cart"></i>
+                      </button>
+                      <button class="action-button wishlist-button" [ngClass]="{'liked': product.isFavorite}" (click)="toggleFavorite(product)">
+                        <i [ngClass]="product.isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
+                      </button>
                     </div>
-
-                    <!-- Title -->
-                    <div class="fw-bold">
-                      <a class="text-body" [routerLink]="['/products', product.productId]">
-                        {{ product.productName }}
-                      </a>
-                    </div>
-
-                    <!-- Price -->
-                    <div class="fw-bold" [class.text-primary]="product.hasDiscount">
-                      <span class="fs-xs text-gray-350 text-decoration-line-through" *ngIf="product.hasDiscount">{{ getOriginalPrice(product) | currency:'EUR' }}</span>
-                      <span [class.text-primary]="product.hasDiscount">{{ getFinalPrice(product) | currency:'EUR' }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Second row (3 products) -->
-              <div class="col-product" *ngFor="let product of artisanProducts.slice(3, 6)">
-                <!-- Product Card -->
-                <div class="card mb-7">
-                  <!-- Badge -->
-                  <div class="badge bg-white text-body card-badge card-badge-start text-uppercase" *ngIf="product.isBestseller">
-                    Bestseller
-                  </div>
-                  <div class="badge bg-dark card-badge card-badge-start text-uppercase" *ngIf="product.hasDiscount">
-                    Sale
-                  </div>
-
-                  <!-- Image -->
-                  <div class="card-img">
-                    <!-- Image -->
-                    <a class="card-img-hover" [routerLink]="['/products', product.productId]">
-                      <img *ngFor="let image of product.images" 
-                      [src]="getProductImageUrl(image)" 
-                      [alt]="product.productName" 
-                      class="product-image" 
-                      (error)="handleImageError($event)">
-                    </a>
-
-                    <!-- Favorite button -->
-                    <button class="btn btn-favorite position-absolute top-0 end-0 m-2" (click)="toggleFavorite(product)">
-                      <i [ngClass]="{'fe fe-heart': !product.isFavorite, 'fe fe-heart active-heart': product.isFavorite}"></i>
-                    </button>
-
-                    <!-- Actions -->
-                    <div class="card-actions">
-                      <span class="card-action">
-                        <button class="btn btn-xs btn-circle btn-white-primary" [routerLink]="['/products', product.productId]">
-                          <i class="fe fe-eye"></i>
-                        </button>
-                      </span>
-                      <span class="card-action">
-                        <button class="btn btn-xs btn-circle btn-white-primary" (click)="addToCart(product)">
-                          <i class="fe fe-shopping-cart"></i>
-                        </button>
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Body -->
-                  <div class="card-body px-0">
-                    <!-- Category -->
-                    <div class="fs-xs">
-                      <a class="text-muted" href="#">{{ product.category }}</a>
-                    </div>
-
-                    <!-- Title -->
-                    <div class="fw-bold">
-                      <a class="text-body" [routerLink]="['/products', product.productId]">
-                        {{ product.productName }}
-                      </a>
-                    </div>
-
-                    <!-- Price -->
-                    <div class="fw-bold" [class.text-primary]="product.hasDiscount">
-                      <span class="fs-xs text-gray-350 text-decoration-line-through" *ngIf="product.hasDiscount">{{ getOriginalPrice(product) | currency:'EUR' }}</span>
-                      <span [class.text-primary]="product.hasDiscount">{{ getFinalPrice(product) | currency:'EUR' }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <!-- Badges -->
+      <div class="product-badges">
+        <span class="discount-badge" *ngIf="product.hasDiscount && product.discountPercentage">
+          -{{ product.discountPercentage }}%
+        </span>
+        <div class="badge bg-white text-body card-badge card-badge-start text-uppercase" *ngIf="product.isBestseller">
+          Bestseller
+        </div>
+        <div class="badge bg-dark card-badge card-badge-start text-uppercase" *ngIf="product.hasDiscount">
+          Sale
+        </div>
+      </div>
+      <!-- Product Actions overlayed on the image -->
+      <div class="product-actions">
+        <button class="action-button view-button" [routerLink]="['/products', product.productId]">
+          <i class="fas fa-eye"></i>
+        </button>
+        <button class="action-button cart-button" 
+                [routerLink]="['/products/addtocart', product.productId]"
+                [disabled]="product.stockQuantity === 0">
+          <i class="fas fa-shopping-cart"></i>
+        </button>
+        <button class="action-button wishlist-button" [ngClass]="{'liked': product.isFavorite}" (click)="toggleFavorite(product)">
+          <i [ngClass]="product.isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Product Info -->
+    <div class="product-info">
+      <!-- Category -->
+      <div class="product-category">{{ product.category }}</div>
+      <!-- Product Name -->
+      <h3 class="product-name" [routerLink]="['/products', product.productId]">
+        {{ product.productName }}
+      </h3>
+      <!-- Price -->
+      <div class="product-price" [class.has-discount]="product.hasDiscount">
+        <ng-container *ngIf="product.hasDiscount; else regularPrice">
+          <span class="current-price">{{ calculateDiscountedPrice(product) | currency:'EUR' }}</span>
+          <span class="original-price">{{ product.price | currency:'EUR' }}</span>
+        </ng-container>
+        <ng-template #regularPrice>
+          <span class="current-price">{{ product.price | currency:'EUR' }}</span>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
           </div>
 
-          <!-- Home & Living Products Tab -->
-          <div class="tab-pane fade" [class.show]="activeCategory === 'home'" [class.active]="activeCategory === 'home'">
-            <div class="row-products">
-              <!-- First row (3 products) -->
-              <div class="col-product" *ngFor="let product of homeLifestyleProducts.slice(0, 3)">
-                <!-- Product Card -->
-                <div class="card mb-7">
-                  <!-- Badge -->
-                  <div class="badge bg-white text-body card-badge card-badge-start text-uppercase" *ngIf="product.isBestseller">
-                    Bestseller
-                  </div>
-                  <div class="badge bg-dark card-badge card-badge-start text-uppercase" *ngIf="product.hasDiscount">
-                    Sale
-                  </div>
-
-                  <!-- Image -->
-                  <div class="card-img">
-                    <!-- Image -->
-                    <a class="card-img-hover" [routerLink]="['/products', product.productId]">
-                      <img *ngFor="let image of product.images" 
-                      [src]="getProductImageUrl(image)" 
-                      [alt]="product.productName" 
-                      class="product-image" 
-                      (error)="handleImageError($event)">                      
-                    </a>
-
-                    <!-- Favorite button -->
-                    <button class="btn btn-favorite position-absolute top-0 end-0 m-2" (click)="toggleFavorite(product)">
-                      <i [ngClass]="{'fe fe-heart': !product.isFavorite, 'fe fe-heart active-heart': product.isFavorite}"></i>
-                    </button>
-
-                    <!-- Actions -->
-                    <div class="card-actions">
-                      <span class="card-action">
-                        <button class="btn btn-xs btn-circle btn-white-primary" [routerLink]="['/products', product.productId]">
-                          <i class="fe fe-eye"></i>
-                        </button>
-                      </span>
-                      <span class="card-action">
-                        <button class="btn btn-xs btn-circle btn-white-primary" (click)="addToCart(product)">
-                          <i class="fe fe-shopping-cart"></i>
-                        </button>
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Body -->
-                  <div class="card-body px-0">
-                    <!-- Category -->
-                    <div class="fs-xs">
-                      <a class="text-muted" href="#">{{ product.category }}</a>
-                    </div>
-
-                    <!-- Title -->
-                    <div class="fw-bold">
-                      <a class="text-body" [routerLink]="['/products', product.productId]">
-                        {{ product.productName }}
-                      </a>
-                    </div>
-
-                    <!-- Price -->
-                    <div class="fw-bold" [class.text-primary]="product.hasDiscount">
-                      <span class="fs-xs text-gray-350 text-decoration-line-through" *ngIf="product.hasDiscount">{{ getOriginalPrice(product) | currency:'EUR' }}</span>
-                      <span [class.text-primary]="product.hasDiscount">{{ getFinalPrice(product) | currency:'EUR' }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Second row (3 products) -->
-              <div class="col-product" *ngFor="let product of homeLifestyleProducts.slice(3, 6)">
-                <!-- Product Card -->
-                <div class="card mb-7">
-                  <!-- Badge -->
-                  <div class="badge bg-white text-body card-badge card-badge-start text-uppercase" *ngIf="product.isBestseller">
-                    Bestseller
-                  </div>
-                  <div class="badge bg-dark card-badge card-badge-start text-uppercase" *ngIf="product.hasDiscount">
-                    Sale
-                  </div>
-
-                  <!-- Image -->
-                  <div class="card-img">
-                    <!-- Image -->
-                    <a class="card-img-hover" [routerLink]="['/products', product.productId]">
-                      <img *ngFor="let image of product.images" 
-                      [src]="getProductImageUrl(image)" 
-                      [alt]="product.productName" 
-                      class="product-image" 
-                      (error)="handleImageError($event)">                      
-                    </a>
-
-                    <!-- Favorite button -->
-                    <button class="btn btn-favorite position-absolute top-0 end-0 m-2" (click)="toggleFavorite(product)">
-                      <i [ngClass]="{'fe fe-heart': !product.isFavorite, 'fe fe-heart active-heart': product.isFavorite}"></i>
-                    </button>
-
-                    <!-- Actions -->
-                    <div class="card-actions">
-                      <span class="card-action">
-                        <button class="btn btn-xs btn-circle btn-white-primary" [routerLink]="['/products', product.productId]">
-                          <i class="fe fe-eye"></i>
-                        </button>
-                      </span>
-                      <span class="card-action">
-                        <button class="btn btn-xs btn-circle btn-white-primary" (click)="addToCart(product)">
-                          <i class="fe fe-shopping-cart"></i>
-                        </button>
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Body -->
-                  <div class="card-body px-0">
-                    <!-- Category -->
-                    <div class="fs-xs">
-                      <a class="text-muted" href="#">{{ product.category }}</a>
-                    </div>
-
-                    <!-- Title -->
-                    <div class="fw-bold">
-                      <a class="text-body" [routerLink]="['/products', product.productId]">
-                        {{ product.productName }}
-                      </a>
-                    </div>
-
-                    <!-- Price -->
-                    <div class="fw-bold" [class.text-primary]="product.hasDiscount">
-                      <span class="fs-xs text-gray-350 text-decoration-line-through" *ngIf="product.hasDiscount">{{ getOriginalPrice(product) | currency:'EUR' }}</span>
-                      <span [class.text-primary]="product.hasDiscount">{{ getFinalPrice(product) | currency:'EUR' }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Consumables & Entertainment Products Tab -->
-          <div class="tab-pane fade" [class.show]="activeCategory === 'consumables'" [class.active]="activeCategory === 'consumables'">
-            <div class="row-products">
-              <!-- First row (3 products) -->
-              <div class="col-product" *ngFor="let product of consumablesEntertainmentProducts.slice(0, 3)">
-                <!-- Product Card -->
-                <div class="card mb-7">
-                  <!-- Badge -->
-                  <div class="badge bg-white text-body card-badge card-badge-start text-uppercase" *ngIf="product.isBestseller">
-                    Bestseller
-                  </div>
-                  <div class="badge bg-dark card-badge card-badge-start text-uppercase" *ngIf="product.hasDiscount">
-                    Sale
-                  </div>
-
-                  <!-- Image -->
-                  <div class="card-img">
-                    <!-- Image -->
-                    <a class="card-img-hover" [routerLink]="['/products', product.productId]">
-                      <img *ngFor="let image of product.images" 
-                      [src]="getProductImageUrl(image)" 
-                      [alt]="product.productName" 
-                      class="product-image" 
-                      (error)="handleImageError($event)">                      
-                    </a>
-
-                    <!-- Favorite button -->
-                    <button class="btn btn-favorite position-absolute top-0 end-0 m-2" (click)="toggleFavorite(product)">
-                      <i [ngClass]="{'fe fe-heart': !product.isFavorite, 'fe fe-heart active-heart': product.isFavorite}"></i>
-                    </button>
-
-                    <!-- Actions -->
-                    <div class="card-actions">
-                      <span class="card-action">
-                        <button class="btn btn-xs btn-circle btn-white-primary" [routerLink]="['/products', product.productId]">
-                          <i class="fe fe-eye"></i>
-                        </button>
-                      </span>
-                      <span class="card-action">
-                        <button class="btn btn-xs btn-circle btn-white-primary" (click)="addToCart(product)">
-                          <i class="fe fe-shopping-cart"></i>
-                        </button>
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Body -->
-                  <div class="card-body px-0">
-                    <!-- Category -->
-                    <div class="fs-xs">
-                      <a class="text-muted" href="#">{{ product.category }}</a>
-                    </div>
-
-                    <!-- Title -->
-                    <div class="fw-bold">
-                      <a class="text-body" [routerLink]="['/products', product.productId]">
-                        {{ product.productName }}
-                      </a>
-                    </div>
-
-                    <!-- Price -->
-                    <div class="fw-bold" [class.text-primary]="product.hasDiscount">
-                      <span class="fs-xs text-gray-350 text-decoration-line-through" *ngIf="product.hasDiscount">{{ getOriginalPrice(product) | currency:'EUR' }}</span>
-                      <span [class.text-primary]="product.hasDiscount">{{ getFinalPrice(product) | currency:'EUR' }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Second row (3 products) -->
-              <div class="col-product" *ngFor="let product of consumablesEntertainmentProducts.slice(3, 6)">
-                <!-- Product Card -->
-                <div class="card mb-7">
-                  <!-- Badge -->
-                  <div class="badge bg-white text-body card-badge card-badge-start text-uppercase" *ngIf="product.isBestseller">
-                    Bestseller
-                  </div>
-                  <div class="badge bg-dark card-badge card-badge-start text-uppercase" *ngIf="product.hasDiscount">
-                    Sale
-                  </div>
-
-                  <!-- Image -->
-                  <div class="card-img">
-                    <!-- Image -->
-                    <a class="card-img-hover" [routerLink]="['/products', product.productId]">
-                      <img *ngFor="let image of product.images" 
-                      [src]="getProductImageUrl(image)" 
-                      [alt]="product.productName" 
-                      class="product-image" 
-                      (error)="handleImageError($event)">                      
-                    </a>
-
-                    <!-- Favorite button -->
-                    <button class="btn btn-favorite position-absolute top-0 end-0 m-2" (click)="toggleFavorite(product)">
-                      <i [ngClass]="{'fe fe-heart': !product.isFavorite, 'fe fe-heart active-heart': product.isFavorite}"></i>
-                    </button>
-
-                    <!-- Actions -->
-                    <div class="card-actions">
-                      <span class="card-action">
-                        <button class="btn btn-xs btn-circle btn-white-primary" [routerLink]="['/products', product.productId]">
-                          <i class="fe fe-eye"></i>
-                        </button>
-                      </span>
-                      <span class="card-action">
-                        <button class="btn btn-xs btn-circle btn-white-primary" (click)="addToCart(product)">
-                          <i class="fe fe-shopping-cart"></i>
-                        </button>
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Body -->
-                  <div class="card-body px-0">
-                    <!-- Category -->
-                    <div class="fs-xs">
-                      <a class="text-muted" href="#">{{ product.category }}</a>
-                    </div>
-
-                    <!-- Title -->
-                    <div class="fw-bold">
-                      <a class="text-body" [routerLink]="['/products', product.productId]">
-                        {{ product.productName }}
-                      </a>
-                    </div>
-
-                    <!-- Price -->
-                    <div class="fw-bold" [class.text-primary]="product.hasDiscount">
-                      <span class="fs-xs text-gray-350 text-decoration-line-through" *ngIf="product.hasDiscount">{{ getOriginalPrice(product) | currency:'EUR' }}</span>
-                      <span [class.text-primary]="product.hasDiscount">{{ getFinalPrice(product) | currency:'EUR' }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <!-- END PRODUCT ROW -->
         </div>
         <div class="row">
           <div class="col-12">
@@ -739,7 +413,7 @@
           </div>
         </div>
       </div>
-    </section>
+    <!-- END PRODUCT SECTION -->
 
        <!-- REVIEWS -->
   <section class="py-12">
@@ -757,6 +431,7 @@
 
       </div>
     </div>
+ 
     <div class="row">
       <div class="col-12">
 
@@ -773,7 +448,7 @@
                   <div class="col-4">
 
                     <!-- Image -->
-                    <img src="assets/images/products/j/j5.jpeg" alt="Layered Necklace Set" class="img-fluid">
+                    <img src="assets/images/products/j/j8.jpeg" alt="Layered Necklace Set" class="img-fluid">
 
                   </div>
                   <div class="col-8 ms-n2">

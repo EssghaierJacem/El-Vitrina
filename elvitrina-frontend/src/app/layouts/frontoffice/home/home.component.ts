@@ -1,3 +1,4 @@
+import { AdDisplayComponent } from "../../../main-components/Ad/frontOffice/ad-display/ad-display.component";
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../../core/services/product/product.service';
@@ -11,7 +12,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatSnackBarModule],
+  imports: [CommonModule, RouterModule, MatSnackBarModule,AdDisplayComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -66,13 +67,7 @@ export class HomeComponent implements OnInit {
   loadProducts(): void {
     this.productService.getAll().subscribe({
       next: (products) => {
-        this.allProducts = products.map(product => ({
-          ...product,
-          price: this.productService.calculateFinalPrice(product),
-          originalPrice: product.originalPrice || product.price,
-          hasDiscount: product.hasDiscount || false,
-          discountPercentage: this.productService.calculateDiscountPercentage(product)
-        }));
+        this.allProducts = products;
 
         // Update favorites status
         this.updateFavorites();
@@ -107,20 +102,28 @@ export class HomeComponent implements OnInit {
     this.activeCategory = category;
   }
 
-  getProductImageUrl(image: string | undefined): string {
+  getProductImageUrl(product: Product): string {
+    // Use product.images[0] if available, else fallback
+    const image = product && product.images && product.images.length > 0 ? product.images[0] : undefined;
     if (!image) {
-      return 'assets/images/products/no-image.jpg'; 
+      return 'assets/images/products/no-image.jpg';
     }
-  
-    if (image.startsWith('http')) {
-      return image; 
+    if (image.startsWith('http://') || image.startsWith('https://')) {
+      return image;
     }
-  
     return `http://localhost:8080/api/products/products/images/${image}`;
   }
 
+  calculateDiscountedPrice(product: Product): number {
+    if (!product.hasDiscount || !product.discountPercentage) {
+      return product.price;
+    }
+    const discount = product.price * (product.discountPercentage / 100);
+    return product.price - discount;
+  }
+
   getFinalPrice(product: Product): number {
-    return product.price;
+    return this.productService.calculateFinalPrice(product);
   }
 
   getOriginalPrice(product: Product): number | null {

@@ -42,6 +42,7 @@ export class RequestPersoCreateComponent implements OnInit {
   email = '';
   selectedFile: File | null = null;
   previewUrl: string | ArrayBuffer | null = null;
+  today: Date = new Date();
 
   constructor(
     private fb: FormBuilder,
@@ -53,15 +54,9 @@ export class RequestPersoCreateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log(id);
     const token = this.tokenService.getToken();
-
     if (!token) {
-      this.snackBar.open('Please log in to create a store', 'Close', {
-        duration: 3000,
-        panelClass: ['error-snackbar']
-      });
+      this.snackBar.open('Please log in to create a store', 'Close', { duration: 3000, panelClass: ['error-snackbar'] });
       this.router.navigate(['/authentication/login']);
     } else {
       this.loadCurrentUser();
@@ -80,8 +75,6 @@ export class RequestPersoCreateComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
-      
-      // Create preview
       const reader = new FileReader();
       reader.onload = () => {
         this.previewUrl = reader.result;
@@ -90,37 +83,35 @@ export class RequestPersoCreateComponent implements OnInit {
     }
   }
 
-  private loadCurrentUser(): void {
+  loadCurrentUser(): void {
     const decodedToken = this.tokenService.getDecodedToken();
     if (decodedToken) {
       this.userId = decodedToken.id ?? null;
-      console.log(this.userId);
       this.firstName = decodedToken.firstname || '';
       this.email = decodedToken.email || '';
-      
-      this.currentUser = {
-        id: this.userId,
-        name: this.firstName,
-        email: this.email
-      };
+      this.currentUser = { id: this.userId, name: this.firstName, email: this.email };
     }
   }
 
   add(event: any) {
     const value = (event.value || '').trim();
-    if (value) {
-      this.tags.push(value);
-    }
-    if (event.chipInput) {
-      event.chipInput.clear();
-    }
+    if (value) this.tags.push(value);
+    if (event.chipInput) event.chipInput.clear();
   }
 
   remove(tag: string) {
     const index = this.tags.indexOf(tag);
-    if (index >= 0) {
-      this.tags.splice(index, 1);
-    }
+    if (index >= 0) this.tags.splice(index, 1);
+  }
+
+  priceIsValid(): boolean {
+    const min = this.RequestForm.get('minPrice')?.value;
+    const max = this.RequestForm.get('maxPrice')?.value;
+    return max > min;
+  }
+
+  cancel() {
+    this.router.navigate(['/']);
   }
 
   createRequest() {
@@ -129,15 +120,10 @@ export class RequestPersoCreateComponent implements OnInit {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('image', this.selectedFile);
-    formData.append('title', this.RequestForm.get('title')?.value);
-    formData.append('description', this.RequestForm.get('description')?.value);
-    formData.append('minPrice', this.RequestForm.get('minPrice')?.value);
-    formData.append('maxPrice', this.RequestForm.get('maxPrice')?.value);
-    formData.append('deliveryTime', this.RequestForm.get('deliveryTime')?.value);
-    formData.append('userId', this.currentUser.id);
-    formData.append('tags', JSON.stringify(this.tags));
+    if (!this.priceIsValid()) {
+      this.snackBar.open('Max price must be greater than Min price.', 'Close', { duration: 3000 });
+      return;
+    }
 
     const requestData = {
       userId: this.currentUser.id,

@@ -36,6 +36,7 @@ export class ShoppingCartComponent implements OnInit {
   searchText: string = '';
   currentUser: any;
   userId: number | null = null;
+  showRecentOnly: boolean = false; // 🔥 Ajout du filtre par 3 derniers
 
   constructor(
     private orderService: CustomOrderService,
@@ -72,17 +73,34 @@ export class ShoppingCartComponent implements OnInit {
 
   private loadUserOrders(): void {
     this.orderService.getAllOrders().subscribe((data: CustomOrder[]) => {
-      this.orders = data.filter(order => order.userId === this.userId);
+      this.orders = data
+        .filter(order => order.userId === this.userId)
+        .sort((a, b) => new Date(b.orderDate!).getTime() - new Date(a.orderDate!).getTime()); // 🔥 Tri par date desc
       this.filteredOrders = [...this.orders];
     });
   }
 
   applyFilter(): void {
+    let filtered = this.orders;
+
     const filter = this.searchText.toLowerCase().trim();
-    this.filteredOrders = this.orders.filter(order =>
-      (order.status?.toLowerCase().includes(filter) ||
-       order.userId?.toString().includes(filter))
-    );
+    if (filter) {
+      filtered = filtered.filter(order =>
+        (order.status?.toLowerCase().includes(filter) ||
+         order.userId?.toString().includes(filter))
+      );
+    }
+
+    if (this.showRecentOnly) {
+      filtered = filtered.slice(0, 3); // 🔥 Prendre les 3 premiers après tri
+    }
+
+    this.filteredOrders = filtered;
+  }
+
+  toggleRecentOrders(): void {
+    this.showRecentOnly = !this.showRecentOnly;
+    this.applyFilter(); // 🔥 A chaque toggle, on applique le filtre
   }
 
   deleteOrder(id: number): void {
@@ -108,5 +126,4 @@ export class ShoppingCartComponent implements OnInit {
   getTotalAmount(): number {
     return this.filteredOrders.reduce((sum, order) => sum + (order.price * order.quantity), 0);
   }
-
 }

@@ -36,19 +36,19 @@ export class ProductService {
   create(productData: any, uploadedFiles: File[]): Observable<Product> {
     const formData = new FormData();
     formData.append('product', new Blob([JSON.stringify(productData)], { type: 'application/json' }));
-  
+
     uploadedFiles.forEach(file => {
       formData.append('images', file);
     });
-  
+
     return this.http.post<Product>(this.apiUrl, formData)
       .pipe(catchError(this.handleError));
-  }  
+  }
 
   update(id: number, productData: FormData): Observable<Product> {
     return this.http.put<Product>(`${this.apiUrl}/${id}`, productData)
       .pipe(catchError(this.handleError));
-  }  
+  }
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`)
@@ -69,9 +69,9 @@ export class ProductService {
   uploadProductImage(productId: number, imageFile: File): Observable<Product> {
     const formData = new FormData();
     formData.append('image', imageFile);
-  
+
     return this.http.post<Product>(`${this.apiUrl}/${productId}/upload-image`, formData);
-  }  
+  }
 
   removeImage(productId: number, imageUrl: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${productId}/images?imageUrl=${imageUrl}`)
@@ -154,24 +154,24 @@ export class ProductService {
     return Number(price).toFixed(2);
   }
 
-  getPriceDisplay(product: Product): { 
-    originalPrice: string | null, 
-    finalPrice: string, 
-    discountPercentage: number 
+  getPriceDisplay(product: Product): {
+    originalPrice: string | null,
+    finalPrice: string,
+    discountPercentage: number
   } {
     const discountPercentage = this.calculateDiscountPercentage(product);
     const finalPrice = this.calculateFinalPrice(product);
-    
+
     return {
-      originalPrice: product.hasDiscount && product.originalPrice 
-        ? this.formatPrice(product.originalPrice) 
+      originalPrice: product.hasDiscount && product.originalPrice
+        ? this.formatPrice(product.originalPrice)
         : null,
       finalPrice: this.formatPrice(finalPrice),
       discountPercentage
     };
   }
 
-  getDisplayPrice(product: Product): { 
+  getDisplayPrice(product: Product): {
     finalPrice: number;
     originalPrice: number | undefined;
     hasDiscount: boolean;
@@ -212,11 +212,11 @@ export class ProductService {
         subscriber.complete();
       });
     }
-    
+
     // Create a comma-separated list of IDs for the query parameter
     const idsParam = productIds.join(',');
     console.log(`Requesting products by IDs: ${idsParam}`);
-    
+
     // As a fallback, if the endpoint doesn't exist, we'll use getAll and filter client-side
     return this.getAll().pipe(
       map(allProducts => {
@@ -225,7 +225,7 @@ export class ProductService {
         return allProducts.filter(product => idSet.has(product.productId));
       })
     );
-    
+
     // Uncomment this when the backend endpoint is available
     // return this.http.get<Product[]>(`${this.apiUrl}/by-ids?ids=${idsParam}`)
     //   .pipe(catchError(this.handleError));

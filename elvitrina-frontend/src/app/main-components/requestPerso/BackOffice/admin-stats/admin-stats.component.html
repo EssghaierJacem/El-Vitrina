@@ -1,15 +1,16 @@
+<!-- admin-stats.component.html -->
 <div class="admin-dashboard" *ngIf="!loading; else loadingIndicator">
   <div class="header">
     <h1>Admin Dashboard</h1>
     <div class="date-range-picker">
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="outline">
         <mat-label>Start date</mat-label>
         <input matInput [matDatepicker]="startPicker" [value]="dateRange.start" (dateChange)="onDateChange('start', $event)">
         <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
         <mat-datepicker #startPicker></mat-datepicker>
       </mat-form-field>
 
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="outline">
         <mat-label>End date</mat-label>
         <input matInput [matDatepicker]="endPicker" [value]="dateRange.end" (dateChange)="onDateChange('end', $event)">
         <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
@@ -19,22 +20,36 @@
   </div>
 
   <div class="stats-summary">
-    <mat-card class="stat-card" *ngFor="let item of [
-      {label: 'Total Requests', value: stats?.totalRequests},
-      {label: 'Total Proposals', value: stats?.totalProposals},
-      {label: 'Active Users', value: stats?.activeUsers}
-    ]">
+    <mat-card class="stat-card">
       <mat-card-header>
-        <mat-card-title>{{item.label}}</mat-card-title>
+        <mat-card-title>Total Requests</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <div class="stat-value">{{ item.value || 0 }}</div>
+        <div class="stat-value">{{ stats?.totalRequests || 0 }}</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-card-title>Total Proposals</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats?.totalProposals || 0 }}</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-card-title>Active Users</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats?.activeUsers || 0 }}</div>
       </mat-card-content>
     </mat-card>
   </div>
 
   <div class="charts-section">
-    <mat-card class="chart-card">
+    <mat-card class="chart-card" *ngIf="chartData?.requestsByDate?.[0]?.series?.length ?? false">
       <mat-card-header>
         <mat-card-title>Requests Over Time</mat-card-title>
       </mat-card-header>
@@ -55,7 +70,7 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="chart-card">
+    <mat-card class="chart-card" *ngIf="chartData?.proposalsByDate?.[0]?.series?.length ?? false">
       <mat-card-header>
         <mat-card-title>Proposals Over Time</mat-card-title>
       </mat-card-header>
@@ -76,7 +91,7 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="chart-card">
+    <mat-card class="chart-card" *ngIf="chartData?.requestsByStatus?.length">
       <mat-card-header>
         <mat-card-title>Requests by Status</mat-card-title>
       </mat-card-header>
@@ -92,26 +107,46 @@
     </mat-card>
   </div>
 
-  <div class="top-lists">
-    <mat-card class="top-list-card">
-      <mat-card-header><mat-card-title>Top Requesters</mat-card-title></mat-card-header>
+  <div class="top-lists" *ngIf="stats">
+    <mat-card class="top-list-card" *ngIf="stats?.topRequesters?.length">
+      <mat-card-header>
+        <mat-card-title>Top Requesters</mat-card-title>
+      </mat-card-header>
       <mat-card-content>
         <mat-list>
-          <mat-list-item *ngFor="let requester of stats?.topRequesters">
+          <mat-list-item *ngFor="let requester of stats.topRequesters">
             <span matLine>User {{requester[0]}} — {{requester[1]}} requests</span>
+          </mat-list-item>
+          <mat-list-item *ngIf="!stats.topRequesters?.length">
+            <span matLine>No data available</span>
           </mat-list-item>
         </mat-list>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="top-list-card">
-      <mat-card-header><mat-card-title>Top Proposers</mat-card-title></mat-card-header>
+    <mat-card class="top-list-card" *ngIf="stats?.topProposers?.length">
+      <mat-card-header>
+        <mat-card-title>Top Proposers</mat-card-title>
+      </mat-card-header>
       <mat-card-content>
         <mat-list>
-          <mat-list-item *ngFor="let proposer of stats?.topProposers">
+          <mat-list-item *ngFor="let proposer of stats.topProposers">
             <span matLine>User {{proposer[0]}} — {{proposer[1]}} proposals</span>
           </mat-list-item>
+          <mat-list-item *ngIf="!stats.topProposers?.length">
+            <span matLine>No data available</span>
+          </mat-list-item>
         </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Empty data state -->
+  <div class="empty-state" *ngIf="!loading && (!stats || !chartData.requestsByDate[0]?.series?.length)">
+    <mat-card>
+      <mat-card-content>
+        <p>No data available for the selected date range.</p>
+        <button mat-raised-button color="primary" (click)="loadStats()">Reset to Default Range</button>
       </mat-card-content>
     </mat-card>
   </div>
