@@ -140,10 +140,6 @@
         <!-- Regular actions when not editing -->
         <ng-container *ngIf="!isEditModeActive()">
           <ng-container *ngIf="isUserRole() && !hasUserJoined(); else alreadyJoined">
-            <button mat-raised-button color="primary" class="join-event-button" (click)="joinEvent()">
-              <mat-icon class="button-icon">event</mat-icon>
-              Join Event
-            </button>
           </ng-container>
           <ng-template #alreadyJoined>
             <span *ngIf="isUserRole()" style="display: flex; align-items: center; color: green;">
