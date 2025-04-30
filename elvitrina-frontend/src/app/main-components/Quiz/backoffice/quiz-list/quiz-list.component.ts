@@ -67,11 +67,10 @@ export class QuizListComponent implements OnInit {
 
 
 
-
-  deleteQuiz(userId: number): void {
-    this.quizService.deleteQuiz(userId).subscribe(
+  deleteQuiz(id: number): void {
+    this.quizService.deleteQuiz(id).subscribe(
       () => {
-        this.quizzes = this.quizzes.filter(quiz => quiz.userId !== userId);
+        this.quizzes = this.quizzes.filter(quiz => quiz.id !== id);
         this.dataSource.data = this.quizzes;
       },
       (error) => {
@@ -79,5 +78,5 @@ export class QuizListComponent implements OnInit {
       }
     );
   }
+  }
 
-}

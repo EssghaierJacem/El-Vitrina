@@ -24,9 +24,9 @@
 <div *ngIf="showQuestion && !isLoading" class="quiz-list-container">
 
   <div class="quiz-card">
-    <div class="timer">Temps restant : {{ timeLeft }}s</div>
+    <div class="timer">TIMER : {{ timeLeft }}s</div>
 
-    <h2 class="text-white">Question {{ currentQuestionIndex + 1 }} / {{ quizzes.length }}</h2>
+    <h2 class="text-white">QuestionS {{ currentQuestionIndex + 1 }} / {{ quizzes.length }}</h2>
     <p class="text-white">{{ quizzes[currentQuestionIndex].question }}</p>
 
     <div class="quiz-buttons">
@@ -50,7 +50,7 @@
     <button class="btn btn-secondary" [disabled]="currentQuestionIndex !== quizzes.length - 1">Results ➡</button>
   </div>
   <div *ngIf="allQuestionsAnswered()" class="quiz-buttons">
-    <button class="btn" [routerLink]="['/quiz/recommendation']">Voir les résultats ➡</button>
+    <button class="btn" [routerLink]="['/quiz/recommendation']">SEE RESULTS➡</button>
   </div>  <p class="confirmation" *ngIf="confirmationMessage">{{ confirmationMessage }}</p>
 
 </div>
