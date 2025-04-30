@@ -62,8 +62,7 @@ export const routes: Routes = [
        path: 'quiz',
          loadChildren: () =>
           import('./main-components/Quiz/frontoffice/quizFront.routes').then((m) => m.QuizFrontRoutes),
-},
-
+      },
       {
         path: 'requestperso',
         loadChildren: () =>
@@ -97,9 +96,6 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/event/frontoffice/eventfront.routes').then((m) => m.EVENT_FRONT_ROUTES),
       },
-
-
-
       {
         path: 'donations',
         loadChildren: () =>
@@ -119,7 +115,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: FullComponent,
- // canActivate: [AdminGuard],
+    canActivate: [AdminGuard],
     children: [
       {
         path: '',
@@ -195,15 +191,12 @@ export const routes: Routes = [
           import('./main-components/formation/backoffice/backoffice_formation.routes')
             .then(m => m.FormationRoutes)
       },
-
-
       {
         path: 'blogPosts',
         loadChildren: () =>
           import('./main-components/blogPost/backoffice/backoffice_blogPost.routes')
             .then(m => m.BlogPostRoutes)
       },
-
       {
         path: 'RequestPerso',
         loadChildren: () =>
@@ -214,7 +207,6 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/Ad/backOffice/backoffice_ad.routes').then((m) => m.AdAdmin),
       },
-
       {
         path: 'extra',
         loadChildren: () =>

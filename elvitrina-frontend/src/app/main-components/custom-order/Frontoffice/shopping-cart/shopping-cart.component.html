@@ -1,4 +1,5 @@
-<mat-card class="cardWithShadow">
+<!-- Show cart only if logged in -->
+<mat-card class="cardWithShadow" *ngIf="userId">
   <mat-card-title>My Orders</mat-card-title>
 
   <!-- Search bar + Filter Recent -->
@@ -46,3 +47,16 @@
     </div>
   </div>
 </mat-card>
+
+<!-- Optional: Info message if not logged in -->
+<div *ngIf="!userId" class="not-logged-in-msg">
+  <mat-card>
+    <mat-card-title>Accès non autorisé</mat-card-title>
+    <mat-card-content>
+      <p>Veuillez vous connecter pour consulter vos commandes.</p>
+      <button mat-button color="primary" routerLink='/authentication/login'>
+        Se connecter
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>

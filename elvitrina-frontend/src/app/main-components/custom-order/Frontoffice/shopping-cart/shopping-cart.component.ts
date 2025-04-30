@@ -47,17 +47,22 @@ export class ShoppingCartComponent implements OnInit {
 
   ngOnInit(): void {
     const token = this.tokenService.getToken();
+  
     if (!token) {
       this.snackBar.open('Veuillez vous connecter pour voir votre panier.', 'Fermer', {
         duration: 3000,
         panelClass: ['error-snackbar']
       });
-      this.router.navigate(['/authentication/login']);
-    } else {
-      this.loadCurrentUser();
-      this.loadUserOrders();
+  
+      this.userId = null;
+  
+      return;
     }
+  
+    this.loadCurrentUser();
+    this.loadUserOrders();
   }
+  
 
   private loadCurrentUser(): void {
     const decodedToken = this.tokenService.getDecodedToken();

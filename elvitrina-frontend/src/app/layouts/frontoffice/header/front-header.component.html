@@ -1173,11 +1173,6 @@
               <a class="nav-link" href="/offers">Offers</a>
             </li>
           </ul>
-          <li class="nav-item">
-            <button class="nav-link" [routerLink]="'/payment/mespayments'">
-              payments
-            </button>
-         </li>
           <!-- Nav -->
           <ul class="nav navbar-nav flex-row">
             <li class="nav-item">
@@ -1777,6 +1772,11 @@
             <li class="nav-item">
               <button class="nav-link" *ngIf="isLoggedIn()" (click)="handleStoreButton()" mat-button>
                 {{ role !== 'SELLER' ? 'Create a Store' : hasStore ? 'My Store' : 'Start Selling' }}
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" *ngIf="isLoggedIn()" [routerLink]="'/payment/mespayments' " mat-button>
+                Payments
               </button>
             </li>
           </ul>
