@@ -46,7 +46,7 @@ export class QuizCreateComponent {
       this.quizService.createQuiz(this.quiz).subscribe({
         next: (response) => {
           console.log('Quiz créé avec succès:', response);
-          this.router.navigate(['/quiz/list']); // Redirige vers la liste
+          this.router.navigate(['/dashboard/quiz/list']); // Redirige vers la liste
         },
         error: (error) => {
           console.error('Erreur lors de la création du quiz:', error);
