@@ -1,4 +1,4 @@
-<div class="campaign-container">
+<div class="campaign-container" *ngIf="noData; else noCampaigns">
   <div>
     <h1>Help us to <br><span class="green-text">{{ campaigns.title }}</span></h1>
     <p class="description">
@@ -32,3 +32,7 @@
   </div>
 </div>
 
+<!-- Template for no campaigns -->
+<ng-template #noCampaigns>
+    <h3>Error</h3>
+</ng-template>

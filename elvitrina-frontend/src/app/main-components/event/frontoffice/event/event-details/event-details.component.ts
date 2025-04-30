@@ -225,6 +225,9 @@ export class EventDetailsComponent implements OnInit {
         }));
         this.displayedCalendarEvents = [...this.calendarEvents];
         console.log('Displayed calendar events:', this.displayedCalendarEvents);
+        if(this.displayedCalendarEvents.length ==0) {
+          this.snackBar.open('No season exists to load the event season.', 'Close', { duration: 3000 });
+        }
         this.cdr.detectChanges();
       },
       error: (err) => {
