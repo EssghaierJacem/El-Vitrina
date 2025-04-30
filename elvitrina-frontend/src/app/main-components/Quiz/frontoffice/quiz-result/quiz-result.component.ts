@@ -20,7 +20,9 @@ export class QuizResultComponent implements OnInit {
     const userId = 1;
     this.recoService.getRecommendations(userId).subscribe({
       next: (recommendations) => {
-        this.recommendedProducts = recommendations;
+        this.recommendedProducts = recommendations
+        .sort((a, b) => b.score - a.score)  
+        .slice(0, 4);;
       },
       error: (err) => {
         console.error('Erreur API:', err);
