@@ -55,7 +55,7 @@ export class BecomeSellerComponent implements OnInit {
   selectedFile?: File;
   localImagePreview?: string;
   isUploading = false;
-  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
+  readonly IMAGE_BASE_URL = '/api/user-images/';
 
   constructor(
     private tokenService: TokenService,

@@ -52,7 +52,6 @@ export class HomeComponent implements OnInit {
   activeCategory: string = 'artisan';
 
   // Image base URL from environment
-  // readonly IMAGE_PRODUCT_BASE_URL = 'http://localhost:8080/api/products/products/images/';
 
   constructor(
     private productService: ProductService,
@@ -111,7 +110,7 @@ export class HomeComponent implements OnInit {
     if (image.startsWith('http://') || image.startsWith('https://')) {
       return image;
     }
-    return `http://localhost:8080/api/products/products/images/${image}`;
+    return `/api/api/products/products/images/${image}`;
   }
 
   calculateDiscountedPrice(product: Product): number {

@@ -38,7 +38,7 @@ export class StoreDetailsComponent implements OnInit, AfterViewInit {
   private map: L.Map | undefined;
   private marker: L.Marker | undefined;
 
-  IMAGE_BASE_URL = 'http://localhost:8080/api/stores/store/images/';
+  IMAGE_BASE_URL = '/api/api/stores/store/images/';
 
   constructor(
     private route: ActivatedRoute,
@@ -157,7 +157,7 @@ export class StoreDetailsComponent implements OnInit, AfterViewInit {
     }
   
     const cleaned = filename.replace(/^\/+/, '');
-    return `http://localhost:8080/user-images/${cleaned}`;
+    return `/api/user-images/${cleaned}`;
   }
   
   getCoverImage(store: Store): string {

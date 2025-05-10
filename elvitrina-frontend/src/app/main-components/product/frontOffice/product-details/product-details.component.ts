@@ -46,7 +46,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
   selectedImageIndex = 0;
   isInWishlist = false;
   inBaskets = 0; // Mock data for UI
-  readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
+  readonly IMAGE_BASE_URL = '/api/api/products/products/images/';
   
   // Recommendation types for template
   recommendationTypes = RecommendationType;
@@ -244,7 +244,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
     }
   
     const fileName = imagePath.replace(/^\/+/, '');
-    return `http://localhost:8080/api/products/products/images/${fileName}`;
+    return `/api/api/products/products/images/${fileName}`;
   }
 
   getDisplayPrice(product: Product) {

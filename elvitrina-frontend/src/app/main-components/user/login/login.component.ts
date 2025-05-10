@@ -139,11 +139,11 @@ export class LoginComponent implements OnInit {
   }
 
   signInWithGoogle() {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    window.location.href = '/api/oauth2/authorization/google';
   }
   
   signInWithFacebook() {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/facebook';
+    window.location.href = '/api/oauth2/authorization/facebook';
   }
 
   // Helper method to mark all controls as touched

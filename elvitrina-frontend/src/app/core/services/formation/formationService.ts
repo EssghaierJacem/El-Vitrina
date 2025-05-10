@@ -7,7 +7,7 @@ import { Formation } from '../../models/formation/formation.model';
   providedIn: 'root'
 })
 export class FormationService {
-  private apiUrl = 'http://localhost:8080/api/formations';
+  private apiUrl = '/api/api/formations';
 
   constructor(private http: HttpClient) {}
 

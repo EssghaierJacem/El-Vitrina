@@ -68,7 +68,7 @@ export class AllProductComponent implements OnInit {
   tagSearchQuery = new FormControl('');
 
   favoriteProductIds = new Set<number>();
-  readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
+  readonly IMAGE_BASE_URL = '/api/api/products/products/images/';
 
   // Category background images
   categoryImages: { [key in ProductCategoryType]?: string } = {

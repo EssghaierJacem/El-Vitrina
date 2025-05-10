@@ -8,7 +8,7 @@ import { ActionHistory } from '../../models/ActionHistory/actionHistory';
     providedIn: 'root'
   })
   export class ActionHistoryService {
-    private baseUrl = 'http://localhost:8080/api/history';
+    private baseUrl = '/api/api/history';
   
     constructor(private http: HttpClient) {}
   

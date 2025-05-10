@@ -50,7 +50,7 @@ export class UserTableComponent implements OnInit {
   displayedColumns = ['user', 'email', 'points', 'status', 'actions'];
   searchText: string = '';
 
-  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
+  readonly IMAGE_BASE_URL = '/api/user-images/';
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 

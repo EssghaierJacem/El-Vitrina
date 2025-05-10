@@ -67,7 +67,7 @@ export class UserListComponent implements OnInit {
   usersPerPage = 12;
   
   activeUsers: Set<number> = new Set<number>();
-  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
+  readonly IMAGE_BASE_URL = '/api/user-images/';
   
   mutualFriendsMap: Map<number, number> = new Map<number, number>();
   acceptedFriends: Set<number> = new Set<number>();

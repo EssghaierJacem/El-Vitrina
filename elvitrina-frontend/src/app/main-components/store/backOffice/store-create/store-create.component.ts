@@ -46,7 +46,7 @@ interface CategoryOption {
 })
 export class StoreCreateComponent implements OnInit, AfterViewInit {
 
-  IMAGE_BASE_URL = 'http://localhost:8080/uploads/store-images/';
+  IMAGE_BASE_URL = '/api/uploads/store-images/';
 
   storeForm: FormGroup;
   isSubmitting = false;

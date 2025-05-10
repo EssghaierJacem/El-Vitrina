@@ -187,7 +187,7 @@ export class BlogPostListComponent implements OnInit {
   }
 
   getImageUrl(image: string): string {
-    return `http://localhost:8080/images/${image}`;
+    return `/api/images/${image}`;
   }
 
   deleteComment(commentId: number, postId: number): void {

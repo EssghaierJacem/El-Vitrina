@@ -8,7 +8,7 @@ import { TranslationRequest, TranslationResponse } from '../../models/blogPost/t
   providedIn: 'root'
 })
 export class BlogPostService {
-  private apiUrl = 'http://localhost:8080/api/blogposts';
+  private apiUrl = '/api/api/blogposts';
 
   constructor(private http: HttpClient) {}
 
@@ -50,7 +50,7 @@ export class BlogPostService {
   }
 
   translateText(request: TranslationRequest): Observable<TranslationResponse> {
-    const url = `http://localhost:8080/api/translation/translate`; // Endpoint matching the Spring @PostMapping
+    const url = `/api/api/translation/translate`; // Endpoint matching the Spring @PostMapping
     return this.http.post<TranslationResponse>(url, request);
   }
   

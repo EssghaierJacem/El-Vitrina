@@ -179,7 +179,7 @@ export class FrontHeaderComponent implements OnInit, AfterViewInit {
     }
   }
 
-  readonly IMAGE_BASE_URL = 'http://localhost:8080/api/products/products/images/';
+  readonly IMAGE_BASE_URL = '/api/api/products/products/images/';
 
   getProductImage(product: Product): string {
     if (!product || !product.images || product.images.length === 0) {

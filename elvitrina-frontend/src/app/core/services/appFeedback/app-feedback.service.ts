@@ -9,7 +9,7 @@ import { Page } from '../../models/page.model';
   providedIn: 'root'
 })
 export class AppFeedbackService {
-  private apiUrl = 'http://localhost:8080/api/app-feedbacks';
+  private apiUrl = '/api/api/app-feedbacks';
 
   constructor(private http: HttpClient) { }
 

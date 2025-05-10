@@ -49,7 +49,7 @@ export class UserViewComponent implements OnInit {
 
 
 
-  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
+  readonly IMAGE_BASE_URL = '/api/user-images/';
 
   constructor(private route: ActivatedRoute,
               private userService: UserService,
@@ -174,7 +174,7 @@ export class UserViewComponent implements OnInit {
     }
   
     const cleaned = filename.replace(/^\/+/, '');
-    return `http://localhost:8080/api/products/products/images/${cleaned}`;
+    return `/api/api/products/products/images/${cleaned}`;
   }
 
   getStoreImageUrl(imagePath?: string): string {
@@ -187,7 +187,7 @@ export class UserViewComponent implements OnInit {
     }
   
     const cleaned = imagePath.replace(/^\/+/, '');
-    return `http://localhost:8080/api/stores/store/images/${cleaned}`;
+    return `/api/api/stores/store/images/${cleaned}`;
   }
 
 }

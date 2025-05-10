@@ -9,7 +9,7 @@ import { ProposalPersoDTO } from '../../models/proposalPerso/proposal-perso.dto'
   providedIn: 'root'
 })
 export class ProposalPersoService {
-  private apiUrl ="http://localhost:8080/api/ProposalPerso";
+  private apiUrl ="/api/api/ProposalPerso";
   constructor(private http: HttpClient) { }
   createNewProposalPerso(proposalData: {
     requestPersoId: number;  // ID of the associated RequestPerso

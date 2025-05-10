@@ -49,7 +49,7 @@ export class AppMonthlyEarningsComponent implements OnInit {
     }
 
     loadMonthlyNewUsers(): void {
-        this.http.get<{ [key: string]: number }>('http://localhost:8080/api/stats/monthly-new-users').subscribe({
+        this.http.get<{ [key: string]: number }>('/api/api/stats/monthly-new-users').subscribe({
             next: (data) => {
                 const months = Array(12).fill(0); 
     

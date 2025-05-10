@@ -43,7 +43,7 @@ interface CategoryOption {
 })
 export class StoreEditComponent implements OnInit, AfterViewInit {
 
-  IMAGE_BASE_URL = 'http://localhost:8080/api/stores/store/images/';
+  IMAGE_BASE_URL = '/api/api/stores/store/images/';
 
   storeForm: FormGroup;
   isSubmitting = false;
@@ -222,7 +222,7 @@ export class StoreEditComponent implements OnInit, AfterViewInit {
           coverImage: null
         });
 
-        const baseUrl = 'http://localhost:8080/api/stores/store/images/';
+        const baseUrl = '/api/api/stores/store/images/';
         this.existingImageUrl = store.image ? baseUrl + store.image : null;
         this.existingCoverImageUrl = store.coverImage ? baseUrl + store.coverImage : null;
 

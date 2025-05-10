@@ -36,7 +36,7 @@ export class UserImageUploadComponent {
         .subscribe({
           next: (updatedUser) => {
             alert('Image uploaded successfully!');
-            this.uploadedImageUrl = `http://localhost:8080/users/images/${updatedUser.image}`;
+            this.uploadedImageUrl = `/api/users/images/${updatedUser.image}`;
             this.userImageUpdated.emit(updatedUser);
           },
           error: () => alert('Upload failed!')

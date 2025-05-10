@@ -163,7 +163,7 @@ export class ProductFavComponent implements OnInit, OnDestroy {
     }
   
     const fileName = imagePath.replace(/^\/+/, '');
-    return `http://localhost:8080/api/products/products/images/${fileName}`;
+    return `/api/api/products/products/images/${fileName}`;
   }
   
   private cleanupFavorites(existingIds: Set<number>): void {

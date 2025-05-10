@@ -7,7 +7,7 @@ import { RequestPerso } from '../../models/requestPerso/requestPerso.model';
   providedIn: 'root'
 })
 export class RequestPersoService {
-  private apiUrl ="http://localhost:8080/api/requestPerso";
+  private apiUrl ="/api/api/requestPerso";
   constructor(private http: HttpClient) { }
 // request-perso.service.ts
 createNewRequestPerso(requestData: {

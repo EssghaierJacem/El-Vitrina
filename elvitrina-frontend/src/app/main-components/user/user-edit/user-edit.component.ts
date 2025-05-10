@@ -39,7 +39,7 @@ export class UserEditComponent implements OnInit {
   isImageValid = true;
   localImagePreview?: string;
   isUploading = false;
-  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
+  readonly IMAGE_BASE_URL = '/api/user-images/';
   
   constructor(
     private route: ActivatedRoute,

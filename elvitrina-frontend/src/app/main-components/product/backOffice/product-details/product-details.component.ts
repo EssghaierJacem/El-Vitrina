@@ -118,7 +118,7 @@ export class ProductDetailsComponent implements OnInit {
       return image; 
     }
   
-    return `http://localhost:8080/api/products/products/images/${image}`; 
+    return `/api/api/products/products/images/${image}`; 
   }
   
 }

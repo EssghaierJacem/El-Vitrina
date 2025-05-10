@@ -7,7 +7,7 @@ import { Payment } from '../../models/Panier/payment';
   providedIn: 'root'
 })
 export class PaymentService {
-  private apiUrl = 'http://localhost:8080/api/payments';
+  private apiUrl = '/api/api/payments';
   private lastCreatedPayment: any = null;
 
   constructor(private http: HttpClient) {}

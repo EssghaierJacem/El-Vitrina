@@ -38,7 +38,7 @@ export class UserDetailsComponent implements OnInit {
   user: User = {} as User;
   isLoading = true;
   isEditing = false;
-  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
+  readonly IMAGE_BASE_URL = '/api/user-images/';
 
   constructor(
     private route: ActivatedRoute,

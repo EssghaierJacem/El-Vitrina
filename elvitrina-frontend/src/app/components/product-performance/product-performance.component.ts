@@ -36,7 +36,7 @@ interface Month {
 export class AppProductPerformanceComponent implements OnInit {
   displayedColumns: string[] = ['rank', 'user', 'points', 'status']; 
   dataSource: TopUser[] = [];
-  readonly IMAGE_BASE_URL = 'http://localhost:8080/user-images/';
+  readonly IMAGE_BASE_URL = '/api/user-images/';
 
 
   months: Month[] = [
@@ -52,7 +52,7 @@ export class AppProductPerformanceComponent implements OnInit {
   }
 
   loadTopUsers(): void {
-    this.http.get<TopUser[]>('http://localhost:8080/api/stats/top-users').subscribe({
+    this.http.get<TopUser[]>('/api/api/stats/top-users').subscribe({
       next: (data) => {
         this.dataSource = data.slice(0, 4);
       },

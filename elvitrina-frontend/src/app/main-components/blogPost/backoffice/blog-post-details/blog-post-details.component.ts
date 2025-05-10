@@ -48,7 +48,7 @@ export class BlogPostDetailsComponent implements OnInit {
   userId: number | null = null;
 
   // URL de base pour accéder aux images
-  baseUrl: string = 'http://localhost:8080/images/'; // Remplace avec ton URL de serveur d'images
+  baseUrl: string = '/api/images/'; // Remplace avec ton URL de serveur d'images
 
   constructor(
     private blogPostService: BlogPostService,
