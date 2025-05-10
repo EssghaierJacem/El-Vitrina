@@ -21,13 +21,16 @@ export class CampaignDetailsComponent implements OnInit {
   @Input() storeId : number;
   campaignId: number;
   showCoupon = false;
+  noData = false;
 selectedReward: DonorReward | null = null;
   constructor(private donationCampaignService: DonationCampaignService,private giftService: GiftService, private dialog: MatDialog ,    private route: ActivatedRoute
   ) {}
   
   ngOnInit(): void {
     this.campaignId = +this.campaigns.id;
-
+    if (!this.campaigns) {
+      this.noData=true;
+    }
   }
   
   calculateDaysToGo(endDate?: string): number {

@@ -1,0 +1,94 @@
+:host {
+    display: block;
+    padding: 2rem;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  // Better button style with transitions
+  button {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+    
+    &.opacity-50 {
+      cursor: not-allowed;
+    }
+  }
+  
+  // Container styles
+  .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+  
+  // Success icon animation
+  .bg-green-100 {
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(52, 211, 153, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
+    }
+  }
+  
+  // Special styling for invoice content
+  #invoice {
+    font-family: Arial, sans-serif;
+    
+    h1, h2, h3 {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    table {
+      border-spacing: 0;
+      
+      th, td {
+        padding: 10px;
+      }
+    }
+  }
+  
+  // Print styles for the invoice
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    
+    #invoice, #invoice * {
+      visibility: visible;
+    }
+    
+    #invoice {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+  }

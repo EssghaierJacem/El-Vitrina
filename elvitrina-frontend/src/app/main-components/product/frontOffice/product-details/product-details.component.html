@@ -88,17 +88,19 @@
           <!-- Price Section -->
           <div class="price-section">
             <div class="price-display" [class.has-discount]="product.hasDiscount">
-              <span class="current-price" [style.color]="'#d01117'">
-                {{ getFinalPrice(product) | currency:'TND' }}
-              </span>
-              <ng-container *ngIf="product.hasDiscount">
-                <span class="original-price" *ngIf="getOriginalPrice(product)">
+              <ng-container *ngIf="product.hasDiscount && getOriginalPrice(product); else regularPrice">
+                <span class="current-price" [style.color]="'#d01117'">
+                  {{ getFinalPrice(product) | currency:'TND' }}
+                </span>
+                <span class="original-price">
                   {{ getOriginalPrice(product) | currency:'TND' }}
                 </span>
-                <span class="discount-badge" *ngIf="getDiscountPercentage(product) > 0">
-                  -{{ getDiscountPercentage(product) }}%
-                </span>
               </ng-container>
+              <ng-template #regularPrice>
+                <span class="current-price" [style.color]="'#d01117'">
+                  {{ getFinalPrice(product) | currency:'TND' }}
+                </span>
+              </ng-template>
             </div>
             <div class="price-info">
               <span class="vat-info">VAT included (if applicable), <a href="#">plus delivery charges</a></span>

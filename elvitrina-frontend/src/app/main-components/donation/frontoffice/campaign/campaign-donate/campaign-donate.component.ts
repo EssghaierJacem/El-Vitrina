@@ -3,6 +3,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DonationService } from 'src/app/core/services/donation/donation.service';
 import { DonationRequest } from 'src/app/core/models/donation/donation.model';
+import { PaymentService } from 'src/app/core/services/Panier/PaymentService';
 
 @Component({
   selector: 'app-campaign-donate',
@@ -16,6 +17,7 @@ export class CampaignDonateComponent {
   constructor(
     private fb: FormBuilder,
     private donationService: DonationService,
+    private paymentService: PaymentService,
     private dialogRef: MatDialogRef<CampaignDonateComponent>,
     @Inject(MAT_DIALOG_DATA) private data: { campaignId: number } // Inject dialog data
   ) {
@@ -68,11 +70,22 @@ export class CampaignDonateComponent {
         this.donationService.createDonation(donation as DonationRequest).subscribe({
           next: (createdDonation) => {
             // Return success, amount, and donationId
-            this.dialogRef.close({
-              success: true,
-              amount: this.donationForm.get('amount')?.value,
-              donationId: createdDonation.donationId, 
-              userId: createdDonation.userId 
+           
+            this.paymentService.createCheckoutSession(this.donationForm.get('amount')?.value).subscribe({
+              next: (res) => {
+                if (res.url) {
+                  this.dialogRef.close({
+                    success: true,
+                    amount: this.donationForm.get('amount')?.value,
+                    donationId: createdDonation.donationId, 
+                    userId: createdDonation.userId 
+                  });
+                  window.location.href = res.url;
+                }
+              },
+              error: (err) => {
+                console.error('Erreur Stripe', err);
+              }
             });
           },
           error: (err) => {
@@ -80,6 +93,7 @@ export class CampaignDonateComponent {
             this.dialogRef.close({ success: false });
           }
         });
+       
       } else {
         console.error('No campaignId provided to popup');
       }

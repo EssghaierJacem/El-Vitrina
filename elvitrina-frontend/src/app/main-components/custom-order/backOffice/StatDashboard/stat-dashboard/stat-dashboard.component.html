@@ -1,15 +1,15 @@
 <div class="stats-container">
-  <h2 class="title">📊 Statistiques Globales</h2>
+  <h2 class="title">📊 Global Statistics</h2>
 
   <div class="summary-cards">
     <div class="filter-controls">
-      <label>📅 Mois:
+      <label>📅 Month:
         <select [(ngModel)]="selectedMonth" (change)="loadOverviewByMonth()">
           <option *ngFor="let m of months" [value]="m.value">{{ m.name }}</option>
         </select>
       </label>
 
-      <label>Année:
+      <label>Year:
         <select [(ngModel)]="selectedYear" (change)="loadOverviewByMonth()">
           <option *ngFor="let y of years" [value]="y">{{ y }}</option>
         </select>
@@ -17,22 +17,22 @@
     </div>
 
     <div class="stat-card orders">
-      <h3>Total Commandes</h3>
+      <h3>Total Orders</h3>
       <p>{{ totalOrders }}</p>
     </div>
     <div class="stat-card payments">
-      <h3>Total Paiements</h3>
+      <h3>Total Payments</h3>
       <p>{{ totalPayments }}</p>
     </div>
     <div class="stat-card revenue">
-      <h3>Revenus</h3>
-      <p>{{ totalRevenue | currency:'EUR' }}</p>
+      <h3>Revenue</h3>
+      <p>{{ totalRevenue | currency:'DNT' }}</p>
     </div>
   </div>
 
   <div class="charts">
-    <div style="width: 40%">
-      <h3>Commandes par statut</h3>
+    <div class="chart-container">
+      <h3>Orders by Status</h3>
       <ngx-charts-bar-vertical
         *ngIf="ordersChartData.length"
         [results]="ordersChartData"
@@ -43,8 +43,8 @@
       </ngx-charts-bar-vertical>
     </div>
 
-    <div style="width: 40%">
-      <h3>Paiements par méthode</h3>
+    <div class="chart-container">
+      <h3>Payments by Method</h3>
       <ngx-charts-pie-chart
         *ngIf="paymentsChartData.length"
         [results]="paymentsChartData"
@@ -53,8 +53,8 @@
       </ngx-charts-pie-chart>
     </div>
 
-    <div style="width: 80%">
-      <h3>Revenus par mois</h3>
+    <div class="chart-container wide">
+      <h3>Monthly Revenue</h3>
       <ngx-charts-line-chart
         *ngIf="revenueChartData.length"
         [results]="revenueChartData"

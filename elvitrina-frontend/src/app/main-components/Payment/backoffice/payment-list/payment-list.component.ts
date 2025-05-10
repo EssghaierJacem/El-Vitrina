@@ -30,7 +30,7 @@ import { MatChipsModule } from '@angular/material/chips';
 })
 export class PaymentListComponent implements OnInit {
   payments: Payment[] = [];
-  displayedColumns: string[] = ['id', 'amount', 'transactionDate', 'method', 'paystatus', 'actions'];
+  displayedColumns: string[] = ['amount', 'transactionDate', 'method', 'paystatus', 'actions'];
 
   constructor(private paymentService: PaymentService, private router: Router) {}
 

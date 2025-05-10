@@ -8,6 +8,7 @@ import { Payment } from '../../models/Panier/payment';
 })
 export class PaymentService {
   private apiUrl = 'http://localhost:8080/api/payments';
+  private lastCreatedPayment: any = null;
 
   constructor(private http: HttpClient) {}
 
@@ -44,19 +45,30 @@ export class PaymentService {
   validatePayment(paymentId: number): Observable<Payment> {
     return this.http.post<Payment>(`${this.apiUrl}/validate/${paymentId}`, {});
   }
+
   createPaymentIntent(amount: number): Observable<{ clientSecret: string }> {
     return this.http.post<{ clientSecret: string }>(`${this.apiUrl}/create-payment-intent`, { amount });
   }
+
   createCheckoutSession(amount: number) {
     return this.http.post<{ url: string }>(
-      'http://localhost:8080/api/payments/create-checkout-session',
+      `${this.apiUrl}/create-checkout-session`,
       { amount }
-    );  }
+    );
+  }
 
+  updateStatusToSuccess(id: number): Observable<Payment> {
+    return this.http.put<Payment>(`${this.apiUrl}/updateStatusToSuccess/${id}`, {});
+  }
 
-    updateStatusToSuccess(id: number): Observable<Payment> {
-      return this.http.put<Payment>(`${this.apiUrl}/updateStatusToSuccess/${id}`, {});
-    }
+  setLastCreatedPayment(payment: any) {
+    this.lastCreatedPayment = payment;
+    localStorage.setItem('lastCreatedPayment', JSON.stringify(payment));
+  }
 
-
+  getLastCreatedPayment(): any {
+    if (this.lastCreatedPayment) return this.lastCreatedPayment;
+    const stored = localStorage.getItem('lastCreatedPayment');
+    return stored ? JSON.parse(stored) : null;
+  }
 }

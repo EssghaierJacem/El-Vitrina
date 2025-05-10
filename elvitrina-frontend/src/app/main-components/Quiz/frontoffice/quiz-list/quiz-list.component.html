@@ -1,14 +1,11 @@
 <div class="quiz-home" *ngIf="!showQuestion && !isLoading">
   <div class="quiz-card">
     <h1>🎯 Weekly Quiz</h1>
-    <img class="quiz-icon" src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="Quiz Icon" />
-
-
 
     <div class="quiz-stats">
       <div>
         <p>Questions</p>
-        
+
         <h3>{{ quizzes.length }}</h3>
       </div>
       <div>
@@ -27,9 +24,9 @@
 <div *ngIf="showQuestion && !isLoading" class="quiz-list-container">
 
   <div class="quiz-card">
-    <div class="timer">Temps restant : {{ timeLeft }}s</div>
+    <div class="timer">TIMER : {{ timeLeft }}s</div>
 
-    <h2 class="text-white">Question {{ currentQuestionIndex + 1 }} / {{ quizzes.length }}</h2>
+    <h2 class="text-white">QuestionS {{ currentQuestionIndex + 1 }} / {{ quizzes.length }}</h2>
     <p class="text-white">{{ quizzes[currentQuestionIndex].question }}</p>
 
     <div class="quiz-buttons">
@@ -53,7 +50,7 @@
     <button class="btn btn-secondary" [disabled]="currentQuestionIndex !== quizzes.length - 1">Results ➡</button>
   </div>
   <div *ngIf="allQuestionsAnswered()" class="quiz-buttons">
-    <button class="btn" [routerLink]="['/quiz/recommendation']">Voir les résultats ➡</button>
+    <button class="btn" [routerLink]="['/quiz/recommendation']">SEE RESULTS➡</button>
   </div>  <p class="confirmation" *ngIf="confirmationMessage">{{ confirmationMessage }}</p>
 
 </div>

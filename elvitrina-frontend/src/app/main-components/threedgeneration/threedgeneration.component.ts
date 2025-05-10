@@ -627,4 +627,3 @@ private centerModelInView(object: THREE.Object3D): void {
     this.createDefaultModel();
   }
 }
-

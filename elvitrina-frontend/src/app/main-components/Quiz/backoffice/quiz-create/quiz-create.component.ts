@@ -34,7 +34,7 @@ export class QuizCreateComponent {
     option3: '',
     bonneReponse: '',
     score: 0,
-    userId: 0
+    userId: 1
   };
 
   constructor(private quizService: QuizService, private router: Router) {}
@@ -46,7 +46,7 @@ export class QuizCreateComponent {
       this.quizService.createQuiz(this.quiz).subscribe({
         next: (response) => {
           console.log('Quiz créé avec succès:', response);
-          this.router.navigate(['/quizzes']); // Redirige vers la liste
+          this.router.navigate(['/dashboard/quiz/list']); // Redirige vers la liste
         },
         error: (error) => {
           console.error('Erreur lors de la création du quiz:', error);

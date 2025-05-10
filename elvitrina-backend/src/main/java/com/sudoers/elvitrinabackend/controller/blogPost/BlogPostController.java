@@ -58,7 +58,7 @@ public class BlogPostController {
 
         blogPost.setUser(user);
         BlogPost savedPost = blogPostService.addBlogPost(blogPost, image);
-
+        System.out.println(savedPost.getId());
         return ResponseEntity.ok(savedPost);
     }
 

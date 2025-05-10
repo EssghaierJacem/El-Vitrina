@@ -1,0 +1,50 @@
+.client-cell {
+  display: flex;
+  flex-direction: column;
+
+  .client-name {
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .client-id {
+    font-size: 0.8rem;
+    color: #666;
+  }
+}
+
+/* Status classes - adjust colors as needed */
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status-confirmed {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.status-shipped {
+  background-color: #e2e3e5;
+  color: #383d41;
+}
+
+.status-delivered {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-default {
+  background-color: #f8f9fa;
+  color: #212529;
+}

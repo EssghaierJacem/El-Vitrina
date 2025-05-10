@@ -46,7 +46,7 @@
     "d3-shape": "^3.2.0",
     "file-saver": "^2.0.5",
     "googleapis": "^105.0.0",
-    "jspdf": "^3.0.1",
+    "jspdf": "^2.5.1",
     "jspdf-autotable": "^5.0.2",
     "jwt-decode": "^4.0.0",
     "leaflet": "^1.9.4",

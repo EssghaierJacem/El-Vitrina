@@ -1,40 +1,62 @@
-<mat-card class="cardWithShadow">
-  <mat-card-title>Mes Commandes</mat-card-title>
+<!-- Show cart only if logged in -->
+<mat-card class="cardWithShadow" *ngIf="userId">
+  <mat-card-title>My Orders</mat-card-title>
 
-  <!-- Barre de recherche -->
+  <!-- Search bar + Filter Recent -->
   <mat-form-field appearance="outline" class="w-100 m-b-16">
-    <mat-label>Rechercher</mat-label>
-    <input matInput [(ngModel)]="searchText" (ngModelChange)="applyFilter()" placeholder="Par statut ou client">
+    <mat-label>Search</mat-label>
+    <input matInput [(ngModel)]="searchText" (ngModelChange)="applyFilter()" placeholder="By status or customer">
+    <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
 
-  <!-- Liste sous forme de cartes -->
+  <button mat-raised-button color="primary" (click)="toggleRecentOrders()" class="m-b-16">
+    {{ showRecentOnly ? 'Show All Orders' : 'Show Recent Orders' }}
+  </button>
+
+  <!-- Card-style list -->
   <div class="orders-container">
     <mat-card class="order-card" *ngFor="let order of filteredOrders">
       <div class="order-details">
         <div class="order-info">
-          <strong>Commande #{{ order.id }}</strong>
-          <p>Date : {{ order.orderDate | date }}</p>
-          <p>Montant : {{ order.price * order.quantity | currency: 'TND' }}</p>
+          <strong>Order #{{ order.id }}</strong>
+          <p>Date: {{ order.orderDate | date:'mediumDate' }}</p>
+          <p>Amount: {{ order.price * order.quantity | currency:'TND' }}</p>
           <span class="status" [ngClass]="getStatusClass(order.status)">
             {{ order.status }}
           </span>
         </div>
 
         <div class="order-actions">
-          <button mat-icon-button color="primary" [routerLink]="['/order/view', order.id]">
+          <button mat-icon-button color="primary" [routerLink]="['/order/view', order.id]" matTooltip="View details">
             <mat-icon>visibility</mat-icon>
           </button>
-          <button mat-icon-button color="warn" *ngIf="order.id !== undefined" (click)="deleteOrder(order.id!)">
+          <button mat-icon-button color="warn" *ngIf="order.id !== undefined" (click)="deleteOrder(order.id!)" matTooltip="Delete order">
             <mat-icon>delete</mat-icon>
           </button>
-
         </div>
       </div>
-
     </mat-card>
-    <div class="total-amount">
-      <strong>Total :</strong> {{ getTotalAmount() | currency:'TND' }}
+
+    <div class="no-orders" *ngIf="filteredOrders.length === 0">
+      <mat-icon>shopping_cart</mat-icon>
+      <p>No orders found</p>
     </div>
 
+    <div class="total-amount" *ngIf="filteredOrders.length > 0">
+      <strong>Total:</strong> {{ getTotalAmount() | currency:'TND' }}
+    </div>
   </div>
 </mat-card>
+
+<!-- Optional: Info message if not logged in -->
+<div *ngIf="!userId" class="not-logged-in-msg">
+  <mat-card>
+    <mat-card-title>Accès non autorisé</mat-card-title>
+    <mat-card-content>
+      <p>Veuillez vous connecter pour consulter vos commandes.</p>
+      <button mat-button color="primary" routerLink='/authentication/login'>
+        Se connecter
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>

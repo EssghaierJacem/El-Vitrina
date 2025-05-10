@@ -9,18 +9,18 @@ import { RequestPersoCreateComponent } from './main-components/requestPerso/fron
 import { chartRoutes } from './main-components/chart-ines/chart/charts-routes';
 import { HomeComponent } from './layouts/frontoffice/home/home.component';
 
-export const routes: Routes = [   
-  {  
+export const routes: Routes = [
+  {
     path: '',
     component: FrontComponent,
     children: [
       {
         path: '',
-        component: HomeComponent 
+        component: HomeComponent
       },
       {
         path: 'home',
-        redirectTo: '', pathMatch: 'full' 
+        redirectTo: '', pathMatch: 'full'
       },
       {
         path: 'offers',
@@ -54,11 +54,15 @@ export const routes: Routes = [
           import('./main-components/Payment/frontoffice/payment.routes').then((m) => m.PaymentsRoutes),
       },
       {
+        path: 'order',
+        loadChildren: () =>
+          import('./main-components/custom-order/Frontoffice/custom-order-Front.routes').then(m => m.CustomOrderFrontRoutes),
+      },
+      {
        path: 'quiz',
          loadChildren: () =>
           import('./main-components/Quiz/frontoffice/quizFront.routes').then((m) => m.QuizFrontRoutes),
-},
-
+      },
       {
         path: 'requestperso',
         loadChildren: () =>
@@ -92,8 +96,6 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/event/frontoffice/eventfront.routes').then((m) => m.EVENT_FRONT_ROUTES),
       },
-
-
       {
         path: 'donations',
         loadChildren: () =>
@@ -113,7 +115,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: FullComponent,
-   canActivate: [AdminGuard],
+    canActivate: [AdminGuard],
     children: [
       {
         path: '',
@@ -189,15 +191,12 @@ export const routes: Routes = [
           import('./main-components/formation/backoffice/backoffice_formation.routes')
             .then(m => m.FormationRoutes)
       },
-
-
       {
         path: 'blogPosts',
         loadChildren: () =>
           import('./main-components/blogPost/backoffice/backoffice_blogPost.routes')
             .then(m => m.BlogPostRoutes)
       },
-
       {
         path: 'RequestPerso',
         loadChildren: () =>
@@ -208,7 +207,6 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./main-components/Ad/backOffice/backoffice_ad.routes').then((m) => m.AdAdmin),
       },
-
       {
         path: 'extra',
         loadChildren: () =>

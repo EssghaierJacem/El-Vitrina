@@ -1,38 +1,33 @@
 <mat-card class="cardWithShadow theme-card card">
   <mat-card-header>
-    <mat-card-title>Liste des Paiements</mat-card-title>
+    <mat-card-title>Payments List</mat-card-title>
   </mat-card-header>
 
   <mat-card-content>
     <table mat-table [dataSource]="payments" class="mat-elevation-z8 w-100">
 
-      <!-- ID -->
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef>ID</th>
-        <td mat-cell *matCellDef="let payment">{{ payment.id }}</td>
-      </ng-container>
 
-      <!-- Montant -->
+      <!-- Amount -->
       <ng-container matColumnDef="amount">
-        <th mat-header-cell *matHeaderCellDef>Montant</th>
+        <th mat-header-cell *matHeaderCellDef>Amount</th>
         <td mat-cell *matCellDef="let payment">{{ payment.amount | currency: 'TND' }}</td>
       </ng-container>
 
-      <!-- Date de transaction -->
+      <!-- Transaction Date -->
       <ng-container matColumnDef="transactionDate">
         <th mat-header-cell *matHeaderCellDef>Date</th>
         <td mat-cell *matCellDef="let payment">{{ payment.transactionDate | date:'dd/MM/yyyy' }}</td>
       </ng-container>
 
-      <!-- Méthode -->
+      <!-- Method -->
       <ng-container matColumnDef="method">
-        <th mat-header-cell *matHeaderCellDef>Méthode</th>
+        <th mat-header-cell *matHeaderCellDef>Method</th>
         <td mat-cell *matCellDef="let payment">{{ payment.method }}</td>
       </ng-container>
 
-      <!-- Statut -->
+      <!-- Status -->
       <ng-container matColumnDef="paystatus">
-        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <th mat-header-cell *matHeaderCellDef>Status</th>
         <td mat-cell *matCellDef="let payment">
           <mat-chip [color]="payment.paystatus === 'CONFIRMED' ? 'primary' : payment.paystatus === 'PENDING' ? 'accent' : 'warn'">
             {{ payment.paystatus }}
@@ -44,11 +39,8 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let payment">
-          <button mat-icon-button color="primary" (click)="editPayment(payment.id)">
-            <mat-icon>edit</mat-icon>
-          </button>
           <button mat-icon-button color="warn" (click)="viewPayment(payment.id)">
-            <mat-icon>view</mat-icon>
+            <mat-icon>visibility</mat-icon>
           </button>
           <button mat-icon-button color="warn" (click)="deletePayment(payment.id)">
             <mat-icon>delete</mat-icon>
