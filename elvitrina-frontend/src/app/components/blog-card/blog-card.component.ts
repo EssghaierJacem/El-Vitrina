@@ -24,7 +24,7 @@ export class AppBlogCardsComponent implements OnInit {
     productcards: ProductCard[] = [];
 
     ngOnInit(): void {
-        this.http.get<ProductCard[]>('/api/api/stats/top-products').subscribe({
+        this.http.get<ProductCard[]>('/api/stats/top-products').subscribe({
             next: (data) => {
                 this.productcards = data;
             },
@@ -44,6 +44,6 @@ export class AppBlogCardsComponent implements OnInit {
         }
       
         const cleaned = filename.replace(/^\/+/, '');
-        return `/api/api/products/products/images/${cleaned}`;
+        return `/api/products/products/images/${cleaned}`;
       }
 }

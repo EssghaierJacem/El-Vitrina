@@ -38,7 +38,7 @@ interface ProductCategoryPerformance {
   providedIn: 'root'
 })
 export class StatisticsService {
-  private apiUrl = '/api/api';
+  private apiUrl = '/api';
 
   constructor(private http: HttpClient) {}
 

@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class StatsService {
 
-  private apiUrl = '/api/api/stats';  // L'URL de ton API backend
+  private apiUrl = '/api/stats';  // L'URL de ton API backend
 
   constructor(private http: HttpClient) { }
 

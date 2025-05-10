@@ -109,7 +109,7 @@ export class OfferListComponent implements OnInit {
     const payload = { interests };
   
     this.http.post(
-      '/api/api/ai/suggest-offer', 
+      '/api/ai/suggest-offer', 
       payload,
       { responseType: 'text' }
     ).subscribe(

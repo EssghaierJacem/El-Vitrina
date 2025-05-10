@@ -38,7 +38,7 @@ export class StoreDetailsComponent implements OnInit, AfterViewInit {
   private map: L.Map | undefined;
   private marker: L.Marker | undefined;
 
-  IMAGE_BASE_URL = '/api/api/stores/store/images/';
+  IMAGE_BASE_URL = '/api/stores/store/images/';
 
   constructor(
     private route: ActivatedRoute,

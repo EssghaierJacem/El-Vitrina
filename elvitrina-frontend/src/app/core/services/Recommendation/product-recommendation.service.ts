@@ -8,7 +8,7 @@ import { ProductCategoryType } from '../../models/product/product-category-type.
   providedIn: 'root'
 })
 export class ProductRecommendationService {
-  private apiUrl = '/api/api/recommendations';
+  private apiUrl = '/api/recommendations';
 
   constructor(private http: HttpClient) { }
 

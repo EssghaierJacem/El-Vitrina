@@ -51,7 +51,7 @@ export class AppYearlyBreakupComponent implements OnInit {
     }
 
     loadYearlyDonations(): void {
-        this.http.get<{ [key: string]: number }>('/api/api/stats/yearly-donations').subscribe({
+        this.http.get<{ [key: string]: number }>('/api/stats/yearly-donations').subscribe({
             next: (data) => {
                 const labels = Object.keys(data).map(y => y);
                 const series = Object.values(data);

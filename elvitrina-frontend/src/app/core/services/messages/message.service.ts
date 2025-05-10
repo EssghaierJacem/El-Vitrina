@@ -8,7 +8,7 @@ import { Message } from '../../models/messages/message';
   providedIn: 'root',
 })
 export class MessageService {
-  private apiUrl = `/api/api/friends`;
+  private apiUrl = `/api/friends`;
 
   constructor(private http: HttpClient) {}
 

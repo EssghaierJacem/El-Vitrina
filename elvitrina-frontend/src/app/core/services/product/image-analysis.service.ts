@@ -13,7 +13,7 @@ export interface ImageAnalysisResult {
   providedIn: 'root'
 })
 export class ImageAnalysisService {
-  private apiUrl = '/api/api/products';
+  private apiUrl = '/api/products';
 
   constructor(private http: HttpClient) { }
 

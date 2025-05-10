@@ -231,10 +231,10 @@ export class StoreEditComponent implements OnInit, AfterViewInit {
 
         // Set image previews if they exist
         if (store.image) {
-          this.imagePreviewUrl = `/api/api/stores/store/images/${store.image}`;
+          this.imagePreviewUrl = `/api/stores/store/images/${store.image}`;
         }
         if (store.coverImage) {
-          this.coverImagePreviewUrl = `/api/api/stores/store/images/${store.coverImage}`;
+          this.coverImagePreviewUrl = `/api/stores/store/images/${store.coverImage}`;
         }
 
         this.isLoading = false;

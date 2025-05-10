@@ -8,7 +8,7 @@ import { HttpHeaders } from '@angular/common/http';
   providedIn: 'root'
 })
 export class CommentService {
-  private apiUrl = '/api/api/comments';
+  private apiUrl = '/api/comments';
 
   constructor(private http: HttpClient) {}
 

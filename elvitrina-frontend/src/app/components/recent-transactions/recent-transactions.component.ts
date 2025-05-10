@@ -34,7 +34,7 @@ export class AppRecentTransactionsComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.http.get<any[]>('/api/api/stats/recent')
+    this.http.get<any[]>('/api/stats/recent')
       .subscribe(data => {
         this.stats = data.slice(0, 6).map(activity => ({
           id: activity.id,

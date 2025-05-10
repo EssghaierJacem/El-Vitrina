@@ -26,8 +26,8 @@ export class WebSocketService {
   connected$ = this.connectedSubject.asObservable();
   
 
-  private readonly wsUrl = '/ws_api//ws';
-  private readonly apiUrl = '/api/api/messages';
+  private readonly wsUrl = '/ws_api/ws';
+  private readonly apiUrl = '/api/messages';
 
   constructor(private http: HttpClient, private tokenService: TokenService) {
     this.stompClient = new Client({
@@ -192,6 +192,6 @@ export class WebSocketService {
   }
   
   getCorrection(text: string): Observable<string> {
-    return this.http.post('/api/api/corrections', text, { responseType: 'text' });
+    return this.http.post('/api/corrections', text, { responseType: 'text' });
   }
 }

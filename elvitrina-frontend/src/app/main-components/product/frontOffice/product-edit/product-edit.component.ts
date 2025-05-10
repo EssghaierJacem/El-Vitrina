@@ -68,7 +68,7 @@ export class ProductEditComponent implements OnInit {
   // Add properties for category debugging
   showCategoryDebug = false;
 
-  readonly IMAGE_BASE_URL = '/api/api/products/products/images/';
+  readonly IMAGE_BASE_URL = '/api/products/products/images/';
 
   // Add getter for current category value
   get currentCategory(): string {

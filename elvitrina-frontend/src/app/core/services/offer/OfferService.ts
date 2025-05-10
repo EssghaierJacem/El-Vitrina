@@ -7,7 +7,7 @@ import { Offer } from '../../models/offer/offer.model';
   providedIn: 'root'
 })
 export class OfferService {
-  private apiUrl = '/api/api/offers';
+  private apiUrl = '/api/offers';
 
   constructor(private http: HttpClient) {}
 

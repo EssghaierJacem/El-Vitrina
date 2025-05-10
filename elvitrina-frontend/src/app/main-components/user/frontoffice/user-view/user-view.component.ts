@@ -174,7 +174,7 @@ export class UserViewComponent implements OnInit {
     }
   
     const cleaned = filename.replace(/^\/+/, '');
-    return `/api/api/products/products/images/${cleaned}`;
+    return `/api/products/products/images/${cleaned}`;
   }
 
   getStoreImageUrl(imagePath?: string): string {
@@ -187,7 +187,7 @@ export class UserViewComponent implements OnInit {
     }
   
     const cleaned = imagePath.replace(/^\/+/, '');
-    return `/api/api/stores/store/images/${cleaned}`;
+    return `/api/stores/store/images/${cleaned}`;
   }
 
 }

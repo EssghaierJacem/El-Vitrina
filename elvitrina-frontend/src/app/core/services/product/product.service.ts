@@ -13,7 +13,7 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = `/api/api/products`;
+  private apiUrl = `/api/products`;
 
 
   constructor(private http: HttpClient) { }
@@ -62,7 +62,7 @@ export class ProductService {
   }
 
   getImageUrl(filename: string): string {
-    return `/api/api/products/images/${filename}`;
+    return `/api/products/images/${filename}`;
   }
 
 

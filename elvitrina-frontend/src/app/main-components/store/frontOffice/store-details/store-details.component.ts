@@ -121,7 +121,7 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
   }
 
   IMAGE_BASE_URL = `${environment.apiUrl}/stores/store/images/`;
-  readonly IMAGE_PRODUCT_BASE_URL = '/api/api/products/products/images/';
+  readonly IMAGE_PRODUCT_BASE_URL = '/api/products/products/images/';
   readonly USER_IMAGE_BASE_URL = `${environment.apiUrl}/users/images/`;
   
   // Sorting options
@@ -869,7 +869,7 @@ export class StoreDetailsComponent implements OnInit, OnDestroy {
     }
   
     const fileName = imagePath.replace(/^\/+/, '');
-    return `/api/api/products/products/images/${fileName}`;
+    return `/api/products/products/images/${fileName}`;
   }
   
 

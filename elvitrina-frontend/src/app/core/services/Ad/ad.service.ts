@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AdService {
-  private baseUrl = '/api/api/ads';
+  private baseUrl = '/api/ads';
 
   constructor(private http: HttpClient) {}
 

@@ -78,7 +78,7 @@ export class AppSalesOverviewComponent implements OnInit {
   }
 
   loadProductStats(): void {
-    this.http.get<{ [key: string]: number }>('/api/api/stats/products-added-monthly').subscribe({
+    this.http.get<{ [key: string]: number }>('/api/stats/products-added-monthly').subscribe({
       next: (data) => {
         const dynamicMonths: Month[] = [];
         const dynamicSeriesData: number[] = [];

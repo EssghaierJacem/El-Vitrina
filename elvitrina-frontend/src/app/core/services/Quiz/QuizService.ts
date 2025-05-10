@@ -8,7 +8,7 @@ import { Quiz } from 'src/app/core/models/Quiz/quiz';
 })
 export class QuizService {
 
-  private apiUrl = '/api/api/quizzes';
+  private apiUrl = '/api/quizzes';
 
   constructor(private http: HttpClient) {}
 

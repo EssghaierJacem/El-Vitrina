@@ -7,7 +7,7 @@ import { ProposalPerso } from '../../models/proposalPerso/proposalPerso.model';
   providedIn: 'root'
 })
 export class AdminProposalPersoService {
-  private apiUrl = '/api/api/admin/proposalPerso';
+  private apiUrl = '/api/admin/proposalPerso';
 
   constructor(private http: HttpClient) { }
 

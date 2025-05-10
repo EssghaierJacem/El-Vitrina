@@ -8,7 +8,7 @@ import { FriendRequest } from '../../models/messages/friendrequest';
   providedIn: 'root',
 })
 export class FriendRequestService {
-  private apiUrl = '/api/api/friends';
+  private apiUrl = '/api/friends';
 
   constructor(private http: HttpClient) {}
 

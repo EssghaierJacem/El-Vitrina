@@ -52,7 +52,7 @@ export class AppProductPerformanceComponent implements OnInit {
   }
 
   loadTopUsers(): void {
-    this.http.get<TopUser[]>('/api/api/stats/top-users').subscribe({
+    this.http.get<TopUser[]>('/api/stats/top-users').subscribe({
       next: (data) => {
         this.dataSource = data.slice(0, 4);
       },

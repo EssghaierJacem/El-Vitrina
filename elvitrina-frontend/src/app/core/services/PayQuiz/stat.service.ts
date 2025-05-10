@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class StatService {
-  private baseUrl = '/api/api/stats';
+  private baseUrl = '/api/stats';
 
   constructor(private http: HttpClient) {}
 

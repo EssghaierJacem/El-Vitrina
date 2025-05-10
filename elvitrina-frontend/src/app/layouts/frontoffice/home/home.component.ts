@@ -110,7 +110,7 @@ export class HomeComponent implements OnInit {
     if (image.startsWith('http://') || image.startsWith('https://')) {
       return image;
     }
-    return `/api/api/products/products/images/${image}`;
+    return `/api/products/products/images/${image}`;
   }
 
   calculateDiscountedPrice(product: Product): number {

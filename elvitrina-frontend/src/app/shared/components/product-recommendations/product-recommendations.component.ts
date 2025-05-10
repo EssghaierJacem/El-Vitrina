@@ -34,7 +34,7 @@ export class ProductRecommendationsComponent implements OnInit {
   recommendations: ProductRecommendation[] = [];
   loading: boolean = false;
   error: string | null = null;
-  readonly IMAGE_BASE_URL = '/api/api/products/products/images/';
+  readonly IMAGE_BASE_URL = '/api/products/products/images/';
 
   constructor(
     private recommendationService: ProductRecommendationService,
