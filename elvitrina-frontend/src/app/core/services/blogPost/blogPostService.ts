@@ -50,7 +50,7 @@ export class BlogPostService {
   }
 
   translateText(request: TranslationRequest): Observable<TranslationResponse> {
-    const url = '/api/translation/translate`; // Endpoint matching the Spring @PostMapping
+    const url = `/api/translation/translate`; // Endpoint matching the Spring @PostMapping
     return this.http.post<TranslationResponse>(url, request);
   }
   
