@@ -106,7 +106,9 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "src/karma-test-shim.js"
+            ]
           }
         },
         "lint": {

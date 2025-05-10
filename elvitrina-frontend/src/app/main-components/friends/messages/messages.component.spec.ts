@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { COMMON_TEST_CONFIG } from 'src/app/testing/test-utils';
 
 import { MessagesComponent } from './messages.component';
 
@@ -7,9 +8,8 @@ describe('MessagesComponent', () => {
   let fixture: ComponentFixture<MessagesComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [MessagesComponent]
-    })
+    await TestBed.configureTestingModule({imports: [MessagesComponent, ...COMMON_TEST_CONFIG.imports],
+      providers: [...COMMON_TEST_CONFIG.providers]})
     .compileComponents();
 
     fixture = TestBed.createComponent(MessagesComponent);

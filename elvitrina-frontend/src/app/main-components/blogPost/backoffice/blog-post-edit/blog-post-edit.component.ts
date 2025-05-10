@@ -14,11 +14,14 @@ import { MatIconModule } from '@angular/material/icon';  // Pour mat-icon
 import { MatSnackBarModule } from '@angular/material/snack-bar';  // Pour les notifications Snackbar
 import { RouterModule } from '@angular/router'; 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { CommonModule } from '@angular/common';  // Assurez-vous que CommonModule est importé
+import { CommonModule, NgIf } from '@angular/common';  // Assurez-vous que CommonModule est importé
 
 @Component({
   selector: 'app-edit-blog-post',
-  imports: [ CommonModule,
+  standalone: true,
+  imports: [ 
+    CommonModule,
+    NgIf,
     MatProgressSpinnerModule,
     ReactiveFormsModule,  
     MatCardModule,
@@ -27,7 +30,8 @@ import { CommonModule } from '@angular/common';  // Assurez-vous que CommonModul
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
-    RouterModule],
+    RouterModule
+  ],
   templateUrl: './blog-post-edit.component.html',
   styleUrls: ['./blog-post-edit.component.scss']
 })

@@ -1,4 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { COMMON_TEST_CONFIG } from 'src/app/testing/test-utils';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { RequestPersoService } from './request-perso.service';
 
@@ -6,7 +8,8 @@ describe('RequestPersoService', () => {
   let service: RequestPersoService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({imports: [HttpClientTestingModule, ...COMMON_TEST_CONFIG.imports],
+      providers: [...COMMON_TEST_CONFIG.providers]});
     service = TestBed.inject(RequestPersoService);
   });
 

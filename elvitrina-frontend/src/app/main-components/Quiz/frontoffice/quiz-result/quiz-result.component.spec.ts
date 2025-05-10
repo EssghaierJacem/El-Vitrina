@@ -1,6 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { COMMON_TEST_CONFIG } from 'src/app/testing/test-utils';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideLottieOptions } from 'ngx-lottie';
 
 import { QuizResultComponent } from './quiz-result.component';
+
+// Factory function for Lottie player
+export function playerFactory() {
+  return import('lottie-web');
+}
 
 describe('QuizResultComponent', () => {
   let component: QuizResultComponent;
@@ -8,7 +17,18 @@ describe('QuizResultComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [QuizResultComponent]
+      imports: [
+        QuizResultComponent, 
+        HttpClientTestingModule, 
+        ...COMMON_TEST_CONFIG.imports
+      ],
+      providers: [
+        ...COMMON_TEST_CONFIG.providers,
+        provideAnimations(),
+        provideLottieOptions({
+          player: playerFactory
+        })
+      ]
     })
     .compileComponents();
 

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { RequestModerationComponent } from './request-moderation.component';
+import { COMMON_TEST_CONFIG } from 'src/app/testing/test-utils';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('RequestModerationComponent', () => {
   let component: RequestModerationComponent;
@@ -8,7 +9,8 @@ describe('RequestModerationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RequestModerationComponent]
+      imports: [RequestModerationComponent, ...COMMON_TEST_CONFIG.imports, ToastrModule.forRoot()],
+      providers: [...COMMON_TEST_CONFIG.providers]
     })
     .compileComponents();
 

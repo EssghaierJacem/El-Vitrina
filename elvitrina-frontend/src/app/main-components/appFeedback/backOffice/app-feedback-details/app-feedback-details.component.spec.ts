@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { COMMON_TEST_CONFIG } from 'src/app/testing/test-utils';
 
 import { AppFeedbackDetailsComponent } from './app-feedback-details.component';
 
@@ -7,9 +8,8 @@ describe('AppFeedbackDetailsComponent', () => {
   let fixture: ComponentFixture<AppFeedbackDetailsComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [AppFeedbackDetailsComponent]
-    })
+    await TestBed.configureTestingModule({imports: [AppFeedbackDetailsComponent, ...COMMON_TEST_CONFIG.imports],
+      providers: [...COMMON_TEST_CONFIG.providers]})
     .compileComponents();
 
     fixture = TestBed.createComponent(AppFeedbackDetailsComponent);

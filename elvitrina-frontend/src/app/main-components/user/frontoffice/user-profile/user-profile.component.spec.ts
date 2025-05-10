@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { COMMON_TEST_CONFIG } from 'src/app/testing/test-utils';
 
 import { UserProfileComponent } from './user-profile.component';
 
@@ -7,9 +8,8 @@ describe('UserProfileComponent', () => {
   let fixture: ComponentFixture<UserProfileComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [UserProfileComponent]
-    })
+    await TestBed.configureTestingModule({imports: [UserProfileComponent, ...COMMON_TEST_CONFIG.imports],
+      providers: [...COMMON_TEST_CONFIG.providers]})
     .compileComponents();
 
     fixture = TestBed.createComponent(UserProfileComponent);

@@ -1,10 +1,13 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { UserService } from 'src/app/core/services/user/UserService';
 import { User } from 'src/app/core/models/user/user.model';
 
 @Component({
   selector: 'app-user-image-upload',
-  templateUrl: './user-image-upload.component.html'
+  templateUrl: './user-image-upload.component.html',
+  imports: [CommonModule],
+  standalone: true
 })
 export class UserImageUploadComponent {
   @Input() userId!: number;

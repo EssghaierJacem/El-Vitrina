@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { COMMON_TEST_CONFIG } from 'src/app/testing/test-utils';
 
 import { StoreEditComponent } from './store-edit.component';
 
@@ -7,9 +8,8 @@ describe('StoreEditComponent', () => {
   let fixture: ComponentFixture<StoreEditComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [StoreEditComponent]
-    })
+    await TestBed.configureTestingModule({imports: [StoreEditComponent, ...COMMON_TEST_CONFIG.imports],
+      providers: [...COMMON_TEST_CONFIG.providers]})
     .compileComponents();
 
     fixture = TestBed.createComponent(StoreEditComponent);

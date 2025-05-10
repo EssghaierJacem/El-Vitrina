@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { COMMON_TEST_CONFIG } from 'src/app/testing/test-utils';
 
 import { ListPaymentComponent } from './list-payment.component';
 
@@ -7,9 +8,8 @@ describe('ListPaymentComponent', () => {
   let fixture: ComponentFixture<ListPaymentComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ListPaymentComponent]
-    })
+    await TestBed.configureTestingModule({imports: [ListPaymentComponent, ...COMMON_TEST_CONFIG.imports],
+      providers: [...COMMON_TEST_CONFIG.providers]})
     .compileComponents();
 
     fixture = TestBed.createComponent(ListPaymentComponent);

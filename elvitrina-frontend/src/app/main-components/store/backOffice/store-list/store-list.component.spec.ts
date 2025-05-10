@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { StoreListComponent } from './store-list.component';
+import { COMMON_TEST_CONFIG } from 'src/app/testing/test-utils';
 
 describe('StoreListComponent', () => {
   let component: StoreListComponent;
@@ -8,7 +8,8 @@ describe('StoreListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StoreListComponent]
+      imports: [StoreListComponent, ...COMMON_TEST_CONFIG.imports],
+      providers: [...COMMON_TEST_CONFIG.providers]
     })
     .compileComponents();
 
