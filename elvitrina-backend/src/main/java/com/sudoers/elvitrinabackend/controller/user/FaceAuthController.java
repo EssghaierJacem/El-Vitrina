@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/face")
+@RequestMapping("/api/face")
 @RequiredArgsConstructor
 public class FaceAuthController {
 
