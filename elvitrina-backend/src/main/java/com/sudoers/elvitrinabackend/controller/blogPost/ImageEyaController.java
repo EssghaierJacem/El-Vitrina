@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RestController
-@RequestMapping("/api/images")
+@RequestMapping("/api/images-blogposts")
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 
 public class ImageEyaController {
